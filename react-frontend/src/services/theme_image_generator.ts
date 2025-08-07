@@ -1,4 +1,5 @@
 import { LocalAIService } from './local_ai_service';
+import { RunwayMLService } from './runwayml_service';
 
 export interface ThemeImageMapping {
   [themeId: string]: {
@@ -18,7 +19,7 @@ export class ThemeImageGenerator {
       name: 'Royal Palace/Rajasthani Theme',
       description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm',
       images: [],
-      prompt: 'A magnificent Rajasthani royal palace wedding ceremony with ornate mirror work decorations, red and gold color scheme, traditional Rajasthani architecture with carved pillars, royal mandap with marigold flowers, traditional Rajasthani musicians in colorful turbans, desert palace setting, intricate henna patterns, crystal chandeliers, professional photography quality, high resolution, capturing the royal grandeur of Rajasthan.',
+      prompt: 'Cinematic wide shot of a magnificent Rajasthani royal palace Indian wedding ceremony. Traditional red sandstone architecture with intricate carved jharokhas and ornate mirror work. Golden mandap decorated with vibrant marigold garlands and roses. Bride in red lehenga with heavy gold jewelry, groom in cream sherwani with kalgi. Traditional Rajasthani musicians playing shehnai and tabla. Warm golden hour lighting, rich red and gold color palette, ultra-detailed, 4K quality, professional wedding photography style.',
       hasExistingImage: true,
       category: 'indian'
     },
@@ -26,7 +27,7 @@ export class ThemeImageGenerator {
       name: 'Traditional Regional Themes',
       description: 'Authentic celebrations reflecting specific cultural roots and regional traditions',
       images: [],
-      prompt: 'A beautiful traditional Indian regional wedding ceremony showcasing diverse cultural roots, with authentic regional decorations, traditional costumes from different states, cultural symbols, regional musical instruments, traditional thali setup, colorful rangoli patterns, brass lamps, banana leaves, coconut decorations, regional architecture, warm lighting, professional photography quality, capturing the essence of Indian cultural diversity.',
+      prompt: 'Beautiful traditional South Indian temple wedding ceremony with authentic cultural elements. Ornate carved stone pillars and temple architecture. Bride in silk Kanjivaram saree with temple jewelry, groom in white dhoti and angavastram. Sacred fire ceremony with banana leaves, coconut decorations, and colorful rangoli patterns. Traditional nadaswaram music, brass oil lamps, jasmine garlands. Warm temple lighting, rich jewel tones, ultra-detailed Indian cultural authenticity, 4K cinematic quality.',
       hasExistingImage: true,
       category: 'indian'
     },
@@ -34,7 +35,7 @@ export class ThemeImageGenerator {
       name: 'Eco-Friendly Sustainable Weddings',
       description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices',
       images: [],
-      prompt: 'A stunning eco-friendly sustainable wedding setup with organic decorations, natural bamboo mandap, potted plants instead of cut flowers, biodegradable decorations, solar-powered lighting, recycled materials, natural fabric draping, wooden furniture, green foliage backdrop, organic food presentation, earthenware, natural color palette with greens and earth tones, outdoor garden setting, professional photography quality, showcasing environmental consciousness.',
+      prompt: 'Stunning eco-friendly Indian wedding in lush garden setting. Natural bamboo mandap with living plants and organic decorations. Couple in sustainable traditional wear - bride in handloom saree, groom in organic cotton kurta. Potted plants replacing cut flowers, solar string lights, biodegradable leaf plates. Natural wood furniture, jute decorations, earthen diyas. Green and earth tone color palette, soft natural lighting, 4K eco-conscious celebration, professional nature photography style.',
       hasExistingImage: false,
       category: 'indian'
     },
@@ -42,7 +43,7 @@ export class ThemeImageGenerator {
       name: 'Bollywood Glamour Theme',
       description: 'Vibrant Bollywood-inspired celebrations with glamour, dance, and cinematic grandeur',
       images: [],
-      prompt: 'A vibrant Bollywood glamour themed wedding with cinematic grandeur, movie poster backdrops, golden and red color scheme, dramatic lighting with spotlights, large dance floor with disco balls, film reel decorations, star-shaped elements, sequined draping, vintage Bollywood movie posters, glamorous seating arrangement, champagne towers, red carpet entrance, professional photography quality, capturing the essence of Bollywood cinema and glamour.',
+      prompt: 'Glamorous Bollywood-style Indian wedding reception with cinematic grandeur. Large dance floor with disco balls and dramatic spotlights. Vintage Bollywood movie posters and film reel decorations. Bride in heavily embellished lehenga with statement jewelry, groom in designer sherwani. Golden and red sequined draping, champagne towers, red carpet entrance. Professional dancers performing, live orchestra, vibrant party atmosphere. Rich golden lighting, 4K cinematic quality, Bollywood movie aesthetic.',
       hasExistingImage: true,
       category: 'indian'
     },
@@ -50,7 +51,7 @@ export class ThemeImageGenerator {
       name: 'Minimalist Modern Theme',
       description: 'Clean, contemporary celebrations with sophisticated simplicity and modern elegance',
       images: [],
-      prompt: 'A sophisticated minimalist modern wedding setup with clean geometric lines, neutral color palette of whites, greys, and soft pastels, contemporary furniture, simple elegant mandap with minimal decorations, geometric floral arrangements, modern lighting fixtures, sleek table settings, glass elements, modern art installations, uncluttered space design, professional photography quality, capturing contemporary elegance and sophisticated simplicity.',
+      prompt: 'Sophisticated minimalist modern Indian wedding with contemporary elegance. Clean geometric mandap with simple white and gold decorations. Couple in modern traditional wear - bride in subtle pastel lehenga, groom in contemporary sherwani. Sleek furniture, geometric floral arrangements, modern lighting fixtures. Neutral color palette of whites, greys, and soft pastels. Uncluttered space design, glass elements, architectural lines. Soft professional lighting, 4K ultra-clean aesthetic, luxury hotel setting.',
       hasExistingImage: true,
       category: 'indian'
     },
@@ -58,7 +59,7 @@ export class ThemeImageGenerator {
       name: 'Floral Paradise Theme',
       description: 'Enchanting celebrations surrounded by abundant flowers, garden elements, and natural beauty',
       images: [],
-      prompt: 'A breathtaking floral paradise wedding with abundant flower arrangements, floral archways, garden mandap covered in roses and jasmine, hanging flower installations, floral ceiling decorations, botanical elements, flower walls as backdrops, natural garden setting, pastel color palette with pinks, whites, and soft greens, butterfly and bird motifs, floral carpets, professional photography quality, capturing the essence of a blooming garden paradise.',
+      prompt: 'Breathtaking floral paradise Indian wedding in blooming garden. Mandap completely covered in roses, jasmine, and marigolds. Massive floral archways and hanging flower installations. Bride in floral-themed lehenga with fresh flower jewelry, groom with floral sehra. Flower walls as backdrops, floral carpets, botanical ceiling decorations. Pastel color palette with pinks, whites, and soft greens. Natural garden setting with butterflies, 4K botanical paradise, dreamy romantic lighting, professional garden photography.',
       hasExistingImage: false,
       category: 'indian'
     },
@@ -66,7 +67,7 @@ export class ThemeImageGenerator {
       name: 'Bohemian Chic Theme',
       description: 'Free-spirited celebrations with eclectic decor, artistic elements, and bohemian charm',
       images: [],
-      prompt: 'A bohemian chic wedding setup with eclectic decorations, macrame hanging installations, vintage rugs and cushions, dreamcatchers, artistic mandap with flowing fabrics, mixed textures and patterns, vintage furniture pieces, feathers and beads, natural wood elements, warm earth tones with pops of jewel colors, outdoor garden setting with fairy lights, professional photography quality, capturing the free-spirited artistic bohemian lifestyle.',
+      prompt: 'Bohemian chic Indian wedding with artistic eclectic decorations. Mandap with flowing fabrics, macrame hanging installations, vintage rugs and floor cushions. Bride in boho-style lehenga with oxidized jewelry, groom in artistic kurta. Dreamcatchers, feathers, mixed textures and patterns. Vintage furniture pieces, natural wood elements, fairy lights. Warm earth tones with jewel color pops, outdoor garden setting. 4K artistic bohemian aesthetic, free-spirited celebration, warm golden lighting.',
       hasExistingImage: false,
       category: 'indian'
     },
@@ -74,7 +75,7 @@ export class ThemeImageGenerator {
       name: 'Vintage Classic Theme',
       description: 'Timeless celebrations with classic elegance, antique elements, and nostalgic charm',
       images: [],
-      prompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.',
+      prompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.',
       hasExistingImage: true,
       category: 'indian'
     },
@@ -196,7 +197,7 @@ export class ThemeImageGenerator {
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
-    console.log('🎨 Starting generation of missing theme images...');
+    console.log('🎨 Starting generation of missing theme images with RunwayML...');
     
     const updatedThemes = { ...this.THEME_PROMPTS };
     
@@ -211,35 +212,52 @@ export class ThemeImageGenerator {
           updatedThemes[themeId].hasExistingImage = true;
           console.log(`✅ ${themeData.name} (${themeData.category}): Using existing image - ${existingImage}`);
         } else {
-          // Generate new image
-          console.log(`🖼️ Generating new image for: ${themeData.name} (${themeData.category})`);
+          // Generate new image with RunwayML
+          console.log(`🖼️ Generating new image for: ${themeData.name} (${themeData.category}) with RunwayML`);
           
-          const requestData = {
-            theme: themeData.name,
-            style: 'Traditional',
-            colors: 'Red & Gold',
-            season: 'Wedding Season',
-            venueType: this.getVenueTypeForTheme(themeId),
-            customDescription: themeData.prompt,
-            guestCount: 200,
-            location: 'India',
-            imageCount: 1
-          };
-
-          const response = await LocalAIService.generateWeddingThemeImages(requestData);
+          const runwayMLResponse = await RunwayMLService.generateThemeImage({
+            prompt: themeData.prompt,
+            width: 1024,
+            height: 1024,
+            guidance_scale: 8.0,
+            num_inference_steps: 50
+          });
           
-          if (response.success && response.images) {
-            updatedThemes[themeId].images = response.images;
+          if (runwayMLResponse.success && runwayMLResponse.image) {
+            updatedThemes[themeId].images = [runwayMLResponse.image];
             updatedThemes[themeId].hasExistingImage = false;
-            console.log(`✅ Generated new image for ${themeData.name}`);
+            console.log(`✅ Generated new image for ${themeData.name} with RunwayML`);
           } else {
-            console.log(`⚠️ Failed to generate image for ${themeData.name}, using fallback`);
-            updatedThemes[themeId].images = this.getFallbackImages(themeId);
-            updatedThemes[themeId].hasExistingImage = false;
+            // Fallback to LocalAI if RunwayML fails
+            console.log(`⚠️ RunwayML failed for ${themeData.name}, trying LocalAI fallback`);
+            
+            const requestData = {
+              theme: themeData.name,
+              style: 'Traditional',
+              colors: 'Red & Gold',
+              season: 'Wedding Season',
+              venueType: this.getVenueTypeForTheme(themeId),
+              customDescription: themeData.prompt,
+              guestCount: 200,
+              location: 'India',
+              imageCount: 1
+            };
+
+            const localResponse = await LocalAIService.generateWeddingThemeImages(requestData);
+            
+            if (localResponse.success && localResponse.images) {
+              updatedThemes[themeId].images = localResponse.images;
+              updatedThemes[themeId].hasExistingImage = false;
+              console.log(`✅ Generated fallback image for ${themeData.name}`);
+            } else {
+              console.log(`⚠️ All generation methods failed for ${themeData.name}, using static fallback`);
+              updatedThemes[themeId].images = this.getFallbackImages(themeId);
+              updatedThemes[themeId].hasExistingImage = false;
+            }
           }
           
           // Add delay between requests to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 3000));
         }
         
       } catch (error) {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import { CloudflareAIService } from "../services/cloudflare_ai_service";
@@ -154,17 +153,17 @@ const WeddingPreferences: React.FC = () => {
     }
   });
 
-  // New Indian Wedding Themes with detailed descriptions and image generation prompts
+  // Enhanced Indian Wedding Themes with RunwayML-optimized prompts
   const themes = [
     // Royal & Traditional Themes
     { 
       id: 'royal-palace-rajasthani', 
-      name: 'Royal Palace/Rajasthani Theme', 
+      name: 'Royal Palace/ Rajasthani Theme', 
       description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm', 
       color: '#B91C1C',
       image: '/images/themes/royal-palace.jpg',
       features: ['Heritage Palaces', 'Royal Rajasthani Decor', 'Mirror Work', 'Traditional Music'],
-      imagePrompt: 'A magnificent Rajasthani royal palace wedding ceremony with ornate mirror work decorations, red and gold color scheme, traditional Rajasthani architecture with carved pillars, royal mandap with marigold flowers, traditional Rajasthani musicians in colorful turbans, desert palace setting, intricate henna patterns, crystal chandeliers, professional photography quality, high resolution, capturing the royal grandeur of Rajasthan.'
+      imagePrompt: 'Cinematic wide shot of a magnificent Rajasthani royal palace Indian wedding ceremony. Traditional red sandstone architecture with intricate carved jharokhas and ornate mirror work. Golden mandap decorated with vibrant marigold garlands and roses. Bride in red lehenga with heavy gold jewelry, groom in cream sherwani with kalgi. Traditional Rajasthani musicians playing shehnai and tabla. Warm golden hour lighting, rich red and gold color palette, ultra-detailed, 4K quality, professional wedding photography style.'
     },
     { 
       id: 'traditional-regional-roots', 
@@ -173,7 +172,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#DC2626',
       image: '/images/themes/traditional-cultural.jpg',
       features: ['Regional Customs', 'Cultural Authenticity', 'Local Traditions', 'Heritage Elements'],
-      imagePrompt: 'A beautiful traditional Indian regional wedding ceremony showcasing diverse cultural roots, with authentic regional decorations, traditional costumes from different states, cultural symbols, regional musical instruments, traditional thali setup, colorful rangoli patterns, brass lamps, banana leaves, coconut decorations, regional architecture, warm lighting, professional photography quality, capturing the essence of Indian cultural diversity.'
+      imagePrompt: 'Beautiful traditional South Indian temple wedding ceremony with authentic cultural elements. Ornate carved stone pillars and temple architecture. Bride in silk Kanjivaram saree with temple jewelry, groom in white dhoti and angavastram. Sacred fire ceremony with banana leaves, coconut decorations, and colorful rangoli patterns. Traditional nadaswaram music, brass oil lamps, jasmine garlands. Warm temple lighting, rich jewel tones, ultra-detailed Indian cultural authenticity, 4K cinematic quality.'
     },
     { 
       id: 'eco-friendly-sustainable', 
@@ -182,7 +181,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#16A34A',
       image: '/images/themes/boho-garden.jpg',
       features: ['Organic Decorations', 'Sustainable Practices', 'Natural Elements', 'Eco-Conscious'],
-      imagePrompt: 'A stunning eco-friendly sustainable wedding setup with organic decorations, natural bamboo mandap, potted plants instead of cut flowers, biodegradable decorations, solar-powered lighting, recycled materials, natural fabric draping, wooden furniture, green foliage backdrop, organic food presentation, earthenware, natural color palette with greens and earth tones, outdoor garden setting, professional photography quality, showcasing environmental consciousness.'
+      imagePrompt: 'Stunning eco-friendly Indian wedding in lush garden setting. Natural bamboo mandap with living plants and organic decorations. Couple in sustainable traditional wear - bride in handloom saree, groom in organic cotton kurta. Potted plants replacing cut flowers, solar string lights, biodegradable leaf plates. Natural wood furniture, jute decorations, earthen diyas. Green and earth tone color palette, soft natural lighting, 4K eco-conscious celebration, professional nature photography style.'
     },
     { 
       id: 'bollywood-glamour', 
@@ -191,7 +190,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#F59E0B',
       image: '/images/themes/bollywood-sangeet.jpg',
       features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant Colors'],
-      imagePrompt: 'A vibrant Bollywood glamour themed wedding with cinematic grandeur, movie poster backdrops, golden and red color scheme, dramatic lighting with spotlights, large dance floor with disco balls, film reel decorations, star-shaped elements, sequined draping, vintage Bollywood movie posters, glamorous seating arrangement, champagne towers, red carpet entrance, professional photography quality, capturing the essence of Bollywood cinema and glamour.'
+      imagePrompt: 'Glamorous Bollywood-style Indian wedding reception with cinematic grandeur. Large dance floor with disco balls and dramatic spotlights. Vintage Bollywood movie posters and film reel decorations. Bride in heavily embellished lehenga with statement jewelry, groom in designer sherwani. Golden and red sequined draping, champagne towers, red carpet entrance. Professional dancers performing, live orchestra, vibrant party atmosphere. Rich golden lighting, 4K cinematic quality, Bollywood movie aesthetic.'
     },
     { 
       id: 'minimalist-modern', 
@@ -200,7 +199,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#64748B',
       image: '/images/themes/minimalist-pastel.jpg',
       features: ['Clean Lines', 'Modern Furniture', 'Neutral Colors', 'Sophisticated Simplicity'],
-      imagePrompt: 'A sophisticated minimalist modern wedding setup with clean geometric lines, neutral color palette of whites, greys, and soft pastels, contemporary furniture, simple elegant mandap with minimal decorations, geometric floral arrangements, modern lighting fixtures, sleek table settings, glass elements, modern art installations, uncluttered space design, professional photography quality, capturing contemporary elegance and sophisticated simplicity.'
+      imagePrompt: 'Sophisticated minimalist modern Indian wedding with contemporary elegance. Clean geometric mandap with simple white and gold decorations. Couple in modern traditional wear - bride in subtle pastel lehenga, groom in contemporary sherwani. Sleek furniture, geometric floral arrangements, modern lighting fixtures. Neutral color palette of whites, greys, and soft pastels. Uncluttered space design, glass elements, architectural lines. Soft professional lighting, 4K ultra-clean aesthetic, luxury hotel setting.'
     },
     { 
       id: 'floral-paradise', 
@@ -209,7 +208,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#EC4899',
       image: '/images/themes/boho-garden.jpg',
       features: ['Abundant Flowers', 'Garden Elements', 'Floral Arches', 'Natural Beauty'],
-      imagePrompt: 'A breathtaking floral paradise wedding with abundant flower arrangements, floral archways, garden mandap covered in roses and jasmine, hanging flower installations, floral ceiling decorations, botanical elements, flower walls as backdrops, natural garden setting, pastel color palette with pinks, whites, and soft greens, butterfly and bird motifs, floral carpets, professional photography quality, capturing the essence of a blooming garden paradise.'
+      imagePrompt: 'Breathtaking floral paradise Indian wedding in blooming garden. Mandap completely covered in roses, jasmine, and marigolds. Massive floral archways and hanging flower installations. Bride in floral-themed lehenga with fresh flower jewelry, groom with floral sehra. Flower walls as backdrops, floral carpets, botanical ceiling decorations. Pastel color palette with pinks, whites, and soft greens. Natural garden setting with butterflies, 4K botanical paradise, dreamy romantic lighting, professional garden photography.'
     },
     { 
       id: 'bohemian-chic', 
@@ -218,7 +217,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#7C3AED',
       image: '/images/themes/boho-garden.jpg',
       features: ['Eclectic Decor', 'Artistic Elements', 'Vintage Furniture', 'Free-Spirited Vibe'],
-      imagePrompt: 'A bohemian chic wedding setup with eclectic decorations, macrame hanging installations, vintage rugs and cushions, dreamcatchers, artistic mandap with flowing fabrics, mixed textures and patterns, vintage furniture pieces, feathers and beads, natural wood elements, warm earth tones with pops of jewel colors, outdoor garden setting with fairy lights, professional photography quality, capturing the free-spirited artistic bohemian lifestyle.'
+      imagePrompt: 'Bohemian chic Indian wedding with artistic eclectic decorations. Mandap with flowing fabrics, macrame hanging installations, vintage rugs and floor cushions. Bride in boho-style lehenga with oxidized jewelry, groom in artistic kurta. Dreamcatchers, feathers, mixed textures and patterns. Vintage furniture pieces, natural wood elements, fairy lights. Warm earth tones with jewel color pops, outdoor garden setting. 4K artistic bohemian aesthetic, free-spirited celebration, warm golden lighting.'
     },
     { 
       id: 'vintage-classic', 
@@ -227,7 +226,8 @@ const WeddingPreferences: React.FC = () => {
       color: '#92400E',
       image: '/images/themes/traditional-cultural.jpg',
       features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
-      imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
+      imagePrompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.',
+      features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm']
     }
   ];
 
@@ -461,7 +461,7 @@ const WeddingPreferences: React.FC = () => {
     if (savedPreferences) {
       try {
         const parsed = JSON.parse(savedPreferences);
-        
+
         // Ensure the photography object has all required nested properties
         const enhancedParsed = {
           ...parsed,
@@ -510,7 +510,7 @@ const WeddingPreferences: React.FC = () => {
             budgetRange: parsed.photography?.budgetRange || ''
           }
         };
-        
+
         setPreferences(prev => ({ ...prev, ...enhancedParsed }));
       } catch (error) {
         console.error('Error parsing saved preferences:', error);
@@ -524,7 +524,7 @@ const WeddingPreferences: React.FC = () => {
         // Handle nested objects (e.g., photography.multiDayCoverage.preWeddingShoot)
         const currentSection = prev[section] as any;
         const currentKey = currentSection[key] as any;
-        
+
         return {
           ...prev,
           [section]: {
@@ -543,7 +543,7 @@ const WeddingPreferences: React.FC = () => {
         };
       }
     });
-    
+
     // Auto-save to localStorage
     const currentSection = preferences[section] as any;
     const updatedPreferences = {
@@ -553,7 +553,7 @@ const WeddingPreferences: React.FC = () => {
         : { ...currentSection, [key]: value }
     };
     localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
-    
+
     // Mark section as saved
     setSavedSections(prev => new Set(Array.from(prev).concat(section)));
   };
@@ -612,7 +612,7 @@ const WeddingPreferences: React.FC = () => {
                 const Icon = tab.icon;
                 const isComplete = isSectionComplete(tab.id);
                 const isActive = activeTab === tab.id;
-                
+
                 return (
                   <button
                     key={tab.id}
@@ -1036,7 +1036,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="font-medium">Include Videography Services</span>
                     </div>
-                    
+
                     {preferences.photography.videography?.required && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -1318,7 +1318,7 @@ const WeddingPreferences: React.FC = () => {
                         Create a comprehensive AI-generated wedding blueprint based on your preferences.
                       </p>
                     </div>
-                    
+
                     {!(preferences.venue.venueType && preferences.theme.selectedTheme) && (
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                         <p className="text-yellow-800 text-sm">
@@ -1327,7 +1327,7 @@ const WeddingPreferences: React.FC = () => {
                         </p>
                       </div>
                     )}
-                    
+
                     <button
                       onClick={() => setShowBlueprint(true)}
                       className="px-8 py-3 bg-deep-navy text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-300 flex items-center gap-2 mx-auto"
