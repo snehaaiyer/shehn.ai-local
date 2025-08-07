@@ -193,7 +193,7 @@ export class ThemeImageGenerator {
     'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
     'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
     'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-    'vintage-classic': '/images/themes/traditional-cultural.jpg'
+    'vintage-classic': '/images/themes/vintage-classic-decor.jpg'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {

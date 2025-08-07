@@ -1,4 +1,3 @@
-
 // Simple Mock Service - No AI dependencies
 export interface MockImageGenerationRequest {
   theme: string;
@@ -32,9 +31,9 @@ export class SimpleMockService {
   static async generateWeddingThemeImages(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     const { theme, style, colors, venueType } = request;
-    
+
     // Map theme names to appropriate images
     const themeImageMappings: { [key: string]: string } = {
       // Indian Wedding Themes
@@ -42,42 +41,45 @@ export class SimpleMockService {
       'rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
       'royal': '/images/themes/royal-rajasthani-mandap.jpg',
       'palace': '/images/themes/royal-rajasthani-mandap.jpg',
-      
+
       'traditional': '/images/themes/traditional-temple-ceremony.jpg',
       'temple': '/images/themes/traditional-temple-ceremony.jpg',
       'regional': '/images/themes/traditional-temple-ceremony.jpg',
       'hindu': '/images/themes/traditional-temple-ceremony.jpg',
-      
+
       'bollywood': '/images/themes/bollywood-glamour-stage.jpg',
       'glamour': '/images/themes/bollywood-glamour-stage.jpg',
       'sangeet': '/images/themes/bollywood-glamour-stage.jpg',
-      
+
       'minimalist': '/images/themes/minimalist-modern-white.jpg',
       'modern': '/images/themes/minimalist-modern-white.jpg',
       'contemporary': '/images/themes/minimalist-modern-white.jpg',
-      
+
       'floral': '/images/themes/floral-paradise-garden.jpg',
       'paradise': '/images/themes/floral-paradise-garden.jpg',
       'garden': '/images/themes/floral-paradise-garden.jpg',
       'flower': '/images/themes/floral-paradise-garden.jpg',
-      
+
       'eco': '/images/themes/eco-sustainable-bamboo.jpg',
       'sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
       'green': '/images/themes/eco-sustainable-bamboo.jpg',
       'bamboo': '/images/themes/eco-sustainable-bamboo.jpg',
-      
+
       'bohemian': '/images/themes/bohemian-chic-dreamcatcher.jpg',
       'boho': '/images/themes/bohemian-chic-dreamcatcher.jpg',
       'chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-      
+
       'beach': '/images/themes/beach-destination.jpg',
       'destination': '/images/themes/beach-destination.jpg',
-      'luxury': '/images/themes/beach-destination.jpg'
+      'luxury': '/images/themes/beach-destination.jpg',
+
+      'vintage': '/images/themes/vintage-classic-decor.jpg',
+      'classic': '/images/themes/vintage-classic-decor.jpg'
     };
-    
+
     // Find appropriate image based on theme
     let selectedImage = '/images/themes/traditional-cultural.jpg'; // default
-    
+
     const themeLower = theme.toLowerCase();
     for (const [keyword, imagePath] of Object.entries(themeImageMappings)) {
       if (themeLower.includes(keyword)) {
@@ -85,7 +87,7 @@ export class SimpleMockService {
         break;
       }
     }
-    
+
     // Generate mock analysis
     const mockAnalysis = {
       keywords: [theme, style, 'wedding', 'celebration', 'elegant', 'beautiful'],
@@ -93,9 +95,9 @@ export class SimpleMockService {
       style: style.toLowerCase(),
       colors: colors.split(' ').map(c => c.toLowerCase())
     };
-    
+
     const mockDescription = `A beautiful ${theme} wedding with ${style} styling in ${colors} colors. Perfect for ${venueType} venues with elegant decorations and romantic atmosphere.`;
-    
+
     return {
       images: [selectedImage],
       success: true,
@@ -110,7 +112,7 @@ export class SimpleMockService {
   static async generateVenueImages(venuePrompt: string): Promise<MockImageGenerationResponse> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     // Map venue prompts to appropriate images
     const venueImageMappings: { [key: string]: string } = {
       // Heritage & Luxury
@@ -121,7 +123,7 @@ export class SimpleMockService {
       'haveli': '/images/venues/heritagehaveli.png',
       'fort': '/images/venues/royal fort.png',
       'royal': '/images/venues/royal fort.png',
-      
+
       // Destination & Nature
       'beach': '/images/venues/beachresort.png',
       'resort': '/images/venues/beachresort.png',
@@ -129,14 +131,14 @@ export class SimpleMockService {
       'garden': '/images/venues/garden.png',
       'lake': '/images/venues/lakeresort.png',
       'lakefront': '/images/venues/lakeresort.png',
-      
+
       // Traditional & Cultural
       'banquet': '/images/venues/banquet.png',
       'hall': '/images/venues/banquet.png',
       'temple': '/images/venues/temple.png',
       'community': '/images/venues/communityhall.png',
       'gurudwara': '/images/venues/gurudwara.png',
-      
+
       // Modern & Urban
       'rooftop': '/images/venues/rooftop.png',
       'farmhouse': '/images/venues/farmhouse.png',
@@ -144,10 +146,10 @@ export class SimpleMockService {
       'villa': '/images/venues/luxuryvilla.png',
       'industrial': '/images/venues/industrial.png'
     };
-    
+
     // Find appropriate image based on venue prompt
     let selectedImage = '/images/venues/luxury hotel.png'; // default
-    
+
     const promptLower = venuePrompt.toLowerCase();
     for (const [keyword, imagePath] of Object.entries(venueImageMappings)) {
       if (promptLower.includes(keyword)) {
@@ -155,7 +157,7 @@ export class SimpleMockService {
         break;
       }
     }
-    
+
     return {
       images: [selectedImage],
       success: true,
@@ -169,14 +171,14 @@ export class SimpleMockService {
   static async generateThemeAnalysis(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     const mockAnalysis = {
       keywords: [request.theme, request.style, 'wedding'],
       mood: 'elegant',
       style: request.style.toLowerCase(),
       colors: ['white', 'gold']
     };
-    
+
     return {
       images: [],
       success: true,
