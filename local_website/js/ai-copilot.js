@@ -22,7 +22,7 @@ class WeddingAICopilot {
         // Load current wedding data from localStorage
         const weddingData = JSON.parse(localStorage.getItem('vivaha_wedding_data') || '{}');
         const preferences = JSON.parse(localStorage.getItem('vivaha_preferences') || '{}');
-        
+
         this.currentContext = {
             couple: `${weddingData.partner1Name || ''} & ${weddingData.partner2Name || ''}`.trim(),
             date: weddingData.weddingDate || 'Not set',
@@ -37,7 +37,7 @@ class WeddingAICopilot {
     async getWeddingSuggestions() {
         try {
             console.log('🤖 Getting AI wedding suggestions...');
-            
+
             const response = await fetch(`${this.baseURL}/wedding-suggestions`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -45,7 +45,7 @@ class WeddingAICopilot {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 this.displaySuggestions(result);
                 return result;
@@ -62,7 +62,7 @@ class WeddingAICopilot {
     async analyzeVendors(vendors, userPreferences = {}) {
         try {
             console.log('🤖 Getting AI vendor analysis...');
-            
+
             const response = await fetch(`${this.baseURL}/vendor-analysis`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -73,7 +73,7 @@ class WeddingAICopilot {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 this.displayVendorAnalysis(result);
                 return result;
@@ -90,7 +90,7 @@ class WeddingAICopilot {
     async generateTimeline() {
         try {
             console.log('🤖 Generating AI timeline...');
-            
+
             const response = await fetch(`${this.baseURL}/timeline`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -98,7 +98,7 @@ class WeddingAICopilot {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 this.displayTimeline(result);
                 return result;
@@ -115,7 +115,7 @@ class WeddingAICopilot {
     async chatWithAssistant(message) {
         try {
             console.log('🤖 Chatting with AI assistant...');
-            
+
             const response = await fetch(`${this.baseURL}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -126,7 +126,7 @@ class WeddingAICopilot {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 return result.response;
             } else {
@@ -140,7 +140,7 @@ class WeddingAICopilot {
 
     displaySuggestions(result) {
         const container = document.getElementById('ai-suggestions') || this.createSuggestionsContainer();
-        
+
         container.innerHTML = `
             <div class="ai-suggestions-card">
                 <div class="ai-header">
@@ -160,7 +160,7 @@ class WeddingAICopilot {
 
     displayVendorAnalysis(result) {
         const container = document.getElementById('ai-vendor-analysis') || this.createAnalysisContainer();
-        
+
         container.innerHTML = `
             <div class="ai-analysis-card">
                 <div class="ai-header">
@@ -179,7 +179,7 @@ class WeddingAICopilot {
 
     displayTimeline(result) {
         const container = document.getElementById('ai-timeline') || this.createTimelineContainer();
-        
+
         container.innerHTML = `
             <div class="ai-timeline-card">
                 <div class="ai-header">
@@ -227,7 +227,7 @@ class WeddingAICopilot {
         const container = document.querySelector('.ai-chat-container');
         const isVisible = container.style.display !== 'none';
         container.style.display = isVisible ? 'none' : 'block';
-        
+
         if (!isVisible) {
             // Add welcome message if first time opening
             const messages = document.getElementById('ai-chat-messages');
@@ -240,19 +240,19 @@ class WeddingAICopilot {
     async sendMessage() {
         const input = document.getElementById('ai-chat-input');
         const message = input.value.trim();
-        
+
         if (!message) return;
-        
+
         // Add user message
         this.addChatMessage('user', message);
         input.value = '';
-        
+
         // Show typing indicator
         this.addChatMessage('ai', '...', true);
-        
+
         // Get AI response
         const response = await this.chatWithAssistant(message);
-        
+
         // Remove typing indicator and add response
         const messages = document.getElementById('ai-chat-messages');
         messages.removeChild(messages.lastChild);
@@ -537,4 +537,4 @@ const aiCopilotStyles = `
 `;
 
 // Inject styles
-document.head.insertAdjacentHTML('beforeend', aiCopilotStyles); 
+document.head.insertAdjacentHTML('beforeend', aiCopilotStyles);

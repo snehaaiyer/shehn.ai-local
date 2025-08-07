@@ -45,6 +45,9 @@ interface WeddingPreferencesData {
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || '';
 
+// Replit API Configuration
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://0.0.0.0:5000';
+
 // Mock mode for testing without API keys
 const MOCK_MODE = !GOOGLE_API_KEY || !GEMINI_API_KEY;
 
@@ -120,30 +123,30 @@ class AIAssistantService {
 
     // Analyze user intent using Gemini API
     const intent = await this.analyzeIntent(userMessage, context);
-    
+
     // Execute appropriate action based on intent
     switch (intent.action) {
       case 'schedule_meeting':
         return await this.scheduleMeeting(intent.data, context);
-      
+
       case 'find_vendors':
         return await this.findVendors(intent.data, context);
-      
+
       case 'send_email':
         return await this.sendEmail(intent.data, context);
-      
+
       case 'get_directions':
         return await this.getDirections(intent.data, context);
-      
+
       case 'create_timeline':
         return await this.createTimeline(context);
-      
+
       case 'budget_analysis':
         return await this.analyzeBudget(context);
-      
+
       case 'vendor_communication':
         return await this.communicateWithVendor(intent.data, context);
-      
+
       default:
         return await this.getGeneralResponse(userMessage, context);
     }
@@ -152,7 +155,7 @@ class AIAssistantService {
   // Mock request processor for testing without API keys
   private async processMockRequest(userMessage: string, context: TaskContext): Promise<TaskResult> {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // Simple keyword-based intent detection
     if (lowerMessage.includes('schedule') || lowerMessage.includes('meeting')) {
       return await this.mockScheduleMeeting(context);
@@ -287,50 +290,21 @@ class AIAssistantService {
   // Analyze user intent using Gemini API
   private async analyzeIntent(message: string, context: TaskContext): Promise<{action: string, data?: any}> {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`${API_BASE_URL}/api/gemini/generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Analyze this wedding planning request and return the intent in JSON format:
-              
-              User Message: "${message}"
-              
-              Wedding Context:
-              - Date: ${context.weddingDate}
-              - Location: ${context.location}
-              - Budget: ${context.budget}
-              - Photography Styles: ${context.userPreferences.photographyPreferences.join(', ')}
-              - Venue Type: ${context.userPreferences.theme.venueType}
-              
-              Available Actions:
-              - schedule_meeting: Schedule meetings with vendors
-              - find_vendors: Find vendors based on preferences
-              - send_email: Send emails to vendors
-              - get_directions: Get directions to venues
-              - create_timeline: Create wedding timeline
-              - budget_analysis: Analyze budget
-              - vendor_communication: Communicate with vendors
-              
-              Return JSON: {"action": "action_name", "data": {...}}`
-            }]
-          }]
+          message: message,
+          context: context,
+          geminiApiKey: GEMINI_API_KEY
         })
       });
 
       const result = await response.json();
-      const content = result.candidates[0].content.parts[0].text;
       
-      // Extract JSON from response
-      const jsonMatch = content.match(/\{.*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      return { action: 'general_response' };
+      return result;
     } catch (error) {
       console.error('Error analyzing intent:', error);
       return { action: 'general_response' };
@@ -350,19 +324,15 @@ class AIAssistantService {
       };
 
       // Call Google Calendar API
-      const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${GOOGLE_API_KEY}`, {
+      const response = await fetch(`${API_BASE_URL}/api/google/calendar/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${await this.getGoogleAccessToken()}`,
         },
         body: JSON.stringify({
-          summary: event.summary,
-          description: event.description,
-          start: { dateTime: event.startTime, timeZone: 'Asia/Kolkata' },
-          end: { dateTime: event.endTime, timeZone: 'Asia/Kolkata' },
-          location: event.location,
-          attendees: event.attendees?.map(email => ({ email })) || [],
+          event,
+          googleApiKey: GOOGLE_API_KEY
         }),
       });
 
@@ -396,14 +366,21 @@ class AIAssistantService {
     try {
       const searchQuery = data.query || 'wedding vendors';
       const location = context.location;
-      
+
       // Use Google Places API to find vendors
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchQuery + ' ' + location)}&key=${GOOGLE_API_KEY}`
-      );
+      const response = await fetch(`${API_BASE_URL}/api/google/places/textsearch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: searchQuery + ' ' + location,
+          googleApiKey: GOOGLE_API_KEY
+        }),
+      });
 
       const result = await response.json();
-      
+
       if (result.results && result.results.length > 0) {
         const vendors = result.results.slice(0, 5).map((place: any) => ({
           name: place.name,
@@ -451,14 +428,19 @@ class AIAssistantService {
       };
 
       // Call Gmail API
-      const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/send?key=${GOOGLE_API_KEY}`, {
+      const response = await fetch(`${API_BASE_URL}/api/google/gmail/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${await this.getGoogleAccessToken()}`,
         },
         body: JSON.stringify({
-          raw: btoa(`To: ${emailContent.to}\r\nSubject: ${emailContent.subject}\r\n\r\n${emailContent.body}`),
+          message: {
+            to: emailContent.to,
+            subject: emailContent.subject,
+            body: emailContent.body,
+          },
+          googleApiKey: GOOGLE_API_KEY
         }),
       });
 
@@ -491,13 +473,21 @@ class AIAssistantService {
     try {
       const origin = data.origin || context.location;
       const destination = data.destination;
-      
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&key=${GOOGLE_API_KEY}`
-      );
+
+      const response = await fetch(`${API_BASE_URL}/api/google/maps/directions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          origin,
+          destination,
+          googleApiKey: GOOGLE_API_KEY
+        }),
+      });
 
       const result = await response.json();
-      
+
       if (result.routes && result.routes.length > 0) {
         const route = result.routes[0];
         const directions = {
@@ -604,7 +594,7 @@ class AIAssistantService {
 
       // Send email and/or SMS
       const emailResult = await this.sendEmail(vendorContact, context);
-      
+
       // If phone number provided, could also send SMS
       if (vendorContact.phone) {
         // SMS functionality would go here
@@ -636,39 +626,25 @@ class AIAssistantService {
   // Get general response from Gemini
   private async getGeneralResponse(message: string, context: TaskContext): Promise<TaskResult> {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`${API_BASE_URL}/api/gemini/generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a wedding planning assistant. Help with this request:
-
-              User Message: "${message}"
-              
-              Wedding Context:
-              - Date: ${context.weddingDate}
-              - Location: ${context.location}
-              - Budget: ${context.budget}
-              - Photography Styles: ${context.userPreferences.photographyPreferences.join(', ')}
-              - Venue Type: ${context.userPreferences.theme.venueType}
-              
-              Provide helpful, actionable advice based on their wedding context.`
-            }]
-          }]
+          message: message,
+          context: context,
+          geminiApiKey: GEMINI_API_KEY
         })
       });
 
       const result = await response.json();
-      const content = result.candidates[0].content.parts[0].text;
-
+      
       return {
         success: true,
         action: 'general_response',
-        data: { response: content },
-        message: content,
+        data: { response: result.candidates[0].content.parts[0].text },
+        message: result.candidates[0].content.parts[0].text,
       };
     } catch (error) {
       return {
@@ -771,4 +747,4 @@ class AIAssistantService {
 }
 
 // Export singleton instance
-export const aiAssistant = new AIAssistantService(); 
+export const aiAssistant = new AIAssistantService();
