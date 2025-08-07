@@ -35,13 +35,56 @@ export class SimpleMockService {
     
     const { theme, style, colors, venueType } = request;
     
-    // Generate mock images based on theme
-    const mockImages = [
-      '/images/themes/traditional-cultural.jpg',
-      '/images/themes/royal-palace.jpg',
-      '/images/themes/boho-garden.jpg',
-      '/images/themes/destination.jpg'
-    ];
+    // Map theme names to appropriate images
+    const themeImageMappings: { [key: string]: string } = {
+      // Indian Wedding Themes
+      'royal palace': '/images/themes/royal-rajasthani-mandap.jpg',
+      'rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
+      'royal': '/images/themes/royal-rajasthani-mandap.jpg',
+      'palace': '/images/themes/royal-rajasthani-mandap.jpg',
+      
+      'traditional': '/images/themes/traditional-temple-ceremony.jpg',
+      'temple': '/images/themes/traditional-temple-ceremony.jpg',
+      'regional': '/images/themes/traditional-temple-ceremony.jpg',
+      'hindu': '/images/themes/traditional-temple-ceremony.jpg',
+      
+      'bollywood': '/images/themes/bollywood-glamour-stage.jpg',
+      'glamour': '/images/themes/bollywood-glamour-stage.jpg',
+      'sangeet': '/images/themes/bollywood-glamour-stage.jpg',
+      
+      'minimalist': '/images/themes/minimalist-modern-white.jpg',
+      'modern': '/images/themes/minimalist-modern-white.jpg',
+      'contemporary': '/images/themes/minimalist-modern-white.jpg',
+      
+      'floral': '/images/themes/floral-paradise-garden.jpg',
+      'paradise': '/images/themes/floral-paradise-garden.jpg',
+      'garden': '/images/themes/floral-paradise-garden.jpg',
+      'flower': '/images/themes/floral-paradise-garden.jpg',
+      
+      'eco': '/images/themes/eco-sustainable-bamboo.jpg',
+      'sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
+      'green': '/images/themes/eco-sustainable-bamboo.jpg',
+      'bamboo': '/images/themes/eco-sustainable-bamboo.jpg',
+      
+      'bohemian': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+      'boho': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+      'chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+      
+      'beach': '/images/themes/beach-destination.jpg',
+      'destination': '/images/themes/beach-destination.jpg',
+      'luxury': '/images/themes/beach-destination.jpg'
+    };
+    
+    // Find appropriate image based on theme
+    let selectedImage = '/images/themes/traditional-cultural.jpg'; // default
+    
+    const themeLower = theme.toLowerCase();
+    for (const [keyword, imagePath] of Object.entries(themeImageMappings)) {
+      if (themeLower.includes(keyword)) {
+        selectedImage = imagePath;
+        break;
+      }
+    }
     
     // Generate mock analysis
     const mockAnalysis = {
@@ -54,7 +97,7 @@ export class SimpleMockService {
     const mockDescription = `A beautiful ${theme} wedding with ${style} styling in ${colors} colors. Perfect for ${venueType} venues with elegant decorations and romantic atmosphere.`;
     
     return {
-      images: mockImages.slice(0, request.imageCount || 2),
+      images: [selectedImage],
       success: true,
       generatedDescription: mockDescription,
       themeAnalysis: mockAnalysis
@@ -68,8 +111,53 @@ export class SimpleMockService {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
+    // Map venue prompts to appropriate images
+    const venueImageMappings: { [key: string]: string } = {
+      // Heritage & Luxury
+      'heritage': '/images/venues/heritage palace.png',
+      'palace': '/images/venues/heritage palace.png',
+      'luxury': '/images/venues/luxury hotel.png',
+      'hotel': '/images/venues/luxury hotel.png',
+      'haveli': '/images/venues/heritagehaveli.png',
+      'fort': '/images/venues/royal fort.png',
+      'royal': '/images/venues/royal fort.png',
+      
+      // Destination & Nature
+      'beach': '/images/venues/beachresort.png',
+      'resort': '/images/venues/beachresort.png',
+      'mountain': '/images/venues/mountain.png',
+      'garden': '/images/venues/garden.png',
+      'lake': '/images/venues/lakeresort.png',
+      'lakefront': '/images/venues/lakeresort.png',
+      
+      // Traditional & Cultural
+      'banquet': '/images/venues/banquet.png',
+      'hall': '/images/venues/banquet.png',
+      'temple': '/images/venues/temple.png',
+      'community': '/images/venues/communityhall.png',
+      'gurudwara': '/images/venues/gurudwara.png',
+      
+      // Modern & Urban
+      'rooftop': '/images/venues/rooftop.png',
+      'farmhouse': '/images/venues/farmhouse.png',
+      'farm': '/images/venues/farmhouse.png',
+      'villa': '/images/venues/luxuryvilla.png',
+      'industrial': '/images/venues/industrial.png'
+    };
+    
+    // Find appropriate image based on venue prompt
+    let selectedImage = '/images/venues/luxury hotel.png'; // default
+    
+    const promptLower = venuePrompt.toLowerCase();
+    for (const [keyword, imagePath] of Object.entries(venueImageMappings)) {
+      if (promptLower.includes(keyword)) {
+        selectedImage = imagePath;
+        break;
+      }
+    }
+    
     return {
-      images: ['/images/venues/luxury hotel.png'],
+      images: [selectedImage],
       success: true,
       generatedDescription: venuePrompt
     };
