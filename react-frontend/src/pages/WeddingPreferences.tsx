@@ -154,39 +154,81 @@ const WeddingPreferences: React.FC = () => {
     }
   });
 
-  // Wedding Themes with images and detailed descriptions (Research-based from leading Indian wedding companies)
+  // New Indian Wedding Themes with detailed descriptions and image generation prompts
   const themes = [
-    // Heritage & Luxury Themes (High Engagement)
+    // Royal & Traditional Themes
     { 
-      id: 'royal-palace-extravaganza', 
-      name: 'Royal Palace Extravaganza', 
-      description: 'Majestic palace celebrations with royal grandeur and heritage charm', 
-      color: '#7C3AED',
+      id: 'royal-palace-rajasthani', 
+      name: 'Royal Palace/Rajasthani Theme', 
+      description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm', 
+      color: '#B91C1C',
       image: '/images/themes/royal-palace.jpg',
-      features: ['Heritage Palace', 'Royal Decorations', 'Traditional Music', 'Cultural Experience']
+      features: ['Heritage Palaces', 'Royal Rajasthani Decor', 'Mirror Work', 'Traditional Music'],
+      imagePrompt: 'A magnificent Rajasthani royal palace wedding ceremony with ornate mirror work decorations, red and gold color scheme, traditional Rajasthani architecture with carved pillars, royal mandap with marigold flowers, traditional Rajasthani musicians in colorful turbans, desert palace setting, intricate henna patterns, crystal chandeliers, professional photography quality, high resolution, capturing the royal grandeur of Rajasthan.'
     },
     { 
-      id: 'heritage-palace-wedding', 
-      name: 'Heritage Palace Wedding', 
-      description: 'Elegant heritage palace celebrations with cultural authenticity', 
+      id: 'traditional-regional-roots', 
+      name: 'Traditional Regional Themes', 
+      description: 'Authentic celebrations reflecting specific cultural roots and regional traditions', 
       color: '#DC2626',
       image: '/images/themes/traditional-cultural.jpg',
-      features: ['Historical Venue', 'Cultural Decor', 'Traditional Cuisine', 'Heritage Experience']
+      features: ['Regional Customs', 'Cultural Authenticity', 'Local Traditions', 'Heritage Elements'],
+      imagePrompt: 'A beautiful traditional Indian regional wedding ceremony showcasing diverse cultural roots, with authentic regional decorations, traditional costumes from different states, cultural symbols, regional musical instruments, traditional thali setup, colorful rangoli patterns, brass lamps, banana leaves, coconut decorations, regional architecture, warm lighting, professional photography quality, capturing the essence of Indian cultural diversity.'
     },
     { 
-      id: 'luxury-hotel-grandeur', 
-      name: 'Luxury Hotel Grandeur', 
-      description: 'Five-star celebrations with modern amenities and world-class service', 
-      color: '#8B5CF6',
-      image: '/images/themes/minimalist-pastel.jpg',
-      features: ['Premium Service', 'Modern Amenities', 'International Cuisine', 'Luxury Accommodations']
+      id: 'eco-friendly-sustainable', 
+      name: 'Eco-Friendly Sustainable Weddings', 
+      description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices', 
+      color: '#16A34A',
+      image: '/images/themes/boho-garden.jpg',
+      features: ['Organic Decorations', 'Sustainable Practices', 'Natural Elements', 'Eco-Conscious'],
+      imagePrompt: 'A stunning eco-friendly sustainable wedding setup with organic decorations, natural bamboo mandap, potted plants instead of cut flowers, biodegradable decorations, solar-powered lighting, recycled materials, natural fabric draping, wooden furniture, green foliage backdrop, organic food presentation, earthenware, natural color palette with greens and earth tones, outdoor garden setting, professional photography quality, showcasing environmental consciousness.'
     },
     { 
-      id: 'heritage-haveli-celebration', 
-      name: 'Heritage Haveli Celebration', 
-      description: 'Regional charm with cultural authenticity in traditional havelis', 
+      id: 'bollywood-glamour', 
+      name: 'Bollywood Glamour Theme', 
+      description: 'Vibrant Bollywood-inspired celebrations with glamour, dance, and cinematic grandeur', 
       color: '#F59E0B',
+      image: '/images/themes/bollywood-sangeet.jpg',
+      features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant Colors'],
+      imagePrompt: 'A vibrant Bollywood glamour themed wedding with cinematic grandeur, movie poster backdrops, golden and red color scheme, dramatic lighting with spotlights, large dance floor with disco balls, film reel decorations, star-shaped elements, sequined draping, vintage Bollywood movie posters, glamorous seating arrangement, champagne towers, red carpet entrance, professional photography quality, capturing the essence of Bollywood cinema and glamour.'
+    },
+    { 
+      id: 'minimalist-modern', 
+      name: 'Minimalist Modern Theme', 
+      description: 'Clean, contemporary celebrations with sophisticated simplicity and modern elegance', 
+      color: '#64748B',
+      image: '/images/themes/minimalist-pastel.jpg',
+      features: ['Clean Lines', 'Modern Furniture', 'Neutral Colors', 'Sophisticated Simplicity'],
+      imagePrompt: 'A sophisticated minimalist modern wedding setup with clean geometric lines, neutral color palette of whites, greys, and soft pastels, contemporary furniture, simple elegant mandap with minimal decorations, geometric floral arrangements, modern lighting fixtures, sleek table settings, glass elements, modern art installations, uncluttered space design, professional photography quality, capturing contemporary elegance and sophisticated simplicity.'
+    },
+    { 
+      id: 'floral-paradise', 
+      name: 'Floral Paradise Theme', 
+      description: 'Enchanting celebrations surrounded by abundant flowers, garden elements, and natural beauty', 
+      color: '#EC4899',
+      image: '/images/themes/boho-garden.jpg',
+      features: ['Abundant Flowers', 'Garden Elements', 'Floral Arches', 'Natural Beauty'],
+      imagePrompt: 'A breathtaking floral paradise wedding with abundant flower arrangements, floral archways, garden mandap covered in roses and jasmine, hanging flower installations, floral ceiling decorations, botanical elements, flower walls as backdrops, natural garden setting, pastel color palette with pinks, whites, and soft greens, butterfly and bird motifs, floral carpets, professional photography quality, capturing the essence of a blooming garden paradise.'
+    },
+    { 
+      id: 'bohemian-chic', 
+      name: 'Bohemian Chic Theme', 
+      description: 'Free-spirited celebrations with eclectic decor, artistic elements, and bohemian charm', 
+      color: '#7C3AED',
+      image: '/images/themes/boho-garden.jpg',
+      features: ['Eclectic Decor', 'Artistic Elements', 'Vintage Furniture', 'Free-Spirited Vibe'],
+      imagePrompt: 'A bohemian chic wedding setup with eclectic decorations, macrame hanging installations, vintage rugs and cushions, dreamcatchers, artistic mandap with flowing fabrics, mixed textures and patterns, vintage furniture pieces, feathers and beads, natural wood elements, warm earth tones with pops of jewel colors, outdoor garden setting with fairy lights, professional photography quality, capturing the free-spirited artistic bohemian lifestyle.'
+    },
+    { 
+      id: 'vintage-classic', 
+      name: 'Vintage Classic Theme', 
+      description: 'Timeless celebrations with classic elegance, antique elements, and nostalgic charm', 
+      color: '#92400E',
       image: '/images/themes/traditional-cultural.jpg',
+      features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
+      imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
+    }
       features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
     },
     

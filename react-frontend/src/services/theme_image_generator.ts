@@ -13,37 +13,69 @@ export interface ThemeImageMapping {
 
 export class ThemeImageGenerator {
   private static readonly THEME_PROMPTS: ThemeImageMapping = {
-    // Heritage & Luxury Themes (High Engagement)
-    'royal-palace-extravaganza': {
-      name: 'Royal Palace Extravaganza',
-      description: 'Majestic palace celebrations with royal grandeur and heritage charm',
+    // New Indian Wedding Themes
+    'royal-palace-rajasthani': {
+      name: 'Royal Palace/Rajasthani Theme',
+      description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm',
       images: [],
-      prompt: 'Royal palace extravaganza wedding with majestic architecture, grand halls, crystal chandeliers, and luxurious decorations. Majestic and opulent atmosphere with royal grandeur and heritage charm.',
+      prompt: 'A magnificent Rajasthani royal palace wedding ceremony with ornate mirror work decorations, red and gold color scheme, traditional Rajasthani architecture with carved pillars, royal mandap with marigold flowers, traditional Rajasthani musicians in colorful turbans, desert palace setting, intricate henna patterns, crystal chandeliers, professional photography quality, high resolution, capturing the royal grandeur of Rajasthan.',
       hasExistingImage: true,
-      category: 'original'
+      category: 'indian'
     },
-    'heritage-palace-wedding': {
-      name: 'Heritage Palace Wedding',
-      description: 'Elegant heritage palace celebrations with cultural authenticity',
+    'traditional-regional-roots': {
+      name: 'Traditional Regional Themes',
+      description: 'Authentic celebrations reflecting specific cultural roots and regional traditions',
       images: [],
-      prompt: 'Heritage palace wedding with historical architecture, cultural decorations, traditional elements, and authentic Indian heritage. Elegant and culturally rich atmosphere with heritage charm.',
+      prompt: 'A beautiful traditional Indian regional wedding ceremony showcasing diverse cultural roots, with authentic regional decorations, traditional costumes from different states, cultural symbols, regional musical instruments, traditional thali setup, colorful rangoli patterns, brass lamps, banana leaves, coconut decorations, regional architecture, warm lighting, professional photography quality, capturing the essence of Indian cultural diversity.',
+      hasExistingImage: true,
+      category: 'indian'
+    },
+    'eco-friendly-sustainable': {
+      name: 'Eco-Friendly Sustainable Weddings',
+      description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices',
+      images: [],
+      prompt: 'A stunning eco-friendly sustainable wedding setup with organic decorations, natural bamboo mandap, potted plants instead of cut flowers, biodegradable decorations, solar-powered lighting, recycled materials, natural fabric draping, wooden furniture, green foliage backdrop, organic food presentation, earthenware, natural color palette with greens and earth tones, outdoor garden setting, professional photography quality, showcasing environmental consciousness.',
       hasExistingImage: false,
       category: 'indian'
     },
-    'luxury-hotel-grandeur': {
-      name: 'Luxury Hotel Grandeur',
-      description: 'Five-star celebrations with modern amenities and world-class service',
+    'bollywood-glamour': {
+      name: 'Bollywood Glamour Theme',
+      description: 'Vibrant Bollywood-inspired celebrations with glamour, dance, and cinematic grandeur',
       images: [],
-      prompt: 'Luxury hotel grandeur wedding with modern amenities, elegant ballroom, crystal chandeliers, and sophisticated decorations. Contemporary and luxurious atmosphere with world-class service.',
+      prompt: 'A vibrant Bollywood glamour themed wedding with cinematic grandeur, movie poster backdrops, golden and red color scheme, dramatic lighting with spotlights, large dance floor with disco balls, film reel decorations, star-shaped elements, sequined draping, vintage Bollywood movie posters, glamorous seating arrangement, champagne towers, red carpet entrance, professional photography quality, capturing the essence of Bollywood cinema and glamour.',
+      hasExistingImage: true,
+      category: 'indian'
+    },
+    'minimalist-modern': {
+      name: 'Minimalist Modern Theme',
+      description: 'Clean, contemporary celebrations with sophisticated simplicity and modern elegance',
+      images: [],
+      prompt: 'A sophisticated minimalist modern wedding setup with clean geometric lines, neutral color palette of whites, greys, and soft pastels, contemporary furniture, simple elegant mandap with minimal decorations, geometric floral arrangements, modern lighting fixtures, sleek table settings, glass elements, modern art installations, uncluttered space design, professional photography quality, capturing contemporary elegance and sophisticated simplicity.',
+      hasExistingImage: true,
+      category: 'indian'
+    },
+    'floral-paradise': {
+      name: 'Floral Paradise Theme',
+      description: 'Enchanting celebrations surrounded by abundant flowers, garden elements, and natural beauty',
+      images: [],
+      prompt: 'A breathtaking floral paradise wedding with abundant flower arrangements, floral archways, garden mandap covered in roses and jasmine, hanging flower installations, floral ceiling decorations, botanical elements, flower walls as backdrops, natural garden setting, pastel color palette with pinks, whites, and soft greens, butterfly and bird motifs, floral carpets, professional photography quality, capturing the essence of a blooming garden paradise.',
       hasExistingImage: false,
       category: 'indian'
     },
-    'heritage-haveli-celebration': {
-      name: 'Heritage Haveli Celebration',
-      description: 'Regional charm with cultural authenticity in traditional havelis',
+    'bohemian-chic': {
+      name: 'Bohemian Chic Theme',
+      description: 'Free-spirited celebrations with eclectic decor, artistic elements, and bohemian charm',
       images: [],
-      prompt: 'Heritage haveli celebration with regional architecture, cultural decorations, traditional elements, and local authenticity. Regional charm with cultural authenticity and traditional haveli setting.',
+      prompt: 'A bohemian chic wedding setup with eclectic decorations, macrame hanging installations, vintage rugs and cushions, dreamcatchers, artistic mandap with flowing fabrics, mixed textures and patterns, vintage furniture pieces, feathers and beads, natural wood elements, warm earth tones with pops of jewel colors, outdoor garden setting with fairy lights, professional photography quality, capturing the free-spirited artistic bohemian lifestyle.',
       hasExistingImage: false,
+      category: 'indian'
+    },
+    'vintage-classic': {
+      name: 'Vintage Classic Theme',
+      description: 'Timeless celebrations with classic elegance, antique elements, and nostalgic charm',
+      images: [],
+      prompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.',
+      hasExistingImage: true,
       category: 'indian'
     },
     
@@ -152,29 +184,15 @@ export class ThemeImageGenerator {
 
   // Map of existing images that can be reused for themes
   private static readonly EXISTING_IMAGE_MAPPINGS: { [themeId: string]: string } = {
-    // Heritage & Luxury Themes
-    'royal-palace-extravaganza': '/images/themes/royal-palace.jpg',
-    'heritage-palace-wedding': '/images/themes/traditional-cultural.jpg',
-    'luxury-hotel-grandeur': '/images/themes/minimalist-pastel.jpg',
-    'heritage-haveli-celebration': '/images/themes/traditional-cultural.jpg',
-    
-    // Destination & Nature Themes
-    'beach-destination-luxury': '/images/themes/beach-destination.jpg',
-    'mountain-retreat-celebration': '/images/themes/boho-garden.jpg',
-    'garden-palace-affair': '/images/themes/boho-garden.jpg',
-    'lakefront-wedding': '/images/themes/beach-destination.jpg',
-    
-    // Cultural & Traditional Themes
-    'traditional-hindu-grandeur': '/images/themes/traditional-cultural.jpg',
-    'sikh-anand-karaj': '/images/themes/traditional-cultural.jpg',
-    'muslim-nikah-ceremony': '/images/themes/traditional-cultural.jpg',
-    'south-indian-temple': '/images/themes/south-indian-temple.jpg',
-    
-    // Modern & Contemporary Themes
-    'modern-fusion-wedding': '/images/themes/minimalist-pastel.jpg',
-    'bollywood-sangeet': '/images/themes/bollywood-sangeet.jpg',
-    'contemporary-luxury': '/images/themes/minimalist-pastel.jpg',
-    'urban-rooftop-wedding': '/images/themes/minimalist-pastel.jpg'
+    // New Indian Wedding Themes
+    'royal-palace-rajasthani': '/images/themes/royal-palace.jpg',
+    'traditional-regional-roots': '/images/themes/traditional-cultural.jpg',
+    'eco-friendly-sustainable': '/images/themes/boho-garden.jpg',
+    'bollywood-glamour': '/images/themes/bollywood-sangeet.jpg',
+    'minimalist-modern': '/images/themes/minimalist-pastel.jpg',
+    'floral-paradise': '/images/themes/boho-garden.jpg',
+    'bohemian-chic': '/images/themes/boho-garden.jpg',
+    'vintage-classic': '/images/themes/traditional-cultural.jpg'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
@@ -251,60 +269,54 @@ export class ThemeImageGenerator {
 
   private static getVenueTypeForTheme(themeId: string): string {
     const venueMapping: { [key: string]: string } = {
-      // Heritage & Luxury Themes
-      'royal-palace-extravaganza': 'Heritage Palaces',
-      'heritage-palace-wedding': 'Heritage Palaces',
-      'luxury-hotel-grandeur': 'Luxury Hotels',
-      'heritage-haveli-celebration': 'Heritage Havelis',
-      
-      // Destination & Nature Themes
-      'beach-destination-luxury': 'Beach Resorts',
-      'mountain-retreat-celebration': 'Mountain Resorts',
-      'garden-palace-affair': 'Garden Venues',
-      'lakefront-wedding': 'Lakefront Resorts',
-      
-      // Cultural & Traditional Themes
-      'traditional-hindu-grandeur': 'Temple Complexes',
-      'sikh-anand-karaj': 'Gurudwara Grounds',
-      'muslim-nikah-ceremony': 'Community Halls',
-      'south-indian-temple': 'Temple Complexes',
-      
-      // Modern & Contemporary Themes
-      'modern-fusion-wedding': 'Luxury Hotels',
-      'bollywood-sangeet': 'Banquet Halls',
-      'contemporary-luxury': 'Luxury Hotels',
-      'urban-rooftop-wedding': 'Rooftop Venues'
+      // New Indian Wedding Themes
+      'royal-palace-rajasthani': 'Heritage Palaces',
+      'traditional-regional-roots': 'Heritage Havelis',
+      'eco-friendly-sustainable': 'Garden Venues',
+      'bollywood-glamour': 'Banquet Halls',
+      'minimalist-modern': 'Luxury Hotels',
+      'floral-paradise': 'Garden Venues',
+      'bohemian-chic': 'Farmhouse',
+      'vintage-classic': 'Heritage Palaces'
     };
     
     return venueMapping[themeId] || 'Heritage Palaces';
   }
 
   private static getFallbackImages(themeId: string): string[] {
-    // Fallback images for simplified themes
+    // Fallback images for new Indian wedding themes
     const fallbackImages: { [key: string]: string[] } = {
-      'traditional-hindu': [
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop'
+      'royal-palace-rajasthani': [
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1024&h=1024&fit=crop',
+        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop'
       ],
-      'luxury-hotel': [
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop'
+      'traditional-regional-roots': [
+        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop',
+        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop'
       ],
-      'royal-palace': [
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop'
-      ],
-      'beach-destination': [
+      'eco-friendly-sustainable': [
         'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-50'
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1024&h=1024&fit=crop'
       ],
-      'farmhouse-wedding': [
-        'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-50'
+      'bollywood-glamour': [
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1024&h=1024&fit=crop',
+        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=50'
       ],
-      'bollywood-sangeet': [
+      'minimalist-modern': [
+        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-50',
+        'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop&sat=-50'
+      ],
+      'floral-paradise': [
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1024&h=1024&fit=crop',
+        'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop'
+      ],
+      'bohemian-chic': [
         'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-50'
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1024&h=1024&fit=crop'
+      ],
+      'vintage-classic': [
+        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop&sat=-20',
+        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-20'
       ]
     };
     
