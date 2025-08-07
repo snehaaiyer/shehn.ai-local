@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Run Wedding App with NocoDB"
+runButton = "Start All Wedding Services"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -19,3 +19,16 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python simple_unified_server.py"
+
+[[workflows.workflow]]
+name = "Start All Wedding Services"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python start_all_services.py"
+
+[[ports]]
+localPort = 5000
+externalPort = 80

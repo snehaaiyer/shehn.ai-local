@@ -2029,24 +2029,26 @@ async def serve_spa_routes(path: str):
 def main():
     logger.info("🌸 BID AI Wedding Assistant - Simplified Unified Server")
     logger.info("=" * 60)
-    logger.info("🚀 Starting simplified unified server on http://localhost:8000")
-    logger.info("📱 Frontend: http://localhost:8000")
-    logger.info("🎉 Vendor Discovery: http://localhost:8000/vendor-discovery")
-    logger.info("🤖 API: http://localhost:8000/api/")
-    logger.info("📊 Health: http://localhost:8000/health")
-    logger.info("📋 API Docs: http://localhost:8000/api/docs")
+    logger.info("🚀 Starting simplified unified server on http://0.0.0.0:5000")
+    logger.info("📱 Frontend: http://0.0.0.0:5000")
+    logger.info("🎉 Vendor Discovery: http://0.0.0.0:5000/vendor-discovery")
+    logger.info("🤖 API: http://0.0.0.0:5000/api/")
+    logger.info("📊 Health: http://0.0.0.0:5000/health")
+    logger.info("📋 API Docs: http://0.0.0.0:5000/api/docs")
     logger.info("=" * 60)
     logger.info("💡 All services running on single port!")
     logger.info("   - Frontend (HTML/CSS/JS)")
     logger.info("   - Vendor Discovery")
     logger.info("   - Communications Agent")
     logger.info("   - Budget Analysis")
+    logger.info("   - NocoDB Integration")
+    logger.info("   - Ollama AI Service")
     logger.info("=" * 60)
     
     uvicorn.run(
         "simple_unified_server:app",
         host="0.0.0.0",
-        port=8000,
+        port=5000,
         reload=False,
         log_level="info"
     )
