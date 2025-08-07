@@ -151,7 +151,7 @@ const WeddingPreferences: React.FC = () => {
     }
   });
 
-  // Enhanced Indian Wedding Themes with RunwayML-optimized prompts
+  // Enhanced Indian Wedding Themes with correct image mappings
   const themes = [
     // Royal & Traditional Themes
     { 

@@ -26,6 +26,61 @@ export interface MockImageGenerationResponse {
 
 export class SimpleMockService {
   /**
+   * Mapping from theme names to image paths.
+   * This mapping is used to select appropriate images based on the wedding theme.
+   */
+  private static readonly THEME_IMAGE_MAPPING: { [key: string]: string } = {
+    // Exact theme ID mapping using uploaded images
+    'royal-palace-rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
+    'traditional-regional-roots': '/images/themes/traditional-temple-ceremony.jpg',
+    'eco-friendly-sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
+    'bollywood-glamour': '/images/themes/bollywood-glamour-stage.jpg',
+    'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
+    'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
+    'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+    'vintage-classic': '/images/themes/vintage-classic-decor.jpg',
+
+    // Keyword-based mapping for theme selection
+    'royal': '/images/themes/royal-rajasthani-mandap.jpg',
+    'rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
+    'palace': '/images/themes/royal-rajasthani-mandap.jpg',
+
+    'traditional': '/images/themes/traditional-temple-ceremony.jpg',
+    'temple': '/images/themes/traditional-temple-ceremony.jpg',
+    'regional': '/images/themes/traditional-temple-ceremony.jpg',
+    'hindu': '/images/themes/traditional-temple-ceremony.jpg',
+
+    'bollywood': '/images/themes/bollywood-glamour-stage.jpg',
+    'glamour': '/images/themes/bollywood-glamour-stage.jpg',
+    'sangeet': '/images/themes/bollywood-glamour-stage.jpg',
+
+    'minimalist': '/images/themes/minimalist-modern-white.jpg',
+    'modern': '/images/themes/minimalist-modern-white.jpg',
+    'contemporary': '/images/themes/minimalist-modern-white.jpg',
+
+    'floral': '/images/themes/floral-paradise-garden.jpg',
+    'paradise': '/images/themes/floral-paradise-garden.jpg',
+    'garden': '/images/themes/floral-paradise-garden.jpg',
+    'flower': '/images/themes/floral-paradise-garden.jpg',
+
+    'eco': '/images/themes/eco-sustainable-bamboo.jpg',
+    'sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
+    'green': '/images/themes/eco-sustainable-bamboo.jpg',
+    'bamboo': '/images/themes/eco-sustainable-bamboo.jpg',
+
+    'bohemian': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+    'boho': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+    'chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
+
+    'beach': '/images/themes/beach-destination.jpg',
+    'destination': '/images/themes/beach-destination.jpg',
+    'luxury': '/images/themes/beach-destination.jpg',
+
+    'vintage': '/images/themes/vintage-classic-decor.jpg',
+    'classic': '/images/themes/vintage-classic-decor.jpg'
+  };
+
+  /**
    * Generate mock wedding theme images using placeholder images
    */
   static async generateWeddingThemeImages(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
@@ -34,54 +89,11 @@ export class SimpleMockService {
 
     const { theme, style, colors, venueType } = request;
 
-    // Map theme names to appropriate images
-    const themeImageMappings: { [key: string]: string } = {
-      // Indian Wedding Themes
-      'royal palace': '/images/themes/royal-rajasthani-mandap.jpg',
-      'rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
-      'royal': '/images/themes/royal-rajasthani-mandap.jpg',
-      'palace': '/images/themes/royal-rajasthani-mandap.jpg',
-
-      'traditional': '/images/themes/traditional-temple-ceremony.jpg',
-      'temple': '/images/themes/traditional-temple-ceremony.jpg',
-      'regional': '/images/themes/traditional-temple-ceremony.jpg',
-      'hindu': '/images/themes/traditional-temple-ceremony.jpg',
-
-      'bollywood': '/images/themes/bollywood-glamour-stage.jpg',
-      'glamour': '/images/themes/bollywood-glamour-stage.jpg',
-      'sangeet': '/images/themes/bollywood-glamour-stage.jpg',
-
-      'minimalist': '/images/themes/minimalist-modern-white.jpg',
-      'modern': '/images/themes/minimalist-modern-white.jpg',
-      'contemporary': '/images/themes/minimalist-modern-white.jpg',
-
-      'floral': '/images/themes/floral-paradise-garden.jpg',
-      'paradise': '/images/themes/floral-paradise-garden.jpg',
-      'garden': '/images/themes/floral-paradise-garden.jpg',
-      'flower': '/images/themes/floral-paradise-garden.jpg',
-
-      'eco': '/images/themes/eco-sustainable-bamboo.jpg',
-      'sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
-      'green': '/images/themes/eco-sustainable-bamboo.jpg',
-      'bamboo': '/images/themes/eco-sustainable-bamboo.jpg',
-
-      'bohemian': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-      'boho': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-      'chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-
-      'beach': '/images/themes/beach-destination.jpg',
-      'destination': '/images/themes/beach-destination.jpg',
-      'luxury': '/images/themes/beach-destination.jpg',
-
-      'vintage': '/images/themes/vintage-classic-decor.jpg',
-      'classic': '/images/themes/vintage-classic-decor.jpg'
-    };
-
     // Find appropriate image based on theme
     let selectedImage = '/images/themes/traditional-cultural.jpg'; // default
 
     const themeLower = theme.toLowerCase();
-    for (const [keyword, imagePath] of Object.entries(themeImageMappings)) {
+    for (const [keyword, imagePath] of Object.entries(this.THEME_IMAGE_MAPPING)) {
       if (themeLower.includes(keyword)) {
         selectedImage = imagePath;
         break;
@@ -104,6 +116,35 @@ export class SimpleMockService {
       generatedDescription: mockDescription,
       themeAnalysis: mockAnalysis
     };
+  }
+
+  /**
+   * Get the image path for a given theme ID.
+   * Prioritizes exact matches, then falls back to keyword matching, and finally a default image.
+   * @param themeId The ID of the theme.
+   * @returns The path to the corresponding image.
+   */
+  static getThemeImage(themeId: string): string {
+    console.log('🎨 Getting theme image for:', themeId);
+
+    // First try exact theme ID match
+    if (this.THEME_IMAGE_MAPPING[themeId]) {
+      console.log('✅ Found exact match:', this.THEME_IMAGE_MAPPING[themeId]);
+      return this.THEME_IMAGE_MAPPING[themeId];
+    }
+
+    // Then try keyword matching
+    const themeIdLower = themeId.toLowerCase();
+    for (const [keyword, imagePath] of Object.entries(this.THEME_IMAGE_MAPPING)) {
+      if (themeIdLower.includes(keyword)) {
+        console.log('✅ Found keyword match for', keyword, ':', imagePath);
+        return imagePath;
+      }
+    }
+
+    // Default fallback to vintage classic
+    console.log('⚠️ No match found, using vintage classic image');
+    return '/images/themes/vintage-classic-decor.jpg';
   }
 
   /**
