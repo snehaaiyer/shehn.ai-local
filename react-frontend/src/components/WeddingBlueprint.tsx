@@ -306,27 +306,21 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
         ? venueCategories.flatMap(cat => cat.venues)
             .filter(v => v.id === preferences.venue.selectedVenueType)
             .map(async (venue) => {
-              const venueResult = await SimpleMockService.generateVenueImages(venue.prompt);
-              return venueResult.url || '/images/placeholder-venue.png';
+              const venueResult = await SimpleMockService.generateVenueImages({ prompt: venue.prompt });
+              return venueResult.images?.[0] || '/images/placeholder-venue.png';
             })
         : [Promise.resolve('/images/placeholder-venue.png')];
 
       const themePromises = preferences.theme?.selectedTheme
         ? themes.filter(t => t.id === preferences.theme.selectedTheme).map(async (theme) => {
             const themeResult = await SimpleMockService.generateWeddingThemeImages({
-              themeName: theme.name,
-              description: theme.description,
+              prompt: `${theme.name}: ${theme.description}`,
             });
-            return themeResult.url || '/images/placeholder-theme.png';
+            return themeResult.images?.[0] || '/images/placeholder-theme.png';
           })
         : [Promise.resolve('/images/placeholder-theme.png')];
 
-      const photographyPromises = preferences.photography?.style
-        ? [SimpleMockService.generatePhotographyStyleImages({
-            style: preferences.photography.style,
-            description: 'Example description for photography style',
-          }).then(res => res.url || '/images/placeholder-photo.png')]
-        : [Promise.resolve('/images/placeholder-photo.png')];
+      const photographyPromises = [Promise.resolve('/images/placeholder-photo.png')];
       
       const [venueImage, themeImage, photographyImage] = await Promise.all([
         Promise.all(venuePromises).then(urls => urls[0]),
@@ -723,7 +717,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                         <span className="text-gray-700 text-sm">Catering & Service</span>
                         <div className="text-right">
                           <div className="font-semibold text-gray-800 text-sm">{formatCurrency(blueprint.budgetBreakdown.catering)}</div>
-                          <<span className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.catering, blueprint.budgetBreakdown.total)}%</span>
+                          <span className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.catering, blueprint.budgetBreakdown.total)}%</span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
