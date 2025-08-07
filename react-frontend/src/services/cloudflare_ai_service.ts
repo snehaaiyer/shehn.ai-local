@@ -21,15 +21,16 @@ interface CloudflareImageGenerationResponse {
     style: string;
     colors: string[];
   };
+  fallbackUsed?: boolean; // Added to indicate if fallback was used
 }
 
 export class CloudflareAIService {
   // Cloudflare Workers AI endpoints
   private static readonly CLOUDFLARE_AI_BASE_URL = 'https://api.cloudflare.com/client/v4/ai/run';
-  
+
   // Cloudflare Worker URL for AI image generation
   private static readonly WORKER_URL = 'https://wedding-ai-worker.aiyersneha19.workers.dev';
-  
+
   // Cloudflare AI models
   private static readonly IMAGE_MODEL = '@cf/runwayml/stable-diffusion-v1-5';
   private static readonly TEXT_MODEL = '@cf/meta/llama-3.1-8b-instruct';
@@ -138,10 +139,10 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       // Fallback: extract keywords manually
       const keywords = text.toLowerCase().match(/\b(wedding|elegant|romantic|luxury|garden|beach|palace|rustic|modern|traditional|bohemian|vintage|classic|sophisticated|intimate|grand|chic|minimalist|opulent|charming)\b/g) || [];
-      
+
       return {
         description: text,
         keywords: Array.from(new Set(keywords)).slice(0, 8),
@@ -167,14 +168,14 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
   static async generateWeddingThemeImages(request: CloudflareImageGenerationRequest): Promise<CloudflareImageGenerationResponse> {
     try {
       console.log('Starting Cloudflare AI image generation for:', request);
-      
+
       // Step 1: Generate images using Cloudflare Workers AI
       const imagePrompt = this.generateImagePrompt(request);
-      
+
       console.log('Generated image prompt for Cloudflare AI:', imagePrompt);
-      
+
       let images: string[] = [];
-      
+
       try {
         const response = await fetch(`${this.WORKER_URL}/generate-image`, {
           method: 'POST',
@@ -193,7 +194,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
         if (response.ok) {
           const result = await response.json();
           console.log('Cloudflare AI response:', result);
-          
+
           // Extract generated images from response
           if (result.success && result.images) {
             images = result.images;
@@ -209,7 +210,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
 
       // Step 2: Generate theme analysis for additional insights
       const analysisPrompt = this.generateAnalysisPrompt(request);
-      
+
       const analysisResponse = await fetch(`${this.WORKER_URL}/analyze-text`, {
         method: 'POST',
         headers: {
@@ -230,7 +231,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
           themeAnalysis = this.parseCloudflareResponse(generatedText);
         }
       }
-      
+
       return {
         images,
         success: true,
@@ -242,13 +243,16 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
           colors: themeAnalysis.colors
         } : undefined
       };
-      
+
     } catch (error) {
-      console.error('Error generating wedding theme images:', error);
+      console.error('Cloudflare AI service temporarily unavailable. Using fallback images.');
+
+      // Return a graceful fallback instead of throwing
       return {
-        images: [],
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        images: [],
+        error: 'AI service temporarily unavailable',
+        fallbackUsed: true
       };
     }
   }
@@ -259,7 +263,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
   static async generateVenueImages(venuePrompt: string): Promise<CloudflareImageGenerationResponse> {
     try {
       console.log('Generating venue image with prompt:', venuePrompt);
-      
+
       // Create a detailed venue-specific prompt
       const detailedPrompt = `A stunning, high-resolution wedding venue photograph featuring:
 
@@ -285,7 +289,7 @@ ${venuePrompt}
 - Elegant and inviting space`;
 
       console.log('Generated detailed venue prompt:', detailedPrompt);
-      
+
       // Call Cloudflare AI directly for venue image
       const response = await fetch(`${this.WORKER_URL}/generate-image`, {
         method: 'POST',
@@ -304,7 +308,7 @@ ${venuePrompt}
       if (response.ok) {
         const result = await response.json();
         console.log('Venue image generation response:', result);
-        
+
         if (result.success && result.images && result.images.length > 0) {
           return {
             images: result.images,
@@ -313,13 +317,13 @@ ${venuePrompt}
           };
         }
       }
-      
+
       return {
         images: [],
         success: false,
         error: 'Failed to generate venue image'
       };
-      
+
     } catch (error) {
       console.error('Error generating venue image:', error);
       return {
@@ -336,10 +340,10 @@ ${venuePrompt}
   static async generateThemeAnalysis(request: CloudflareImageGenerationRequest): Promise<CloudflareImageGenerationResponse> {
     try {
       const analysisPrompt = this.generateAnalysisPrompt(request);
-      
+
       console.log('Generated analysis prompt for Cloudflare AI:', analysisPrompt);
-      
-      
+
+
       const response = await fetch(`${this.WORKER_URL}/analyze-text`, {
         method: 'POST',
         headers: {
@@ -357,9 +361,9 @@ ${venuePrompt}
       }
 
       const result = await response.json();
-      
+
       const generatedText = result.response;
-      
+
       if (!generatedText) {
         throw new Error('No content generated from Cloudflare AI');
       }
@@ -367,7 +371,7 @@ ${venuePrompt}
       console.log('Cloudflare AI analysis response:', generatedText);
 
       const themeAnalysis = this.parseCloudflareResponse(generatedText);
-      
+
       return {
         images: [],
         success: true,
@@ -379,7 +383,7 @@ ${venuePrompt}
           colors: themeAnalysis.colors
         }
       };
-      
+
     } catch (error) {
       console.error('Error generating theme analysis:', error);
       return {
@@ -409,4 +413,4 @@ ${venuePrompt}
       return false;
     }
   }
-} 
+}

@@ -755,18 +755,20 @@ const WeddingPreferences: React.FC = () => {
                                 className="w-full h-full object-cover object-center"
                                 style={{ objectPosition: 'center 30%' }}
                                 onError={(e) => {
+                                  console.log(`❌ Failed to load venue image: ${venue.image}`);
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
                                   target.parentElement!.innerHTML = `
                                     <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
                                       <div class="text-center">
-                                        <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                                        </svg>
-                                        <p class="text-sm">Venue image</p>
+                                        <div class="text-2xl mb-2">🏛️</div>
+                                        <p class="text-sm">${venue.name}</p>
                                       </div>
                                     </div>
                                   `;
+                                }}
+                                onLoad={() => {
+                                  console.log(`✅ Successfully loaded venue image: ${venue.image}`);
                                 }}
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
@@ -833,7 +835,17 @@ const WeddingPreferences: React.FC = () => {
                           onError={(e) => {
                             console.log(`❌ Failed to load image for ${theme.name}: ${theme.image}`);
                             const target = e.target as HTMLImageElement;
-                            target.src = '/images/themes/traditional-temple-ceremony.jpg';
+                            // Show a placeholder div instead of broken image
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'w-full h-full flex items-center justify-center bg-gray-100 text-gray-500';
+                            placeholder.innerHTML = `
+                              <div class="text-center">
+                                <div class="text-2xl mb-2">🎭</div>
+                                <div class="text-sm">${theme.name}</div>
+                              </div>
+                            `;
+                            target.parentElement?.appendChild(placeholder);
+                            target.style.display = 'none';
                           }}
                           onLoad={() => {
                             console.log(`✅ Successfully loaded image for ${theme.name}: ${theme.image}`);
