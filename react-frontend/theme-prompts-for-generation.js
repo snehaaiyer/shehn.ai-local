@@ -22,20 +22,20 @@ const INDIAN_WEDDING_THEME_PROMPTS = {
     features: ['Regional Customs', 'Cultural Authenticity', 'Local Traditions', 'Heritage Elements']
   },
 
-  'eco-friendly-sustainable': {
-    name: 'Eco-Friendly Sustainable Weddings',
-    description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices',
-    prompt: `Stunning eco-friendly Indian wedding in lush garden setting. Natural bamboo mandap with living plants and organic decorations. Couple in sustainable traditional wear - bride in handloom saree, groom in organic cotton kurta. Potted plants replacing cut flowers, solar string lights, biodegradable leaf plates. Natural wood furniture, jute decorations, earthen diyas. Green and earth tone color palette, soft natural lighting, 4K eco-conscious celebration, professional nature photography style.`,
-    colors: ['Green', 'Brown', 'Natural', 'Earth Tones'],
-    features: ['Organic Decorations', 'Sustainable Practices', 'Natural Elements', 'Eco-Conscious']
-  },
 
   'bollywood-glamour': {
     name: 'Bollywood Glamour Theme',
     description: 'Vibrant Bollywood-inspired celebrations with glamour, dance, and cinematic grandeur',
     prompt: `Glamorous Bollywood-style Indian wedding reception with cinematic grandeur. Large dance floor with disco balls and dramatic spotlights. Vintage Bollywood movie posters and film reel decorations. Bride in heavily embellished lehenga with statement jewelry, groom in designer sherwani. Golden and red sequined draping, champagne towers, red carpet entrance. Professional dancers performing, live orchestra, vibrant party atmosphere. Rich golden lighting, 4K cinematic quality, Bollywood movie aesthetic.`,
     colors: ['Gold', 'Red', 'Black', 'Silver'],
-    features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant Colors']
+    features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant
+  'eco-friendly-sustainable': {
+    name: 'Eco-Friendly Sustainable Weddings',
+    description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices',
+    prompt: `Stunning eco-friendly Indian wedding in lush garden setting. Natural bamboo mandap with living plants and organic decorations. Couple in sustainable traditional wear - bride in handloom saree, groom in organic cotton kurta. Potted plants replacing cut flowers, solar string lights, biodegradable leaf plates. Natural wood furniture, jute decorations, earthen diyas. Green and earth tone color palette, soft natural lighting, 4K eco-conscious celebration, professional nature photography style.`,
+    colors: ['Green', 'Brown', 'Natural', 'Earth Tones'],
+    features: ['Organic Decorations', 'Sustainable Practices', 'Natural Elements', 'Eco-Conscious']
+  }, Colors']
   },
 
   'minimalist-modern': {
