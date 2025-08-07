@@ -38,7 +38,7 @@ export class SimpleMockService {
     'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
     'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
     'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-    'vintage-classic': '/images/themes/vintage-classic-decor.jpg',
+    'vintage-classic': '/images/themes/vintage-classic-premium.jpg',
 
     // Keyword-based mapping for theme selection
     'royal': '/images/themes/royal-rajasthani-mandap.jpg',
@@ -76,8 +76,8 @@ export class SimpleMockService {
     'destination': '/images/themes/beach-destination.jpg',
     'luxury': '/images/themes/beach-destination.jpg',
 
-    'vintage': '/images/themes/vintage-classic-decor.jpg',
-    'classic': '/images/themes/vintage-classic-decor.jpg'
+    'vintage': '/images/themes/vintage-classic-premium.jpg',
+    'classic': '/images/themes/vintage-classic-premium.jpg'
   };
 
   /**
