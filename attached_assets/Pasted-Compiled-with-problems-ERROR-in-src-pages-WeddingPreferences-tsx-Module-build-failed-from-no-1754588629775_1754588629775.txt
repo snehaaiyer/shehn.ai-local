@@ -1,0 +1,1324 @@
+Compiled with problems:
+×
+ERROR in ./src/pages/WeddingPreferences.tsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/runner/workspace/react-frontend/src/pages/WeddingPreferences.tsx: Unexpected token, expected "," (232:6)
+
+  230 |       imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
+  231 |     }
+> 232 |       features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
+      |       ^
+  233 |     },
+  234 |     
+  235 |     // Destination & Nature Themes (High Engagement)
+    at constructor (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:367:19)
+    at TypeScriptParserMixin.raise (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+    at TypeScriptParserMixin.unexpected (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6647:16)
+    at TypeScriptParserMixin.expect (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6927:12)
+    at TypeScriptParserMixin.parseExprList (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12142:14)
+    at TypeScriptParserMixin.parseArrayLike (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12058:26)
+    at TypeScriptParserMixin.parseArrayLike (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9269:24)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11330:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10795:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+    at TypeScriptParserMixin.parseVar (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13384:91)
+    at TypeScriptParserMixin.parseVarStatement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13230:10)
+    at TypeScriptParserMixin.parseVarStatement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9493:31)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12851:23)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9527:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+    at TypeScriptParserMixin.parseStatementListItem (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12747:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13316:61)
+    at TypeScriptParserMixin.parseBlockBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13309:10)
+    at TypeScriptParserMixin.parseBlock (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13297:10)
+    at TypeScriptParserMixin.parseFunctionBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12101:24)
+    at TypeScriptParserMixin.parseArrowExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12076:10)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11686:12)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10795:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12422:16)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+    at TypeScriptParserMixin.parseVar (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13384:91)
+    at TypeScriptParserMixin.parseVarStatement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13230:10)
+ERROR
+[eslint] 
+src/pages/WeddingPreferences.tsx
+  Line 232:6:  Parsing error: ',' expected
+
+ERROR in src/pages/WeddingPreferences.tsx
+TS2451: Cannot redeclare block-scoped variable '(Missing)'.
+ERROR in src/pages/WeddingPreferences.tsx
+TS7031: Binding element '(Missing)' implicitly has an 'any' type.
+ERROR in src/pages/WeddingPreferences.tsx:79:7
+TS2322: Type '() => void' is not assignable to type 'FC<{}>'.
+  Type 'void' is not assignable to type 'ReactElement<any, any> | null'.
+    77 | }
+    78 |
+  > 79 | const WeddingPreferences: React.FC = () => {
+       |       ^^^^^^^^^^^^^^^^^^
+    80 |   const [showBlueprint, setShowBlueprint] = useState(false);
+    81 |   const [activeTab, setActiveTab] = useState('basic');
+    82 |   const [savedSections, setSavedSections] = useState<Set<string>>(new Set());
+ERROR in src/pages/WeddingPreferences.tsx:232:7
+TS1005: ',' expected.
+    230 |       imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
+    231 |     }
+  > 232 |       features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
+        |       ^^^^^^^^
+    233 |     },
+    234 |     
+    235 |     // Destination & Nature Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:232:7
+TS2304: Cannot find name 'features'.
+    230 |       imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
+    231 |     }
+  > 232 |       features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
+        |       ^^^^^^^^
+    233 |     },
+    234 |     
+    235 |     // Destination & Nature Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:232:15
+TS1005: ',' expected.
+    230 |       imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
+    231 |     }
+  > 232 |       features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
+        |               ^
+    233 |     },
+    234 |     
+    235 |     // Destination & Nature Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:233:5
+TS1005: ',' expected.
+    231 |     }
+    232 |       features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
+  > 233 |     },
+        |     ^
+    234 |     
+    235 |     // Destination & Nature Themes (High Engagement)
+    236 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:237:11
+TS1003: Identifier expected.
+    235 |     // Destination & Nature Themes (High Engagement)
+    236 |     { 
+  > 237 |       id: 'beach-destination-luxury', 
+        |           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |       name: 'Beach Destination Luxury', 
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+    240 |       color: '#06B6D4',
+ERROR in src/pages/WeddingPreferences.tsx:237:37
+TS1005: ':' expected.
+    235 |     // Destination & Nature Themes (High Engagement)
+    236 |     { 
+  > 237 |       id: 'beach-destination-luxury', 
+        |                                     ^
+    238 |       name: 'Beach Destination Luxury', 
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+    240 |       color: '#06B6D4',
+ERROR in src/pages/WeddingPreferences.tsx:238:13
+TS1003: Identifier expected.
+    236 |     { 
+    237 |       id: 'beach-destination-luxury', 
+  > 238 |       name: 'Beach Destination Luxury', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:238:39
+TS1005: ':' expected.
+    236 |     { 
+    237 |       id: 'beach-destination-luxury', 
+  > 238 |       name: 'Beach Destination Luxury', 
+        |                                       ^
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:239:20
+TS1003: Identifier expected.
+    237 |       id: 'beach-destination-luxury', 
+    238 |       name: 'Beach Destination Luxury', 
+  > 239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+    242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+ERROR in src/pages/WeddingPreferences.tsx:239:90
+TS1005: ':' expected.
+    237 |       id: 'beach-destination-luxury', 
+    238 |       name: 'Beach Destination Luxury', 
+  > 239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+        |                                                                                          ^
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+    242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+ERROR in src/pages/WeddingPreferences.tsx:240:14
+TS1003: Identifier expected.
+    238 |       name: 'Beach Destination Luxury', 
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+  > 240 |       color: '#06B6D4',
+        |              ^^^^^^^^^
+    241 |       image: '/images/themes/beach-destination.jpg',
+    242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+    243 |     },
+ERROR in src/pages/WeddingPreferences.tsx:240:23
+TS1005: ':' expected.
+    238 |       name: 'Beach Destination Luxury', 
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+  > 240 |       color: '#06B6D4',
+        |                       ^
+    241 |       image: '/images/themes/beach-destination.jpg',
+    242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+    243 |     },
+ERROR in src/pages/WeddingPreferences.tsx:241:14
+TS1003: Identifier expected.
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+    240 |       color: '#06B6D4',
+  > 241 |       image: '/images/themes/beach-destination.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+    243 |     },
+    244 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:241:52
+TS1005: ':' expected.
+    239 |       description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+    240 |       color: '#06B6D4',
+  > 241 |       image: '/images/themes/beach-destination.jpg',
+        |                                                    ^
+    242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+    243 |     },
+    244 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:242:18
+TS1181: Array element destructuring pattern expected.
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+  > 242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+        |                  ^^^^^^^^^^^^^
+    243 |     },
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+ERROR in src/pages/WeddingPreferences.tsx:242:31
+TS1005: ':' expected.
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+  > 242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+        |                               ^
+    243 |     },
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+ERROR in src/pages/WeddingPreferences.tsx:242:46
+TS1005: ':' expected.
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+  > 242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+        |                                              ^
+    243 |     },
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+ERROR in src/pages/WeddingPreferences.tsx:242:62
+TS1005: ':' expected.
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+  > 242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+        |                                                              ^
+    243 |     },
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+ERROR in src/pages/WeddingPreferences.tsx:242:81
+TS1005: ':' expected.
+    240 |       color: '#06B6D4',
+    241 |       image: '/images/themes/beach-destination.jpg',
+  > 242 |       features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
+        |                                                                                 ^
+    243 |     },
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+ERROR in src/pages/WeddingPreferences.tsx:245:11
+TS1003: Identifier expected.
+    243 |     },
+    244 |     { 
+  > 245 |       id: 'mountain-retreat-celebration', 
+        |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |       name: 'Mountain Retreat Celebration', 
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+    248 |       color: '#059669',
+ERROR in src/pages/WeddingPreferences.tsx:245:41
+TS1005: ':' expected.
+    243 |     },
+    244 |     { 
+  > 245 |       id: 'mountain-retreat-celebration', 
+        |                                         ^
+    246 |       name: 'Mountain Retreat Celebration', 
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+    248 |       color: '#059669',
+ERROR in src/pages/WeddingPreferences.tsx:246:13
+TS1003: Identifier expected.
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+  > 246 |       name: 'Mountain Retreat Celebration', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:246:43
+TS1005: ':' expected.
+    244 |     { 
+    245 |       id: 'mountain-retreat-celebration', 
+  > 246 |       name: 'Mountain Retreat Celebration', 
+        |                                           ^
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:247:20
+TS1003: Identifier expected.
+    245 |       id: 'mountain-retreat-celebration', 
+    246 |       name: 'Mountain Retreat Celebration', 
+  > 247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+    250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+ERROR in src/pages/WeddingPreferences.tsx:247:98
+TS1005: ':' expected.
+    245 |       id: 'mountain-retreat-celebration', 
+    246 |       name: 'Mountain Retreat Celebration', 
+  > 247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+        |                                                                                                  ^
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+    250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+ERROR in src/pages/WeddingPreferences.tsx:248:14
+TS1003: Identifier expected.
+    246 |       name: 'Mountain Retreat Celebration', 
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+  > 248 |       color: '#059669',
+        |              ^^^^^^^^^
+    249 |       image: '/images/themes/boho-garden.jpg',
+    250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+    251 |     },
+ERROR in src/pages/WeddingPreferences.tsx:248:23
+TS1005: ':' expected.
+    246 |       name: 'Mountain Retreat Celebration', 
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+  > 248 |       color: '#059669',
+        |                       ^
+    249 |       image: '/images/themes/boho-garden.jpg',
+    250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+    251 |     },
+ERROR in src/pages/WeddingPreferences.tsx:249:14
+TS1003: Identifier expected.
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+    248 |       color: '#059669',
+  > 249 |       image: '/images/themes/boho-garden.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+    251 |     },
+    252 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:249:46
+TS1005: ':' expected.
+    247 |       description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+    248 |       color: '#059669',
+  > 249 |       image: '/images/themes/boho-garden.jpg',
+        |                                              ^
+    250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+    251 |     },
+    252 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:250:18
+TS1181: Array element destructuring pattern expected.
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+  > 250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+        |                  ^^^^^^^^^^^^^^^^
+    251 |     },
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+ERROR in src/pages/WeddingPreferences.tsx:250:34
+TS1005: ':' expected.
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+  > 250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+        |                                  ^
+    251 |     },
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+ERROR in src/pages/WeddingPreferences.tsx:250:53
+TS1005: ':' expected.
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+  > 250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+        |                                                     ^
+    251 |     },
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+ERROR in src/pages/WeddingPreferences.tsx:250:76
+TS1005: ':' expected.
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+  > 250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+        |                                                                            ^
+    251 |     },
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+ERROR in src/pages/WeddingPreferences.tsx:250:100
+TS1005: ':' expected.
+    248 |       color: '#059669',
+    249 |       image: '/images/themes/boho-garden.jpg',
+  > 250 |       features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
+        |                                                                                                    ^
+    251 |     },
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+ERROR in src/pages/WeddingPreferences.tsx:253:11
+TS1003: Identifier expected.
+    251 |     },
+    252 |     { 
+  > 253 |       id: 'garden-palace-affair', 
+        |           ^^^^^^^^^^^^^^^^^^^^^^
+    254 |       name: 'Garden Palace Affair', 
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+    256 |       color: '#10B981',
+ERROR in src/pages/WeddingPreferences.tsx:253:33
+TS1005: ':' expected.
+    251 |     },
+    252 |     { 
+  > 253 |       id: 'garden-palace-affair', 
+        |                                 ^
+    254 |       name: 'Garden Palace Affair', 
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+    256 |       color: '#10B981',
+ERROR in src/pages/WeddingPreferences.tsx:254:13
+TS1003: Identifier expected.
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+  > 254 |       name: 'Garden Palace Affair', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:254:35
+TS1005: ':' expected.
+    252 |     { 
+    253 |       id: 'garden-palace-affair', 
+  > 254 |       name: 'Garden Palace Affair', 
+        |                                   ^
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:255:20
+TS1003: Identifier expected.
+    253 |       id: 'garden-palace-affair', 
+    254 |       name: 'Garden Palace Affair', 
+  > 255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+    258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+ERROR in src/pages/WeddingPreferences.tsx:255:83
+TS1005: ':' expected.
+    253 |       id: 'garden-palace-affair', 
+    254 |       name: 'Garden Palace Affair', 
+  > 255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+        |                                                                                   ^
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+    258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+ERROR in src/pages/WeddingPreferences.tsx:256:14
+TS1003: Identifier expected.
+    254 |       name: 'Garden Palace Affair', 
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+  > 256 |       color: '#10B981',
+        |              ^^^^^^^^^
+    257 |       image: '/images/themes/boho-garden.jpg',
+    258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+    259 |     },
+ERROR in src/pages/WeddingPreferences.tsx:256:23
+TS1005: ':' expected.
+    254 |       name: 'Garden Palace Affair', 
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+  > 256 |       color: '#10B981',
+        |                       ^
+    257 |       image: '/images/themes/boho-garden.jpg',
+    258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+    259 |     },
+ERROR in src/pages/WeddingPreferences.tsx:257:14
+TS1003: Identifier expected.
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+    256 |       color: '#10B981',
+  > 257 |       image: '/images/themes/boho-garden.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+    259 |     },
+    260 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:257:46
+TS1005: ':' expected.
+    255 |       description: 'Natural elegance with outdoor charm in garden palace settings', 
+    256 |       color: '#10B981',
+  > 257 |       image: '/images/themes/boho-garden.jpg',
+        |                                              ^
+    258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+    259 |     },
+    260 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:258:18
+TS1181: Array element destructuring pattern expected.
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+  > 258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+        |                  ^^^^^^^^^^^^^^^^
+    259 |     },
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+ERROR in src/pages/WeddingPreferences.tsx:258:34
+TS1005: ':' expected.
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+  > 258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+        |                                  ^
+    259 |     },
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+ERROR in src/pages/WeddingPreferences.tsx:258:52
+TS1005: ':' expected.
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+  > 258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+        |                                                    ^
+    259 |     },
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+ERROR in src/pages/WeddingPreferences.tsx:258:75
+TS1005: ':' expected.
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+  > 258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+        |                                                                           ^
+    259 |     },
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+ERROR in src/pages/WeddingPreferences.tsx:258:91
+TS1005: ':' expected.
+    256 |       color: '#10B981',
+    257 |       image: '/images/themes/boho-garden.jpg',
+  > 258 |       features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
+        |                                                                                           ^
+    259 |     },
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+ERROR in src/pages/WeddingPreferences.tsx:261:11
+TS1003: Identifier expected.
+    259 |     },
+    260 |     { 
+  > 261 |       id: 'lakefront-wedding', 
+        |           ^^^^^^^^^^^^^^^^^^^
+    262 |       name: 'Lakefront Wedding', 
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+    264 |       color: '#3B82F6',
+ERROR in src/pages/WeddingPreferences.tsx:261:30
+TS1005: ':' expected.
+    259 |     },
+    260 |     { 
+  > 261 |       id: 'lakefront-wedding', 
+        |                              ^
+    262 |       name: 'Lakefront Wedding', 
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+    264 |       color: '#3B82F6',
+ERROR in src/pages/WeddingPreferences.tsx:262:13
+TS1003: Identifier expected.
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+  > 262 |       name: 'Lakefront Wedding', 
+        |             ^^^^^^^^^^^^^^^^^^^
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:262:32
+TS1005: ':' expected.
+    260 |     { 
+    261 |       id: 'lakefront-wedding', 
+  > 262 |       name: 'Lakefront Wedding', 
+        |                                ^
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:263:20
+TS1003: Identifier expected.
+    261 |       id: 'lakefront-wedding', 
+    262 |       name: 'Lakefront Wedding', 
+  > 263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+    266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+ERROR in src/pages/WeddingPreferences.tsx:263:92
+TS1005: ':' expected.
+    261 |       id: 'lakefront-wedding', 
+    262 |       name: 'Lakefront Wedding', 
+  > 263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+        |                                                                                            ^
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+    266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+ERROR in src/pages/WeddingPreferences.tsx:264:14
+TS1003: Identifier expected.
+    262 |       name: 'Lakefront Wedding', 
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+  > 264 |       color: '#3B82F6',
+        |              ^^^^^^^^^
+    265 |       image: '/images/themes/beach-destination.jpg',
+    266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+    267 |     },
+ERROR in src/pages/WeddingPreferences.tsx:264:23
+TS1005: ':' expected.
+    262 |       name: 'Lakefront Wedding', 
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+  > 264 |       color: '#3B82F6',
+        |                       ^
+    265 |       image: '/images/themes/beach-destination.jpg',
+    266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+    267 |     },
+ERROR in src/pages/WeddingPreferences.tsx:265:14
+TS1003: Identifier expected.
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+    264 |       color: '#3B82F6',
+  > 265 |       image: '/images/themes/beach-destination.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+    267 |     },
+    268 |     
+ERROR in src/pages/WeddingPreferences.tsx:265:52
+TS1005: ':' expected.
+    263 |       description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+    264 |       color: '#3B82F6',
+  > 265 |       image: '/images/themes/beach-destination.jpg',
+        |                                                    ^
+    266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+    267 |     },
+    268 |     
+ERROR in src/pages/WeddingPreferences.tsx:266:18
+TS1181: Array element destructuring pattern expected.
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+  > 266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+        |                  ^^^^^^^^^^^^
+    267 |     },
+    268 |     
+    269 |     // Cultural & Traditional Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:266:30
+TS1005: ':' expected.
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+  > 266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+        |                              ^
+    267 |     },
+    268 |     
+    269 |     // Cultural & Traditional Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:266:52
+TS1005: ':' expected.
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+  > 266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+        |                                                    ^
+    267 |     },
+    268 |     
+    269 |     // Cultural & Traditional Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:266:75
+TS1005: ':' expected.
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+  > 266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+        |                                                                           ^
+    267 |     },
+    268 |     
+    269 |     // Cultural & Traditional Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:266:94
+TS1005: ':' expected.
+    264 |       color: '#3B82F6',
+    265 |       image: '/images/themes/beach-destination.jpg',
+  > 266 |       features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
+        |                                                                                              ^
+    267 |     },
+    268 |     
+    269 |     // Cultural & Traditional Themes (High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:271:11
+TS1003: Identifier expected.
+    269 |     // Cultural & Traditional Themes (High Engagement)
+    270 |     { 
+  > 271 |       id: 'traditional-hindu-grandeur', 
+        |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    272 |       name: 'Traditional Hindu Grandeur', 
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+    274 |       color: '#DC2626',
+ERROR in src/pages/WeddingPreferences.tsx:271:39
+TS1005: ':' expected.
+    269 |     // Cultural & Traditional Themes (High Engagement)
+    270 |     { 
+  > 271 |       id: 'traditional-hindu-grandeur', 
+        |                                       ^
+    272 |       name: 'Traditional Hindu Grandeur', 
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+    274 |       color: '#DC2626',
+ERROR in src/pages/WeddingPreferences.tsx:272:13
+TS1003: Identifier expected.
+    270 |     { 
+    271 |       id: 'traditional-hindu-grandeur', 
+  > 272 |       name: 'Traditional Hindu Grandeur', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:272:41
+TS1005: ':' expected.
+    270 |     { 
+    271 |       id: 'traditional-hindu-grandeur', 
+  > 272 |       name: 'Traditional Hindu Grandeur', 
+        |                                         ^
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:273:20
+TS1003: Identifier expected.
+    271 |       id: 'traditional-hindu-grandeur', 
+    272 |       name: 'Traditional Hindu Grandeur', 
+  > 273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+    276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+ERROR in src/pages/WeddingPreferences.tsx:273:103
+TS1005: ':' expected.
+    271 |       id: 'traditional-hindu-grandeur', 
+    272 |       name: 'Traditional Hindu Grandeur', 
+  > 273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+        |                                                                                                       ^
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+    276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+ERROR in src/pages/WeddingPreferences.tsx:274:14
+TS1003: Identifier expected.
+    272 |       name: 'Traditional Hindu Grandeur', 
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+  > 274 |       color: '#DC2626',
+        |              ^^^^^^^^^
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+    276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+    277 |     },
+ERROR in src/pages/WeddingPreferences.tsx:274:23
+TS1005: ':' expected.
+    272 |       name: 'Traditional Hindu Grandeur', 
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+  > 274 |       color: '#DC2626',
+        |                       ^
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+    276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+    277 |     },
+ERROR in src/pages/WeddingPreferences.tsx:275:14
+TS1003: Identifier expected.
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+    274 |       color: '#DC2626',
+  > 275 |       image: '/images/themes/traditional-cultural.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+    277 |     },
+    278 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:275:55
+TS1005: ':' expected.
+    273 |       description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+    274 |       color: '#DC2626',
+  > 275 |       image: '/images/themes/traditional-cultural.jpg',
+        |                                                       ^
+    276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+    277 |     },
+    278 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:276:18
+TS1181: Array element destructuring pattern expected.
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+  > 276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+        |                  ^^^^^^^^^^^^^^
+    277 |     },
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+ERROR in src/pages/WeddingPreferences.tsx:276:32
+TS1005: ':' expected.
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+  > 276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+        |                                ^
+    277 |     },
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+ERROR in src/pages/WeddingPreferences.tsx:276:49
+TS1005: ':' expected.
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+  > 276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+        |                                                 ^
+    277 |     },
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+ERROR in src/pages/WeddingPreferences.tsx:276:71
+TS1005: ':' expected.
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+  > 276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+        |                                                                       ^
+    277 |     },
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+ERROR in src/pages/WeddingPreferences.tsx:276:95
+TS1005: ':' expected.
+    274 |       color: '#DC2626',
+    275 |       image: '/images/themes/traditional-cultural.jpg',
+  > 276 |       features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
+        |                                                                                               ^
+    277 |     },
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+ERROR in src/pages/WeddingPreferences.tsx:279:11
+TS1003: Identifier expected.
+    277 |     },
+    278 |     { 
+  > 279 |       id: 'sikh-anand-karaj', 
+        |           ^^^^^^^^^^^^^^^^^^
+    280 |       name: 'Sikh Anand Karaj', 
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+    282 |       color: '#F59E0B',
+ERROR in src/pages/WeddingPreferences.tsx:279:29
+TS1005: ':' expected.
+    277 |     },
+    278 |     { 
+  > 279 |       id: 'sikh-anand-karaj', 
+        |                             ^
+    280 |       name: 'Sikh Anand Karaj', 
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+    282 |       color: '#F59E0B',
+ERROR in src/pages/WeddingPreferences.tsx:280:13
+TS1003: Identifier expected.
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+  > 280 |       name: 'Sikh Anand Karaj', 
+        |             ^^^^^^^^^^^^^^^^^^
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:280:31
+TS1005: ':' expected.
+    278 |     { 
+    279 |       id: 'sikh-anand-karaj', 
+  > 280 |       name: 'Sikh Anand Karaj', 
+        |                               ^
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:281:20
+TS1003: Identifier expected.
+    279 |       id: 'sikh-anand-karaj', 
+    280 |       name: 'Sikh Anand Karaj', 
+  > 281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+    284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+ERROR in src/pages/WeddingPreferences.tsx:281:102
+TS1005: ':' expected.
+    279 |       id: 'sikh-anand-karaj', 
+    280 |       name: 'Sikh Anand Karaj', 
+  > 281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+        |                                                                                                      ^
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+    284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+ERROR in src/pages/WeddingPreferences.tsx:282:14
+TS1003: Identifier expected.
+    280 |       name: 'Sikh Anand Karaj', 
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+  > 282 |       color: '#F59E0B',
+        |              ^^^^^^^^^
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+    284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+    285 |     },
+ERROR in src/pages/WeddingPreferences.tsx:282:23
+TS1005: ':' expected.
+    280 |       name: 'Sikh Anand Karaj', 
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+  > 282 |       color: '#F59E0B',
+        |                       ^
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+    284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+    285 |     },
+ERROR in src/pages/WeddingPreferences.tsx:283:14
+TS1003: Identifier expected.
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+    282 |       color: '#F59E0B',
+  > 283 |       image: '/images/themes/traditional-cultural.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+    285 |     },
+    286 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:283:55
+TS1005: ':' expected.
+    281 |       description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+    282 |       color: '#F59E0B',
+  > 283 |       image: '/images/themes/traditional-cultural.jpg',
+        |                                                       ^
+    284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+    285 |     },
+    286 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:284:18
+TS1181: Array element destructuring pattern expected.
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+  > 284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+        |                  ^^^^^^^^^^^^^^^^^^^^
+    285 |     },
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+ERROR in src/pages/WeddingPreferences.tsx:284:38
+TS1005: ':' expected.
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+  > 284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+        |                                      ^
+    285 |     },
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+ERROR in src/pages/WeddingPreferences.tsx:284:59
+TS1005: ':' expected.
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+  > 284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+        |                                                           ^
+    285 |     },
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+ERROR in src/pages/WeddingPreferences.tsx:284:80
+TS1005: ':' expected.
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+  > 284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+        |                                                                                ^
+    285 |     },
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+ERROR in src/pages/WeddingPreferences.tsx:284:105
+TS1005: ':' expected.
+    282 |       color: '#F59E0B',
+    283 |       image: '/images/themes/traditional-cultural.jpg',
+  > 284 |       features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
+        |                                                                                                         ^
+    285 |     },
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+ERROR in src/pages/WeddingPreferences.tsx:287:11
+TS1003: Identifier expected.
+    285 |     },
+    286 |     { 
+  > 287 |       id: 'muslim-nikah-ceremony', 
+        |           ^^^^^^^^^^^^^^^^^^^^^^^
+    288 |       name: 'Muslim Nikah Ceremony', 
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+    290 |       color: '#059669',
+ERROR in src/pages/WeddingPreferences.tsx:287:34
+TS1005: ':' expected.
+    285 |     },
+    286 |     { 
+  > 287 |       id: 'muslim-nikah-ceremony', 
+        |                                  ^
+    288 |       name: 'Muslim Nikah Ceremony', 
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+    290 |       color: '#059669',
+ERROR in src/pages/WeddingPreferences.tsx:288:13
+TS1003: Identifier expected.
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+  > 288 |       name: 'Muslim Nikah Ceremony', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^^
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:288:36
+TS1005: ':' expected.
+    286 |     { 
+    287 |       id: 'muslim-nikah-ceremony', 
+  > 288 |       name: 'Muslim Nikah Ceremony', 
+        |                                    ^
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:289:20
+TS1003: Identifier expected.
+    287 |       id: 'muslim-nikah-ceremony', 
+    288 |       name: 'Muslim Nikah Ceremony', 
+  > 289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+    292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+ERROR in src/pages/WeddingPreferences.tsx:289:107
+TS1005: ':' expected.
+    287 |       id: 'muslim-nikah-ceremony', 
+    288 |       name: 'Muslim Nikah Ceremony', 
+  > 289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+        |                                                                                                           ^
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+    292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+ERROR in src/pages/WeddingPreferences.tsx:290:14
+TS1003: Identifier expected.
+    288 |       name: 'Muslim Nikah Ceremony', 
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+  > 290 |       color: '#059669',
+        |              ^^^^^^^^^
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+    292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+    293 |     },
+ERROR in src/pages/WeddingPreferences.tsx:290:23
+TS1005: ':' expected.
+    288 |       name: 'Muslim Nikah Ceremony', 
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+  > 290 |       color: '#059669',
+        |                       ^
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+    292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+    293 |     },
+ERROR in src/pages/WeddingPreferences.tsx:291:14
+TS1003: Identifier expected.
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+    290 |       color: '#059669',
+  > 291 |       image: '/images/themes/traditional-cultural.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+    293 |     },
+    294 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:291:55
+TS1005: ':' expected.
+    289 |       description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
+    290 |       color: '#059669',
+  > 291 |       image: '/images/themes/traditional-cultural.jpg',
+        |                                                       ^
+    292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+    293 |     },
+    294 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:292:18
+TS1181: Array element destructuring pattern expected.
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+  > 292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+        |                  ^^^^^^^^^^^^^^^^
+    293 |     },
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+ERROR in src/pages/WeddingPreferences.tsx:292:34
+TS1005: ':' expected.
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+  > 292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+        |                                  ^
+    293 |     },
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+ERROR in src/pages/WeddingPreferences.tsx:292:56
+TS1005: ':' expected.
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+  > 292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+        |                                                        ^
+    293 |     },
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+ERROR in src/pages/WeddingPreferences.tsx:292:74
+TS1005: ':' expected.
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+  > 292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+        |                                                                          ^
+    293 |     },
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+ERROR in src/pages/WeddingPreferences.tsx:292:97
+TS1005: ':' expected.
+    290 |       color: '#059669',
+    291 |       image: '/images/themes/traditional-cultural.jpg',
+  > 292 |       features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
+        |                                                                                                 ^
+    293 |     },
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+ERROR in src/pages/WeddingPreferences.tsx:295:11
+TS1003: Identifier expected.
+    293 |     },
+    294 |     { 
+  > 295 |       id: 'south-indian-temple', 
+        |           ^^^^^^^^^^^^^^^^^^^^^
+    296 |       name: 'South Indian Temple Wedding', 
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+    298 |       color: '#7C3AED',
+ERROR in src/pages/WeddingPreferences.tsx:295:32
+TS1005: ':' expected.
+    293 |     },
+    294 |     { 
+  > 295 |       id: 'south-indian-temple', 
+        |                                ^
+    296 |       name: 'South Indian Temple Wedding', 
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+    298 |       color: '#7C3AED',
+ERROR in src/pages/WeddingPreferences.tsx:296:13
+TS1003: Identifier expected.
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+  > 296 |       name: 'South Indian Temple Wedding', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:296:42
+TS1005: ':' expected.
+    294 |     { 
+    295 |       id: 'south-indian-temple', 
+  > 296 |       name: 'South Indian Temple Wedding', 
+        |                                          ^
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:297:20
+TS1003: Identifier expected.
+    295 |       id: 'south-indian-temple', 
+    296 |       name: 'South Indian Temple Wedding', 
+  > 297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+    300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+ERROR in src/pages/WeddingPreferences.tsx:297:98
+TS1005: ':' expected.
+    295 |       id: 'south-indian-temple', 
+    296 |       name: 'South Indian Temple Wedding', 
+  > 297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+        |                                                                                                  ^
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+    300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+ERROR in src/pages/WeddingPreferences.tsx:298:14
+TS1003: Identifier expected.
+    296 |       name: 'South Indian Temple Wedding', 
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+  > 298 |       color: '#7C3AED',
+        |              ^^^^^^^^^
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+    300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+    301 |     },
+ERROR in src/pages/WeddingPreferences.tsx:298:23
+TS1005: ':' expected.
+    296 |       name: 'South Indian Temple Wedding', 
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+  > 298 |       color: '#7C3AED',
+        |                       ^
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+    300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+    301 |     },
+ERROR in src/pages/WeddingPreferences.tsx:299:14
+TS1003: Identifier expected.
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+    298 |       color: '#7C3AED',
+  > 299 |       image: '/images/themes/south-indian-temple.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+    301 |     },
+    302 |     
+ERROR in src/pages/WeddingPreferences.tsx:299:54
+TS1005: ':' expected.
+    297 |       description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
+    298 |       color: '#7C3AED',
+  > 299 |       image: '/images/themes/south-indian-temple.jpg',
+        |                                                      ^
+    300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+    301 |     },
+    302 |     
+ERROR in src/pages/WeddingPreferences.tsx:300:18
+TS1181: Array element destructuring pattern expected.
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+  > 300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+        |                  ^^^^^^^^^^^^^^^^^
+    301 |     },
+    302 |     
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:300:35
+TS1005: ':' expected.
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+  > 300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+        |                                   ^
+    301 |     },
+    302 |     
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:300:54
+TS1005: ':' expected.
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+  > 300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+        |                                                      ^
+    301 |     },
+    302 |     
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:300:76
+TS1005: ':' expected.
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+  > 300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+        |                                                                            ^
+    301 |     },
+    302 |     
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:300:96
+TS1005: ':' expected.
+    298 |       color: '#7C3AED',
+    299 |       image: '/images/themes/south-indian-temple.jpg',
+  > 300 |       features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
+        |                                                                                                ^
+    301 |     },
+    302 |     
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+ERROR in src/pages/WeddingPreferences.tsx:305:11
+TS1003: Identifier expected.
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+    304 |     { 
+  > 305 |       id: 'modern-fusion-wedding', 
+        |           ^^^^^^^^^^^^^^^^^^^^^^^
+    306 |       name: 'Modern Fusion Wedding', 
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+    308 |       color: '#8B5CF6',
+ERROR in src/pages/WeddingPreferences.tsx:305:34
+TS1005: ':' expected.
+    303 |     // Modern & Contemporary Themes (Medium-High Engagement)
+    304 |     { 
+  > 305 |       id: 'modern-fusion-wedding', 
+        |                                  ^
+    306 |       name: 'Modern Fusion Wedding', 
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+    308 |       color: '#8B5CF6',
+ERROR in src/pages/WeddingPreferences.tsx:306:13
+TS1003: Identifier expected.
+    304 |     { 
+    305 |       id: 'modern-fusion-wedding', 
+  > 306 |       name: 'Modern Fusion Wedding', 
+        |             ^^^^^^^^^^^^^^^^^^^^^^^
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:306:36
+TS1005: ':' expected.
+    304 |     { 
+    305 |       id: 'modern-fusion-wedding', 
+  > 306 |       name: 'Modern Fusion Wedding', 
+        |                                    ^
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+ERROR in src/pages/WeddingPreferences.tsx:307:20
+TS1003: Identifier expected.
+    305 |       id: 'modern-fusion-wedding', 
+    306 |       name: 'Modern Fusion Wedding', 
+  > 307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+    310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+ERROR in src/pages/WeddingPreferences.tsx:307:88
+TS1005: ':' expected.
+    305 |       id: 'modern-fusion-wedding', 
+    306 |       name: 'Modern Fusion Wedding', 
+  > 307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+        |                                                                                        ^
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+    310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+ERROR in src/pages/WeddingPreferences.tsx:308:14
+TS1003: Identifier expected.
+    306 |       name: 'Modern Fusion Wedding', 
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+  > 308 |       color: '#8B5CF6',
+        |              ^^^^^^^^^
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+    310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+    311 |     },
+ERROR in src/pages/WeddingPreferences.tsx:308:23
+TS1005: ':' expected.
+    306 |       name: 'Modern Fusion Wedding', 
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+  > 308 |       color: '#8B5CF6',
+        |                       ^
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+    310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+    311 |     },
+ERROR in src/pages/WeddingPreferences.tsx:309:14
+TS1003: Identifier expected.
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+    308 |       color: '#8B5CF6',
+  > 309 |       image: '/images/themes/minimalist-pastel.jpg',
+        |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+    311 |     },
+    312 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:309:52
+TS1005: ':' expected.
+    307 |       description: 'Contemporary celebrations blending traditional and modern elements', 
+    308 |       color: '#8B5CF6',
+  > 309 |       image: '/images/themes/minimalist-pastel.jpg',
+        |                                                    ^
+    310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+    311 |     },
+    312 |     { 
+ERROR in src/pages/WeddingPreferences.tsx:310:18
+TS1181: Array element destructuring pattern expected.
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+  > 310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+        |                  ^^^^^^^^^^^^^^
+    311 |     },
+    312 |     { 
+    313 |       id: 'bollywood-sangeet', 
+ERROR in src/pages/WeddingPreferences.tsx:310:32
+TS1005: ':' expected.
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+  > 310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+        |                                ^
+    311 |     },
+    312 |     { 
+    313 |       id: 'bollywood-sangeet', 
+ERROR in src/pages/WeddingPreferences.tsx:310:50
+TS1005: ':' expected.
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+  > 310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+        |                                                  ^
+    311 |     },
+    312 |     { 
+    313 |       id: 'bollywood-sangeet', 
+ERROR in src/pages/WeddingPreferences.tsx:310:72
+TS1005: ':' expected.
+    308 |       color: '#8B5CF6',
+    309 |       image: '/images/themes/minimalist-pastel.jpg',
+  > 310 |       features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
+        |                                                                        ^
+    311 |     },
+    312 |     { 
+    313 |       id: 'bollywood-sangeet', 
