@@ -188,9 +188,9 @@ const WeddingPreferences: React.FC = () => {
       ]
     },
     {
-      id: 'glamour-entertainment',
-      name: '🎬 Glamour & Entertainment',
-      description: 'Vibrant celebrations with cinematic flair and entertainment focus',
+      id: 'modern-glamour',
+      name: '🎬 Modern & Glamour',
+      description: 'Contemporary celebrations with cinematic flair, modern elegance, and sophisticated style',
       themes: [
         { 
           id: 'bollywood-glamour', 
@@ -200,14 +200,7 @@ const WeddingPreferences: React.FC = () => {
           image: '/bollywoodglamor.png',
           features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant Colors'],
           imagePrompt: 'Glamorous Bollywood-style Indian wedding reception with cinematic grandeur. Large dance floor with disco balls and dramatic spotlights. Vintage Bollywood movie posters and film reel decorations. Bride in heavily embellished lehenga with statement jewelry, groom in designer sherwani. Golden and red sequined draping, champagne towers, red carpet entrance. Professional dancers performing, live orchestra, vibrant party atmosphere. Rich golden lighting, 4K cinematic quality, Bollywood movie aesthetic.'
-        }
-      ]
-    },
-    {
-      id: 'modern-contemporary',
-      name: '🏙️ Modern & Contemporary',
-      description: 'Clean, sophisticated celebrations with contemporary design and modern elegance',
-      themes: [
+        },
         { 
           id: 'minimalist-modern', 
           name: 'Minimalist Modern', 
@@ -216,13 +209,22 @@ const WeddingPreferences: React.FC = () => {
           image: '/minimalist pastel.png',
           features: ['Clean Lines', 'Modern Furniture', 'Neutral Colors', 'Sophisticated Simplicity'],
           imagePrompt: 'Sophisticated minimalist modern Indian wedding with contemporary elegance. Clean geometric mandap with simple white and gold decorations. Couple in modern traditional wear - bride in subtle pastel lehenga, groom in contemporary sherwani. Sleek furniture, geometric floral arrangements, modern lighting fixtures. Neutral color palette of whites, greys, and soft pastels. Uncluttered space design, glass elements, architectural lines. Soft professional lighting, 4K ultra-clean aesthetic, luxury hotel setting.'
+        },
+        { 
+          id: 'luxury-contemporary', 
+          name: 'Luxury Contemporary', 
+          description: 'High-end modern celebrations with premium decor, sophisticated lighting, and urban elegance', 
+          color: '#1F2937',
+          image: '/minimalist pastel.png',
+          features: ['Premium Materials', 'Sophisticated Lighting', 'Urban Elegance', 'High-End Decor'],
+          imagePrompt: 'Luxury contemporary Indian wedding in upscale urban venue. Premium materials like marble and crystal, sophisticated LED lighting systems, sleek modern mandap with metallic accents. Bride in designer contemporary lehenga, groom in luxury modern sherwani. High-end floral arrangements, premium table settings, urban city views. Sophisticated color palette of blacks, whites, and metallics. Professional lighting, 4K luxury aesthetic, five-star hotel setting.'
         }
       ]
     },
     {
-      id: 'nature-sustainable',
-      name: '🌿 Nature & Sustainable',
-      description: 'Eco-conscious celebrations with natural beauty and sustainable practices',
+      id: 'nature-garden',
+      name: '🌿 Nature & Garden',
+      description: 'Natural celebrations with eco-conscious elements, garden beauty, and organic charm',
       themes: [
         { 
           id: 'eco-friendly-sustainable', 
@@ -241,22 +243,15 @@ const WeddingPreferences: React.FC = () => {
           image: '/floralparadise.png',
           features: ['Abundant Flowers', 'Garden Elements', 'Floral Arches', 'Natural Beauty'],
           imagePrompt: 'Breathtaking floral paradise Indian wedding in blooming garden. Mandap completely covered in roses, jasmine, and marigolds. Massive floral archways and hanging flower installations. Bride in floral-themed lehenga with fresh flower jewelry, groom with floral sehra. Flower walls as backdrops, floral carpets, botanical ceiling decorations. Pastel color palette with pinks, whites, and soft greens. Natural garden setting with butterflies, 4K botanical paradise, dreamy romantic lighting, professional garden photography.'
-        }
-      ]
-    },
-    {
-      id: 'artistic-bohemian',
-      name: '🎨 Artistic & Bohemian',
-      description: 'Creative celebrations with artistic flair and free-spirited charm',
-      themes: [
+        },
         { 
           id: 'bohemian-chic', 
-          name: 'Bohemian Chic', 
-          description: 'Free-spirited celebrations with eclectic decor, artistic elements, and bohemian charm', 
+          name: 'Bohemian Garden Chic', 
+          description: 'Free-spirited garden celebrations with eclectic decor, artistic elements, and bohemian charm', 
           color: '#7C3AED',
           image: '/boho.png',
-          features: ['Eclectic Decor', 'Artistic Elements', 'Vintage Furniture', 'Free-Spirited Vibe'],
-          imagePrompt: 'Bohemian chic Indian wedding with artistic eclectic decorations. Mandap with flowing fabrics, macrame hanging installations, vintage rugs and floor cushions. Bride in boho-style lehenga with oxidized jewelry, groom in artistic kurta. Dreamcatchers, feathers, mixed textures and patterns. Vintage furniture pieces, natural wood elements, fairy lights. Warm earth tones with jewel color pops, outdoor garden setting. 4K artistic bohemian aesthetic, free-spirited celebration, warm golden lighting.'
+          features: ['Eclectic Decor', 'Artistic Elements', 'Garden Setting', 'Free-Spirited Vibe'],
+          imagePrompt: 'Bohemian chic Indian wedding with artistic eclectic decorations in garden setting. Mandap with flowing fabrics, macrame hanging installations, vintage rugs and floor cushions. Bride in boho-style lehenga with oxidized jewelry, groom in artistic kurta. Dreamcatchers, feathers, mixed textures and patterns. Vintage furniture pieces, natural wood elements, fairy lights. Warm earth tones with jewel color pops, outdoor garden setting. 4K artistic bohemian aesthetic, free-spirited celebration, warm golden lighting.'
         }
       ]
     }
