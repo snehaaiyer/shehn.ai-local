@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Genie - Fixed API Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeef3 0%, #f8e8ee 50%, #f5d0e0 100%);
+            min-height: 100vh;
+            color: #2d2d2d;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .ai-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            color: #2d2d2d;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 24px 16px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2d2d2d;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8B4B6B;
+            box-shadow: 0 0 0 3px rgba(139, 75, 107, 0.1);
+        }
+
+        .city-autocomplete {
+            position: relative;
+        }
+
+        .city-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .city-suggestion {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .city-suggestion:hover {
+            background: rgba(139, 75, 107, 0.05);
+        }
+
+        .city-icon {
+            color: #8B4B6B;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(139, 75, 107, 0.05);
+            border-color: #8B4B6B;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #8B4B6B;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 75, 107, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ai-results {
+            background: linear-gradient(135deg, rgba(139, 75, 107, 0.05), rgba(168, 85, 168, 0.05));
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(139, 75, 107, 0.1);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .ai-icon {
+            font-size: 20px;
+        }
+
+        .ai-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #8B4B6B;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 8px;
+        }
+
+        .result-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8B4B6B;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(139, 75, 107, 0.1);
+            border-left: 4px solid #8B4B6B;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .error-message {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            border: 1px solid #c8e6c9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Dashboard Screen -->
+        <div class="screen active" id="dashboard">
+            <div class="header">
+                <div class="ai-status" title="AI Agents Online"></div>
+                <div class="title">Wedding Genie</div>
+                <div class="subtitle">AI-Powered Wedding Planning</div>
+            </div>
+
+            <div class="content">
+                <div class="welcome-section">
+                    <h1 class="welcome-title">Plan Your Perfect Wedding</h1>
+                    <p class="welcome-subtitle">AI-powered recommendations for your special day</p>
+                </div>
+
+                <div class="action-grid">
+                    <button class="action-card" onclick="showScreen('wedding-form')">
+                        <span class="action-icon">📝</span>
+                        Wedding Details
+                    </button>
+                    <button class="action-card" onclick="showScreen('vendors')">
+                        <span class="action-icon">🔍</span>
+                        Find Vendors
+                    </button>
+                    <button class="action-card" onclick="showScreen('budget')">
+                        <span class="action-icon">💰</span>
+                        Smart Budget
+                    </button>
+                    <button class="action-card" onclick="showScreen('timeline')">
+                        <span class="action-icon">📋</span>
+                        AI Timeline
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wedding Form Screen -->
+        <div class="screen" id="wedding-form">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">Wedding Details</div>
+                <div class="subtitle">Tell us about your dream wedding</div>
+            </div>
+
+            <div class="content">
+                <div id="error-container"></div>
+                
+                <div class="form-section">
+                    <div class="section-title">Couple Information</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Name *</label>
+                        <input type="text" class="form-input" id="yourName" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Partner's Name *</label>
+                        <input type="text" class="form-input" id="partnerName" placeholder="Enter partner's name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Wedding Date *</label>
+                        <input type="date" class="form-input" id="weddingDate" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Wedding Preferences</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">City *</label>
+                        <div class="city-autocomplete">
+                            <input type="text" class="form-input" id="city" placeholder="Type city name..." required>
+                            <div class="city-suggestions" id="city-suggestions"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Budget Range *</label>
+                        <select class="form-input" id="budget" required>
+                            <option value="">Select budget</option>
+                            <option value="₹5-10 Lakhs">₹5-10 Lakhs</option>
+                            <option value="₹10-20 Lakhs">₹10-20 Lakhs</option>
+                            <option value="₹20-30 Lakhs">₹20-30 Lakhs</option>
+                            <option value="₹30-50 Lakhs">₹30-50 Lakhs</option>
+                            <option value="₹50+ Lakhs">₹50+ Lakhs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Guest Count</label>
+                        <input type="number" class="form-input" id="guestCount" placeholder="200" min="50" max="2000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Wedding Type</label>
+                        <select class="form-input" id="weddingType">
+                            <option value="Traditional Hindu">Traditional Hindu</option>
+                            <option value="Sikh">Sikh</option>
+                            <option value="Muslim">Muslim</option>
+                            <option value="Christian">Christian</option>
+                            <option value="Inter-faith">Inter-faith</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Wedding Duration</label>
+                        <select class="form-input" id="duration">
+                            <option value="1 day">1 day</option>
+                            <option value="2 days">2 days</option>
+                            <option value="3 days" selected>3 days</option>
+                            <option value="4 days">4 days</option>
+                            <option value="5+ days">5+ days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Priority Areas</div>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 16px;">Select your top priorities (AI will optimize budget accordingly)</p>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="priority-venue" value="Venue">
+                            <label for="priority-venue">Venue</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="priority-photography" value="Photography">
+                            <label for="priority-photography">Photography</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="priority-catering" value="Catering">
+                            <label for="priority-catering">Catering</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="priority-decoration" value="Decoration">
+                            <label for="priority-decoration">Decoration</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="priority-music" value="Entertainment">
+                            <label for="priority-music">Music</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="priority-transport" value="Transport">
+                            <label for="priority-transport">Transport</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="submitWeddingForm()">
+                    Get AI Wedding Plan
+                </button>
+
+                <div class="loading" id="form-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AI analyzing your preferences...</p>
+                </div>
+
+                <div id="wedding-results" class="ai-results" style="display: none;">
+                    <div class="ai-header">
+                        <span class="ai-icon">🧞‍♂️</span>
+                        <span class="ai-title">AI Analysis Complete</span>
+                    </div>
+                    <div id="wedding-recommendations"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other screens placeholder -->
+        <div class="screen" id="vendors">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">Vendor Discovery</div>
+                <div class="subtitle">AI-Matched Professionals</div>
+            </div>
+            <div class="content">
+                <p>Vendor discovery interface - redirecting to specialized screen...</p>
+                <button class="btn-primary" onclick="window.open('/vendor-screen.html', '_blank')">
+                    Open Vendor Discovery
+                </button>
+            </div>
+        </div>
+
+        <div class="screen" id="budget">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">Smart Budget</div>
+                <div class="subtitle">AI-Optimized Planning</div>
+            </div>
+            <div class="content">
+                <p>Smart budget analysis will be available after completing wedding details form.</p>
+            </div>
+        </div>
+
+        <div class="screen" id="timeline">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">AI Timeline</div>
+                <div class="subtitle">Smart Planning Schedule</div>
+            </div>
+            <div class="content">
+                <p>AI timeline generation will be available after completing wedding details form.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8001';
+
+        // Indian cities data with states for autocomplete
+        const indianCities = [
+            { name: "Mumbai", state: "Maharashtra", region: "Western India" },
+            { name: "Delhi", state: "Delhi", region: "Northern India" },
+            { name: "Bangalore", state: "Karnataka", region: "Southern India" },
+            { name: "Chennai", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Kolkata", state: "West Bengal", region: "Eastern India" },
+            { name: "Pune", state: "Maharashtra", region: "Western India" },
+            { name: "Hyderabad", state: "Telangana", region: "Southern India" },
+            { name: "Ahmedabad", state: "Gujarat", region: "Western India" },
+            { name: "Jaipur", state: "Rajasthan", region: "Northern India" },
+            { name: "Surat", state: "Gujarat", region: "Western India" },
+            { name: "Lucknow", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Kanpur", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Nagpur", state: "Maharashtra", region: "Central India" },
+            { name: "Indore", state: "Madhya Pradesh", region: "Central India" },
+            { name: "Thane", state: "Maharashtra", region: "Western India" },
+            { name: "Bhopal", state: "Madhya Pradesh", region: "Central India" },
+            { name: "Visakhapatnam", state: "Andhra Pradesh", region: "Southern India" },
+            { name: "Pimpri-Chinchwad", state: "Maharashtra", region: "Western India" },
+            { name: "Patna", state: "Bihar", region: "Eastern India" },
+            { name: "Vadodara", state: "Gujarat", region: "Western India" },
+            { name: "Ghaziabad", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Ludhiana", state: "Punjab", region: "Northern India" },
+            { name: "Agra", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Nashik", state: "Maharashtra", region: "Western India" },
+            { name: "Faridabad", state: "Haryana", region: "Northern India" },
+            { name: "Meerut", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Rajkot", state: "Gujarat", region: "Western India" },
+            { name: "Kalyan-Dombivali", state: "Maharashtra", region: "Western India" },
+            { name: "Vasai-Virar", state: "Maharashtra", region: "Western India" },
+            { name: "Varanasi", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Srinagar", state: "Jammu and Kashmir", region: "Northern India" },
+            { name: "Aurangabad", state: "Maharashtra", region: "Western India" },
+            { name: "Dhanbad", state: "Jharkhand", region: "Eastern India" },
+            { name: "Amritsar", state: "Punjab", region: "Northern India" },
+            { name: "Navi Mumbai", state: "Maharashtra", region: "Western India" },
+            { name: "Allahabad", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Howrah", state: "West Bengal", region: "Eastern India" },
+            { name: "Ranchi", state: "Jharkhand", region: "Eastern India" },
+            { name: "Gwalior", state: "Madhya Pradesh", region: "Central India" },
+            { name: "Jabalpur", state: "Madhya Pradesh", region: "Central India" },
+            { name: "Coimbatore", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Vijayawada", state: "Andhra Pradesh", region: "Southern India" },
+            { name: "Jodhpur", state: "Rajasthan", region: "Northern India" },
+            { name: "Madurai", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Raipur", state: "Chhattisgarh", region: "Central India" },
+            { name: "Kota", state: "Rajasthan", region: "Northern India" },
+            { name: "Guwahati", state: "Assam", region: "Northeastern India" },
+            { name: "Chandigarh", state: "Chandigarh", region: "Northern India" },
+            { name: "Solapur", state: "Maharashtra", region: "Western India" },
+            { name: "Hubballi-Dharwad", state: "Karnataka", region: "Southern India" },
+            { name: "Bareilly", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Moradabad", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Mysore", state: "Karnataka", region: "Southern India" },
+            { name: "Gurgaon", state: "Haryana", region: "Northern India" },
+            { name: "Aligarh", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Jalandhar", state: "Punjab", region: "Northern India" },
+            { name: "Tiruchirappalli", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Bhubaneswar", state: "Odisha", region: "Eastern India" },
+            { name: "Salem", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Warangal", state: "Telangana", region: "Southern India" },
+            { name: "Mira-Bhayandar", state: "Maharashtra", region: "Western India" },
+            { name: "Thiruvananthapuram", state: "Kerala", region: "Southern India" },
+            { name: "Bhiwandi", state: "Maharashtra", region: "Western India" },
+            { name: "Saharanpur", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Gorakhpur", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Guntur", state: "Andhra Pradesh", region: "Southern India" },
+            { name: "Bikaner", state: "Rajasthan", region: "Northern India" },
+            { name: "Amravati", state: "Maharashtra", region: "Western India" },
+            { name: "Noida", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Jamshedpur", state: "Jharkhand", region: "Eastern India" },
+            { name: "Bhilai Nagar", state: "Chhattisgarh", region: "Central India" },
+            { name: "Cuttack", state: "Odisha", region: "Eastern India" },
+            { name: "Firozabad", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Kochi", state: "Kerala", region: "Southern India" },
+            { name: "Bhavnagar", state: "Gujarat", region: "Western India" },
+            { name: "Dehradun", state: "Uttarakhand", region: "Northern India" },
+            { name: "Durgapur", state: "West Bengal", region: "Eastern India" },
+            { name: "Asansol", state: "West Bengal", region: "Eastern India" },
+            { name: "Nanded", state: "Maharashtra", region: "Western India" },
+            { name: "Kolhapur", state: "Maharashtra", region: "Western India" },
+            { name: "Ajmer", state: "Rajasthan", region: "Northern India" },
+            { name: "Gulbarga", state: "Karnataka", region: "Southern India" },
+            { name: "Jamnagar", state: "Gujarat", region: "Western India" },
+            { name: "Ujjain", state: "Madhya Pradesh", region: "Central India" },
+            { name: "Loni", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Siliguri", state: "West Bengal", region: "Eastern India" },
+            { name: "Jhansi", state: "Uttar Pradesh", region: "Northern India" },
+            { name: "Ulhasnagar", state: "Maharashtra", region: "Western India" },
+            { name: "Nellore", state: "Andhra Pradesh", region: "Southern India" },
+            { name: "Jammu", state: "Jammu and Kashmir", region: "Northern India" },
+            { name: "Sangli-Miraj & Kupwad", state: "Maharashtra", region: "Western India" },
+            { name: "Belgaum", state: "Karnataka", region: "Southern India" },
+            { name: "Mangalore", state: "Karnataka", region: "Southern India" },
+            { name: "Ambattur", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Tirunelveli", state: "Tamil Nadu", region: "Southern India" },
+            { name: "Malegaon", state: "Maharashtra", region: "Western India" },
+            { name: "Gaya", state: "Bihar", region: "Eastern India" },
+            { name: "Jalgaon", state: "Maharashtra", region: "Western India" },
+            { name: "Udaipur", state: "Rajasthan", region: "Northern India" },
+            { name: "Maheshtala", state: "West Bengal", region: "Eastern India" }
+        ];
+
+        // Screen Management
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // City Autocomplete
+        function setupCityAutocomplete() {
+            const cityInput = document.getElementById('city');
+            const suggestions = document.getElementById('city-suggestions');
+
+            cityInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+
+                const matches = indianCities.filter(city => 
+                    city.name.toLowerCase().includes(query) ||
+                    city.state.toLowerCase().includes(query)
+                ).slice(0, 8);
+
+                if (matches.length > 0) {
+                    suggestions.innerHTML = matches.map(city => `
+                        <div class="city-suggestion" onclick="selectCity('${city.name}', '${city.state}')">
+                            <span class="city-icon">📍</span>
+                            <div>
+                                <div style="font-weight: 600;">${city.name}</div>
+                                <div style="font-size: 12px; color: #666;">${city.state}, ${city.region}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                    suggestions.style.display = 'block';
+                } else {
+                    suggestions.style.display = 'none';
+                }
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!cityInput.contains(e.target) && !suggestions.contains(e.target)) {
+                    suggestions.style.display = 'none';
+                }
+            });
+        }
+
+        function selectCity(cityName, stateName) {
+            document.getElementById('city').value = cityName;
+            document.getElementById('city-suggestions').style.display = 'none';
+        }
+
+        // Form Validation
+        function validateForm() {
+            const required = ['yourName', 'partnerName', 'weddingDate', 'city', 'budget'];
+            const errors = [];
+
+            required.forEach(field => {
+                const element = document.getElementById(field);
+                if (!element.value.trim()) {
+                    errors.push(`${field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} is required`);
+                }
+            });
+
+            const weddingDate = new Date(document.getElementById('weddingDate').value);
+            const today = new Date();
+            if (weddingDate <= today) {
+                errors.push('Wedding date must be in the future');
+            }
+
+            return errors;
+        }
+
+        function showError(errors) {
+            const container = document.getElementById('error-container');
+            if (errors.length > 0) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <strong>Please fix the following errors:</strong>
+                        <ul style="margin: 8px 0 0 20px;">
+                            ${errors.map(error => `<li>${error}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="success-message">${message}</div>`;
+        }
+
+        // Get selected priorities
+        function getSelectedPriorities() {
+            const priorities = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                priorities.push(checkbox.value);
+            });
+            return priorities.length > 0 ? priorities : ['Photography', 'Venue']; // Default priorities
+        }
+
+        // Wedding Form Submission with fixed API
+        async function submitWeddingForm() {
+            const errors = validateForm();
+            if (errors.length > 0) {
+                showError(errors);
+                return;
+            }
+
+            showError([]); // Clear errors
+
+            // Prepare data according to AI service requirements
+            const formData = {
+                yourName: document.getElementById('yourName').value.trim(),
+                partnerName: document.getElementById('partnerName').value.trim(),
+                weddingDate: document.getElementById('weddingDate').value,
+                city: document.getElementById('city').value.trim(),
+                budget: document.getElementById('budget').value,
+                guestCount: parseInt(document.getElementById('guestCount').value) || 200,
+                weddingType: document.getElementById('weddingType').value || "Traditional Hindu",
+                duration: document.getElementById('duration').value || "3 days",
+                events: ["Wedding", "Reception"], // Default events
+                priorities: getSelectedPriorities(),
+                specialRequirements: "" // Can be added later
+            };
+
+            console.log('Submitting wedding data:', formData);
+
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Processing...';
+            
+            document.getElementById('form-loading').style.display = 'block';
+            document.getElementById('wedding-results').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE}/submit-wedding`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Failed to parse response:', parseError);
+                    throw new Error('Invalid response from AI service');
+                }
+
+                console.log('Parsed result:', result);
+                displayWeddingResults(result, response.ok);
+
+            } catch (error) {
+                console.error('Submit error:', error);
+                displayWeddingResults({
+                    success: false,
+                    error: error.message || 'Connection failed. Please check if AI service is running.',
+                    debug: 'Make sure http://localhost:8001 is accessible'
+                }, false);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Get AI Wedding Plan';
+                document.getElementById('form-loading').style.display = 'none';
+            }
+        }
+
+        function displayWeddingResults(result, responseOk = true) {
+            const resultsDiv = document.getElementById('wedding-results');
+            const recommendationsDiv = document.getElementById('wedding-recommendations');
+            
+            resultsDiv.style.display = 'block';
+            
+            if (responseOk && result.success !== false) {
+                showSuccess('✅ Wedding plan submitted successfully!');
+                
+                let recommendationsHTML = `
+                    <div class="result-item">
+                        <div class="result-title">✅ Wedding Plan Created</div>
+                        <div class="result-desc">Your wedding details have been analyzed by our AI agents.</div>
+                    </div>
+                `;
+
+                if (result.ai_insights && result.ai_insights.success) {
+                    recommendationsHTML += `
+                        <div class="result-item">
+                            <div class="result-title">🤖 AI Insights</div>
+                            <div class="result-desc">${result.summary || 'AI analysis completed successfully. Personalized recommendations generated.'}</div>
+                        </div>
+                    `;
+                }
+
+                if (result.budget_analysis && result.budget_analysis.success) {
+                    recommendationsHTML += `
+                        <div class="result-item">
+                            <div class="result-title">💰 Budget Analysis</div>
+                            <div class="result-desc">Smart budget allocation created. Visit the Budget section for detailed breakdown.</div>
+                        </div>
+                    `;
+                }
+
+                if (result.vendor_recommendations) {
+                    recommendationsHTML += `
+                        <div class="result-item">
+                            <div class="result-title">🔍 Vendor Matching</div>
+                            <div class="result-desc">AI vendor search initiated. Visit Vendor Discovery for matched professionals.</div>
+                        </div>
+                    `;
+                }
+
+                recommendationsHTML += `
+                    <div class="result-item">
+                        <div class="result-title">📋 Next Steps</div>
+                        <div class="result-desc">
+                            1. Check Budget section for AI allocation<br>
+                            2. Visit Vendor Discovery for matches<br>
+                            3. Generate AI timeline for planning
+                        </div>
+                    </div>
+                `;
+
+                recommendationsDiv.innerHTML = recommendationsHTML;
+            } else {
+                const errorMsg = result.error || result.detail || 'Unknown error occurred';
+                showError([`AI Service Error: ${errorMsg}`]);
+                
+                recommendationsDiv.innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title">⚠️ Service Issue</div>
+                        <div class="result-desc">
+                            ${errorMsg}<br><br>
+                            <strong>Troubleshooting:</strong><br>
+                            • Check if AI service is running on port 8001<br>
+                            • Verify all required fields are filled<br>
+                            • Try again in a few moments
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCityAutocomplete();
+            
+            // Check AI service status
+            fetch(`${API_BASE}/health`)
+                .then(response => response.json())
+                .then(data => {
+                    const statusDot = document.querySelector('.ai-status');
+                    if (data.status === 'healthy') {
+                        statusDot.style.background = '#4CAF50';
+                        statusDot.title = 'AI Agents Online';
+                    } else {
+                        statusDot.style.background = '#FF9800';
+                        statusDot.title = 'AI Agents Degraded';
+                    }
+                })
+                .catch(() => {
+                    const statusDot = document.querySelector('.ai-status');
+                    statusDot.style.background = '#F44336';
+                    statusDot.title = 'AI Agents Offline';
+                });
+        });
+    </script>
+</body>
+</html> 

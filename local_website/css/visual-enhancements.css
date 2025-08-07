@@ -1,0 +1,468 @@
+/* Enhanced Visual Preferences Styles */
+
+/* Theme Image Gallery */
+.theme-image-gallery {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(255, 27, 141, 0.2);
+    border: 2px solid transparent;
+    border-image: var(--gradient-sunset) 1;
+}
+
+.gallery-preview h4 {
+    background: var(--gradient-fire);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.style-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.style-image {
+    aspect-ratio: 1;
+    background: var(--gradient-sunset);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(255, 27, 141, 0.3);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.style-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.style-image span {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.style-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(255, 27, 141, 0.5);
+}
+
+/* Theme Cards with Image Elements */
+.visual-themes .theme-card {
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    border-radius: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-size: cover;
+    background-position: center;
+}
+
+.theme-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    z-index: 1;
+}
+
+.theme-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.theme-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.theme-card:hover .theme-image {
+    transform: scale(1.1);
+}
+
+.color-palette {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.color-swatch {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    animation: swatch-pulse 2s ease-in-out infinite;
+}
+
+@keyframes swatch-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.theme-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.theme-card.selected {
+    transform: scale(1.05);
+    box-shadow: 
+        0 15px 40px rgba(255, 27, 141, 0.4),
+        0 0 30px rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Cuisine Visual Elements */
+.cuisine-preview {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.2);
+}
+
+.flavor-meter h4 {
+    background: var(--gradient-sunset);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.spice-legend {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.spice-legend span {
+    background: rgba(255, 107, 107, 0.1);
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    border: 2px solid rgba(255, 107, 107, 0.3);
+    animation: spice-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes spice-glow {
+    0% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.3); }
+    100% { box-shadow: 0 0 15px rgba(255, 107, 107, 0.6); }
+}
+
+.cuisine-grid .cuisine-card {
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    border-radius: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cuisine-visual {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.cuisine-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.spice-level {
+    font-size: 1.2rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.cuisine-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.cuisine-card.selected {
+    transform: scale(1.05);
+    box-shadow: 
+        0 15px 40px rgba(255, 107, 107, 0.4),
+        0 0 30px rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Photography Style Visual Elements */
+.photo-gallery {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(139, 95, 191, 0.2);
+}
+
+.photo-samples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.photo-sample {
+    aspect-ratio: 1;
+    background: var(--gradient-ocean);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 4px 20px rgba(139, 95, 191, 0.3);
+    animation: photo-zoom 3s ease-in-out infinite;
+    cursor: pointer;
+}
+
+@keyframes photo-zoom {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.photo-sample:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 30px rgba(139, 95, 191, 0.5);
+}
+
+/* Venue Type Visual Elements */
+.venue-showcase {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(78, 205, 196, 0.2);
+}
+
+.venue-types {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.venue-icon {
+    font-size: 3rem;
+    padding: 20px;
+    background: var(--gradient-spring);
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(78, 205, 196, 0.3);
+    animation: venue-rotate 4s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+@keyframes venue-rotate {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+.venue-icon:hover {
+    transform: scale(1.2) rotate(15deg);
+    animation-play-state: paused;
+}
+
+/* Enhanced Option Cards */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.option-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(255, 27, 141, 0.2);
+    border: 3px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.option-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-party);
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.option-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(255, 27, 141, 0.3);
+}
+
+.option-card:hover::before {
+    opacity: 1;
+    animation: border-glow 2s ease-in-out infinite;
+}
+
+@keyframes border-glow {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(180deg); }
+}
+
+.option-card.selected {
+    border-color: transparent;
+    transform: translateY(-15px) scale(1.05);
+    box-shadow: 
+        0 20px 50px rgba(255, 27, 141, 0.4),
+        0 0 30px rgba(255, 255, 255, 0.8);
+}
+
+.option-card.selected::before {
+    opacity: 1;
+    animation: selected-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selected-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.option-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.option-description {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Image-based Style Representations */
+.style-representation {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+}
+
+.style-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 27, 141, 0.1) 0%, 
+        rgba(139, 95, 191, 0.1) 100%);
+    border-radius: 15px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .mood-gallery {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .mood-item {
+        font-size: 2rem;
+        padding: 10px;
+    }
+    
+    .theme-mood {
+        font-size: 2rem;
+    }
+    
+    .color-swatch {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .venue-types {
+        justify-content: center;
+    }
+    
+    .venue-icon {
+        font-size: 2.5rem;
+        padding: 15px;
+    }
+} 

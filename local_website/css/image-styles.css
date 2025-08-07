@@ -1,0 +1,195 @@
+/* Image-Based Wedding Style Representations */
+
+/* Theme Background Images */
+.traditional-theme {
+    background-image: 
+        linear-gradient(rgba(139, 0, 0, 0.3), rgba(255, 215, 0, 0.3)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="mandala" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="25" cy="25" r="20" fill="none" stroke="gold" stroke-width="1"/><circle cx="25" cy="25" r="15" fill="none" stroke="darkred" stroke-width="1"/><circle cx="25" cy="25" r="10" fill="none" stroke="gold" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23mandala)"/></svg>');
+}
+
+.modern-theme {
+    background-image: 
+        linear-gradient(rgba(248, 248, 255, 0.8), rgba(230, 230, 250, 0.8)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="geometric" patternUnits="userSpaceOnUse" width="20" height="20"><polygon points="10,2 18,10 10,18 2,10" fill="none" stroke="lavender" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23geometric)"/></svg>');
+}
+
+.rustic-theme {
+    background-image: 
+        linear-gradient(rgba(143, 188, 143, 0.3), rgba(222, 184, 135, 0.3)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" patternUnits="userSpaceOnUse" width="30" height="30"><path d="M15,5 Q20,15 15,25 Q10,15 15,5" fill="darkgreen" opacity="0.3"/><path d="M5,15 Q15,20 25,15 Q15,10 5,15" fill="burlywood" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+}
+
+.vintage-theme {
+    background-image: 
+        linear-gradient(rgba(245, 245, 220, 0.8), rgba(222, 184, 135, 0.8)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="lace" patternUnits="userSpaceOnUse" width="25" height="25"><circle cx="12.5" cy="12.5" r="8" fill="none" stroke="burlywood" stroke-width="0.5"/><circle cx="12.5" cy="12.5" r="4" fill="none" stroke="tan" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23lace)"/></svg>');
+}
+
+.bollywood-theme {
+    background-image: 
+        linear-gradient(rgba(255, 20, 147, 0.3), rgba(255, 215, 0, 0.3), rgba(0, 206, 209, 0.3)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bollywood" patternUnits="userSpaceOnUse" width="40" height="40"><circle cx="20" cy="20" r="15" fill="none" stroke="gold" stroke-width="2"/><path d="M20,10 L25,15 L20,20 L15,15 Z" fill="hotpink"/><circle cx="20" cy="20" r="5" fill="turquoise"/></pattern></defs><rect width="100" height="100" fill="url(%23bollywood)"/></svg>');
+}
+
+.fusion-theme {
+    background-image: 
+        linear-gradient(rgba(147, 112, 219, 0.3), rgba(32, 178, 170, 0.3), rgba(255, 107, 107, 0.3)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="fusion" patternUnits="userSpaceOnUse" width="35" height="35"><rect x="5" y="5" width="25" height="25" fill="none" stroke="mediumorchid" stroke-width="1"/><circle cx="17.5" cy="17.5" r="8" fill="none" stroke="lightseagreen" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23fusion)"/></svg>');
+}
+
+/* Cuisine Background Images */
+.north-indian-cuisine {
+    background-image: 
+        linear-gradient(rgba(255, 99, 71, 0.4), rgba(255, 215, 0, 0.4)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="naan" patternUnits="userSpaceOnUse" width="30" height="30"><ellipse cx="15" cy="15" rx="12" ry="8" fill="wheat" stroke="saddlebrown" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23naan)"/></svg>');
+}
+
+.south-indian-cuisine {
+    background-image: 
+        linear-gradient(rgba(34, 139, 34, 0.4), rgba(255, 215, 0, 0.4)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dosa" patternUnits="userSpaceOnUse" width="25" height="25"><rect x="2" y="10" width="21" height="5" rx="2" fill="goldenrod"/><circle cx="12.5" cy="6" r="3" fill="darkgreen"/></pattern></defs><rect width="100" height="100" fill="url(%23dosa)"/></svg>');
+}
+
+.gujarati-cuisine {
+    background-image: 
+        linear-gradient(rgba(255, 165, 0, 0.4), rgba(255, 255, 0, 0.4)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dhokla" patternUnits="userSpaceOnUse" width="20" height="20"><rect x="2" y="2" width="16" height="16" fill="khaki" stroke="orange" stroke-width="0.5"/><circle cx="10" cy="10" r="2" fill="darkgoldenrod"/></pattern></defs><rect width="100" height="100" fill="url(%23dhokla)"/></svg>');
+}
+
+.bengali-cuisine {
+    background-image: 
+        linear-gradient(rgba(70, 130, 180, 0.4), rgba(240, 230, 140, 0.4)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="fish" patternUnits="userSpaceOnUse" width="35" height="25"><path d="M5,12 Q15,8 25,12 Q15,16 5,12" fill="steelblue"/><circle cx="20" cy="12" r="1" fill="white"/><path d="M25,12 L30,10 L30,14 Z" fill="steelblue"/></pattern></defs><rect width="100" height="100" fill="url(%23fish)"/></svg>');
+}
+
+.multi-regional-cuisine {
+    background-image: 
+        linear-gradient(rgba(255, 99, 71, 0.3), rgba(50, 205, 50, 0.3), rgba(255, 215, 0, 0.3)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="thali" patternUnits="userSpaceOnUse" width="40" height="40"><circle cx="20" cy="20" r="18" fill="none" stroke="saddlebrown" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="tomato"/><circle cx="28" cy="12" r="4" fill="limegreen"/><circle cx="12" cy="28" r="4" fill="gold"/><circle cx="28" cy="28" r="4" fill="orange"/></pattern></defs><rect width="100" height="100" fill="url(%23thali)"/></svg>');
+}
+
+.fusion-cuisine {
+    background-image: 
+        linear-gradient(rgba(147, 112, 219, 0.3), rgba(255, 99, 71, 0.3), rgba(50, 205, 50, 0.3)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="fusion-food" patternUnits="userSpaceOnUse" width="30" height="30"><rect x="5" y="10" width="20" height="10" rx="5" fill="mediumorchid"/><rect x="8" y="13" width="14" height="4" fill="wheat"/><circle cx="15" cy="6" r="2" fill="tomato"/></pattern></defs><rect width="100" height="100" fill="url(%23fusion-food)"/></svg>');
+}
+
+/* Enhanced Image Containers */
+.theme-card.traditional { background-image: var(--traditional-pattern); }
+.theme-card.modern { background-image: var(--modern-pattern); }
+.theme-card.rustic { background-image: var(--rustic-pattern); }
+.theme-card.vintage { background-image: var(--vintage-pattern); }
+.theme-card.bollywood { background-image: var(--bollywood-pattern); }
+.theme-card.fusion { background-image: var(--fusion-pattern); }
+
+/* Photo Style Representations */
+.photo-style-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.photo-style-sample {
+    aspect-ratio: 4/3;
+    border-radius: 15px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.photo-style-sample::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+
+.photo-style-sample:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.photo-style-label {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
+    z-index: 2;
+}
+
+/* Venue Type Visual Representations */
+.venue-showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.venue-type-visual {
+    aspect-ratio: 1;
+    border-radius: 20px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.venue-type-visual::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+}
+
+.venue-type-visual:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+}
+
+.venue-type-label {
+    position: relative;
+    z-index: 2;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    font-size: 0.9rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .style-images {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .photo-style-gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .venue-showcase-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+} 

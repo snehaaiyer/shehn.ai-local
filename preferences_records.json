@@ -1,0 +1,51 @@
+{
+  "list": [
+    {
+      "Id": 1,
+      "CreatedAt": "2025-06-18 11:05:39+00:00",
+      "UpdatedAt": null,
+      "Wedding Reference": "1",
+      "Style Preference": "Traditional",
+      "Design Style": "Classic",
+      "Color Theme": "romantic",
+      "Event Theme": "garden_romance",
+      "Decoration Elements flowers": "roses",
+      "Lighting Options type": "ambient",
+      "Table Centerpieces style": "floral",
+      "Planned Events": "[object Object]",
+      "Essential Elements": "Vegetarian Food",
+      "Cultural Notes": "Hindu Customs",
+      "Venue Location": "Mumbai Central",
+      "Special Notes": "Garden setup preferred",
+      "Preference Created": "2024-03-20 10:00:00",
+      "Preference Updated": "2024-03-20 10:00:00"
+    },
+    {
+      "Id": 2,
+      "CreatedAt": "2025-06-18 14:59:36+00:00",
+      "UpdatedAt": null,
+      "Wedding Reference": "string",
+      "Style Preference": "string",
+      "Design Style": "string",
+      "Color Theme": "string",
+      "Event Theme": "string",
+      "Decoration Elements flowers": "string",
+      "Lighting Options type": "string",
+      "Table Centerpieces style": "string",
+      "Planned Events": "string",
+      "Essential Elements": "string",
+      "Cultural Notes": "string",
+      "Venue Location": "string",
+      "Special Notes": "string",
+      "Preference Created": "string",
+      "Preference Updated": "string"
+    }
+  ],
+  "pageInfo": {
+    "totalRows": 10,
+    "page": 1,
+    "pageSize": 2,
+    "isFirstPage": true,
+    "isLastPage": false
+  }
+}

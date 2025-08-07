@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Discovery - BID AI Wedding Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation - Matching existing design */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8B4B6B, #4A1B2E);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+
+        .nav-section {
+            padding: 16px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            margin: 2px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a5568;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(139, 75, 107, 0.1), rgba(74, 27, 46, 0.1));
+            color: #8B4B6B;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 16px 0;
+        }
+        
+        .nav-section-title {
+            padding: 0 20px 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 24px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 32px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .tab-navigation {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #718096;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tab-button.active {
+            color: #8B4B6B;
+            background: rgba(139, 75, 107, 0.05);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #8B4B6B, #4A1B2E);
+        }
+
+        .tab-icon {
+            font-size: 20px;
+        }
+
+        /* Controls */
+        .controls-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            background: #f7fafc;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #8B4B6B;
+            background: white;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #8B4B6B;
+        }
+
+        .preferences-toggle {
+            background: linear-gradient(135deg, #8B4B6B, #4A1B2E);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .preferences-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 75, 107, 0.3);
+        }
+
+        /* Content Area */
+        .content-area {
+            display: flex;
+            gap: 24px;
+            min-height: 600px;
+        }
+
+        .preferences-panel {
+            width: 280px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 20px;
+            height: fit-content;
+            transition: all 0.3s ease;
+        }
+
+        .preferences-panel.hidden {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .vendor-grid {
+            flex: 1;
+            background: #f5f7fa;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 24px;
+        }
+
+        .vendor-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 24px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .vendor-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vendor-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        .vendor-image-section {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .vendor-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .vendor-card:hover .vendor-image {
+            transform: scale(1.05);
+        }
+
+        .vendor-image-fallback {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 48px;
+        }
+
+        .vendor-badge-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .verified-badge {
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .match-score-overlay {
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .vendor-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .vendor-header {
+            margin-bottom: 16px;
+        }
+
+        .vendor-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .vendor-rating-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .vendor-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rating-stars {
+            color: #f59e0b;
+            font-size: 14px;
+        }
+
+        .rating-text {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .vendor-trust-indicators {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .availability-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .availability-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            flex-shrink: 0;
+        }
+
+        .vendor-highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .highlight-tag {
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #dbeafe;
+            white-space: nowrap;
+        }
+
+        .vendor-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vendor-pricing {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .pricing-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .pricing-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #059669;
+            word-wrap: break-word;
+        }
+
+        .vendor-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #374151;
+            min-width: 0;
+        }
+
+        .detail-icon {
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .detail-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .vendor-justifications {
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .justification-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .justification-item {
+            font-size: 12px;
+            color: #4b5563;
+            line-height: 1.4;
+            margin-bottom: 4px;
+            padding-left: 12px;
+            position: relative;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .justification-item::before {
+            content: "•";
+            color: #10b981;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .vendor-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-top: 8px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .contact-icons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .contact-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+            color: #374151;
+        }
+
+        .save-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .save-btn:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .primary-cta {
+            flex: 2;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 16px;
+            min-height: 44px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .primary-cta:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-cta {
+            flex: 1;
+            background: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 16px;
+            min-height: 44px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .secondary-cta:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        /* Availability Section */
+        .availability-section {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+        }
+
+        .availability-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .availability-status {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .confidence-score {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .confidence-high {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .confidence-medium {
+            background: #fef5e7;
+            color: #c05621;
+        }
+
+        .confidence-low {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .availability-note {
+            font-size: 12px;
+            color: #718096;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .available-dates {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .date-chip {
+            background: rgba(139, 75, 107, 0.1);
+            color: #8B4B6B;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Preferences Panel */
+        .preference-section {
+            margin-bottom: 20px;
+        }
+
+        .preference-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1a202c;
+        }
+
+        .preference-options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .preference-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .preference-option:hover {
+            border-color: #8B4B6B;
+            background: rgba(139, 75, 107, 0.05);
+        }
+
+        .preference-option input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: #8B4B6B;
+        }
+
+        /* Loading and No Results */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-size: 16px;
+            color: #718096;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        /* Communication Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .message-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .message-textarea:focus {
+            outline: none;
+            border-color: #8B4B6B;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #8B4B6B, #4A1B2E);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 75, 107, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .preferences-panel {
+                width: 100%;
+            }
+            
+            .vendor-cards-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 16px;
+            }
+            
+            .vendor-card {
+                max-width: 100%;
+            }
+            
+            .vendor-image-section {
+                height: 180px;
+            }
+            
+            .vendor-details {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .vendor-rating-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .primary-cta, .secondary-cta {
+                flex: none;
+            }
+            
+            .vendor-actions {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .contact-icons {
+                order: 2;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .save-btn {
+                order: 1;
+                align-self: flex-end;
+            }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .vendor-cards-container {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 20px;
+            }
+            
+            .vendor-image-section {
+                height: 180px;
+            }
+        }
+        @media (min-width: 1200px) {
+            .vendor-cards-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
+        }
+        /* Loading and Error States */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            margin: 20px;
+        }
+
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .retry-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .retry-btn:hover {
+            background: #b91c1c;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin: 20px;
+        }
+
+        .no-results-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .no-results-message {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Improved Vendor Cards */
+        .vendor-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 24px;
+        }
+
+        .vendor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .vendor-image-section {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .vendor-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .vendor-card:hover .vendor-image {
+            transform: scale(1.05);
+        }
+
+        .vendor-category-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .vendor-rating-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1f2937;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .vendor-content {
+            padding: 20px;
+        }
+
+        .vendor-header {
+            margin-bottom: 12px;
+        }
+
+        .vendor-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .vendor-location {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .vendor-description {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .vendor-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .vendor-price, .vendor-capacity, .vendor-specialty {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .vendor-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .contact-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #f3f4f6;
+            color: #4b5563;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .contact-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .phone-btn:hover { background: #dcfce7; color: #16a34a; }
+        .whatsapp-btn:hover { background: #dcfce7; color: #16a34a; }
+        .email-btn:hover { background: #dbeafe; color: #2563eb; }
+        .maps-btn:hover { background: #fef3c7; color: #d97706; }
+        .instagram-btn:hover { background: #fce7f3; color: #ec4899; }
+
+        .quote-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            max-width: 140px;
+        }
+
+        .quote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Default fallback images */
+        .vendor-image[src=""], .vendor-image[src*="undefined"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">💒</div>
+                    <div class="logo-text">
+                        <h1>Vivaha AI</h1>
+                        <p>Intelligent Wedding Planner</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Planning</div>
+                <a href="/" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Overview</span>
+                </a>
+                <a href="/#couple-form" class="nav-item">
+                    <span class="nav-icon">❤️</span>
+                    <span>Couple Details</span>
+                </a>
+                <a href="/enhanced-preferences.html" class="nav-item">
+                    <span class="nav-icon">🎨</span>
+                    <span>Style & Design</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a href="/vendor-discovery" class="nav-item active">
+                    <span class="nav-icon">🏪</span>
+                    <span>Vendor Discovery</span>
+                </a>
+                <a href="/#budget" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Budget</span>
+                </a>
+                <a href="/#timeline" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span>Timeline</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Tools</div>
+                <a href="/#guest-list" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Guest List</span>
+                </a>
+                <a href="/#checklist" class="nav-item">
+                    <span class="nav-icon">✅</span>
+                    <span>Checklist</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>🎉 Vendor Discovery</h1>
+                <p>Find the perfect vendors for your special day</p>
+            </div>
+
+            <div class="content">
+                <!-- Tabs Container -->
+                <div class="tabs-container">
+                    <div class="tab-navigation">
+                        <button class="tab-button active" onclick="switchTab('venues')" data-tab="venues">
+                            <span class="tab-icon">🏛️</span>
+                            <span>Venues</span>
+                        </button>
+                        <button class="tab-button" onclick="switchTab('decoration')" data-tab="decoration">
+                            <span class="tab-icon">🎨</span>
+                            <span>Decoration</span>
+                        </button>
+                        <button class="tab-button" onclick="switchTab('catering')" data-tab="catering">
+                            <span class="tab-icon">🍽️</span>
+                            <span>Catering</span>
+                        </button>
+                        <button class="tab-button" onclick="switchTab('makeup')" data-tab="makeup">
+                            <span class="tab-icon">💄</span>
+                            <span>Makeup</span>
+                        </button>
+                        <button class="tab-button" onclick="switchTab('photography')" data-tab="photography">
+                            <span class="tab-icon">📸</span>
+                            <span>Photography</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="controls-section">
+                    <div class="controls-row">
+                        <input type="text" class="search-box" placeholder="Search vendors by name, location, or services..." id="searchInput">
+                        <div class="filter-group">
+                            <select class="filter-select" id="locationFilter">
+                                <option value="">All Locations</option>
+                                <option value="mumbai">Mumbai</option>
+                                <option value="delhi">Delhi</option>
+                                <option value="bangalore">Bangalore</option>
+                                <option value="pune">Pune</option>
+                            </select>
+                            <select class="filter-select" id="budgetFilter">
+                                <option value="">All Budgets</option>
+                                <option value="budget">Budget Friendly</option>
+                                <option value="mid">Mid Range</option>
+                                <option value="premium">Premium</option>
+                                <option value="luxury">Luxury</option>
+                            </select>
+                            <select class="filter-select" id="ratingFilter">
+                                <option value="">All Ratings</option>
+                                <option value="5">5 Stars</option>
+                                <option value="4">4+ Stars</option>
+                                <option value="3">3+ Stars</option>
+                            </select>
+                        </div>
+                        <button class="preferences-toggle" onclick="togglePreferences()">
+                            ⚙️ Preferences
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="content-area">
+                    <!-- Preferences Panel -->
+                    <div class="preferences-panel" id="preferencesPanel">
+                        <div class="preference-section">
+                            <div class="preference-title">Style Preferences</div>
+                            <div class="preference-options">
+                                <label class="preference-option">
+                                    <input type="checkbox" name="style" value="traditional">
+                                    <span>Traditional</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="style" value="modern">
+                                    <span>Modern</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="style" value="vintage">
+                                    <span>Vintage</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="style" value="contemporary">
+                                    <span>Contemporary</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="preference-section">
+                            <div class="preference-title">Service Type</div>
+                            <div class="preference-options">
+                                <label class="preference-option">
+                                    <input type="checkbox" name="service" value="full-service">
+                                    <span>Full Service</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="service" value="consultation">
+                                    <span>Consultation Only</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="service" value="day-of">
+                                    <span>Day-of Coordination</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="preference-section">
+                            <div class="preference-title">Experience Level</div>
+                            <div class="preference-options">
+                                <label class="preference-option">
+                                    <input type="checkbox" name="experience" value="5plus">
+                                    <span>5+ Years</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="experience" value="10plus">
+                                    <span>10+ Years</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="experience" value="established">
+                                    <span>Well Established</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="preference-section">
+                            <div class="preference-title">Availability</div>
+                            <div class="preference-options">
+                                <label class="preference-option">
+                                    <input type="checkbox" name="availability" value="immediate">
+                                    <span>Available Immediately</span>
+                                </label>
+                                <label class="preference-option">
+                                    <input type="checkbox" name="availability" value="flexible">
+                                    <span>Flexible Dates</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vendor Grid -->
+                    <div class="vendor-grid">
+                        <div class="vendor-cards-container" id="vendorCards">
+                            <!-- Vendor cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Communication Modal -->
+    <div id="communicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Contact Vendor</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <textarea class="message-textarea" id="messageText" placeholder="Your message will be auto-generated here..."></textarea>
+                <button class="send-btn" onclick="sendMessage()">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'venues';
+        let currentVendor = null;
+        let preferencesVisible = true;
+        let loadingVendors = false; // Prevent multiple simultaneous calls
+
+        // Vendor data will be loaded from API
+        let vendorData = {};
+
+        function switchTab(tabName) {
+            console.log('🔄 Switching to tab:', tabName);
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            const targetTab = document.querySelector(`[data-tab="${tabName}"]`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            currentTab = tabName;
+            
+            // Show loading state
+            const container = document.getElementById('vendorCards');
+            if (container) {
+                container.innerHTML = '<div class="loading-state">🔄 Loading vendors...</div>';
+            }
+            
+            loadVendors();
+        }
+
+        function togglePreferences() {
+            const panel = document.getElementById('preferencesPanel');
+            preferencesVisible = !preferencesVisible;
+            
+            if (preferencesVisible) {
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        function clearVendorCache() {
+            console.log('🗑️ Clearing vendor cache');
+            vendorData = {};
+        }
+
+        function forceRefreshVendors() {
+            console.log('🔄 Force refreshing vendors for', currentTab);
+            clearVendorCache();
+            loadVendors();
+        }
+
+        async function loadVendors() {
+            console.log('📊 Loading vendors for category:', currentTab);
+            
+            // Check if we already have data for this category
+            if (vendorData[currentTab] && vendorData[currentTab].length > 0) {
+                console.log('✅ Using cached data for', currentTab);
+                renderVendors();
+                return;
+            }
+            
+            try {
+                // Show loading indicator
+                const container = document.getElementById('vendorCards');
+                if (container) {
+                    container.innerHTML = '<div class="loading-state">🔄 Loading vendors...</div>';
+                }
+                
+                // Gather all preferences from localStorage
+                const weddingData = JSON.parse(localStorage.getItem('vivaha_wedding_data') || '{}');
+                const preferencesData = JSON.parse(localStorage.getItem('vivaha_preferences') || '{}');
+                
+                console.log('💾 Wedding data:', weddingData);
+                console.log('🎨 Preferences data:', preferencesData);
+                
+                // Combine all relevant fields into a single payload
+                const payload = {
+                    category: currentTab,
+                    city: weddingData.region || weddingData.city || 'mumbai',
+                    weddingDate: weddingData.weddingDate || '',
+                    weddingDays: weddingData.weddingDays || '',
+                    guestCount: weddingData.guestCount || '',
+                    budget: weddingData.budgetRange || weddingData.budget || '',
+                    weddingType: weddingData.weddingType || '',
+                    yourName: weddingData.partner1Name || weddingData.yourName || '',
+                    partnerName: weddingData.partner2Name || weddingData.partnerName || '',
+                    theme: preferencesData.weddingTheme || preferencesData.decorationTheme || preferencesData.theme || '',
+                    decorStyle: preferencesData.decorStyle || '',
+                    cuisineStyle: preferencesData.cuisineStyle || '',
+                    photographyStyle: preferencesData.photographyStyle || '',
+                    venueType: preferencesData.venueType || preferencesData.venuePreference || '',
+                    floralStyle: preferencesData.floralStyle || '',
+                    lightingStyle: preferencesData.lightingStyle || '',
+                    furnitureStyle: preferencesData.furnitureStyle || '',
+                    musicPreferences: preferencesData.musicPreferences || [],
+                    entertainmentPreferences: preferencesData.entertainmentPreferences || [],
+                    priorities: weddingData.priorities || preferencesData.priorities || [],
+                    specialRequirements: weddingData.specialRequirements || preferencesData.specialRequests || '',
+                    dateFlexibility: weddingData.dateFlexibility || '',
+                    season: weddingData.season || '',
+                };
+
+                console.log('📤 Sending payload:', payload);
+
+                const response = await fetch(`/api/vendor-data/${currentTab}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                console.log('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('📥 Received data:', data);
+                
+                if (data.success && data.vendors) {
+                    vendorData[currentTab] = data.vendors;
+                    console.log('✅ Loaded', data.vendors.length, 'vendors for', currentTab);
+                    renderVendors();
+                    if (data.date_preferences && Object.keys(data.date_preferences).length > 0) {
+                        showPreferencesApplied(data.date_preferences);
+                    }
+                } else {
+                    console.error('❌ Failed to load vendors:', data.error || 'Unknown error');
+                    showError(data.error || 'Failed to load vendor data');
+                }
+            } catch (error) {
+                console.error('💥 Error loading vendors:', error);
+                showError('Network error loading vendors: ' + error.message);
+            }
+        }
+
+        function renderVendors() {
+            console.log('🎨 Rendering vendors for', currentTab);
+            const container = document.getElementById('vendorCards');
+            const vendors = vendorData[currentTab] || [];
+            
+            console.log('📊 Found', vendors.length, 'vendors to render');
+            
+            if (!container) {
+                console.error('❌ Vendor cards container not found!');
+                return;
+            }
+            
+            if (vendors.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <div class="no-results-message">No vendors found for ${currentTab}.</div>
+                        <button class="retry-btn" onclick="forceRefreshVendors()">Refresh</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Category icons mapping
+            const categoryIcons = {
+                'photography': '📸',
+                'venues': '🏛️',
+                'catering': '🍽️',
+                'decoration': '🌺',
+                'makeup': '💄',
+                'music': '🎵',
+                'transport': '🚗',
+                'default': '✨'
+            };
+
+            const icon = categoryIcons[currentTab] || categoryIcons.default;
+            
+            // Render vendor cards
+            const vendorHTML = vendors.map(vendor => {
+                const fallbackImage = getFallbackImage(currentTab);
+                const vendorImage = vendor.primary_image || vendor.image || fallbackImage;
+                
+                return `
+                    <div class="vendor-card" data-vendor-id="${vendor.id}">
+                        <div class="vendor-image-section">
+                            <img src="${vendorImage}" 
+                                 alt="${vendor.name}" 
+                                 class="vendor-image"
+                                 onerror="handleImageError(this, '${currentTab}')"
+                                 loading="lazy">
+                            <div class="vendor-category-badge">${icon}</div>
+                            ${vendor.rating ? `<div class="vendor-rating-badge">⭐ ${vendor.rating}</div>` : ''}
+                        </div>
+                        
+                        <div class="vendor-content">
+                            <div class="vendor-header">
+                                <h3 class="vendor-name">${vendor.name}</h3>
+                                <div class="vendor-location">📍 ${vendor.location || 'Location not specified'}</div>
+                            </div>
+                            
+                            <div class="vendor-description">
+                                ${vendor.description || 'Professional service provider'}
+                            </div>
+                            
+                            <div class="vendor-details">
+                                ${vendor.price ? `<div class="vendor-price">💰 ${vendor.price}</div>` : ''}
+                                ${vendor.capacity ? `<div class="vendor-capacity">👥 ${vendor.capacity}</div>` : ''}
+                                ${vendor.specialty ? `<div class="vendor-specialty">✨ ${vendor.specialty}</div>` : ''}
+                            </div>
+                            
+                            <div class="vendor-actions">
+                                <div class="contact-icons">
+                                    ${vendor.has_valid_phone ? `<a href="tel:${vendor.phone}" class="contact-btn phone-btn" title="Call">📞</a>` : ''}
+                                    ${vendor.has_valid_whatsapp ? `<a href="https://wa.me/${vendor.whatsapp}" class="contact-btn whatsapp-btn" title="WhatsApp" target="_blank">💬</a>` : ''}
+                                    ${vendor.has_valid_email ? `<a href="mailto:${vendor.email}" class="contact-btn email-btn" title="Email">✉️</a>` : ''}
+                                    ${vendor.has_valid_maps ? `<a href="${vendor.google_maps}" class="contact-btn maps-btn" title="Location" target="_blank">🗺️</a>` : ''}
+                                    ${vendor.has_valid_instagram ? `<a href="${vendor.instagram}" class="contact-btn instagram-btn" title="Instagram" target="_blank">📷</a>` : ''}
+                                </div>
+                                <button class="quote-btn" onclick="requestQuote('${vendor.id}', '${vendor.name}')">
+                                    Request Quote
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = vendorHTML;
+            console.log('✅ Successfully rendered', vendors.length, 'vendor cards');
+        }
+
+        // Helper functions
+        function getFallbackImage(category) {
+            const fallbackImages = {
+                'venues': 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400',
+                'decoration': 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400',
+                'catering': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400',
+                'makeup': 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400',
+                'photography': 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=400'
+            };
+            return fallbackImages[category] || fallbackImages.venues;
+        }
+
+        function handleImageError(img, category) {
+            console.log('🖼️ Image failed to load, using fallback');
+            img.src = getFallbackImage(category);
+            img.onerror = function() {
+                // If fallback also fails, create a letter avatar
+                const container = img.parentElement;
+                const vendorName = img.alt || 'Vendor';
+                const letter = vendorName.charAt(0).toUpperCase();
+                
+                img.style.display = 'none';
+                container.innerHTML += `
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 48px;
+                        font-weight: bold;
+                    ">${letter}</div>
+                `;
+            };
+        }
+
+        function findVendorById(vendorId) {
+            const vendors = vendorData[currentTab] || [];
+            return vendors.find(vendor => vendor.id == vendorId);
+        }
+
+        async function openWhatsAppContact(vendorId) {
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            try {
+                const response = await fetch('/api/generate-whatsapp-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        vendor_info: {
+                            name: vendor.name,
+                            category: vendor.category,
+                            location: vendor.location,
+                            price: vendor.price
+                        },
+                        wedding_info: getWeddingInfo()
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const whatsappUrl = `https://wa.me/${vendor.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(data.message)}`;
+                    window.open(whatsappUrl, '_blank');
+                } else {
+                    alert('Failed to generate WhatsApp message');
+                }
+            } catch (error) {
+                console.error('Error generating WhatsApp message:', error);
+                alert('Error generating message');
+            }
+        }
+
+        async function openEmailContact(vendorId) {
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            currentVendor = vendor;
+            
+            try {
+                const response = await fetch('/api/generate-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message_type: 'inquiry',
+                        vendor_info: {
+                            name: vendor.name,
+                            category: vendor.category,
+                            location: vendor.location,
+                            price: vendor.price
+                        },
+                        wedding_info: getWeddingInfo()
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('modalTitle').textContent = `Contact ${vendor.name}`;
+                    document.getElementById('messageText').value = data.message;
+                    document.getElementById('communicationModal').style.display = 'block';
+                } else {
+                    alert('Failed to generate email message');
+                }
+            } catch (error) {
+                console.error('Error generating email message:', error);
+                alert('Error generating message');
+            }
+        }
+
+        async function requestQuote(vendorId, vendorName) {
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            currentVendor = vendor;
+            
+            try {
+                const response = await fetch('/api/generate-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message_type: 'quote',
+                        vendor_info: {
+                            name: vendor.name,
+                            category: vendor.category,
+                            location: vendor.location,
+                            price: vendor.price
+                        },
+                        wedding_info: getWeddingInfo()
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('modalTitle').textContent = `Request Quote - ${vendor.name}`;
+                    document.getElementById('messageText').value = data.message;
+                    document.getElementById('communicationModal').style.display = 'block';
+                } else {
+                    alert('Failed to generate quote message');
+                }
+            } catch (error) {
+                console.error('Error generating quote message:', error);
+                alert('Error generating message');
+            }
+        }
+
+        function getWeddingInfo() {
+            // Get wedding info from localStorage or default values
+            const savedData = localStorage.getItem('weddingFormData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                return {
+                    date: data.weddingDate || '[Please specify wedding date]',
+                    guest_count: data.guestCount || '[Please specify guest count]',
+                    venue: data.venue || '[Please specify venue]',
+                    duration: data.duration || '[Please specify duration]',
+                    customer_name: data.yourName && data.partnerName ? `${data.yourName} & ${data.partnerName}` : '[Your Name]',
+                    customer_phone: '[Your Phone Number]',
+                    customer_email: '[Your Email]'
+                };
+            }
+            
+            return {
+                date: '[Please specify wedding date]',
+                guest_count: '[Please specify guest count]',
+                venue: '[Please specify venue]',
+                duration: '[Please specify duration]',
+                customer_name: '[Your Name]',
+                customer_phone: '[Your Phone Number]',
+                customer_email: '[Your Email]'
+            };
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('messageText').value;
+            if (!currentVendor || !message.trim()) return;
+            
+            // Create email link
+            const subject = `Wedding ${currentTab} Inquiry - ${currentVendor.name}`;
+            const emailUrl = `mailto:${currentVendor.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+            
+            // Open email client
+            window.location.href = emailUrl;
+            
+            // Close modal
+            closeModal();
+            
+            // Show success message
+            alert('Email client opened! Please send the message from your email application.');
+        }
+
+        function closeModal() {
+            document.getElementById('communicationModal').style.display = 'none';
+            currentVendor = null;
+        }
+
+        // New minimalistic contact functions
+        function openGoogleMaps(mapsUrl) {
+            if (mapsUrl) {
+                window.open(mapsUrl, '_blank');
+            }
+        }
+
+        function openWebsite(websiteUrl) {
+            if (websiteUrl) {
+                window.open(websiteUrl, '_blank');
+            }
+        }
+
+        function openInstagram(instagramUrl) {
+            if (instagramUrl) {
+                window.open(instagramUrl, '_blank');
+            }
+        }
+
+        function showError(message) {
+            const container = document.getElementById('vendorCards');
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-state">
+                        <div class="error-icon">⚠️</div>
+                        <div class="error-message">${message}</div>
+                        <button class="retry-btn" onclick="forceRefreshVendors()">Try Again</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Search and filter functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterVendors();
+        });
+
+        document.getElementById('locationFilter').addEventListener('change', filterVendors);
+        document.getElementById('budgetFilter').addEventListener('change', filterVendors);
+        document.getElementById('ratingFilter').addEventListener('change', filterVendors);
+
+        function filterVendors() {
+            // This would typically filter the rendered vendors
+            // For now, we'll just re-render all vendors
+            renderVendors();
+        }
+
+        // Close modal when clicking outside
+        function showPreferencesApplied(preferences) {
+            // Create or update preferences indicator
+            let indicator = document.getElementById('preferencesIndicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'preferencesIndicator';
+                indicator.style.cssText = `
+                    background: linear-gradient(135deg, rgba(139, 75, 107, 0.1), rgba(74, 27, 46, 0.05));
+                    border: 1px solid rgba(139, 75, 107, 0.2);
+                    border-radius: 8px;
+                    padding: 12px;
+                    margin-bottom: 16px;
+                    font-size: 13px;
+                    color: #8B4B6B;
+                `;
+                
+                const content = document.querySelector('.content');
+                content.insertBefore(indicator, content.firstChild);
+            }
+            
+            const preferencesList = Object.entries(preferences)
+                .filter(([key, value]) => value && value !== null)
+                .map(([key, value]) => {
+                    const labels = {
+                        'dateFlexibility': 'Timeline',
+                        'specificDate': 'Start Date',
+                        'season': 'Season',
+                        'guestCount': 'Guest Count',
+                        'weddingDays': 'Duration'
+                    };
+                    return `${labels[key] || key}: ${value}`;
+                }).join(' • ');
+            
+            indicator.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>🎯</span>
+                    <strong>Availability calculated with your preferences:</strong>
+                    ${preferencesList}
+                    <button onclick="clearPreferences()" style="margin-left: auto; padding: 4px 8px; background: none; border: 1px solid #8B4B6B; color: #8B4B6B; border-radius: 4px; cursor: pointer; font-size: 11px;">Clear</button>
+                </div>
+            `;
+        }
+
+        function clearPreferences() {
+            // Remove preferences from localStorage
+            localStorage.removeItem('weddingPreferences');
+            
+            // Remove indicator
+            const indicator = document.getElementById('preferencesIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+            
+            // Reload vendors without preferences
+            loadVendors();
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('communicationModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function saveVendor(vendorId) {
+            // Get saved vendors from localStorage
+            let savedVendors = JSON.parse(localStorage.getItem('savedVendors') || '[]');
+            
+            // Check if vendor is already saved
+            if (savedVendors.includes(vendorId)) {
+                // Remove from saved
+                savedVendors = savedVendors.filter(id => id !== vendorId);
+                localStorage.setItem('savedVendors', JSON.stringify(savedVendors));
+                
+                // Update button text
+                const saveBtn = event.target.closest('.save-btn');
+                if (saveBtn) {
+                    saveBtn.innerHTML = '<span>💝</span><span>Save</span>';
+                }
+                
+                showNotification('Vendor removed from saved list', 'info');
+            } else {
+                // Add to saved
+                savedVendors.push(vendorId);
+                localStorage.setItem('savedVendors', JSON.stringify(savedVendors));
+                
+                // Update button text
+                const saveBtn = event.target.closest('.save-btn');
+                if (saveBtn) {
+                    saveBtn.innerHTML = '<span>💖</span><span>Saved</span>';
+                }
+                
+                showNotification('Vendor saved successfully!', 'success');
+            }
+        }
+
+        function viewVendorDetails(vendorId) {
+            // Create modal or navigate to detailed view
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            // For now, show an alert with vendor details
+            // In production, this would open a detailed modal or navigate to a new page
+            const details = `
+Vendor: ${vendor.name}
+Rating: ${vendor.rating}/5
+Location: ${vendor.location}
+Price: ${vendor.price}
+Specialties: ${vendor.specialties ? vendor.specialties.join(', ') : 'N/A'}
+
+Contact Options:
+${vendor.has_valid_whatsapp ? '• WhatsApp available' : ''}
+${vendor.has_valid_email ? '• Email available' : ''}
+${vendor.has_valid_maps ? '• Location on Maps' : ''}
+${vendor.website ? '• Website available' : ''}
+${vendor.has_valid_instagram ? '• Instagram profile' : ''}
+            `;
+            
+            alert(details);
+            
+            // Track user interaction
+            console.log(`User viewed details for vendor: ${vendor.name}`);
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                max-width: 300px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function preloadVendorImage(imageUrl, onSuccess, onError) {
+            const img = new Image();
+            img.onload = onSuccess;
+            img.onerror = onError;
+            img.src = imageUrl;
+        }
+
+        // Update saved vendor buttons on page load
+        function updateSavedVendorButtons() {
+            const savedVendors = JSON.parse(localStorage.getItem('savedVendors') || '[]');
+            
+            document.querySelectorAll('.save-btn').forEach(btn => {
+                const vendorId = parseInt(btn.getAttribute('onclick').match(/\d+/)[0]);
+                if (savedVendors.includes(vendorId)) {
+                    btn.innerHTML = '<span>💖</span><span>Saved</span>';
+                }
+            });
+        }
+
+        // Call after vendors are rendered
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Vendor Discovery initialized');
+            console.log('📱 Starting with tab:', currentTab);
+            
+            // Ensure venues tab is active by default
+            const venuesTab = document.querySelector('[data-tab="venues"]');
+            if (venuesTab) {
+                venuesTab.classList.add('active');
+            }
+            
+            // Load initial data
+            loadVendors();
+        });
+
+        async function saveUserInputsToBackend() {
+            // Gather all user input from your form or localStorage
+            const userData = JSON.parse(localStorage.getItem('weddingFormData') || '{}');
+            try {
+                const response = await fetch('/api/save-user-inputs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Your details have been saved successfully!');
+                    // Automatically navigate to the next section/tab
+                    // Try to switch to 'preferences' tab if it exists, else to 'venues' tab
+                    if (document.getElementById('tab-preferences')) {
+                        switchTab('preferences');
+                    } else if (document.getElementById('tab-venues')) {
+                        switchTab('venues');
+                    }
+                } else {
+                    alert('Error saving details: ' + (result.error || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Network or server error: ' + err.message);
+            }
+        }
+        // Helper to switch tabs by tab name (if not already present)
+        function switchTab(tabName) {
+            const tab = document.getElementById('tab-' + tabName);
+            if (tab) {
+                tab.click();
+            }
+        }
+    </script>
+</body>
+</html> 

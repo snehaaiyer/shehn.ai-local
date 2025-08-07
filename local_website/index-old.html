@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivaha AI - Intelligent Wedding Planner</title>
+    <link rel="stylesheet" href="css/new-design.css">
+    <link rel="stylesheet" href="css/web-image-styles.css">
+    <link rel="stylesheet" href="css/symbol-guide.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">◈</div>
+                <div class="logo-text">
+                    <h1>Vivaha AI</h1>
+                    <p>Intelligent Wedding Planner</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <h3>Planning</h3>
+                <ul class="nav-list">
+                    <li class="nav-item active" data-screen="overview">
+                        <span class="nav-icon">⌂</span>
+                        <span class="nav-label">Overview</span>
+                    </li>
+                    <li class="nav-item" data-screen="couple-details">
+                        <span class="nav-icon">♡</span>
+                        <span class="nav-label">Couple Details</span>
+                    </li>
+                    <li class="nav-item" data-screen="venue-selection">
+                        <span class="nav-icon">⌂</span>
+                        <span class="nav-label">Venues</span>
+                    </li>
+                    <li class="nav-item" data-screen="style-design">
+                        <span class="nav-icon">◐</span>
+                        <span class="nav-label">Style & Design</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h3>Management</h3>
+                <ul class="nav-list">
+                    <li class="nav-item" data-screen="vendors">
+                        <span class="nav-icon">◊</span>
+                        <span class="nav-label">Vendors</span>
+                    </li>
+                    <li class="nav-item" data-screen="budget">
+                        <span class="nav-icon">$</span>
+                        <span class="nav-label">Budget</span>
+                    </li>
+                    <li class="nav-item" data-screen="timeline">
+                        <span class="nav-icon">□</span>
+                        <span class="nav-label">Timeline</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h3>Tools</h3>
+                <ul class="nav-list">
+                    <li class="nav-item" data-screen="guest-list">
+                        <span class="nav-icon">∽</span>
+                        <span class="nav-label">Guest List</span>
+                    </li>
+                    <li class="nav-item" data-screen="checklist">
+                        <span class="nav-icon">✓</span>
+                        <span class="nav-label">Checklist</span>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="ai-status">
+                <div class="status-indicator active"></div>
+                <span>AI Assistant Active</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="sidebar-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="breadcrumb">
+                    <span id="current-section">Overview</span>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="action-btn save-btn" id="save-data-btn">
+                    <span class="btn-icon">◈</span>
+                    <span>Save Progress</span>
+                </button>
+                <button class="action-btn ai-assist-btn">
+                    <span class="btn-icon">●</span>
+                    <span>AI Assist</span>
+                </button>
+                <div class="connection-status" id="connection-status">
+                    <div class="status-dot"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Overview Screen -->
+            <section id="overview-screen" class="screen active">
+                <div class="screen-header">
+                    <h1>Your Wedding Journey</h1>
+                    <p>Let's create the perfect celebration of your love story</p>
+                </div>
+                
+                <div class="overview-grid">
+                    <div class="overview-card hero-card">
+                        <div class="card-content">
+                            <h2>Welcome to Your Wedding Planning Journey</h2>
+                            <p>Start planning your dream wedding with our AI-powered assistant. We'll guide you through every step to create the perfect celebration.</p>
+                            <button class="cta-btn">Start Planning</button>
+                        </div>
+                        <div class="card-visual">
+                            <div class="floating-hearts">
+                                <span>♡</span>
+                                <span>◊</span>
+                                <span>✤</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-overview">
+                        <h3>Planning Progress</h3>
+                        <div class="progress-items">
+                            <div class="progress-item">
+                                <div class="progress-icon">♡</div>
+                                <div class="progress-info">
+                                    <h4>Couple Details</h4>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text">Not started</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-item">
+                                <div class="progress-icon">⌂</div>
+                                <div class="progress-info">
+                                    <h4>Venue Selection</h4>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text">Not started</span>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-item">
+                                <div class="progress-icon">◐</div>
+                                <div class="progress-info">
+                                    <h4>Style & Design</h4>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="progress-text">Not started</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-stats">
+                        <h3>Quick Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Days to Wedding</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">₹0</div>
+                                <div class="stat-label">Budget Set</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Vendors Booked</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-suggestions">
+                        <h3>AI Recommendations</h3>
+                        <div class="suggestion-list">
+                            <div class="suggestion-item">
+                                <div class="suggestion-icon">●</div>
+                                <div class="suggestion-content">
+                                    <h4>Start with couple details</h4>
+                                    <p>Begin your journey by sharing your story and preferences</p>
+                                </div>
+                            </div>
+                            <div class="suggestion-item">
+                                <div class="suggestion-icon">□</div>
+                                <div class="suggestion-content">
+                                    <h4>Set your wedding date</h4>
+                                    <p>Choose the perfect date to begin venue planning</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Couple Details Screen -->
+            <section id="couple-details-screen" class="screen">
+                <div class="screen-header">
+                    <h1>Tell Us About You</h1>
+                    <p>Share your love story and preferences to get personalized recommendations</p>
+                </div>
+                
+                <div class="form-container">
+                    <div class="form-section">
+                        <h2>Couple Information</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="bride-name">Bride's Name</label>
+                                <input type="text" id="bride-name" name="bride-name" placeholder="Enter bride's name">
+                            </div>
+                            <div class="form-group">
+                                <label for="groom-name">Groom's Name</label>
+                                <input type="text" id="groom-name" name="groom-name" placeholder="Enter groom's name">
+                            </div>
+                            <div class="form-group">
+                                <label for="wedding-date">Wedding Date</label>
+                                <input type="date" id="wedding-date" name="wedding-date">
+                            </div>
+                            <div class="form-group">
+                                <label for="wedding-city">Wedding City</label>
+                                <input type="text" id="wedding-city" name="wedding-city" placeholder="Enter city">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h2>Wedding Details</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="guest-count">Expected Guest Count</label>
+                                <select id="guest-count" name="guest-count">
+                                    <option value="">Select range</option>
+                                    <option value="0-50">50 or less</option>
+                                    <option value="50-100">50-100</option>
+                                    <option value="100-200">100-200</option>
+                                    <option value="200-500">200-500</option>
+                                    <option value="500+">500+</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="budget-range">Budget Range</label>
+                                <select id="budget-range" name="budget-range">
+                                    <option value="">Select budget</option>
+                                    <option value="5-10">₹5-10 Lakhs</option>
+                                    <option value="10-25">₹10-25 Lakhs</option>
+                                    <option value="25-50">₹25-50 Lakhs</option>
+                                    <option value="50-100">₹50 Lakhs - 1 Crore</option>
+                                    <option value="100+">₹1 Crore+</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn-secondary">Save as Draft</button>
+                        <button class="btn-primary">Continue to Venues</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Style & Design Screen -->
+            <section id="style-design-screen" class="screen">
+                <div class="screen-header">
+                    <h1>Style & Design Preferences</h1>
+                    <p>Choose themes, colors, and styles that reflect your personality</p>
+                </div>
+                
+                <div id="visual-preferences-container" class="preferences-container">
+                    <!-- This will be populated by the visual-preferences.js script -->
+                </div>
+            </section>
+
+            <!-- Other screens will be added as needed -->
+            <section id="venue-selection-screen" class="screen">
+                <div class="screen-header">
+                    <h1>Venue Selection</h1>
+                    <p>Find the perfect location for your special day</p>
+                </div>
+                <div class="coming-soon">
+                    <div class="coming-soon-icon">⌂</div>
+                    <h2>Coming Soon</h2>
+                    <p>Venue selection tools are being prepared for you</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3 id="loading-title">Processing your request...</h3>
+                            <p id="loading-message">Our AI is working its magic ◊</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/debug-init.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/enhanced-api-service.js"></script>
+    <script src="js/connection-status.js"></script>
+    <script src="js/web-image-service.js"></script>
+    <script src="js/visual-preferences.js"></script>
+    <script src="js/new-navigation.js"></script>
+    <script src="js/new-app.js"></script>
+    <script src="js/confetti-effects.js"></script>
+</body>
+</html> 

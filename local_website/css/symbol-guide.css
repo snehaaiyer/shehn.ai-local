@@ -1,0 +1,56 @@
+/* Symbol Guide for Vivaha AI Wedding Planner
+   Professional glyphs inspired by The Noun Project style
+   =================================================== */
+
+/* 
+SYMBOL LEGEND:
+◈ - Primary brand/logo symbol, save/important actions
+⌂ - Home/house, venues, overview  
+♡ - Love/heart, couples, romance
+◊ - Vendors, sparkle effects, processing
+◐ - Style/design, preferences, customization
+$ - Budget, financial planning
+□ - Timeline, calendar, scheduling
+∽ - Guest list, people connections
+✓ - Checkmarks, completion, verification  
+● - AI assistance, active states, suggestions
+▲ - Start/play, action buttons
+▼ - Dropdown, expand actions
+◆ - Confetti alternative, celebrations
+✤ - Decorative flourish, special elements
+
+USAGE GUIDELINES:
+- Use ◈ for primary brand identity and key actions
+- Use ⌂ for all location/venue related features
+- Use ♡ for couple/relationship elements
+- Use ◊ for vendor management and processing states
+- Use ◐ for creative/design customization
+- Keep symbols consistent across all interfaces
+- Avoid mixing emoji with these clean symbols
+*/
+
+/* Ensure consistent symbol styling */
+.nav-icon,
+.btn-icon,
+.progress-icon,
+.suggestion-icon,
+.logo-icon {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Symbol size variations */
+.symbol-small { font-size: 0.875rem; }
+.symbol-medium { font-size: 1.125rem; }
+.symbol-large { font-size: 1.5rem; }
+.symbol-xl { font-size: 2rem; }
+
+/* Symbol color themes */
+.symbol-primary { color: var(--primary-600, #7C3AED); }
+.symbol-secondary { color: var(--teal-600, #0D9488); }
+.symbol-muted { color: var(--gray-500, #6B7280); }
+.symbol-success { color: var(--green-600, #059669); }
+.symbol-warning { color: var(--amber-600, #D97706); } 

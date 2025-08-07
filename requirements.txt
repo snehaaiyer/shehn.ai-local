@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+requests
+python-multipart
+jinja2
+# HTTP client for API requests
+httpx
+# For handling environment variables  
+python-dotenv

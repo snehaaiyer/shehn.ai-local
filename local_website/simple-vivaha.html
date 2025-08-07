@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivaha AI - Wedding Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #7C3AED, #0D9488);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+        
+        .logo-text p {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+        
+        .nav-section {
+            padding: 16px 0;
+        }
+        
+        .nav-section-title {
+            padding: 0 20px 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            margin: 2px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .nav-item:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, #7C3AED, #0D9488);
+            color: white;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+        
+        .nav-item.active .nav-icon {
+            opacity: 1;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .top-bar {
+            background: white;
+            padding: 16px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #f0fff4;
+            color: #22543d;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #38a169;
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #7C3AED, #0D9488);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+        }
+        
+        /* Screen Content */
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* Overview Layout */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #7C3AED, #0D9488);
+            color: white;
+            padding: 32px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+        
+        .hero-content h2 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-primary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .progress-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .progress-panel h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a202c;
+        }
+        
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .progress-item:last-child {
+            border-bottom: none;
+        }
+        
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .progress-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .progress-text {
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .progress-status {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #7C3AED;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #718096;
+            font-weight: 500;
+        }
+        
+        .recommendations-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-top: 24px;
+        }
+        
+        .recommendations-panel h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a202c;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .recommendation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .rec-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #7C3AED, #0D9488);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .rec-content {
+            flex: 1;
+        }
+        
+        .rec-title {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+        
+        .rec-desc {
+            font-size: 0.875rem;
+            color: #718096;
+        }
+        
+        /* Form Styles */
+        .form-container {
+            max-width: 800px;
+        }
+        
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        
+        .form-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #1a202c;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7C3AED;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary-solid {
+            background: linear-gradient(135deg, #7C3AED, #0D9488);
+            color: white;
+        }
+        
+        .btn-primary-solid:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary-solid {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-secondary-solid:hover {
+            background: #edf2f7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .main-content {
+                margin-left: 240px;
+            }
+            
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-area {
+                padding: 16px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">✨</div>
+                    <div class="logo-text">
+                        <h1>Vivaha AI</h1>
+                        <p>Intelligent Wedding Planner</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Planning</div>
+                <div class="nav-item active" onclick="showScreen('overview')">
+                    <span class="nav-icon">🏠</span>
+                    <span>Overview</span>
+                </div>
+                <div class="nav-item" onclick="showScreen('couple-form')">
+                    <span class="nav-icon">❤️</span>
+                    <span>Couple Details</span>
+                </div>
+                <div class="nav-item" onclick="showScreen('venues')">
+                    <span class="nav-icon">🏛️</span>
+                    <span>Venues</span>
+                </div>
+                <div class="nav-item" onclick="showScreen('preferences')">
+                    <span class="nav-icon">🎨</span>
+                    <span>Style & Design</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <div class="nav-item" onclick="showScreen('vendors')">
+                    <span class="nav-icon">👥</span>
+                    <span>Vendors</span>
+                </div>
+                <div class="nav-item" onclick="showScreen('budget')">
+                    <span class="nav-icon">💰</span>
+                    <span>Budget</span>
+                </div>
+                <div class="nav-item" onclick="showScreen('timeline')">
+                    <span class="nav-icon">📅</span>
+                    <span>Timeline</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Tools</div>
+                <div class="nav-item" onclick="showScreen('guest-list')">
+                    <span class="nav-icon">📝</span>
+                    <span>Guest List</span>
+                </div>
+                <div class="nav-item" onclick="showScreen('checklist')">
+                    <span class="nav-icon">✅</span>
+                    <span>Checklist</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title" id="page-title">Overview</div>
+                <div class="top-bar-actions">
+                    <div class="status-indicator" id="status">
+                        <div class="status-dot"></div>
+                        <span>Checking connection...</span>
+                    </div>
+                    <button class="save-btn" onclick="saveProgress()">💾 Save Progress</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Overview Screen -->
+                <div id="overview" class="screen active">
+                    <div class="overview-grid">
+                        <div class="hero-section">
+                            <div class="hero-content">
+                                <h2>Your Wedding Journey</h2>
+                                <p>Let's create the perfect celebration of your love story</p>
+                                <div class="hero-actions">
+                                    <button class="btn-primary" onclick="showScreen('couple-form')">Start Planning</button>
+                                    <button class="btn-secondary" onclick="testAPI()">Test API</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-panel">
+                            <h3>Planning Progress</h3>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <div class="progress-icon" style="background: #fef5e7; color: #d69e2e;">❤️</div>
+                                    <div>
+                                        <div class="progress-text">Couple Details</div>
+                                        <div class="progress-status" id="progress-couple-status">Not started</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <div class="progress-icon" style="background: #e6fffa; color: #0d9488;">🏛️</div>
+                                    <div>
+                                        <div class="progress-text">Venue Selection</div>
+                                        <div class="progress-status" id="progress-venue-status">Not started</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <div class="progress-icon" style="background: #f0e6ff; color: #7c3aed;">🎨</div>
+                                    <div>
+                                        <div class="progress-text">Style & Design</div>
+                                        <div class="progress-status" id="progress-style-status">Not started</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="days-count">--</div>
+                            <div class="stat-label">Days to Wedding</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="budget-display" style="font-size: 1.5rem;">Not Set</div>
+                            <div class="stat-label">Budget Set</div>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendations-panel">
+                        <h3>AI Recommendations</h3>
+                        <div class="recommendation-item">
+                            <div class="rec-icon">💡</div>
+                            <div class="rec-content">
+                                <div class="rec-title">Start with couple details</div>
+                                <div class="rec-desc">Begin your journey by sharing your story and preferences</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="rec-icon">📅</div>
+                            <div class="rec-content">
+                                <div class="rec-title">Set your wedding date</div>
+                                <div class="rec-desc">Choose the perfect date to begin venue planning</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Couple Details Screen -->
+                <div id="couple-form" class="screen">
+                    <div class="form-container">
+                        <div class="form-section">
+                            <h2>Tell Us About Your Love Story</h2>
+                            <form id="weddingForm">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="partner1">Partner 1 Name</label>
+                                        <input type="text" id="partner1" name="partner1" placeholder="Enter first partner's name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="partner2">Partner 2 Name</label>
+                                        <input type="text" id="partner2" name="partner2" placeholder="Enter second partner's name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="weddingDate">Wedding Date</label>
+                                        <input type="date" id="weddingDate" name="weddingDate">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="weddingCity">Wedding City</label>
+                                        <input type="text" id="weddingCity" name="weddingCity" placeholder="Enter city">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="guestCount">Guest Count</label>
+                                        <select id="guestCount" name="guestCount">
+                                            <option value="">Select range</option>
+                                            <option value="0-50">50 or less</option>
+                                            <option value="50-100">50-100</option>
+                                            <option value="100-200">100-200</option>
+                                            <option value="200-500">200-500</option>
+                                            <option value="500+">500+</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="budget">Budget Range</label>
+                                        <select id="budget" name="budget">
+                                            <option value="">Select budget</option>
+                                            <option value="5-10">₹5-10 Lakhs</option>
+                                            <option value="10-25">₹10-25 Lakhs</option>
+                                            <option value="25-50">₹25-50 Lakhs</option>
+                                            <option value="50-100">₹50 Lakhs - 1 Crore</option>
+                                            <option value="100+">₹1 Crore+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary-solid" onclick="showScreen('overview')">Back</button>
+                                    <button type="button" class="btn btn-primary-solid" onclick="saveWeddingData()">Save Details</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style Preferences Screen -->
+                <div id="preferences" class="screen">
+                    <div class="form-container">
+                        <div class="form-section">
+                            <h2>Style & Design Preferences</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="theme">Wedding Theme</label>
+                                    <select id="theme" name="theme">
+                                        <option value="">Select theme</option>
+                                        <option value="traditional">Traditional</option>
+                                        <option value="modern">Modern</option>
+                                        <option value="rustic">Rustic</option>
+                                        <option value="beach">Beach</option>
+                                        <option value="garden">Garden</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="colors">Color Scheme</label>
+                                    <input type="text" id="colors" name="colors" placeholder="e.g., Purple & Gold">
+                                </div>
+                                <div class="form-group">
+                                    <label for="photography">Photography Style</label>
+                                    <select id="photography" name="photography">
+                                        <option value="">Select style</option>
+                                        <option value="traditional">Traditional</option>
+                                        <option value="candid">Candid</option>
+                                        <option value="artistic">Artistic</option>
+                                        <option value="documentary">Documentary</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="venue-type">Venue Type</label>
+                                    <select id="venue-type" name="venueType">
+                                        <option value="">Select venue type</option>
+                                        <option value="banquet">Banquet Hall</option>
+                                        <option value="resort">Resort</option>
+                                        <option value="palace">Heritage Palace</option>
+                                        <option value="garden">Garden/Outdoor</option>
+                                        <option value="temple">Temple</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary-solid" onclick="showScreen('couple-form')">Back</button>
+                                <button type="button" class="btn btn-primary-solid" onclick="savePreferences()">Save Preferences</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vendors Screen -->
+                <div id="vendors" class="screen">
+                    <div class="form-section">
+                        <h2>Recommended Vendors</h2>
+                        <div id="vendors-list">
+                            <p>Loading vendors...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Screens (Placeholder) -->
+                <div id="venues" class="screen">
+                    <div class="form-section">
+                        <h2>Venue Selection</h2>
+                        <p>Venue selection interface coming soon...</p>
+                    </div>
+                </div>
+
+                <div id="budget" class="screen">
+                    <div class="form-section">
+                        <h2>Budget Management</h2>
+                        <p>Budget planning tools coming soon...</p>
+                    </div>
+                </div>
+
+                <div id="timeline" class="screen">
+                    <div class="form-section">
+                        <h2>Wedding Timeline</h2>
+                        <p>Timeline planning interface coming soon...</p>
+                    </div>
+                </div>
+
+                <div id="guest-list" class="screen">
+                    <div class="form-section">
+                        <h2>Guest List Management</h2>
+                        <p>Guest list tools coming soon...</p>
+                    </div>
+                </div>
+
+                <div id="checklist" class="screen">
+                    <div class="form-section">
+                        <h2>Wedding Checklist</h2>
+                        <p>Wedding checklist coming soon...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let weddingData = JSON.parse(localStorage.getItem('vivaha_wedding_data')) || {};
+        let preferencesData = JSON.parse(localStorage.getItem('vivaha_preferences')) || {};
+        const API_BASE = 'http://localhost:8001';
+
+        // Page titles mapping
+        const pageTitles = {
+            'overview': 'Overview',
+            'couple-form': 'Couple Details',
+            'preferences': 'Style & Design',
+            'vendors': 'Vendors',
+            'venues': 'Venues',
+            'budget': 'Budget',
+            'timeline': 'Timeline',
+            'guest-list': 'Guest List',
+            'checklist': 'Checklist'
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Vivaha AI - Initializing...');
+            loadSavedData();
+            updateProgress();
+            updateStats();
+            checkAPIConnection();
+        });
+
+        // Navigation
+        function showScreen(screenId) {
+            console.log('📱 Switching to screen:', screenId);
+            
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show target screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update page title
+            document.getElementById('page-title').textContent = pageTitles[screenId] || 'Vivaha AI';
+
+            // Load specific screen data
+            if (screenId === 'vendors') {
+                loadVendors();
+            }
+        }
+
+        // API Functions
+        async function checkAPIConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    updateStatus('Connected', 'green');
+                    console.log('✅ API Connected');
+                } else {
+                    updateStatus('API Issues', 'orange');
+                }
+            } catch (error) {
+                console.log('❌ API Offline');
+                updateStatus('Offline', 'red');
+            }
+        }
+
+        async function testAPI() {
+            console.log('🧪 Testing API connection...');
+            try {
+                const response = await fetch(`${API_BASE}/couples`);
+                const data = await response.json();
+                alert(`API Test Result:\nStatus: Success\nCouples in database: ${data.data ? data.data.length : 0}`);
+            } catch (error) {
+                alert(`API Test Result:\nStatus: Failed\nError: ${error.message}`);
+            }
+        }
+
+        async function saveWeddingData() {
+            const formData = {
+                partner1Name: document.getElementById('partner1').value,
+                partner2Name: document.getElementById('partner2').value,
+                weddingDate: document.getElementById('weddingDate').value,
+                region: document.getElementById('weddingCity').value,
+                guestCount: document.getElementById('guestCount').value,
+                budgetRange: document.getElementById('budget').value
+            };
+
+            // Save locally
+            weddingData = formData;
+            localStorage.setItem('vivaha_wedding_data', JSON.stringify(weddingData));
+            
+            // Save to API
+            try {
+                const response = await fetch(`${API_BASE}/wedding-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    alert('✅ Wedding data saved successfully!');
+                    updateProgress();
+                    updateStats();
+                    showScreen('preferences');
+                } else {
+                    alert('⚠️ Saved locally, but API sync failed');
+                }
+            } catch (error) {
+                alert('💾 Saved locally only (API offline)');
+            }
+        }
+
+        async function savePreferences() {
+            const prefsData = {
+                decorationTheme: document.getElementById('theme').value,
+                colorScheme: document.getElementById('colors').value,
+                photographyStyle: document.getElementById('photography').value,
+                venueType: document.getElementById('venue-type').value
+            };
+
+            // Save locally
+            preferencesData = prefsData;
+            localStorage.setItem('vivaha_preferences', JSON.stringify(preferencesData));
+            
+            // Save to API
+            try {
+                const response = await fetch(`${API_BASE}/visual-preferences`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prefsData)
+                });
+                
+                if (response.ok) {
+                    alert('✅ Preferences saved successfully!');
+                    updateProgress();
+                    showScreen('vendors');
+                } else {
+                    alert('⚠️ Saved locally, but API sync failed');
+                }
+            } catch (error) {
+                alert('💾 Saved locally only (API offline)');
+            }
+        }
+
+        async function saveProgress() {
+            try {
+                await saveWeddingData();
+                await savePreferences();
+                alert('💾 All progress saved!');
+            } catch (error) {
+                console.log('Error saving progress:', error);
+            }
+        }
+
+        async function loadVendors() {
+            try {
+                const response = await fetch(`${API_BASE}/vendors`);
+                const data = await response.json();
+                
+                const vendorsList = document.getElementById('vendors-list');
+                if (data.data && data.data.length > 0) {
+                    vendorsList.innerHTML = data.data.map(vendor => `
+                        <div class="form-section" style="margin-bottom: 20px;">
+                            <h3>${vendor['Vendor Name'] || 'Unknown Vendor'}</h3>
+                            <p><strong>Type:</strong> ${vendor['Vendor Type'] || 'N/A'}</p>
+                            <p><strong>Location:</strong> ${vendor['Service Location'] || 'N/A'}</p>
+                            <p><strong>Contact:</strong> ${vendor['Contact Email'] || vendor['Contact Phone'] || 'N/A'}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    vendorsList.innerHTML = '<p>No vendors found. Please check API connection.</p>';
+                }
+            } catch (error) {
+                document.getElementById('vendors-list').innerHTML = '<p>Error loading vendors. API might be offline.</p>';
+            }
+        }
+
+        // Helper Functions
+        function loadSavedData() {
+            // Load wedding data
+            if (weddingData.partner1Name) {
+                document.getElementById('partner1').value = weddingData.partner1Name;
+                document.getElementById('partner2').value = weddingData.partner2Name;
+                document.getElementById('weddingDate').value = weddingData.weddingDate;
+                document.getElementById('weddingCity').value = weddingData.region;
+                document.getElementById('guestCount').value = weddingData.guestCount;
+                document.getElementById('budget').value = weddingData.budgetRange;
+            }
+            
+            // Load preferences
+            if (preferencesData.decorationTheme) {
+                document.getElementById('theme').value = preferencesData.decorationTheme;
+                document.getElementById('colors').value = preferencesData.colorScheme;
+                document.getElementById('photography').value = preferencesData.photographyStyle;
+                document.getElementById('venue-type').value = preferencesData.venueType;
+            }
+        }
+
+        function updateProgress() {
+            // Couple details progress
+            const coupleFields = ['partner1Name', 'partner2Name', 'weddingDate', 'region'];
+            const filledCoupleFields = coupleFields.filter(field => weddingData[field]);
+            const coupleProgress = filledCoupleFields.length / coupleFields.length;
+            
+            document.getElementById('progress-couple-status').textContent = 
+                coupleProgress === 1 ? 'Completed' : 
+                coupleProgress > 0 ? 'In Progress' : 'Not started';
+
+            // Style progress
+            const styleFields = Object.keys(preferencesData);
+            const styleProgress = styleFields.length > 0 ? 0.5 : 0;
+            
+            document.getElementById('progress-style-status').textContent = 
+                styleProgress > 0 ? 'In Progress' : 'Not started';
+        }
+
+        function updateStats() {
+            // Days to wedding
+            if (weddingData.weddingDate) {
+                const today = new Date();
+                const weddingDate = new Date(weddingData.weddingDate);
+                const diffTime = weddingDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById('days-count').textContent = diffDays > 0 ? diffDays : 0;
+            }
+
+            // Budget display
+            if (weddingData.budgetRange) {
+                document.getElementById('budget-display').textContent = `₹${weddingData.budgetRange} Lakhs`;
+            }
+        }
+
+        function updateStatus(text, color) {
+            const statusEl = document.getElementById('status');
+            const dot = statusEl.querySelector('.status-dot');
+            const span = statusEl.querySelector('span');
+            
+            span.textContent = text;
+            dot.style.background = color === 'green' ? '#38a169' : 
+                                 color === 'orange' ? '#d69e2e' : '#e53e3e';
+        }
+
+        // Auto-save on form changes
+        document.addEventListener('input', function(e) {
+            if (e.target.form && e.target.form.id === 'weddingForm') {
+                setTimeout(updateProgress, 100);
+                setTimeout(updateStats, 100);
+            }
+        });
+
+        console.log('✨ Vivaha AI - Ready!');
+    </script>
+</body>
+</html> 

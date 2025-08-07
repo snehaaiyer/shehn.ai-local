@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BID AI Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .test-card { background: white; padding: 20px; border-radius: 10px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🌸 BID AI Wedding Assistant - Debug Test</h1>
+    
+    <div class="test-card">
+        <h3>JavaScript Loading Test</h3>
+        <div id="js-test">Testing JavaScript...</div>
+    </div>
+    
+    <div class="test-card">
+        <h3>Storage Test</h3>
+        <div id="storage-test">Testing Local Storage...</div>
+    </div>
+    
+    <div class="test-card">
+        <h3>Console Output</h3>
+        <div id="console-output">Check browser console for errors</div>
+    </div>
+    
+    <div class="test-card">
+        <button onclick="testApp()">Test Full App</button>
+        <button onclick="openMainApp()">Open Main App</button>
+    </div>
+
+    <script>
+        console.log('🌸 BID AI Test - JavaScript is working!');
+        
+        // Test basic functionality
+        document.getElementById('js-test').innerHTML = '<span class="success">✅ JavaScript is working!</span>';
+        
+        // Test localStorage
+        try {
+            localStorage.setItem('bidai_test', 'working');
+            const test = localStorage.getItem('bidai_test');
+            if (test === 'working') {
+                document.getElementById('storage-test').innerHTML = '<span class="success">✅ Local Storage is working!</span>';
+                localStorage.removeItem('bidai_test');
+            } else {
+                document.getElementById('storage-test').innerHTML = '<span class="error">❌ Local Storage read failed</span>';
+            }
+        } catch (error) {
+            document.getElementById('storage-test').innerHTML = '<span class="error">❌ Local Storage error: ' + error.message + '</span>';
+        }
+        
+        function testApp() {
+            console.log('Testing app components...');
+            
+            // Test if our scripts can be loaded
+            const scripts = [
+                'js/storage.js',
+                'js/navigation.js', 
+                'js/dashboard.js',
+                'js/wedding-form.js',
+                'js/visual-preferences.js',
+                'js/app.js'
+            ];
+            
+            scripts.forEach((script, index) => {
+                const scriptEl = document.createElement('script');
+                scriptEl.src = script;
+                scriptEl.onload = () => console.log('✅ Loaded:', script);
+                scriptEl.onerror = () => console.error('❌ Failed to load:', script);
+                document.head.appendChild(scriptEl);
+            });
+        }
+        
+        function openMainApp() {
+            window.location.href = 'index.html';
+        }
+        
+        // Show console messages on page
+        const originalLog = console.log;
+        const originalError = console.error;
+        let consoleOutput = '';
+        
+        console.log = function(...args) {
+            consoleOutput += '✅ ' + args.join(' ') + '<br>';
+            document.getElementById('console-output').innerHTML = consoleOutput;
+            originalLog.apply(console, arguments);
+        };
+        
+        console.error = function(...args) {
+            consoleOutput += '❌ ' + args.join(' ') + '<br>';
+            document.getElementById('console-output').innerHTML = consoleOutput;
+            originalError.apply(console, arguments);
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Discovery - Wedding Genie</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeef3 0%, #f8e8ee 50%, #f5d0e0 100%);
+            min-height: 100vh;
+            color: #2d2d2d;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .category-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-card.active {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border-color: #8B4B6B;
+        }
+
+        .category-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .category-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .search-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-select {
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .budget-card {
+            background: rgba(139, 75, 107, 0.05);
+            border: 1px solid rgba(139, 75, 107, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .budget-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #8B4B6B;
+            margin-bottom: 8px;
+        }
+
+        .budget-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d2d2d;
+        }
+
+        .budget-range {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .vendor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .vendor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(139, 75, 107, 0.1);
+        }
+
+        .vendor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .vendor-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+
+        .vendor-rating {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .vendor-type {
+            color: #8B4B6B;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .match-score {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .score-bar {
+            flex: 1;
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+        }
+
+        .score-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8B4B6B;
+        }
+
+        .vendor-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .feature-tag {
+            background: rgba(139, 75, 107, 0.1);
+            color: #8B4B6B;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .vendor-pricing {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .vendor-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d2d2d;
+        }
+
+        .btn-contact {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .ai-insight {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+        }
+
+        .ai-insight-text {
+            font-size: 11px;
+            color: #2e7d32;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8B4B6B;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(139, 75, 107, 0.1);
+            border-left: 4px solid #8B4B6B;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="history.back()">←</button>
+            <div class="title">Vendor Discovery</div>
+            <div class="subtitle">AI-Powered Vendor Matching</div>
+        </div>
+
+        <div class="content">
+            <div class="category-grid">
+                <div class="category-card active" data-category="Photography">
+                    <span class="category-icon">📸</span>
+                    <div class="category-name">Photography</div>
+                </div>
+                <div class="category-card" data-category="Catering">
+                    <span class="category-icon">🍽️</span>
+                    <div class="category-name">Catering</div>
+                </div>
+                <div class="category-card" data-category="Venue">
+                    <span class="category-icon">🏛️</span>
+                    <div class="category-name">Venue</div>
+                </div>
+                <div class="category-card" data-category="Decoration">
+                    <span class="category-icon">🎨</span>
+                    <div class="category-name">Decoration</div>
+                </div>
+            </div>
+
+            <div class="search-controls">
+                <select class="form-select" id="city-select">
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Bangalore">Bangalore</option>
+                </select>
+                <select class="form-select" id="budget-select">
+                    <option value="₹20-30 Lakhs">₹20-30 Lakhs</option>
+                    <option value="₹30-50 Lakhs">₹30-50 Lakhs</option>
+                </select>
+            </div>
+
+            <button class="btn-search" onclick="searchVendors()">
+                🔍 Find AI-Matched Vendors
+            </button>
+
+            <div class="budget-card" id="budget-card" style="display: none;">
+                <div class="budget-title">💰 AI Budget Recommendation</div>
+                <div class="budget-amount" id="budget-amount">₹3.5 L</div>
+                <div class="budget-range" id="budget-range">₹2.8 L - ₹4.2 L recommended range</div>
+            </div>
+
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>AI analyzing vendors...</p>
+            </div>
+
+            <div class="vendor-list" id="vendor-results">
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <h3>Find Your Perfect Vendors</h3>
+                    <p>Select a category and search to discover AI-matched professionals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8001';
+        let currentCategory = 'Photography';
+
+        const mockVendors = {
+            Photography: [
+                {
+                    name: "Studio Light Photography",
+                    type: "Premium Wedding Photography",
+                    rating: 4.8,
+                    price: "₹2.5L - ₹3.5L",
+                    features: ["Pre-wedding", "Traditional", "Candid", "Drone"],
+                    matchScore: 95,
+                    aiInsight: "Perfect match for traditional photography style with excellent budget fit"
+                },
+                {
+                    name: "Captured Moments",
+                    type: "Contemporary Wedding Photography", 
+                    rating: 4.6,
+                    price: "₹2.0L - ₹3.0L",
+                    features: ["Candid", "Portrait", "Modern", "Albums"],
+                    matchScore: 87,
+                    aiInsight: "Great value option with modern photography approach"
+                },
+                {
+                    name: "Royal Frame Studios",
+                    type: "Luxury Wedding Photography",
+                    rating: 4.9,
+                    price: "₹4.0L - ₹6.0L",
+                    features: ["Cinematic", "Premium", "Same-day-edit", "Multiple shooters"],
+                    matchScore: 82,
+                    aiInsight: "Premium option - exceeds budget but exceptional quality"
+                }
+            ],
+            Catering: [
+                {
+                    name: "Spice Garden Catering",
+                    type: "Traditional Indian Catering",
+                    rating: 4.7,
+                    price: "₹800 - ₹1200 per plate",
+                    features: ["Multi-cuisine", "Live counters", "Traditional", "Vegetarian"],
+                    matchScore: 92,
+                    aiInsight: "Excellent traditional menu options within budget range"
+                },
+                {
+                    name: "Royal Feast Events",
+                    type: "Premium Catering Services",
+                    rating: 4.8,
+                    price: "₹1200 - ₹1800 per plate", 
+                    features: ["Gourmet", "Live cooking", "Premium service", "Custom menu"],
+                    matchScore: 88,
+                    aiInsight: "Premium service with customizable traditional menus"
+                },
+                {
+                    name: "Heritage Kitchen",
+                    type: "Authentic Regional Cuisine",
+                    rating: 4.5,
+                    price: "₹600 - ₹900 per plate",
+                    features: ["Regional", "Authentic", "Home-style", "Budget-friendly"],
+                    matchScore: 78,
+                    aiInsight: "Budget-friendly option with authentic regional flavors"
+                }
+            ],
+            Venue: [
+                {
+                    name: "Heritage Palace",
+                    type: "Royal Wedding Venue",
+                    rating: 4.9,
+                    price: "₹8.0L - ₹12.0L",
+                    features: ["Heritage", "200+ capacity", "Gardens", "AC Halls"],
+                    matchScore: 94,
+                    aiInsight: "Perfect traditional venue matching your style and guest count"
+                },
+                {
+                    name: "Grand Ballroom",
+                    type: "Modern Banquet Hall",
+                    rating: 4.6,
+                    price: "₹6.0L - ₹9.0L",
+                    features: ["Modern", "300+ capacity", "Parking", "Decor included"],
+                    matchScore: 85,
+                    aiInsight: "Good value venue with modern amenities"
+                },
+                {
+                    name: "Lakeside Lawns",
+                    type: "Outdoor Wedding Destination",
+                    rating: 4.7,
+                    price: "₹10.0L - ₹15.0L",
+                    features: ["Outdoor", "Scenic", "250+ capacity", "Weather backup"],
+                    matchScore: 81,
+                    aiInsight: "Stunning outdoor venue - weather dependent but memorable"
+                }
+            ],
+            Decoration: [
+                {
+                    name: "Marigold Decorators",
+                    type: "Traditional Wedding Decor",
+                    rating: 4.8,
+                    price: "₹2.0L - ₹4.0L",
+                    features: ["Traditional", "Flowers", "Mandap", "Lighting"],
+                    matchScore: 96,
+                    aiInsight: "Specialist in traditional Indian wedding decorations"
+                },
+                {
+                    name: "Elegant Events",
+                    type: "Modern Wedding Styling",
+                    rating: 4.5,
+                    price: "₹3.0L - ₹5.0L",
+                    features: ["Modern", "Themes", "Centerpieces", "Draping"],
+                    matchScore: 83,
+                    aiInsight: "Contemporary styling with traditional elements"
+                }
+            ]
+        };
+
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                getBudgetRecommendation();
+            });
+        });
+
+        async function getBudgetRecommendation() {
+            const budgetData = {
+                budget_range: document.getElementById('budget-select').value,
+                priorities: [currentCategory, "Venue"],
+                guest_count: 200,
+                wedding_style: "Traditional"
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/budget-analysis`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(budgetData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.allocations[currentCategory]) {
+                    const allocation = result.allocations[currentCategory];
+                    document.getElementById('budget-amount').textContent = allocation.amount_formatted;
+                    document.getElementById('budget-range').textContent = allocation.range_formatted + ' recommended';
+                    document.getElementById('budget-card').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Budget API error:', error);
+            }
+        }
+
+        async function searchVendors() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('vendor-results').innerHTML = '';
+
+            await getBudgetRecommendation();
+
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                const vendors = mockVendors[currentCategory] || [];
+                displayVendors(vendors);
+            }, 2000);
+        }
+
+        function displayVendors(vendors) {
+            const resultsContainer = document.getElementById('vendor-results');
+            
+            if (vendors.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">❌</div>
+                        <h3>No Vendors Found</h3>
+                        <p>Try adjusting your search criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = vendors.map(vendor => `
+                <div class="vendor-card">
+                    <div class="vendor-header">
+                        <div class="vendor-name">${vendor.name}</div>
+                        <div class="vendor-rating">★ ${vendor.rating}</div>
+                    </div>
+                    
+                    <div class="vendor-type">${vendor.type}</div>
+                    
+                    <div class="match-score">
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${vendor.matchScore}%"></div>
+                        </div>
+                        <div class="score-text">${vendor.matchScore}% match</div>
+                    </div>
+                    
+                    <div class="vendor-features">
+                        ${vendor.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                    </div>
+                    
+                    <div class="ai-insight">
+                        <div class="ai-insight-text">🤖 ${vendor.aiInsight}</div>
+                    </div>
+                    
+                    <div class="vendor-pricing">
+                        <div class="vendor-price">${vendor.price}</div>
+                        <button class="btn-contact">Contact</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        getBudgetRecommendation();
+    </script>
+</body>
+</html> 
