@@ -7,3 +7,14 @@ jinja2
 httpx
 # For handling environment variables  
 python-dotenv
+aiohttp
+beautifulsoup4
+crewai
+crewai-tools
+flask
+flask-cors
+google-generativeai
+langchain
+pydantic
+selenium
+textblob
