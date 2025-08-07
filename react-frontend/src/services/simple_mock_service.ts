@@ -3,6 +3,32 @@
  * Provides fallback when external AI services are unavailable
  */
 
+interface CloudflareImageGenerationRequest {
+  theme: string;
+  style: string;
+  colors: string;
+  season: string;
+  venueType: string;
+  customDescription: string;
+  guestCount: number;
+  location: string;
+  imageCount?: number;
+}
+
+interface CloudflareImageGenerationResponse {
+  images: string[];
+  success: boolean;
+  error?: string;
+  generatedDescription?: string;
+  themeAnalysis?: {
+    keywords: string[];
+    mood: string;
+    style: string;
+    colors: string[];
+  };
+  fallbackUsed?: boolean;
+}
+
 export class SimpleMockService {
   static async generateImage(prompt: string): Promise<string> {
     // Simulate API delay
@@ -15,6 +41,30 @@ export class SimpleMockService {
   static async generateText(prompt: string): Promise<string> {
     await new Promise(resolve => setTimeout(resolve, 1000));
     return "AI text generation is temporarily unavailable. Please try again later.";
+  }
+
+  static async generateVenueImages(venuePrompt: string): Promise<CloudflareImageGenerationResponse> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    return {
+      images: [],
+      success: false,
+      error: 'Image generation service is currently unavailable',
+      fallbackUsed: true
+    };
+  }
+
+  static async generateWeddingThemeImages(request: CloudflareImageGenerationRequest): Promise<CloudflareImageGenerationResponse> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    return {
+      images: [],
+      success: false,
+      error: 'Image generation service is currently unavailable',
+      fallbackUsed: true
+    };
   }
 
   static async isServiceAvailable(): Promise<boolean> {

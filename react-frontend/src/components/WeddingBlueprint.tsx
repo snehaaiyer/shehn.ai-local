@@ -300,40 +300,13 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
     setError(null);
 
     try {
-      // Removed Cloudflare AI calls and replaced with SimpleMockService
-      const venuePromises = preferences.venue?.selectedVenueType
-        ? venueCategories.flatMap(cat => cat.venues)
-            .filter(v => v.id === preferences.venue.selectedVenueType)
-            .map(async (venue) => {
-              const venueResult = await SimpleMockService.generateVenueImages(venue.prompt);
-              return venueResult.images?.[0] || '/images/placeholder-venue.png';
-            })
-        : [Promise.resolve('/images/placeholder-venue.png')];
-
-      const themePromises = preferences.theme?.selectedTheme
-        ? themes.filter(t => t.id === preferences.theme.selectedTheme).map(async (theme) => {
-            const themeResult = await SimpleMockService.generateWeddingThemeImages({
-              theme: theme.name,
-              style: 'Traditional',
-              colors: 'Gold and Red',
-              season: 'Wedding Season',
-              venueType: preferences.venue?.selectedVenueType || 'Venue',
-              customDescription: theme.description,
-              guestCount: preferences.basicDetails?.guestCount || 100,
-              location: preferences.basicDetails?.location || 'India',
-              imageCount: 1
-            });
-            return themeResult.images?.[0] || '/images/placeholder-theme.png';
-          })
-        : [Promise.resolve('/images/placeholder-theme.png')];
-
-      const photographyPromises = [Promise.resolve('/images/placeholder-photo.png')];
-
-      const [venueImage, themeImage, photographyImage] = await Promise.all([
-        Promise.all(venuePromises).then(urls => urls[0]),
-        Promise.all(themePromises).then(urls => urls[0]),
-        Promise.all(photographyPromises).then(urls => urls[0]),
-      ]);
+      // Use static images only - no AI generation
+      const selectedVenue = venueCategories?.flatMap(cat => cat.venues)?.find(v => v.id === preferences.venue?.selectedVenueType);
+      const selectedTheme = themes?.find(t => t.id === preferences.theme?.selectedTheme);
+      
+      const venueImage = selectedVenue?.image || '/images/placeholder-venue.png';
+      const themeImage = selectedTheme?.image || '/images/placeholder-theme.png';
+      const photographyImage = '/images/placeholder-photo.png';
 
       // Mock response for blueprint generation
       const mockBlueprint = {
