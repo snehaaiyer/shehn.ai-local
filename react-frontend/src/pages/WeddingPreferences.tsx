@@ -151,82 +151,119 @@ const WeddingPreferences: React.FC = () => {
     }
   });
 
-  // Enhanced Indian Wedding Themes with correct image mappings
-  const themes = [
-    // Royal & Traditional Themes
-    { 
-      id: 'royal-palace-rajasthani', 
-      name: 'Royal Palace/ Rajasthani Theme', 
-      description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm', 
-      color: '#B91C1C',
-      image: '/rajasthani royal.png',
-      features: ['Heritage Palaces', 'Royal Rajasthani Decor', 'Mirror Work', 'Traditional Music'],
-      imagePrompt: 'Cinematic wide shot of a magnificent Rajasthani royal palace Indian wedding ceremony. Traditional red sandstone architecture with intricate carved jharokhas and ornate mirror work. Golden mandap decorated with vibrant marigold garlands and roses. Bride in red lehenga with heavy gold jewelry, groom in cream sherwani with kalgi. Traditional Rajasthani musicians playing shehnai and tabla. Warm golden hour lighting, rich red and gold color palette, ultra-detailed, 4K quality, professional wedding photography style.'
+  // Wedding Theme Categories for better organization
+  const themeCategories = [
+    {
+      id: 'royal-traditional',
+      name: '👑 Royal & Traditional',
+      description: 'Majestic heritage celebrations with royal grandeur and cultural authenticity',
+      themes: [
+        { 
+          id: 'royal-palace-rajasthani', 
+          name: 'Royal Palace Rajasthani', 
+          description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm', 
+          color: '#B91C1C',
+          image: '/rajasthani royal.png',
+          features: ['Heritage Palaces', 'Royal Rajasthani Decor', 'Mirror Work', 'Traditional Music'],
+          imagePrompt: 'Cinematic wide shot of a magnificent Rajasthani royal palace Indian wedding ceremony. Traditional red sandstone architecture with intricate carved jharokhas and ornate mirror work. Golden mandap decorated with vibrant marigold garlands and roses. Bride in red lehenga with heavy gold jewelry, groom in cream sherwani with kalgi. Traditional Rajasthani musicians playing shehnai and tabla. Warm golden hour lighting, rich red and gold color palette, ultra-detailed, 4K quality, professional wedding photography style.'
+        },
+        { 
+          id: 'traditional-regional-roots', 
+          name: 'Traditional Regional Heritage', 
+          description: 'Authentic celebrations reflecting specific cultural roots and regional traditions', 
+          color: '#DC2626',
+          image: '/traditional.png',
+          features: ['Regional Customs', 'Cultural Authenticity', 'Local Traditions', 'Heritage Elements'],
+          imagePrompt: 'Beautiful traditional South Indian temple wedding ceremony with authentic cultural elements. Ornate carved stone pillars and temple architecture. Bride in silk Kanjivaram saree with temple jewelry, groom in white dhoti and angavastram. Sacred fire ceremony with banana leaves, coconut decorations, and colorful rangoli patterns. Traditional nadaswaram music, brass oil lamps, jasmine garlands. Warm temple lighting, rich jewel tones, ultra-detailed Indian cultural authenticity, 4K cinematic quality.'
+        },
+        { 
+          id: 'vintage-classic', 
+          name: 'Vintage Classic Heritage', 
+          description: 'Timeless celebrations with classic elegance, antique elements, and nostalgic charm', 
+          color: '#92400E',
+          image: '/vintage.png',
+          features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
+          imagePrompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.'
+        }
+      ]
     },
-    { 
-      id: 'traditional-regional-roots', 
-      name: 'Traditional Regional Themes', 
-      description: 'Authentic celebrations reflecting specific cultural roots and regional traditions', 
-      color: '#DC2626',
-      image: '/traditional.png',
-      features: ['Regional Customs', 'Cultural Authenticity', 'Local Traditions', 'Heritage Elements'],
-      imagePrompt: 'Beautiful traditional South Indian temple wedding ceremony with authentic cultural elements. Ornate carved stone pillars and temple architecture. Bride in silk Kanjivaram saree with temple jewelry, groom in white dhoti and angavastram. Sacred fire ceremony with banana leaves, coconut decorations, and colorful rangoli patterns. Traditional nadaswaram music, brass oil lamps, jasmine garlands. Warm temple lighting, rich jewel tones, ultra-detailed Indian cultural authenticity, 4K cinematic quality.'
+    {
+      id: 'glamour-entertainment',
+      name: '🎬 Glamour & Entertainment',
+      description: 'Vibrant celebrations with cinematic flair and entertainment focus',
+      themes: [
+        { 
+          id: 'bollywood-glamour', 
+          name: 'Bollywood Glamour', 
+          description: 'Vibrant Bollywood-inspired celebrations with glamour, dance, and cinematic grandeur', 
+          color: '#F59E0B',
+          image: '/bollywoodglamor.png',
+          features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant Colors'],
+          imagePrompt: 'Glamorous Bollywood-style Indian wedding reception with cinematic grandeur. Large dance floor with disco balls and dramatic spotlights. Vintage Bollywood movie posters and film reel decorations. Bride in heavily embellished lehenga with statement jewelry, groom in designer sherwani. Golden and red sequined draping, champagne towers, red carpet entrance. Professional dancers performing, live orchestra, vibrant party atmosphere. Rich golden lighting, 4K cinematic quality, Bollywood movie aesthetic.'
+        }
+      ]
     },
-    { 
-      id: 'eco-friendly-sustainable', 
-      name: 'Eco-Friendly Sustainable Weddings', 
-      description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices', 
-      color: '#16A34A',
-      image: '/eco sustainable.png',
-      features: ['Organic Decorations', 'Sustainable Practices', 'Natural Elements', 'Eco-Conscious'],
-      imagePrompt: 'Stunning eco-friendly Indian wedding in lush garden setting. Natural bamboo mandap with living plants and organic decorations. Couple in sustainable traditional wear - bride in handloom saree, groom in organic cotton kurta. Potted plants replacing cut flowers, solar string lights, biodegradable leaf plates. Natural wood furniture, jute decorations, earthen diyas. Green and earth tone color palette, soft natural lighting, 4K eco-conscious celebration, professional nature photography style.'
+    {
+      id: 'modern-contemporary',
+      name: '🏙️ Modern & Contemporary',
+      description: 'Clean, sophisticated celebrations with contemporary design and modern elegance',
+      themes: [
+        { 
+          id: 'minimalist-modern', 
+          name: 'Minimalist Modern', 
+          description: 'Clean, contemporary celebrations with sophisticated simplicity and modern elegance', 
+          color: '#64748B',
+          image: '/minimalist pastel.png',
+          features: ['Clean Lines', 'Modern Furniture', 'Neutral Colors', 'Sophisticated Simplicity'],
+          imagePrompt: 'Sophisticated minimalist modern Indian wedding with contemporary elegance. Clean geometric mandap with simple white and gold decorations. Couple in modern traditional wear - bride in subtle pastel lehenga, groom in contemporary sherwani. Sleek furniture, geometric floral arrangements, modern lighting fixtures. Neutral color palette of whites, greys, and soft pastels. Uncluttered space design, glass elements, architectural lines. Soft professional lighting, 4K ultra-clean aesthetic, luxury hotel setting.'
+        }
+      ]
     },
-    { 
-      id: 'bollywood-glamour', 
-      name: 'Bollywood Glamour Theme', 
-      description: 'Vibrant Bollywood-inspired celebrations with glamour, dance, and cinematic grandeur', 
-      color: '#F59E0B',
-      image: '/bollywoodglamor.png',
-      features: ['Cinematic Setup', 'Glamorous Decor', 'Dance Floor', 'Vibrant Colors'],
-      imagePrompt: 'Glamorous Bollywood-style Indian wedding reception with cinematic grandeur. Large dance floor with disco balls and dramatic spotlights. Vintage Bollywood movie posters and film reel decorations. Bride in heavily embellished lehenga with statement jewelry, groom in designer sherwani. Golden and red sequined draping, champagne towers, red carpet entrance. Professional dancers performing, live orchestra, vibrant party atmosphere. Rich golden lighting, 4K cinematic quality, Bollywood movie aesthetic.'
+    {
+      id: 'nature-sustainable',
+      name: '🌿 Nature & Sustainable',
+      description: 'Eco-conscious celebrations with natural beauty and sustainable practices',
+      themes: [
+        { 
+          id: 'eco-friendly-sustainable', 
+          name: 'Eco-Friendly Sustainable', 
+          description: 'Green celebrations with sustainable practices, organic decorations, and eco-conscious choices', 
+          color: '#16A34A',
+          image: '/eco sustainable.png',
+          features: ['Organic Decorations', 'Sustainable Practices', 'Natural Elements', 'Eco-Conscious'],
+          imagePrompt: 'Stunning eco-friendly Indian wedding in lush garden setting. Natural bamboo mandap with living plants and organic decorations. Couple in sustainable traditional wear - bride in handloom saree, groom in organic cotton kurta. Potted plants replacing cut flowers, solar string lights, biodegradable leaf plates. Natural wood furniture, jute decorations, earthen diyas. Green and earth tone color palette, soft natural lighting, 4K eco-conscious celebration, professional nature photography style.'
+        },
+        { 
+          id: 'floral-paradise', 
+          name: 'Floral Paradise Garden', 
+          description: 'Enchanting celebrations surrounded by abundant flowers, garden elements, and natural beauty', 
+          color: '#EC4899',
+          image: '/floralparadise.png',
+          features: ['Abundant Flowers', 'Garden Elements', 'Floral Arches', 'Natural Beauty'],
+          imagePrompt: 'Breathtaking floral paradise Indian wedding in blooming garden. Mandap completely covered in roses, jasmine, and marigolds. Massive floral archways and hanging flower installations. Bride in floral-themed lehenga with fresh flower jewelry, groom with floral sehra. Flower walls as backdrops, floral carpets, botanical ceiling decorations. Pastel color palette with pinks, whites, and soft greens. Natural garden setting with butterflies, 4K botanical paradise, dreamy romantic lighting, professional garden photography.'
+        }
+      ]
     },
-    { 
-      id: 'minimalist-modern', 
-      name: 'Minimalist Modern Theme', 
-      description: 'Clean, contemporary celebrations with sophisticated simplicity and modern elegance', 
-      color: '#64748B',
-      image: '/minimalist pastel.png',
-      features: ['Clean Lines', 'Modern Furniture', 'Neutral Colors', 'Sophisticated Simplicity'],
-      imagePrompt: 'Sophisticated minimalist modern Indian wedding with contemporary elegance. Clean geometric mandap with simple white and gold decorations. Couple in modern traditional wear - bride in subtle pastel lehenga, groom in contemporary sherwani. Sleek furniture, geometric floral arrangements, modern lighting fixtures. Neutral color palette of whites, greys, and soft pastels. Uncluttered space design, glass elements, architectural lines. Soft professional lighting, 4K ultra-clean aesthetic, luxury hotel setting.'
-    },
-    { 
-      id: 'floral-paradise', 
-      name: 'Floral Paradise Theme', 
-      description: 'Enchanting celebrations surrounded by abundant flowers, garden elements, and natural beauty', 
-      color: '#EC4899',
-      image: '/floralparadise.png',
-      features: ['Abundant Flowers', 'Garden Elements', 'Floral Arches', 'Natural Beauty'],
-      imagePrompt: 'Breathtaking floral paradise Indian wedding in blooming garden. Mandap completely covered in roses, jasmine, and marigolds. Massive floral archways and hanging flower installations. Bride in floral-themed lehenga with fresh flower jewelry, groom with floral sehra. Flower walls as backdrops, floral carpets, botanical ceiling decorations. Pastel color palette with pinks, whites, and soft greens. Natural garden setting with butterflies, 4K botanical paradise, dreamy romantic lighting, professional garden photography.'
-    },
-    { 
-      id: 'bohemian-chic', 
-      name: 'Bohemian Chic Theme', 
-      description: 'Free-spirited celebrations with eclectic decor, artistic elements, and bohemian charm', 
-      color: '#7C3AED',
-      image: '/boho.png',
-      features: ['Eclectic Decor', 'Artistic Elements', 'Vintage Furniture', 'Free-Spirited Vibe'],
-      imagePrompt: 'Bohemian chic Indian wedding with artistic eclectic decorations. Mandap with flowing fabrics, macrame hanging installations, vintage rugs and floor cushions. Bride in boho-style lehenga with oxidized jewelry, groom in artistic kurta. Dreamcatchers, feathers, mixed textures and patterns. Vintage furniture pieces, natural wood elements, fairy lights. Warm earth tones with jewel color pops, outdoor garden setting. 4K artistic bohemian aesthetic, free-spirited celebration, warm golden lighting.'
-    },
-    { 
-      id: 'vintage-classic', 
-      name: 'Vintage Classic Theme', 
-      description: 'Timeless celebrations with classic elegance, antique elements, and nostalgic charm', 
-      color: '#92400E',
-      image: '/vintage.png',
-      features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
-      imagePrompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.'
+    {
+      id: 'artistic-bohemian',
+      name: '🎨 Artistic & Bohemian',
+      description: 'Creative celebrations with artistic flair and free-spirited charm',
+      themes: [
+        { 
+          id: 'bohemian-chic', 
+          name: 'Bohemian Chic', 
+          description: 'Free-spirited celebrations with eclectic decor, artistic elements, and bohemian charm', 
+          color: '#7C3AED',
+          image: '/boho.png',
+          features: ['Eclectic Decor', 'Artistic Elements', 'Vintage Furniture', 'Free-Spirited Vibe'],
+          imagePrompt: 'Bohemian chic Indian wedding with artistic eclectic decorations. Mandap with flowing fabrics, macrame hanging installations, vintage rugs and floor cushions. Bride in boho-style lehenga with oxidized jewelry, groom in artistic kurta. Dreamcatchers, feathers, mixed textures and patterns. Vintage furniture pieces, natural wood elements, fairy lights. Warm earth tones with jewel color pops, outdoor garden setting. 4K artistic bohemian aesthetic, free-spirited celebration, warm golden lighting.'
+        }
+      ]
     }
   ];
+
+  // Create a flat themes array for compatibility with existing code
+  const themes = themeCategories.flatMap(category => category.themes);
 
   // Venue Categories for better organization
   const venueCategories = [
@@ -810,63 +847,88 @@ const WeddingPreferences: React.FC = () => {
             {/* Decor & Theme Tab */}
             {activeTab === 'theme' && (
               <div>
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#2F4F4F' }}>
-                  <Palette className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
-                  Wedding Theme
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {themes.map((theme) => {
-                    console.log(`🎨 Theme: ${theme.name}, ID: ${theme.id}, Image: ${theme.image}`);
-                    return (
-                    <div
-                      key={theme.id}
-                      onClick={() => updatePreference('theme', 'selectedTheme', theme.id)}
-                      className={`p-6 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
-                        preferences.theme.selectedTheme === theme.id
-                          ? 'border-deep-navy bg-deep-navy/5'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden">
-                        <img
-                          src={theme.image}
-                          alt={theme.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            console.log(`❌ Failed to load image for ${theme.name}: ${theme.image}`);
-                            const target = e.target as HTMLImageElement;
-                            // Show a placeholder div instead of broken image
-                            const placeholder = document.createElement('div');
-                            placeholder.className = 'w-full h-full flex items-center justify-center bg-gray-100 text-gray-500';
-                            placeholder.innerHTML = `
-                              <div class="text-center">
-                                <div class="text-2xl mb-2">🎭</div>
-                                <div class="text-sm">${theme.name}</div>
-                              </div>
-                            `;
-                            target.parentElement?.appendChild(placeholder);
-                            target.style.display = 'none';
-                          }}
-                          onLoad={() => {
-                            console.log(`✅ Successfully loaded image for ${theme.name}: ${theme.image}`);
-                          }}
-                        />
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#2F4F4F' }}>
+                    <Palette className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                    Wedding Theme Selection
+                  </h2>
+                  <p className="text-gray-600 mt-2">Choose from our curated collection of wedding themes, organized by style and aesthetic</p>
+                </div>
+                <div className="space-y-8">
+                  {themeCategories.map((category) => (
+                    <div key={category.id} className="space-y-4">
+                      <div className="border-b border-gray-200 pb-2">
+                        <h3 className="text-lg font-semibold" style={{ color: '#2F4F4F' }}>
+                          {category.name}
+                        </h3>
+                        <p className="text-sm text-gray-600">{category.description}</p>
                       </div>
-                      <h3 className="font-semibold text-lg mb-2" style={{ color: '#2F4F4F' }}>
-                        {theme.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-3">{theme.description}</p>
-                      <div className="space-y-1">
-                        {theme.features.map((feature, index) => (
-                          <div key={index} className="text-xs text-gray-600 flex items-center">
-                            <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
-                            {feature}
-                          </div>
-                        ))}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {category.themes.map((theme) => {
+                          console.log(`🎨 Theme: ${theme.name}, ID: ${theme.id}, Image: ${theme.image}`);
+                          return (
+                            <div
+                              key={theme.id}
+                              onClick={() => updatePreference('theme', 'selectedTheme', theme.id)}
+                              className={`p-6 border-2 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-md ${
+                                preferences.theme.selectedTheme === theme.id
+                                  ? 'border-deep-navy bg-deep-navy/5 shadow-md'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
+                                <img
+                                  src={theme.image}
+                                  alt={theme.name}
+                                  className="w-full h-full object-cover"
+                                  style={{ objectPosition: 'center 30%' }}
+                                  onError={(e) => {
+                                    console.log(`❌ Failed to load image for ${theme.name}: ${theme.image}`);
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.parentElement!.innerHTML = `
+                                      <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                                        <div class="text-center">
+                                          <div class="text-2xl mb-2">🎭</div>
+                                          <p class="text-sm">${theme.name}</p>
+                                        </div>
+                                      </div>
+                                    `;
+                                  }}
+                                  onLoad={() => {
+                                    console.log(`✅ Successfully loaded image for ${theme.name}: ${theme.image}`);
+                                  }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                              </div>
+                              <h4 className="font-semibold text-base mb-2" style={{ color: '#2F4F4F' }}>
+                                {theme.name}
+                              </h4>
+                              <p className="text-gray-600 text-sm mb-3" style={{ 
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                              }}>{theme.description}</p>
+                              <div className="space-y-1">
+                                {theme.features.slice(0, 2).map((feature, index) => (
+                                  <div key={index} className="text-xs text-gray-600 flex items-center">
+                                    <div className="w-1 h-1 bg-gray-400 rounded-full mr-1"></div>
+                                    <span className="truncate">{feature}</span>
+                                  </div>
+                                ))}
+                                {theme.features.length > 2 && (
+                                  <div className="text-xs text-gray-500">
+                                    +{theme.features.length - 2} more features
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                    );
-                  })}
+                  ))}
                 </div>
               </div>
             )}
