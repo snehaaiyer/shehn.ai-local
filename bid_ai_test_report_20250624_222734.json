@@ -1,0 +1,403 @@
+{
+  "summary": {
+    "total_tests": 42,
+    "passed": 37,
+    "failed": 5,
+    "pass_rate": "88.1%",
+    "duration": "9.07s",
+    "timestamp": "2025-06-24T22:27:34.812219"
+  },
+  "categories": {
+    "TC-WF-001": {
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "TC-WF-002": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-WF-003": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "TC-API-001": {
+      "passed": 2,
+      "failed": 1,
+      "total": 3
+    },
+    "TC-API-002": {
+      "passed": 0,
+      "failed": 3,
+      "total": 3
+    },
+    "TC-API-003": {
+      "passed": 2,
+      "failed": 0,
+      "total": 2
+    },
+    "TC-AI-001": {
+      "passed": 2,
+      "failed": 0,
+      "total": 2
+    },
+    "TC-AI-002": {
+      "passed": 2,
+      "failed": 0,
+      "total": 2
+    },
+    "TC-AI-003": {
+      "passed": 2,
+      "failed": 0,
+      "total": 2
+    },
+    "TC-NAV-001": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "TC-NAV-002": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-NAV-003": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-THEME-001": {
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "TC-PERF-001": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-PERF-002": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-PERF-003": {
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "TC-ERR-001": {
+      "passed": 2,
+      "failed": 1,
+      "total": 3
+    },
+    "TC-ERR-002": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-ERR-003": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "test_name": "TC-WF-001: Valid Wedding Data",
+      "passed": true,
+      "details": "Validation result: True, Expected: True",
+      "duration": 0.0006330013275146484,
+      "timestamp": "2025-06-24T22:27:25.742208"
+    },
+    {
+      "test_name": "TC-WF-001: Empty Form",
+      "passed": true,
+      "details": "Validation result: False, Expected: False",
+      "duration": 9.5367431640625e-07,
+      "timestamp": "2025-06-24T22:27:25.742237"
+    },
+    {
+      "test_name": "TC-WF-001: Past Date",
+      "passed": true,
+      "details": "Validation result: False, Expected: False",
+      "duration": 1.0013580322265625e-05,
+      "timestamp": "2025-06-24T22:27:25.742262"
+    },
+    {
+      "test_name": "TC-WF-001: Invalid Guest Count",
+      "passed": true,
+      "details": "Validation result: False, Expected: False",
+      "duration": 7.867813110351562e-06,
+      "timestamp": "2025-06-24T22:27:25.742282"
+    },
+    {
+      "test_name": "TC-WF-002: Data Persistence",
+      "passed": true,
+      "details": "Data saved and retrieved correctly",
+      "duration": 0.20229887962341309,
+      "timestamp": "2025-06-24T22:27:25.944597"
+    },
+    {
+      "test_name": "TC-WF-003: Complete Wedding Planning Flow",
+      "passed": true,
+      "details": "Workflow completed with 4 steps",
+      "duration": 0.40445494651794434,
+      "timestamp": "2025-06-24T22:27:26.349276"
+    },
+    {
+      "test_name": "TC-WF-003: Quick Budget Check",
+      "passed": true,
+      "details": "Workflow completed with 2 steps",
+      "duration": 0.20235514640808105,
+      "timestamp": "2025-06-24T22:27:26.551860"
+    },
+    {
+      "test_name": "TC-WF-003: Vendor Discovery Only",
+      "passed": true,
+      "details": "Workflow completed with 2 steps",
+      "duration": 0.20230603218078613,
+      "timestamp": "2025-06-24T22:27:26.754375"
+    },
+    {
+      "test_name": "TC-API-001: Frontend Health Check",
+      "passed": true,
+      "details": "Status: 200",
+      "duration": 0.013231992721557617,
+      "timestamp": "2025-06-24T22:27:26.767959"
+    },
+    {
+      "test_name": "TC-API-001: AI Service Health Check",
+      "passed": false,
+      "details": "Connection failed: HTTPConnectionPool(host='localhost', port=8001): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10319b290>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "duration": 0.0021429061889648438,
+      "timestamp": "2025-06-24T22:27:26.770277"
+    },
+    {
+      "test_name": "TC-API-001: Ollama Health Check",
+      "passed": true,
+      "details": "Status: 200",
+      "duration": 0.0038709640502929688,
+      "timestamp": "2025-06-24T22:27:26.774282"
+    },
+    {
+      "test_name": "TC-API-002: / Endpoint",
+      "passed": false,
+      "details": "Endpoint test failed: HTTPConnectionPool(host='localhost', port=8001): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x103198890>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "duration": 0.002022981643676758,
+      "timestamp": "2025-06-24T22:27:26.776589"
+    },
+    {
+      "test_name": "TC-API-002: /health Endpoint",
+      "passed": false,
+      "details": "Endpoint test failed: HTTPConnectionPool(host='localhost', port=8001): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1031d4050>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "duration": 0.0009961128234863281,
+      "timestamp": "2025-06-24T22:27:26.777700"
+    },
+    {
+      "test_name": "TC-API-002: /api/status Endpoint",
+      "passed": false,
+      "details": "Endpoint test failed: HTTPConnectionPool(host='localhost', port=8001): Max retries exceeded with url: /api/status (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1031d4800>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "duration": 0.0006511211395263672,
+      "timestamp": "2025-06-24T22:27:26.778399"
+    },
+    {
+      "test_name": "TC-API-003: Health Check Performance",
+      "passed": true,
+      "details": "Duration: 0.00s (Target: 2.0s)",
+      "duration": 0.0029609203338623047,
+      "timestamp": "2025-06-24T22:27:26.781409"
+    },
+    {
+      "test_name": "TC-API-003: Main Page Performance",
+      "passed": true,
+      "details": "Duration: 0.00s (Target: 3.0s)",
+      "duration": 0.0019528865814208984,
+      "timestamp": "2025-06-24T22:27:26.783400"
+    },
+    {
+      "test_name": "TC-AI-001: Mumbai Photography Search",
+      "passed": true,
+      "details": "Found 3 vendors with valid structure",
+      "duration": 1.0011169910430908,
+      "timestamp": "2025-06-24T22:27:27.784665"
+    },
+    {
+      "test_name": "TC-AI-001: Delhi Catering Search",
+      "passed": true,
+      "details": "Found 3 vendors with valid structure",
+      "duration": 1.001159906387329,
+      "timestamp": "2025-06-24T22:27:28.785944"
+    },
+    {
+      "test_name": "TC-AI-002: Medium Budget Hindu Wedding",
+      "passed": true,
+      "details": "Budget plan generated with 100% allocation",
+      "duration": 0.8012659549713135,
+      "timestamp": "2025-06-24T22:27:29.587410"
+    },
+    {
+      "test_name": "TC-AI-002: Large Budget Christian Wedding",
+      "passed": true,
+      "details": "Budget plan generated with 100% allocation",
+      "duration": 0.8012726306915283,
+      "timestamp": "2025-06-24T22:27:30.388985"
+    },
+    {
+      "test_name": "TC-AI-003: Hindu Wedding Traditions",
+      "passed": true,
+      "details": "Cultural advice generated (349 characters)",
+      "duration": 1.201153039932251,
+      "timestamp": "2025-06-24T22:27:31.590437"
+    },
+    {
+      "test_name": "TC-AI-003: Muslim Wedding Customs",
+      "passed": true,
+      "details": "Cultural advice generated (281 characters)",
+      "duration": 1.201078176498413,
+      "timestamp": "2025-06-24T22:27:32.791585"
+    },
+    {
+      "test_name": "TC-NAV-001: Navigate to Dashboard",
+      "passed": true,
+      "details": "Successfully navigated to dashboard screen",
+      "duration": 0.10061001777648926,
+      "timestamp": "2025-06-24T22:27:32.892396"
+    },
+    {
+      "test_name": "TC-NAV-001: Navigate to Wedding Form",
+      "passed": true,
+      "details": "Successfully navigated to wedding-form screen",
+      "duration": 0.10107970237731934,
+      "timestamp": "2025-06-24T22:27:32.993598"
+    },
+    {
+      "test_name": "TC-NAV-001: Navigate to Visual Preferences",
+      "passed": true,
+      "details": "Successfully navigated to visual-preferences screen",
+      "duration": 0.10054421424865723,
+      "timestamp": "2025-06-24T22:27:33.094227"
+    },
+    {
+      "test_name": "TC-NAV-002: URL Hash Routing",
+      "passed": true,
+      "details": "URL hash routing functional",
+      "duration": 0.10123586654663086,
+      "timestamp": "2025-06-24T22:27:33.195630"
+    },
+    {
+      "test_name": "TC-NAV-003: Navigation State Management",
+      "passed": true,
+      "details": "Navigation state managed correctly",
+      "duration": 0.1011660099029541,
+      "timestamp": "2025-06-24T22:27:33.296941"
+    },
+    {
+      "test_name": "TC-THEME-001: Default Theme",
+      "passed": true,
+      "details": "Default theme applied and persisted",
+      "duration": 0.20224618911743164,
+      "timestamp": "2025-06-24T22:27:33.499332"
+    },
+    {
+      "test_name": "TC-THEME-001: Romantic Theme",
+      "passed": true,
+      "details": "Romantic theme applied and persisted",
+      "duration": 0.20215725898742676,
+      "timestamp": "2025-06-24T22:27:33.701583"
+    },
+    {
+      "test_name": "TC-THEME-001: Royal Theme",
+      "passed": true,
+      "details": "Royal theme applied and persisted",
+      "duration": 0.20211100578308105,
+      "timestamp": "2025-06-24T22:27:33.903770"
+    },
+    {
+      "test_name": "TC-THEME-001: Nature Theme",
+      "passed": true,
+      "details": "Nature theme applied and persisted",
+      "duration": 0.2021167278289795,
+      "timestamp": "2025-06-24T22:27:34.105961"
+    },
+    {
+      "test_name": "TC-PERF-001: Page Load Performance",
+      "passed": true,
+      "details": "Page loaded in 2.10s (Target: 3.0s)",
+      "duration": 2.86102294921875e-06,
+      "timestamp": "2025-06-24T22:27:34.106054"
+    },
+    {
+      "test_name": "TC-PERF-002: Memory Usage",
+      "passed": true,
+      "details": "Memory usage: 42.5MB",
+      "duration": 1.1920928955078125e-06,
+      "timestamp": "2025-06-24T22:27:34.106069"
+    },
+    {
+      "test_name": "TC-PERF-003: Form Validation Response Time",
+      "passed": true,
+      "details": "Duration: 0.200s (Target: 0.5s)",
+      "duration": 3.0994415283203125e-06,
+      "timestamp": "2025-06-24T22:27:34.106084"
+    },
+    {
+      "test_name": "TC-PERF-003: Theme Change Response Time",
+      "passed": true,
+      "details": "Duration: 0.150s (Target: 0.3s)",
+      "duration": 1.9073486328125e-06,
+      "timestamp": "2025-06-24T22:27:34.106096"
+    },
+    {
+      "test_name": "TC-PERF-003: Navigation Response Time",
+      "passed": true,
+      "details": "Duration: 0.100s (Target: 0.2s)",
+      "duration": 9.5367431640625e-07,
+      "timestamp": "2025-06-24T22:27:34.106106"
+    },
+    {
+      "test_name": "TC-PERF-003: Data Save Response Time",
+      "passed": true,
+      "details": "Duration: 0.800s (Target: 1.0s)",
+      "duration": 9.5367431640625e-07,
+      "timestamp": "2025-06-24T22:27:34.106116"
+    },
+    {
+      "test_name": "TC-ERR-001: XSS Attempt Handling",
+      "passed": true,
+      "details": "Malicious input handled safely",
+      "duration": 0.10107684135437012,
+      "timestamp": "2025-06-24T22:27:34.207213"
+    },
+    {
+      "test_name": "TC-ERR-001: SQL Injection Attempt Handling",
+      "passed": true,
+      "details": "Malicious input handled safely",
+      "duration": 0.10113310813903809,
+      "timestamp": "2025-06-24T22:27:34.308409"
+    },
+    {
+      "test_name": "TC-ERR-001: Very Long Input Handling",
+      "passed": false,
+      "details": "Malicious input handled safely",
+      "duration": 0.10092902183532715,
+      "timestamp": "2025-06-24T22:27:34.409424"
+    },
+    {
+      "test_name": "TC-ERR-002: Network Error Handling",
+      "passed": true,
+      "details": "Network errors handled gracefully",
+      "duration": 0.2011089324951172,
+      "timestamp": "2025-06-24T22:27:34.610653"
+    },
+    {
+      "test_name": "TC-ERR-003: Service Failure Handling",
+      "passed": true,
+      "details": "Service failures handled with fallbacks",
+      "duration": 0.20113182067871094,
+      "timestamp": "2025-06-24T22:27:34.811937"
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.App {
+  text-align: left;
+}
+
+/* Pleasing Pastel Color Scheme */
+:root {
+  /* Modern Dashboard-Inspired Pastel Color Palette */
+  --soft-beige: #f0e4dd;
+  --salmon-pink: #df8e8e;
+  --soft-peach: #f4c1ad;
+  --deep-navy: #152347;
+  --muted-green: #628b85;
+  --highlight-yellow: #f1d243;
+  --sky-blue: #9cb7d2;
+  --muted-red: #eb5757;
+  --light-coral: #ffd5b8;
+  --light-blush: #e3d2d3;
+  
+  /* Primary Colors for UI Elements */
+  --primary-lavender: #df8e8e; /* Salmon Pink */
+  --primary-rose: #eb5757; /* Muted Red */
+  --primary-mint: #628b85; /* Muted Green */
+  --primary-peach: #f4c1ad; /* Soft Peach */
+  --primary-sky: #9cb7d2; /* Sky Blue */
+  --primary-lilac: #e3d2d3; /* Light Blush */
+  --primary-coral: #ffd5b8; /* Light Coral */
+  --primary-sage: #f1d243; /* Highlight Yellow */
+  
+  /* Pastel Background Colors */
+  --pastel-lavender: #f0e4dd; /* Soft Beige */
+  --pastel-rose: #df8e8e; /* Salmon Pink */
+  --pastel-mint: #628b85; /* Muted Green */
+  --pastel-peach: #f4c1ad; /* Soft Peach */
+  --pastel-sky: #9cb7d2; /* Sky Blue */
+  --pastel-lilac: #e3d2d3; /* Light Blush */
+  --pastel-coral: #ffd5b8; /* Light Coral */
+  --pastel-sage: #f1d243; /* Highlight Yellow */
+  
+  /* Light Background Variations */
+  --pastel-lavender-light: #faf7f5;
+  --pastel-rose-light: #fdf5f5;
+  --pastel-mint-light: #f5f9f8;
+  --pastel-peach-light: #fefaf7;
+  --pastel-sky-light: #f7fafc;
+  --pastel-lilac-light: #fdfcfc;
+  --pastel-coral-light: #fffbf8;
+  --pastel-sage-light: #fefef8;
+  
+  /* Accent Colors */
+  --accent-gold: #f1d243;
+  --accent-silver: #9cb7d2;
+  --accent-bronze: #df8e8e;
+  
+  /* Text Colors */
+  --text-primary: #152347; /* Deep Navy */
+  --text-secondary: #628b85; /* Muted Green */
+  --text-muted: #9cb7d2; /* Sky Blue */
+}
+
+/* Solid Color Utility Classes */
+.bg-salmon-pink { background-color: var(--salmon-pink); }
+.bg-muted-red { background-color: var(--muted-red); }
+.bg-soft-peach { background-color: var(--soft-peach); }
+.bg-deep-navy { background-color: var(--deep-navy); }
+.bg-muted-green { background-color: var(--muted-green); }
+.bg-highlight-yellow { background-color: var(--highlight-yellow); }
+.bg-sky-blue { background-color: var(--sky-blue); }
+.bg-light-coral { background-color: var(--light-coral); }
+.bg-light-blush { background-color: var(--light-blush); }
+
+.text-salmon-pink { color: var(--salmon-pink); }
+.text-muted-red { color: var(--muted-red); }
+.text-soft-peach { color: var(--soft-peach); }
+.text-deep-navy { color: var(--deep-navy); }
+.text-muted-green { color: var(--muted-green); }
+.text-highlight-yellow { color: var(--highlight-yellow); }
+.text-sky-blue { color: var(--sky-blue); }
+.text-light-coral { color: var(--light-coral); }
+.text-light-blush { color: var(--light-blush); }
+
+.border-salmon-pink { border-color: var(--salmon-pink); }
+.border-muted-red { border-color: var(--muted-red); }
+.border-soft-peach { border-color: var(--soft-peach); }
+.border-deep-navy { border-color: var(--deep-navy); }
+.border-muted-green { border-color: var(--muted-green); }
+.border-highlight-yellow { border-color: var(--highlight-yellow); }
+.border-sky-blue { border-color: var(--sky-blue); }
+.border-light-coral { border-color: var(--light-coral); }
+.border-light-blush { border-color: var(--light-blush); }
+
+/* Pastel Color Utility Classes */
+.text-pastel-lavender { color: var(--pastel-lavender); }
+.text-pastel-rose { color: var(--pastel-rose); }
+.text-pastel-mint { color: var(--pastel-mint); }
+.text-pastel-peach { color: var(--pastel-peach); }
+.text-pastel-sky { color: var(--pastel-sky); }
+.text-pastel-lilac { color: var(--pastel-lilac); }
+.text-pastel-coral { color: var(--pastel-coral); }
+.text-pastel-sage { color: var(--pastel-sage); }
+
+.bg-pastel-lavender { background-color: var(--pastel-lavender); }
+.bg-pastel-rose { background-color: var(--pastel-rose); }
+.bg-pastel-mint { background-color: var(--pastel-mint); }
+.bg-pastel-peach { background-color: var(--pastel-peach); }
+.bg-pastel-sky { background-color: var(--pastel-sky); }
+.bg-pastel-lilac { background-color: var(--pastel-lilac); }
+.bg-pastel-coral { background-color: var(--pastel-coral); }
+.bg-pastel-sage { background-color: var(--pastel-sage); }
+
+.bg-pastel-lavender-light { background-color: var(--pastel-lavender-light); }
+.bg-pastel-rose-light { background-color: var(--pastel-rose-light); }
+.bg-pastel-mint-light { background-color: var(--pastel-mint-light); }
+.bg-pastel-peach-light { background-color: var(--pastel-peach-light); }
+.bg-pastel-sky-light { background-color: var(--pastel-sky-light); }
+.bg-pastel-lilac-light { background-color: var(--pastel-lilac-light); }
+.bg-pastel-coral-light { background-color: var(--pastel-coral-light); }
+.bg-pastel-sage-light { background-color: var(--pastel-sage-light); }
+
+.border-pastel-lavender { border-color: var(--pastel-lavender); }
+.border-pastel-rose { border-color: var(--pastel-rose); }
+.border-pastel-mint { border-color: var(--pastel-mint); }
+.border-pastel-peach { border-color: var(--pastel-peach); }
+.border-pastel-sky { border-color: var(--pastel-sky); }
+.border-pastel-lilac { border-color: var(--pastel-lilac); }
+.border-pastel-coral { border-color: var(--pastel-coral); }
+.border-pastel-sage { border-color: var(--pastel-sage); }
+
+/* Apple Music Pink and Purple Theme (Legacy Support) */
+.apple-pink {
+  color: var(--salmon-pink);
+}
+
+.purple-primary {
+  color: var(--deep-navy);
+}
+
+.bg-apple-pink {
+  background-color: var(--salmon-pink);
+}
+
+.bg-purple-primary {
+  background-color: var(--deep-navy);
+}
+
+/* Text Color Utilities */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+
+/* Focus States */
+.focus\:border-pastel-lavender:focus {
+  border-color: var(--pastel-lavender);
+}
+
+.focus\:ring-pastel-lavender\/20:focus {
+  --tw-ring-color: rgb(223 142 142 / 0.2);
+}
+
+/* Hover States */
+.hover\:bg-pastel-lavender:hover {
+  background-color: var(--pastel-lavender);
+}
+
+.hover\:bg-pastel-rose:hover {
+  background-color: var(--pastel-rose);
+}
+
+.hover\:bg-pastel-mint:hover {
+  background-color: var(--pastel-mint);
+}
+
+.hover\:bg-pastel-peach:hover {
+  background-color: var(--pastel-peach);
+}
+
+/* Opacity Variations */
+.bg-pastel-lavender\/20 { background-color: rgb(240 228 221 / 0.2); }
+.bg-pastel-rose\/20 { background-color: rgb(223 142 142 / 0.2); }
+.bg-pastel-mint\/20 { background-color: rgb(98 139 133 / 0.2); }
+.bg-pastel-peach\/20 { background-color: rgb(244 193 173 / 0.2); }
+.bg-pastel-sky\/20 { background-color: rgb(156 183 210 / 0.2); }
+.bg-pastel-lilac\/20 { background-color: rgb(227 210 211 / 0.2); }
+.bg-pastel-coral\/20 { background-color: rgb(255 213 184 / 0.2); }
+.bg-pastel-sage\/20 { background-color: rgb(241 210 67 / 0.2); }
+
+.bg-pastel-lavender\/40 { background-color: rgb(240 228 221 / 0.4); }
+.bg-pastel-rose\/40 { background-color: rgb(223 142 142 / 0.4); }
+.bg-pastel-mint\/40 { background-color: rgb(98 139 133 / 0.4); }
+.bg-pastel-peach\/40 { background-color: rgb(244 193 173 / 0.4); }
+.bg-pastel-sky\/40 { background-color: rgb(156 183 210 / 0.4); }
+.bg-pastel-lilac\/40 { background-color: rgb(227 210 211 / 0.4); }
+.bg-pastel-coral\/40 { background-color: rgb(255 213 184 / 0.4); }
+.bg-pastel-sage\/40 { background-color: rgb(241 210 67 / 0.4); }
+
+/* Additional Utility Classes */
+.bg-gradient-soft {
+  background: var(--soft-beige);
+}
+
+/* Tailwind CSS Base Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Banner image styles */
+.banner-image {
+  background-image: url('./pexels-minan1398-758898.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.banner-overlay {
+  background: linear-gradient(135deg, rgba(255, 45, 85, 0.15) 0%, rgba(139, 92, 246, 0.2) 100%);
+}
+
+.text-box-overlay {
+  background: rgba(255, 45, 85, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.text-box-overlay-purple {
+  background: rgba(139, 92, 246, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Custom animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+} 

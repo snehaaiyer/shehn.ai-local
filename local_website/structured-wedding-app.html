@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Genie - Smart Planning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeef3 0%, #f8e8ee 50%, #f5d0e0 100%);
+            min-height: 100vh;
+            color: #2d2d2d;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .progress-ring {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 24px 16px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2d2d2d;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8B4B6B;
+            box-shadow: 0 0 0 3px rgba(139, 75, 107, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .ai-results {
+            background: rgba(139, 75, 107, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(139, 75, 107, 0.1);
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .result-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8B4B6B;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(139, 75, 107, 0.1);
+            border-left: 4px solid #8B4B6B;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Dashboard -->
+        <div class="screen active" id="dashboard">
+            <div class="header">
+                <div class="title">Wedding Genie</div>
+                <div class="subtitle">AI-Powered Wedding Planning</div>
+            </div>
+
+            <div class="content">
+                <div class="welcome-card">
+                    <div class="progress-ring">
+                        <svg width="100" height="100">
+                            <circle cx="50" cy="50" r="45" stroke="#f0f0f0" stroke-width="6" fill="none"></circle>
+                            <circle cx="50" cy="50" r="45" stroke="#8B4B6B" stroke-width="6" fill="none" 
+                                    stroke-dasharray="283" stroke-dashoffset="170" stroke-linecap="round" 
+                                    transform="rotate(-90 50 50)"></circle>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                            <div style="font-size: 20px; font-weight: bold; color: #8B4B6B;">40%</div>
+                            <div style="font-size: 12px; color: #666;">Complete</div>
+                        </div>
+                    </div>
+                    <h2>Your Wedding Progress</h2>
+                    <p style="color: #666; font-size: 14px; margin-top: 8px;">AI recommendations ready</p>
+                </div>
+
+                <div class="action-grid">
+                    <button class="action-card" onclick="showScreen('wedding-form')">
+                        <span class="action-icon">📝</span>
+                        Wedding Details
+                    </button>
+                    <button class="action-card" onclick="showScreen('budget')">
+                        <span class="action-icon">💰</span>
+                        Smart Budget
+                    </button>
+                    <button class="action-card" onclick="showScreen('vendors')">
+                        <span class="action-icon">🔍</span>
+                        Find Vendors
+                    </button>
+                    <button class="action-card" onclick="showScreen('timeline')">
+                        <span class="action-icon">📋</span>
+                        AI Timeline
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wedding Form -->
+        <div class="screen" id="wedding-form">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">Wedding Details</div>
+                <div class="subtitle">Tell us about your big day</div>
+            </div>
+
+            <div class="content">
+                <div class="form-section">
+                    <div class="section-title">Basic Information</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-input" id="yourName" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Partner's Name</label>
+                        <input type="text" class="form-input" id="partnerName" placeholder="Partner's name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Wedding Date</label>
+                        <input type="date" class="form-input" id="weddingDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <select class="form-input" id="city">
+                            <option value="">Select city</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Bangalore">Bangalore</option>
+                            <option value="Chennai">Chennai</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Budget Range</label>
+                        <select class="form-input" id="budget">
+                            <option value="">Select budget</option>
+                            <option value="₹10-20 Lakhs">₹10-20 Lakhs</option>
+                            <option value="₹20-30 Lakhs">₹20-30 Lakhs</option>
+                            <option value="₹30-50 Lakhs">₹30-50 Lakhs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Guest Count</label>
+                        <input type="number" class="form-input" id="guestCount" placeholder="200">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="submitWeddingForm()">
+                    Get AI Recommendations
+                </button>
+
+                <div id="wedding-results" class="ai-results" style="display: none;">
+                    <h3 style="color: #8B4B6B; margin-bottom: 16px;">🧞‍♂️ AI Analysis</h3>
+                    <div id="wedding-recommendations"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Screen -->
+        <div class="screen" id="budget">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">Smart Budget</div>
+                <div class="subtitle">AI-optimized allocation</div>
+            </div>
+
+            <div class="content">
+                <div class="form-section">
+                    <div class="section-title">Budget Analysis</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Total Budget</label>
+                        <select class="form-input" id="budget-total">
+                            <option value="₹20-30 Lakhs">₹20-30 Lakhs</option>
+                            <option value="₹30-50 Lakhs">₹30-50 Lakhs</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="getBudgetAnalysis()">
+                    Generate Budget Plan
+                </button>
+
+                <div id="budget-loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AI analyzing budget...</p>
+                </div>
+
+                <div id="budget-results" class="ai-results" style="display: none;">
+                    <h3 style="color: #8B4B6B; margin-bottom: 16px;">💰 Budget Breakdown</h3>
+                    <div id="budget-breakdown"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendors Screen -->
+        <div class="screen" id="vendors">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">Find Vendors</div>
+                <div class="subtitle">AI-matched professionals</div>
+            </div>
+
+            <div class="content">
+                <div class="form-section">
+                    <div class="section-title">Vendor Search</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-input" id="vendor-category">
+                            <option value="Photography">Photography</option>
+                            <option value="Catering">Catering</option>
+                            <option value="Venue">Venue</option>
+                            <option value="Decoration">Decoration</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <select class="form-input" id="vendor-city">
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Bangalore">Bangalore</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="searchVendors()">
+                    Find Vendors
+                </button>
+
+                <div id="vendor-loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AI finding vendors...</p>
+                </div>
+
+                <div id="vendor-results" class="ai-results" style="display: none;">
+                    <h3 style="color: #8B4B6B; margin-bottom: 16px;">🔍 Vendor Results</h3>
+                    <div id="vendor-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Screen -->
+        <div class="screen" id="timeline">
+            <div class="header">
+                <button class="back-btn" onclick="showScreen('dashboard')">←</button>
+                <div class="title">AI Timeline</div>
+                <div class="subtitle">Smart planning schedule</div>
+            </div>
+
+            <div class="content">
+                <div class="form-section">
+                    <div class="section-title">Timeline Generation</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Wedding Date</label>
+                        <input type="date" class="form-input" id="timeline-date">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="generateTimeline()">
+                    Generate Timeline
+                </button>
+
+                <div id="timeline-loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Creating timeline...</p>
+                </div>
+
+                <div id="timeline-results" class="ai-results" style="display: none;">
+                    <h3 style="color: #8B4B6B; margin-bottom: 16px;">📋 Your Timeline</h3>
+                    <div id="timeline-plan"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8001';
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        async function submitWeddingForm() {
+            const formData = {
+                yourName: document.getElementById('yourName').value,
+                partnerName: document.getElementById('partnerName').value,
+                weddingDate: document.getElementById('weddingDate').value,
+                city: document.getElementById('city').value,
+                budget: document.getElementById('budget').value,
+                guestCount: parseInt(document.getElementById('guestCount').value) || 200,
+                weddingType: "Traditional",
+                duration: "3 days",
+                events: ["Wedding", "Reception"],
+                priorities: ["Photography", "Venue"],
+                specialRequirements: ""
+            };
+
+            if (!formData.yourName || !formData.city || !formData.budget) {
+                alert('Please fill required fields');
+                return;
+            }
+
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            try {
+                const response = await fetch(`${API_BASE}/submit-wedding`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                
+                document.getElementById('wedding-results').style.display = 'block';
+                document.getElementById('wedding-recommendations').innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title">✅ Wedding Plan Created</div>
+                        <div class="result-desc">Your details have been analyzed by AI agents.</div>
+                    </div>
+                    ${result.success ? `
+                    <div class="result-item">
+                        <div class="result-title">🤖 AI Recommendations</div>
+                        <div class="result-desc">Based on your preferences, focus on venue and photography first.</div>
+                    </div>
+                    ` : `
+                    <div class="result-item">
+                        <div class="result-title">⚠️ Service Offline</div>
+                        <div class="result-desc">Data saved locally. AI analysis when online.</div>
+                    </div>
+                    `}
+                `;
+
+            } catch (error) {
+                document.getElementById('wedding-results').style.display = 'block';
+                document.getElementById('wedding-recommendations').innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title">⚠️ Connection Error</div>
+                        <div class="result-desc">AI service unavailable. Data saved locally.</div>
+                    </div>
+                `;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Get AI Recommendations';
+            }
+        }
+
+        async function getBudgetAnalysis() {
+            document.getElementById('budget-loading').style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE}/budget-analysis`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        budget_range: document.getElementById('budget-total').value,
+                        priorities: ['Photography', 'Venue'],
+                        guest_count: 200,
+                        wedding_style: 'Traditional'
+                    })
+                });
+
+                const result = await response.json();
+                
+                setTimeout(() => {
+                    document.getElementById('budget-loading').style.display = 'none';
+                    document.getElementById('budget-results').style.display = 'block';
+                    
+                    let breakdownHTML = '';
+                    if (result.success && result.allocations) {
+                        Object.entries(result.allocations).forEach(([category, data]) => {
+                            breakdownHTML += `
+                                <div class="result-item">
+                                    <div class="result-title">${category} - ${data.percentage}%</div>
+                                    <div class="result-desc">${data.amount_formatted || '₹' + (data.amount || 0).toLocaleString()}</div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        breakdownHTML = `
+                            <div class="result-item">
+                                <div class="result-title">Sample Budget Breakdown</div>
+                                <div class="result-desc">Venue: 30%, Catering: 25%, Photography: 15%, Others: 30%</div>
+                            </div>
+                        `;
+                    }
+                    document.getElementById('budget-breakdown').innerHTML = breakdownHTML;
+                }, 1500);
+
+            } catch (error) {
+                setTimeout(() => {
+                    document.getElementById('budget-loading').style.display = 'none';
+                    document.getElementById('budget-results').style.display = 'block';
+                    document.getElementById('budget-breakdown').innerHTML = `
+                        <div class="result-item">
+                            <div class="result-title">Budget Analysis Offline</div>
+                            <div class="result-desc">AI service unavailable. Try again later.</div>
+                        </div>
+                    `;
+                }, 1500);
+            }
+        }
+
+        async function searchVendors() {
+            document.getElementById('vendor-loading').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('vendor-loading').style.display = 'none';
+                document.getElementById('vendor-results').style.display = 'block';
+                document.getElementById('vendor-list').innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title">Top Photographers in Mumbai</div>
+                        <div class="result-desc">AI found 12 photographers matching your style and budget.</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">Recommendation: Studio Light</div>
+                        <div class="result-desc">95% match score • ₹2.5L package • 4.8★ rating</div>
+                    </div>
+                `;
+            }, 2000);
+        }
+
+        function generateTimeline() {
+            document.getElementById('timeline-loading').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('timeline-loading').style.display = 'none';
+                document.getElementById('timeline-results').style.display = 'block';
+                document.getElementById('timeline-plan').innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title">📅 12 Months Before</div>
+                        <div class="result-desc">Book venue and major vendors</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">📅 6 Months Before</div>
+                        <div class="result-desc">Send invitations, finalize catering</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-title">📅 1 Month Before</div>
+                        <div class="result-desc">Final preparations and confirmations</div>
+                    </div>
+                `;
+            }, 1500);
+        }
+    </script>
+</body>
+</html> 

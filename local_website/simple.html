@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BID AI - Simple Wedding Assistant</title>
+    <style>
+        :root {
+            --primary-pink: #E8C5A0;
+            --primary-green: #A8C5A3;
+            --primary-gold: #B8860B;
+            --gold-light: #DAA520;
+            --gold-bg: #FEF7E0;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-200: #E5E7EB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-green) 100%);
+            min-height: 100vh;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .title {
+            color: var(--primary-gold);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--gray-500);
+            font-size: 1rem;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-gold), var(--gold-light));
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-gold);
+            color: var(--primary-gold);
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .option-card:hover {
+            border-color: var(--primary-gold);
+            transform: translateY(-2px);
+        }
+        
+        .option-card.selected {
+            border-color: var(--primary-gold);
+            background: var(--gold-bg);
+        }
+        
+        .success-message {
+            background: #DCFCE7;
+            border: 1px solid #BBF7D0;
+            color: #16A34A;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .nav-buttons { flex-direction: column; align-items: center; }
+            .btn { width: 100%; max-width: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1 class="title">🌸 BID AI Wedding Assistant</h1>
+                <p class="subtitle">Smart Sanskari Wedding Planning</p>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn btn-primary" onclick="showScreen('dashboard')">📊 Dashboard</button>
+                <button class="btn btn-outline" onclick="showScreen('form')">📝 Wedding Form</button>
+                <button class="btn btn-outline" onclick="showScreen('preferences')">🎨 Preferences</button>
+            </div>
+            
+            <!-- Dashboard Screen -->
+            <div id="dashboard" class="screen active">
+                <h2 style="color: var(--primary-gold); margin-bottom: 1rem;">📊 Wedding Dashboard</h2>
+                <p>Welcome to your wedding planning journey!</p>
+                <div style="margin: 1rem 0;">
+                    <div style="background: var(--gray-50); padding: 1rem; border-radius: 8px;">
+                        <strong>Progress:</strong> <span id="progress">0%</span>
+                    </div>
+                </div>
+                <p>Click on "Wedding Form" to start planning your dream wedding!</p>
+            </div>
+            
+            <!-- Wedding Form Screen -->
+            <div id="form" class="screen">
+                <h2 style="color: var(--primary-gold); margin-bottom: 1rem;">📝 Wedding Details</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-input" id="yourName" placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Partner's Name</label>
+                    <input type="text" class="form-input" id="partnerName" placeholder="Enter partner's name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Wedding Date</label>
+                    <input type="date" class="form-input" id="weddingDate">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Wedding Type</label>
+                    <select class="form-input" id="weddingType">
+                        <option value="hindu">Traditional Hindu</option>
+                        <option value="sikh">Sikh</option>
+                        <option value="muslim">Muslim</option>
+                        <option value="christian">Christian</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveForm()">💾 Save Details</button>
+            </div>
+            
+            <!-- Preferences Screen -->
+            <div id="preferences" class="screen">
+                <h2 style="color: var(--primary-gold); margin-bottom: 1rem;">🎨 Visual Preferences</h2>
+                
+                <h3 style="margin: 1rem 0;">Decoration Theme</h3>
+                <div class="grid">
+                    <div class="option-card" onclick="selectOption(this, 'theme', 'traditional')">
+                        <h4>🌺 Traditional Royal</h4>
+                        <p>Rich reds, gold accents, marigold flowers</p>
+                    </div>
+                    <div class="option-card" onclick="selectOption(this, 'theme', 'modern')">
+                        <h4>✨ Modern Elegant</h4>
+                        <p>Minimal pastels, geometric patterns</p>
+                    </div>
+                    <div class="option-card" onclick="selectOption(this, 'theme', 'rustic')">
+                        <h4>🌿 Rustic Charm</h4>
+                        <p>Earthy tones, wooden elements</p>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="savePreferences()">✨ Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🌸 BID AI Simple Wedding Assistant Loaded!');
+        
+        // Simple data storage
+        let weddingData = {
+            yourName: '',
+            partnerName: '',
+            weddingDate: '',
+            weddingType: 'hindu',
+            theme: ''
+        };
+        
+        // Load data from localStorage
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('bidai_simple_data');
+                if (saved) {
+                    weddingData = { ...weddingData, ...JSON.parse(saved) };
+                    updateForm();
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            try {
+                localStorage.setItem('bidai_simple_data', JSON.stringify(weddingData));
+                return true;
+            } catch (error) {
+                console.error('Error saving data:', error);
+                return false;
+            }
+        }
+        
+        // Show different screens
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenName).classList.add('active');
+            
+            // Update button styles
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.className = 'btn btn-outline';
+            });
+            event.target.className = 'btn btn-primary';
+            
+            console.log('Switched to screen:', screenName);
+        }
+        
+        // Update form with saved data
+        function updateForm() {
+            document.getElementById('yourName').value = weddingData.yourName || '';
+            document.getElementById('partnerName').value = weddingData.partnerName || '';
+            document.getElementById('weddingDate').value = weddingData.weddingDate || '';
+            document.getElementById('weddingType').value = weddingData.weddingType || 'hindu';
+            
+            updateProgress();
+        }
+        
+        // Save form data
+        function saveForm() {
+            weddingData.yourName = document.getElementById('yourName').value;
+            weddingData.partnerName = document.getElementById('partnerName').value;
+            weddingData.weddingDate = document.getElementById('weddingDate').value;
+            weddingData.weddingType = document.getElementById('weddingType').value;
+            
+            if (saveData()) {
+                showMessage('Wedding details saved successfully! 💒');
+                updateProgress();
+            } else {
+                showMessage('Error saving data. Please try again.', 'error');
+            }
+        }
+        
+        // Select option in preferences
+        function selectOption(element, type, value) {
+            // Remove selected class from siblings
+            element.parentNode.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked element
+            element.classList.add('selected');
+            
+            // Save selection
+            weddingData[type] = value;
+            console.log('Selected', type, ':', value);
+        }
+        
+        // Save preferences
+        function savePreferences() {
+            if (saveData()) {
+                showMessage('Visual preferences saved! 🎨');
+                updateProgress();
+            } else {
+                showMessage('Error saving preferences. Please try again.', 'error');
+            }
+        }
+        
+        // Show success message
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'success-message';
+            messageDiv.textContent = message;
+            
+            if (type === 'error') {
+                messageDiv.style.background = '#FEE2E2';
+                messageDiv.style.borderColor = '#FECACA';
+                messageDiv.style.color = '#DC2626';
+            }
+            
+            const activeScreen = document.querySelector('.screen.active');
+            activeScreen.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.parentNode.removeChild(messageDiv);
+                }
+            }, 3000);
+        }
+        
+        // Update progress
+        function updateProgress() {
+            const fields = ['yourName', 'partnerName', 'weddingDate', 'theme'];
+            const completed = fields.filter(field => weddingData[field] && weddingData[field].trim()).length;
+            const progress = Math.round((completed / fields.length) * 100);
+            
+            document.getElementById('progress').textContent = progress + '%';
+        }
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing app...');
+            loadData();
+            updateProgress();
+        });
+        
+        console.log('🎉 BID AI Simple Wedding Assistant Ready!');
+    </script>
+</body>
+</html> 

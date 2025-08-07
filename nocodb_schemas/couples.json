@@ -1,0 +1,57 @@
+{
+    "table_name": "couples",
+    "columns": [
+        {
+            "column_name": "id",
+            "type": "integer",
+            "primary": true,
+            "auto_increment": true
+        },
+        {
+            "column_name": "partner1_name",
+            "type": "string",
+            "required": true
+        },
+        {
+            "column_name": "partner2_name",
+            "type": "string",
+            "required": true
+        },
+        {
+            "column_name": "wedding_date",
+            "type": "date",
+            "required": true
+        },
+        {
+            "column_name": "contact_email",
+            "type": "string",
+            "required": true,
+            "validate": "email"
+        },
+        {
+            "column_name": "contact_phone",
+            "type": "string",
+            "required": true
+        },
+        {
+            "column_name": "created_at",
+            "type": "datetime",
+            "required": true,
+            "default": "now()"
+        },
+        {
+            "column_name": "updated_at",
+            "type": "datetime",
+            "required": true,
+            "default": "now()",
+            "on_update": "now()"
+        }
+    ],
+    "indexes": [
+        {
+            "name": "email_idx",
+            "columns": ["contact_email"],
+            "type": "unique"
+        }
+    ]
+} 

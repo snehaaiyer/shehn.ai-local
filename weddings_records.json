@@ -1,0 +1,43 @@
+{
+  "list": [
+    {
+      "Id": 1,
+      "CreatedAt": "2025-06-18 11:04:23+00:00",
+      "UpdatedAt": null,
+      "Wedding Title": "John & Jane Wedding",
+      "Event Date": "2024-12-25",
+      "Total Budget": "500000",
+      "Total Guests": "200",
+      "Planning Status": "Planning",
+      "Ceremony Type": "Hindu",
+      "Event City": "Mumbai",
+      "Schedule Status": "On Track",
+      "Current Phase": "Initial Planning",
+      "Wedding Season": "Winter",
+      "Countdown Days": "280"
+    },
+    {
+      "Id": 2,
+      "CreatedAt": "2025-06-18 15:05:02+00:00",
+      "UpdatedAt": null,
+      "Wedding Title": "string",
+      "Event Date": "string",
+      "Total Budget": "string",
+      "Total Guests": "string",
+      "Planning Status": "string",
+      "Ceremony Type": "string",
+      "Event City": "string",
+      "Schedule Status": "string",
+      "Current Phase": "string",
+      "Wedding Season": "string",
+      "Countdown Days": "string"
+    }
+  ],
+  "pageInfo": {
+    "totalRows": 8,
+    "page": 1,
+    "pageSize": 2,
+    "isFirstPage": true,
+    "isLastPage": false
+  }
+}

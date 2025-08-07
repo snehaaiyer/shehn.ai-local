@@ -1,0 +1,64 @@
+{
+  "summary": {
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "pass_rate": "100.0%",
+    "duration": "0.51s",
+    "timestamp": "2025-06-24T22:27:19.318867"
+  },
+  "categories": {
+    "TC-NAV-001": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "TC-NAV-002": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "TC-NAV-003": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "test_name": "TC-NAV-001: Navigate to Dashboard",
+      "passed": true,
+      "details": "Successfully navigated to dashboard screen",
+      "duration": 0.10108804702758789,
+      "timestamp": "2025-06-24T22:27:18.913072"
+    },
+    {
+      "test_name": "TC-NAV-001: Navigate to Wedding Form",
+      "passed": true,
+      "details": "Successfully navigated to wedding-form screen",
+      "duration": 0.10114479064941406,
+      "timestamp": "2025-06-24T22:27:19.014290"
+    },
+    {
+      "test_name": "TC-NAV-001: Navigate to Visual Preferences",
+      "passed": true,
+      "details": "Successfully navigated to visual-preferences screen",
+      "duration": 0.10113096237182617,
+      "timestamp": "2025-06-24T22:27:19.115561"
+    },
+    {
+      "test_name": "TC-NAV-002: URL Hash Routing",
+      "passed": true,
+      "details": "URL hash routing functional",
+      "duration": 0.1011199951171875,
+      "timestamp": "2025-06-24T22:27:19.216825"
+    },
+    {
+      "test_name": "TC-NAV-003: Navigation State Management",
+      "passed": true,
+      "details": "Navigation state managed correctly",
+      "duration": 0.10111212730407715,
+      "timestamp": "2025-06-24T22:27:19.318127"
+    }
+  ]
+}

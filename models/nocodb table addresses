@@ -1,0 +1,330 @@
+https://app.nocodb.com/#/w6gi3jq7/p0o0no5kpaic74k/mg0w6xb658pvkqb :weddings
+https://app.nocodb.com/#/w6gi3jq7/p0o0no5kpaic74k/m5n3t4l0edym7w4:venues
+https://app.nocodb.com/#/w6gi3jq7/p0o0no5kpaic74k/ma3xsdfzx3fgxdf:vendors
+https://app.nocodb.com/#/w6gi3jq7/p0o0no5kpaic74k/m4v24wea9g5wino : tasks
+https://app.nocodb.com/#/w6gi3jq7/p0o0no5kpaic74k/mhkpiytp9rqyd20 : preferences
+https://app.nocodb.com/#/w6gi3jq7/p0o0no5kpaic74k/m6v4on94fj53j9n: couples
+API snippet 
+url --request GET \
+	--url 'https://app.nocodb.com/api/v2/tables/mg0w6xb658pvkqb/records?offset=0&limit=25&where=&viewId=vwpk49gev5o8t0sa' \
+	--header 'xc-token: CREATE_YOUR_API_TOKEN_FROM https://app.nocodb.com/#/account/tokens'
+
+    weddings_csv
+
+
+GET
+/api/v2/tables/mg0w6xb658pvkqb/records
+weddings_csv list
+
+
+POST
+/api/v2/tables/mg0w6xb658pvkqb/records
+weddings_csv create
+
+
+PATCH
+/api/v2/tables/mg0w6xb658pvkqb/records
+weddings_csv update
+
+
+DELETE
+/api/v2/tables/mg0w6xb658pvkqb/records
+weddings_csv delete
+
+
+GET
+/api/v2/tables/mg0w6xb658pvkqb/records/{recordId}
+weddings_csv read
+
+
+GET
+/api/v2/tables/mg0w6xb658pvkqb/records/count
+weddings_csv count
+
+Venues_csv
+
+
+GET
+/api/v2/tables/m5n3t4l0edym7w4/records
+Venues_csv list
+
+
+POST
+/api/v2/tables/m5n3t4l0edym7w4/records
+Venues_csv create
+
+
+PATCH
+/api/v2/tables/m5n3t4l0edym7w4/records
+Venues_csv update
+
+
+DELETE
+/api/v2/tables/m5n3t4l0edym7w4/records
+Venues_csv delete
+
+
+GET
+/api/v2/tables/m5n3t4l0edym7w4/records/{recordId}
+Venues_csv read
+
+
+GET
+/api/v2/tables/m5n3t4l0edym7w4/records/count
+Venues_csv count
+
+vendors_csv
+
+
+GET
+/api/v2/tables/ma3xsdfzx3fgxdf/records
+vendors_csv list
+
+
+POST
+/api/v2/tables/ma3xsdfzx3fgxdf/records
+vendors_csv create
+
+
+PATCH
+/api/v2/tables/ma3xsdfzx3fgxdf/records
+vendors_csv update
+
+
+DELETE
+/api/v2/tables/ma3xsdfzx3fgxdf/records
+vendors_csv delete
+
+
+GET
+/api/v2/tables/ma3xsdfzx3fgxdf/records/{recordId}
+vendors_csv read
+
+
+GET
+/api/v2/tables/ma3xsdfzx3fgxdf/records/count
+vendors_csv count
+
+tasks_csv
+
+
+GET
+/api/v2/tables/m4v24wea9g5wino/records
+tasks_csv list
+
+
+POST
+/api/v2/tables/m4v24wea9g5wino/records
+tasks_csv create
+
+
+PATCH
+/api/v2/tables/m4v24wea9g5wino/records
+tasks_csv update
+
+
+DELETE
+/api/v2/tables/m4v24wea9g5wino/records
+tasks_csv delete
+
+
+GET
+/api/v2/tables/m4v24wea9g5wino/records/{recordId}
+tasks_csv read
+
+
+GET
+/api/v2/tables/m4v24wea9g5wino/records/count
+tasks_csv count
+
+preferences_csv
+
+
+GET
+/api/v2/tables/mhkpiytp9rqyd20/records
+preferences_csv list
+
+
+POST
+/api/v2/tables/mhkpiytp9rqyd20/records
+preferences_csv create
+
+
+PATCH
+/api/v2/tables/mhkpiytp9rqyd20/records
+preferences_csv update
+
+
+DELETE
+/api/v2/tables/mhkpiytp9rqyd20/records
+preferences_csv delete
+
+
+GET
+/api/v2/tables/mhkpiytp9rqyd20/records/{recordId}
+preferences_csv read
+
+
+GET
+/api/v2/tables/mhkpiytp9rqyd20/records/count
+preferences_csv count
+
+couples_csv
+
+
+GET
+/api/v2/tables/m6v4on94fj53j9n/records
+couples_csv list
+
+
+POST
+/api/v2/tables/m6v4on94fj53j9n/records
+couples_csv create
+
+
+PATCH
+/api/v2/tables/m6v4on94fj53j9n/records
+couples_csv update
+
+
+DELETE
+/api/v2/tables/m6v4on94fj53j9n/records
+couples_csv delete
+
+
+GET
+/api/v2/tables/m6v4on94fj53j9n/records/{recordId}
+couples_csv read
+
+
+GET
+/api/v2/tables/m6v4on94fj53j9n/records/count
+couples_csv count
+
+communications_csv
+
+
+GET
+/api/v2/tables/m72hw41xhkjuul3/records
+communications_csv list
+
+
+POST
+/api/v2/tables/m72hw41xhkjuul3/records
+communications_csv create
+
+
+PATCH
+/api/v2/tables/m72hw41xhkjuul3/records
+communications_csv update
+
+
+DELETE
+/api/v2/tables/m72hw41xhkjuul3/records
+communications_csv delete
+
+
+GET
+/api/v2/tables/m72hw41xhkjuul3/records/{recordId}
+communications_csv read
+
+
+GET
+/api/v2/tables/m72hw41xhkjuul3/records/count
+communications_csv count
+
+ceremonies_csv
+
+
+GET
+/api/v2/tables/mo8npbdp35aumyq/records
+ceremonies_csv list
+
+
+POST
+/api/v2/tables/mo8npbdp35aumyq/records
+ceremonies_csv create
+
+
+PATCH
+/api/v2/tables/mo8npbdp35aumyq/records
+ceremonies_csv update
+
+
+DELETE
+/api/v2/tables/mo8npbdp35aumyq/records
+ceremonies_csv delete
+
+
+GET
+/api/v2/tables/mo8npbdp35aumyq/records/{recordId}
+ceremonies_csv read
+
+
+GET
+/api/v2/tables/mo8npbdp35aumyq/records/count
+ceremonies_csv count
+
+budget_csv
+
+
+GET
+/api/v2/tables/m9ba2y6vl9t005j/records
+budget_csv list
+
+
+POST
+/api/v2/tables/m9ba2y6vl9t005j/records
+budget_csv create
+
+
+PATCH
+/api/v2/tables/m9ba2y6vl9t005j/records
+budget_csv update
+
+
+DELETE
+/api/v2/tables/m9ba2y6vl9t005j/records
+budget_csv delete
+
+
+GET
+/api/v2/tables/m9ba2y6vl9t005j/records/{recordId}
+budget_csv read
+
+
+GET
+/api/v2/tables/m9ba2y6vl9t005j/records/count
+budget_csv count
+
+ai_activities_csv
+
+
+GET
+/api/v2/tables/m4prxg2yuh75gtw/records
+ai_activities_csv list
+
+
+POST
+/api/v2/tables/m4prxg2yuh75gtw/records
+ai_activities_csv create
+
+
+PATCH
+/api/v2/tables/m4prxg2yuh75gtw/records
+ai_activities_csv update
+
+
+DELETE
+/api/v2/tables/m4prxg2yuh75gtw/records
+ai_activities_csv delete
+
+
+GET
+/api/v2/tables/m4prxg2yuh75gtw/records/{recordId}
+ai_activities_csv read
+
+
+GET
+/api/v2/tables/m4prxg2yuh75gtw/records/count
+ai_activities_csv count

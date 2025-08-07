@@ -1,0 +1,128 @@
+/* Wedding Theme Images */
+
+.royal-palace {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/royal-palace.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.minimalist-pastel {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/minimalist-pastel.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.boho-garden {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/boho-garden.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.south-indian-temple {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/south-indian-temple.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.beach-destination {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/beach-destination.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.bollywood-sangeet {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/bollywood-sangeet.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.traditional-cultural {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/css/traditional-cultural.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Enhanced overlay effects for all theme images */
+.vendor-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(139, 75, 107, 0.1), rgba(168, 85, 168, 0.1));
+    z-index: 1;
+}
+
+/* Hover effects for theme images */
+.vendor-card:hover .vendor-image {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+/* Loading state for images */
+.vendor-image[data-loading="true"] {
+    opacity: 0.7;
+    background-color: #f0f0f0;
+}
+
+/* Fallback for when images fail to load */
+.vendor-image:not([data-image-loaded="true"]) {
+    background-color: #f8f9fa;
+    background-image: 
+        linear-gradient(45deg, #e9ecef 25%, transparent 25%), 
+        linear-gradient(-45deg, #e9ecef 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #e9ecef 75%), 
+        linear-gradient(-45deg, transparent 75%, #e9ecef 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Theme-specific color overlays */
+.vendor-image.royal-palace::before {
+    background: linear-gradient(45deg, rgba(139, 75, 107, 0.2), rgba(168, 85, 168, 0.1));
+}
+
+.vendor-image.minimalist-pastel::before {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(240, 240, 240, 0.2));
+}
+
+.vendor-image.boho-garden::before {
+    background: linear-gradient(45deg, rgba(76, 175, 80, 0.2), rgba(139, 195, 74, 0.1));
+}
+
+.vendor-image.south-indian-temple::before {
+    background: linear-gradient(45deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.1));
+}
+
+.vendor-image.beach-destination::before {
+    background: linear-gradient(45deg, rgba(33, 150, 243, 0.2), rgba(0, 188, 212, 0.1));
+}
+
+.vendor-image.bollywood-sangeet::before {
+    background: linear-gradient(45deg, rgba(233, 30, 99, 0.2), rgba(156, 39, 176, 0.1));
+}
+
+.vendor-image.traditional-cultural::before {
+    background: linear-gradient(45deg, rgba(244, 67, 54, 0.2), rgba(255, 87, 34, 0.1));
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vendor-image {
+        height: 200px; /* Slightly smaller on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .vendor-image {
+        height: 180px; /* Even smaller on very small screens */
+    }
+} 

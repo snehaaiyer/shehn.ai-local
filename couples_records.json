@@ -1,0 +1,41 @@
+{
+  "list": [
+    {
+      "Id": 1,
+      "CreatedAt": "2025-06-18 11:03:27+00:00",
+      "UpdatedAt": null,
+      "Primary Partner": "John",
+      "Secondary Partner": "Jane",
+      "Ceremony Date": "2024-12-25",
+      "Primary Email": "john@email.com",
+      "Primary Phone": "+1234567890",
+      "Residence City": "Mumbai",
+      "Preferred Communication": "WhatsApp",
+      "Current Status": "Active",
+      "Record Created": "2024-03-20 10:00:00",
+      "Record Updated": "2024-03-20 10:00:00"
+    },
+    {
+      "Id": 2,
+      "CreatedAt": "2025-06-18 11:03:27+00:00",
+      "UpdatedAt": null,
+      "Primary Partner": "Michael",
+      "Secondary Partner": "Sarah",
+      "Ceremony Date": "2024-11-15",
+      "Primary Email": "michael@email.com",
+      "Primary Phone": "+1987654321",
+      "Residence City": "Delhi",
+      "Preferred Communication": "Email",
+      "Current Status": "Active",
+      "Record Created": "2024-03-20 10:30:00",
+      "Record Updated": "2024-03-20 10:30:00"
+    }
+  ],
+  "pageInfo": {
+    "totalRows": 19,
+    "page": 1,
+    "pageSize": 2,
+    "isFirstPage": true,
+    "isLastPage": false
+  }
+}

@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Vendor Discovery - BID AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeef3 0%, #f8e8ee 50%, #f5d0e0 100%);
+            min-height: 100vh;
+            color: #2d2d2d;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(139, 75, 107, 0.3);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .tabs-container {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 20px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-button.active {
+            color: #8B4B6B;
+            background: rgba(139, 75, 107, 0.05);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        .controls-section {
+            padding: 24px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #8B4B6B;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #8B4B6B;
+        }
+
+        .preferences-toggle {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .preferences-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 75, 107, 0.3);
+        }
+
+        .content-area {
+            display: flex;
+            min-height: calc(100vh - 200px);
+        }
+
+        .preferences-panel {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            padding: 24px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .preferences-panel.hidden {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .vendor-grid {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .vendor-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .vendor-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vendor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .vendor-image {
+            height: 200px;
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vendor-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255,255,255,0.9);
+            color: #8B4B6B;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .vendor-info {
+            padding: 20px;
+        }
+
+        .vendor-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d2d2d;
+        }
+
+        .vendor-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .vendor-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .detail-icon {
+            font-size: 16px;
+            color: #8B4B6B;
+        }
+
+        .vendor-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .contact-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+        }
+
+        .whatsapp-btn:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+        }
+
+        .email-btn {
+            background: #4285f4;
+            color: white;
+        }
+
+        .email-btn:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+        }
+
+        .quote-btn {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .quote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 75, 107, 0.3);
+        }
+
+        .preference-section {
+            margin-bottom: 24px;
+        }
+
+        .preference-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2d2d2d;
+        }
+
+        .preference-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .preference-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preference-option:hover {
+            border-color: #8B4B6B;
+            background: rgba(139, 75, 107, 0.05);
+        }
+
+        .preference-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #8B4B6B;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Communication Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .message-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        .message-textarea:focus {
+            outline: none;
+            border-color: #8B4B6B;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #8B4B6B, #A855A8);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 75, 107, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: auto;
+            }
+            
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .preferences-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .vendor-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🎉 Wedding Vendor Discovery</h1>
+                <div class="subtitle">Find the perfect vendors for your special day</div>
+            </div>
+            <button class="back-btn" onclick="window.history.back()">← Back to Planning</button>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="switchTab('venues')" data-tab="venues">
+                <span class="tab-icon">🏛️</span>
+                Venues
+            </button>
+            <button class="tab-button" onclick="switchTab('decoration')" data-tab="decoration">
+                <span class="tab-icon">🎨</span>
+                Decoration
+            </button>
+            <button class="tab-button" onclick="switchTab('catering')" data-tab="catering">
+                <span class="tab-icon">🍽️</span>
+                Catering
+            </button>
+            <button class="tab-button" onclick="switchTab('makeup')" data-tab="makeup">
+                <span class="tab-icon">💄</span>
+                Makeup
+            </button>
+            <button class="tab-button" onclick="switchTab('photography')" data-tab="photography">
+                <span class="tab-icon">📸</span>
+                Photography
+            </button>
+        </div>
+
+        <div class="controls-section">
+            <div class="controls-row">
+                <input type="text" class="search-box" placeholder="Search vendors by name, location, or services..." id="searchInput">
+                <div class="filter-group">
+                    <select class="filter-select" id="locationFilter">
+                        <option value="">All Locations</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="bangalore">Bangalore</option>
+                        <option value="pune">Pune</option>
+                    </select>
+                    <select class="filter-select" id="budgetFilter">
+                        <option value="">All Budgets</option>
+                        <option value="budget">Budget Friendly</option>
+                        <option value="mid">Mid Range</option>
+                        <option value="premium">Premium</option>
+                        <option value="luxury">Luxury</option>
+                    </select>
+                    <select class="filter-select" id="ratingFilter">
+                        <option value="">All Ratings</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4+ Stars</option>
+                        <option value="3">3+ Stars</option>
+                    </select>
+                </div>
+                <button class="preferences-toggle" onclick="togglePreferences()">
+                    ⚙️ Preferences
+                </button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="preferences-panel" id="preferencesPanel">
+                <div class="preference-section">
+                    <div class="preference-title">Style Preferences</div>
+                    <div class="preference-options">
+                        <label class="preference-option">
+                            <input type="checkbox" name="style" value="traditional">
+                            <span>Traditional</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="style" value="modern">
+                            <span>Modern</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="style" value="vintage">
+                            <span>Vintage</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="style" value="contemporary">
+                            <span>Contemporary</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <div class="preference-title">Service Type</div>
+                    <div class="preference-options">
+                        <label class="preference-option">
+                            <input type="checkbox" name="service" value="full-service">
+                            <span>Full Service</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="service" value="consultation">
+                            <span>Consultation Only</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="service" value="day-of">
+                            <span>Day-of Coordination</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <div class="preference-title">Experience Level</div>
+                    <div class="preference-options">
+                        <label class="preference-option">
+                            <input type="checkbox" name="experience" value="5plus">
+                            <span>5+ Years</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="experience" value="10plus">
+                            <span>10+ Years</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="experience" value="established">
+                            <span>Well Established</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <div class="preference-title">Availability</div>
+                    <div class="preference-options">
+                        <label class="preference-option">
+                            <input type="checkbox" name="availability" value="immediate">
+                            <span>Available Immediately</span>
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox" name="availability" value="flexible">
+                            <span>Flexible Dates</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vendor-grid">
+                <div class="vendor-cards" id="vendorCards">
+                    <!-- Vendor cards will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Communication Modal -->
+    <div id="communicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Contact Vendor</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <textarea class="message-textarea" id="messageText" placeholder="Your message will be auto-generated here..."></textarea>
+                <button class="send-btn" onclick="sendMessage()">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'venues';
+        let currentVendor = null;
+        let preferencesVisible = true;
+
+        // Sample vendor data for different categories
+        const vendorData = {
+            venues: [
+                {
+                    id: 1,
+                    name: "Royal Garden Palace",
+                    description: "Luxury banquet hall with beautiful gardens, perfect for grand celebrations",
+                    location: "Mumbai",
+                    rating: 4.8,
+                    price: "₹2,00,000 - ₹5,00,000",
+                    capacity: "500-1000 guests",
+                    type: "premium",
+                    phone: "+91 98765 43210",
+                    email: "info@royalgardenpalace.com",
+                    image: "venue1.jpg"
+                },
+                {
+                    id: 2,
+                    name: "Heritage Haveli",
+                    description: "Traditional Rajasthani architecture with modern amenities",
+                    location: "Delhi",
+                    rating: 4.6,
+                    price: "₹1,50,000 - ₹3,00,000",
+                    capacity: "200-500 guests",
+                    type: "mid",
+                    phone: "+91 98765 43211",
+                    email: "bookings@heritagehaveli.com",
+                    image: "venue2.jpg"
+                }
+            ],
+            decoration: [
+                {
+                    id: 11,
+                    name: "Elegant Decor Studio",
+                    description: "Creative floral arrangements and stunning stage setups",
+                    location: "Mumbai",
+                    rating: 4.7,
+                    price: "₹50,000 - ₹2,00,000",
+                    specialty: "Floral arrangements",
+                    type: "premium",
+                    phone: "+91 98765 43212",
+                    email: "info@elegantdecor.com",
+                    image: "decor1.jpg"
+                },
+                {
+                    id: 12,
+                    name: "Bloom & Bliss",
+                    description: "Specialized in traditional and modern decoration themes",
+                    location: "Bangalore",
+                    rating: 4.5,
+                    price: "₹30,000 - ₹1,50,000",
+                    specialty: "Theme decoration",
+                    type: "mid",
+                    phone: "+91 98765 43213",
+                    email: "contact@bloombliss.com",
+                    image: "decor2.jpg"
+                }
+            ],
+            catering: [
+                {
+                    id: 21,
+                    name: "Spice Route Catering",
+                    description: "Authentic Indian cuisine with international options",
+                    location: "Mumbai",
+                    rating: 4.9,
+                    price: "₹800 - ₹2,500 per person",
+                    specialty: "Multi-cuisine",
+                    type: "premium",
+                    phone: "+91 98765 43214",
+                    email: "orders@spiceroute.com",
+                    image: "catering1.jpg"
+                },
+                {
+                    id: 22,
+                    name: "Royal Feast",
+                    description: "Traditional royal cuisine with modern presentation",
+                    location: "Delhi",
+                    rating: 4.6,
+                    price: "₹600 - ₹1,800 per person",
+                    specialty: "Royal cuisine",
+                    type: "mid",
+                    phone: "+91 98765 43215",
+                    email: "bookings@royalfeast.com",
+                    image: "catering2.jpg"
+                }
+            ],
+            makeup: [
+                {
+                    id: 31,
+                    name: "Glamour Studio",
+                    description: "Professional bridal makeup and hair styling",
+                    location: "Mumbai",
+                    rating: 4.8,
+                    price: "₹25,000 - ₹80,000",
+                    specialty: "Bridal makeup",
+                    type: "premium",
+                    phone: "+91 98765 43216",
+                    email: "bookings@glamourstudio.com",
+                    image: "makeup1.jpg"
+                },
+                {
+                    id: 32,
+                    name: "Beauty Bliss",
+                    description: "Complete bridal beauty services and packages",
+                    location: "Pune",
+                    rating: 4.4,
+                    price: "₹15,000 - ₹50,000",
+                    specialty: "Bridal packages",
+                    type: "mid",
+                    phone: "+91 98765 43217",
+                    email: "info@beautybliss.com",
+                    image: "makeup2.jpg"
+                }
+            ],
+            photography: [
+                {
+                    id: 41,
+                    name: "Capture Moments",
+                    description: "Cinematic wedding photography and videography",
+                    location: "Mumbai",
+                    rating: 4.9,
+                    price: "₹1,00,000 - ₹5,00,000",
+                    specialty: "Cinematic style",
+                    type: "premium",
+                    phone: "+91 98765 43218",
+                    email: "info@capturemoments.com",
+                    image: "photo1.jpg"
+                },
+                {
+                    id: 42,
+                    name: "Wedding Chronicles",
+                    description: "Traditional and candid wedding photography",
+                    location: "Bangalore",
+                    rating: 4.7,
+                    price: "₹75,000 - ₹3,00,000",
+                    specialty: "Candid photography",
+                    type: "mid",
+                    phone: "+91 98765 43219",
+                    email: "bookings@weddingchronicles.com",
+                    image: "photo2.jpg"
+                }
+            ]
+        };
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            currentTab = tabName;
+            renderVendors();
+        }
+
+        function togglePreferences() {
+            const panel = document.getElementById('preferencesPanel');
+            preferencesVisible = !preferencesVisible;
+            
+            if (preferencesVisible) {
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        function renderVendors() {
+            const container = document.getElementById('vendorCards');
+            const vendors = vendorData[currentTab] || [];
+            
+            if (vendors.length === 0) {
+                container.innerHTML = '<div class="no-results">No vendors found for this category.</div>';
+                return;
+            }
+
+            container.innerHTML = vendors.map(vendor => `
+                <div class="vendor-card">
+                    <div class="vendor-image">
+                        <div class="vendor-badge">${vendor.rating} ⭐</div>
+                    </div>
+                    <div class="vendor-info">
+                        <div class="vendor-name">${vendor.name}</div>
+                        <div class="vendor-description">${vendor.description}</div>
+                        <div class="vendor-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📍</span>
+                                <span>${vendor.location}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">💰</span>
+                                <span>${vendor.price}</span>
+                            </div>
+                            ${vendor.capacity ? `
+                                <div class="detail-item">
+                                    <span class="detail-icon">👥</span>
+                                    <span>${vendor.capacity}</span>
+                                </div>
+                            ` : ''}
+                            ${vendor.specialty ? `
+                                <div class="detail-item">
+                                    <span class="detail-icon">✨</span>
+                                    <span>${vendor.specialty}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="vendor-actions">
+                            <button class="contact-btn whatsapp-btn" onclick="openWhatsAppContact(${vendor.id})">
+                                📱 WhatsApp
+                            </button>
+                            <button class="contact-btn email-btn" onclick="openEmailContact(${vendor.id})">
+                                ✉️ Email
+                            </button>
+                        </div>
+                        <button class="quote-btn" onclick="requestQuote(${vendor.id})">
+                            📋 Request Quote
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openWhatsAppContact(vendorId) {
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            const message = generateContactMessage(vendor, 'whatsapp');
+            const whatsappUrl = `https://wa.me/${vendor.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function openEmailContact(vendorId) {
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            currentVendor = vendor;
+            const message = generateContactMessage(vendor, 'email');
+            
+            document.getElementById('modalTitle').textContent = `Contact ${vendor.name}`;
+            document.getElementById('messageText').value = message;
+            document.getElementById('communicationModal').style.display = 'block';
+        }
+
+        function requestQuote(vendorId) {
+            const vendor = findVendorById(vendorId);
+            if (!vendor) return;
+            
+            currentVendor = vendor;
+            const message = generateQuoteMessage(vendor);
+            
+            document.getElementById('modalTitle').textContent = `Request Quote - ${vendor.name}`;
+            document.getElementById('messageText').value = message;
+            document.getElementById('communicationModal').style.display = 'block';
+        }
+
+        function generateContactMessage(vendor, type) {
+            const currentDate = new Date().toLocaleDateString();
+            const category = currentTab;
+            
+            return `Dear ${vendor.name} Team,
+
+Greetings! I hope this message finds you well.
+
+I am writing to inquire about your ${category} services for an upcoming wedding celebration. I came across your profile and was impressed by your work and reputation in the industry.
+
+Here are some initial details about our requirements:
+
+📅 Event Date: [Please specify your wedding date]
+📍 Location: ${vendor.location}
+👥 Guest Count: [Please specify expected guest count]
+💰 Budget Range: ${vendor.price}
+🎯 Service Category: ${category.charAt(0).toUpperCase() + category.slice(1)}
+
+I would be grateful if you could provide the following information:
+• Availability for our proposed date
+• Detailed service packages and pricing
+• Portfolio/previous work samples
+• Terms and conditions
+• Any special offers or packages
+
+We are looking for a reliable and professional partner to make our special day memorable. Your expertise in ${category} services aligns perfectly with our vision.
+
+Please let me know a convenient time for a detailed discussion. I look forward to hearing from you soon.
+
+Best regards,
+[Your Name]
+[Your Phone Number]
+[Your Email]
+
+Date: ${currentDate}`;
+        }
+
+        function generateQuoteMessage(vendor) {
+            const currentDate = new Date().toLocaleDateString();
+            const category = currentTab;
+            
+            return `Dear ${vendor.name},
+
+Warm greetings! I hope you are doing well.
+
+I am writing to request a formal quotation for your ${category} services for our upcoming wedding celebration. After reviewing your profile and services, I believe you would be the perfect fit for our special day.
+
+WEDDING DETAILS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📅 Wedding Date: [Please specify your wedding date]
+📍 Venue: [Please specify venue name and location]
+⏰ Event Duration: [Please specify event duration]
+👥 Guest Count: [Please specify expected guest count]
+🎯 Service Required: ${category.charAt(0).toUpperCase() + category.slice(1)}
+
+SPECIFIC REQUIREMENTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${getServiceSpecificRequirements(category)}
+
+QUOTATION REQUEST:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Please provide a detailed quotation including:
+• Complete service package details
+• Itemized pricing breakdown
+• Available packages/options
+• Terms and conditions
+• Payment schedule
+• Cancellation policy
+• Additional charges (if any)
+
+We would also appreciate if you could include:
+• Your portfolio/previous work samples
+• Client testimonials
+• Any special offers or seasonal discounts
+• Availability confirmation for our date
+
+CONTACT INFORMATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Name: [Your Name]
+Phone: [Your Phone Number]
+Email: [Your Email]
+Preferred Communication: [WhatsApp/Email/Phone]
+
+We are excited about the possibility of working with you and would appreciate receiving your quotation at your earliest convenience. Please feel free to contact us if you need any additional information.
+
+Thank you for your time and consideration.
+
+Best regards,
+[Your Name]
+
+Date: ${currentDate}`;
+        }
+
+        function getServiceSpecificRequirements(category) {
+            const requirements = {
+                venues: `• Preferred venue type: [Indoor/Outdoor/Both]
+• Required amenities: [Parking, AC, Stage, etc.]
+• Decorations allowed: [Yes/No/Restrictions]
+• Catering arrangements: [In-house/External allowed]
+• Sound system: [Required/Not required]
+• Additional facilities: [Bridal room, guest rooms, etc.]`,
+                
+                decoration: `• Decoration theme: [Traditional/Modern/Contemporary]
+• Color scheme: [Please specify preferred colors]
+• Floral arrangements: [Fresh flowers/Artificial/Both]
+• Stage decoration: [Required/Not required]
+• Entrance decoration: [Required/Not required]
+• Additional props: [Mandap, photo booth, etc.]`,
+                
+                catering: `• Cuisine type: [North Indian/South Indian/Multi-cuisine]
+• Meal type: [Breakfast/Lunch/Dinner/All]
+• Service style: [Buffet/Plated/Both]
+• Dietary restrictions: [Vegetarian/Non-vegetarian/Jain/Other]
+• Special requirements: [Live counters/Beverages/Desserts]
+• Service staff: [Required/Not required]`,
+                
+                makeup: `• Makeup type: [Bridal/Party/Both]
+• Hair styling: [Required/Not required]
+• Makeup style: [Traditional/Contemporary/HD]
+• Duration: [Half day/Full day/Multiple days]
+• Additional services: [Mehendi/Draping/Accessories]
+• Location: [Salon/Home/Venue]`,
+                
+                photography: `• Photography style: [Traditional/Candid/Cinematic]
+• Coverage duration: [Half day/Full day/Multiple days]
+• Video services: [Required/Not required]
+• Drone coverage: [Required/Not required]
+• Album and prints: [Required/Not required]
+• Additional services: [Pre-wedding/Post-wedding shoots]`
+            };
+            
+            return requirements[category] || '• Please specify your detailed requirements';
+        }
+
+        function findVendorById(vendorId) {
+            for (const category in vendorData) {
+                const vendor = vendorData[category].find(v => v.id === vendorId);
+                if (vendor) return vendor;
+            }
+            return null;
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('messageText').value;
+            if (!currentVendor || !message.trim()) return;
+            
+            // Create email link
+            const subject = `Wedding ${currentTab} Inquiry - ${currentVendor.name}`;
+            const emailUrl = `mailto:${currentVendor.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+            
+            // Open email client
+            window.location.href = emailUrl;
+            
+            // Close modal
+            closeModal();
+            
+            // Show success message
+            alert('Email client opened! Please send the message from your email application.');
+        }
+
+        function closeModal() {
+            document.getElementById('communicationModal').style.display = 'none';
+            currentVendor = null;
+        }
+
+        // Search and filter functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterVendors();
+        });
+
+        document.getElementById('locationFilter').addEventListener('change', filterVendors);
+        document.getElementById('budgetFilter').addEventListener('change', filterVendors);
+        document.getElementById('ratingFilter').addEventListener('change', filterVendors);
+
+        function filterVendors() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const locationFilter = document.getElementById('locationFilter').value;
+            const budgetFilter = document.getElementById('budgetFilter').value;
+            const ratingFilter = document.getElementById('ratingFilter').value;
+            
+            // This would typically filter the rendered vendors
+            // For now, we'll just re-render all vendors
+            renderVendors();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('communicationModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderVendors();
+        });
+    </script>
+</body>
+</html> 

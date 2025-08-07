@@ -1,0 +1,11 @@
+FROM nous-hermes:latest
+PARAMETER stop "<|im_start|>"
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "\nObservation:"
+PARAMETER stop "\nHuman:"
+PARAMETER stop "\nAssistant:"
+PARAMETER num_ctx 4096
+PARAMETER num_predict 2048
+PARAMETER temperature 0.3
+PARAMETER top_k 40
+PARAMETER top_p 0.9 
