@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Start Full Wedding App"
+runButton = "Start React Frontend Only"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -58,6 +58,15 @@ args = "chmod +x start_react_with_backend.sh && ./start_react_with_backend.sh"
 
 [[workflows.workflow]]
 name = "React Frontend Only"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Start React Frontend Only"
 author = 37053864
 mode = "sequential"
 
