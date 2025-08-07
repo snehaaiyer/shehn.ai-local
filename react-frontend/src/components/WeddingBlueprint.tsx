@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { Heart, DollarSign, Camera, Utensils, Palette, Loader2, Sparkles, Clock, TrendingUp, FileText, Building2 } from 'lucide-react';
-import { WeddingBlueprintService } from '../services/wedding_blueprint_service';
 import { SimpleMockService } from '../services/simple_mock_service';
 
 // Venue Categories Data
@@ -306,7 +305,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
         ? venueCategories.flatMap(cat => cat.venues)
             .filter(v => v.id === preferences.venue.selectedVenueType)
             .map(async (venue) => {
-              const venueResult = await SimpleMockService.generateVenueImages({ prompt: venue.prompt });
+              const venueResult = await SimpleMockService.generateVenueImages(venue.prompt);
               return venueResult.images?.[0] || '/images/placeholder-venue.png';
             })
         : [Promise.resolve('/images/placeholder-venue.png')];
@@ -314,7 +313,15 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
       const themePromises = preferences.theme?.selectedTheme
         ? themes.filter(t => t.id === preferences.theme.selectedTheme).map(async (theme) => {
             const themeResult = await SimpleMockService.generateWeddingThemeImages({
-              prompt: `${theme.name}: ${theme.description}`,
+              theme: theme.name,
+              style: 'Traditional',
+              colors: 'Gold and Red',
+              season: 'Wedding Season',
+              venueType: preferences.venue?.selectedVenueType || 'Venue',
+              customDescription: theme.description,
+              guestCount: preferences.basicDetails?.guestCount || 100,
+              location: preferences.basicDetails?.location || 'India',
+              imageCount: 1
             });
             return themeResult.images?.[0] || '/images/placeholder-theme.png';
           })
