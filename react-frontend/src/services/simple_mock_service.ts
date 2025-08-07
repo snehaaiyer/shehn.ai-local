@@ -133,18 +133,21 @@ export class SimpleMockService {
       return this.THEME_IMAGE_MAPPING[themeId];
     }
 
-    // Then try keyword matching
+    // Then try keyword matching - check if theme ID contains any of the keywords
     const themeIdLower = themeId.toLowerCase();
     for (const [keyword, imagePath] of Object.entries(this.THEME_IMAGE_MAPPING)) {
-      if (themeIdLower.includes(keyword)) {
+      // Skip exact matches (already checked above)
+      if (keyword === themeId) continue;
+      
+      if (themeIdLower.includes(keyword.toLowerCase())) {
         console.log('✅ Found keyword match for', keyword, ':', imagePath);
         return imagePath;
       }
     }
 
-    // Default fallback to vintage classic
-    console.log('⚠️ No match found, using vintage classic image');
-    return '/images/themes/vintage-classic-decor.jpg';
+    // Default fallback to traditional temple ceremony
+    console.log('⚠️ No match found for', themeId, ', using traditional temple ceremony image');
+    return '/images/themes/traditional-temple-ceremony.jpg';
   }
 
   /**

@@ -813,7 +813,9 @@ const WeddingPreferences: React.FC = () => {
                   Wedding Theme
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {themes.map((theme) => (
+                  {themes.map((theme) => {
+                    console.log(`🎨 Theme: ${theme.name}, ID: ${theme.id}, Image: ${theme.image}`);
+                    return (
                     <div
                       key={theme.id}
                       onClick={() => updatePreference('theme', 'selectedTheme', theme.id)}
@@ -829,8 +831,12 @@ const WeddingPreferences: React.FC = () => {
                           alt={theme.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
+                            console.log(`❌ Failed to load image for ${theme.name}: ${theme.image}`);
                             const target = e.target as HTMLImageElement;
-                            target.src = '/images/themes/traditional-cultural.jpg';
+                            target.src = '/images/themes/traditional-temple-ceremony.jpg';
+                          }}
+                          onLoad={() => {
+                            console.log(`✅ Successfully loaded image for ${theme.name}: ${theme.image}`);
                           }}
                         />
                       </div>
@@ -847,7 +853,8 @@ const WeddingPreferences: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
