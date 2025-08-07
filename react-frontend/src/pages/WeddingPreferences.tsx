@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import { CloudflareAIService } from "../services/cloudflare_ai_service";
@@ -81,7 +82,6 @@ const WeddingPreferences: React.FC = () => {
   const [activeTab, setActiveTab] = useState('basic');
   const [savedSections, setSavedSections] = useState<Set<string>>(new Set());
 
-  
   const [preferences, setPreferences] = useState<WeddingPreferencesData>({
     basicDetails: {
       guestCount: 100,
@@ -228,118 +228,6 @@ const WeddingPreferences: React.FC = () => {
       image: '/images/themes/traditional-cultural.jpg',
       features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
       imagePrompt: 'A vintage classic wedding setup with antique furniture, vintage lace decorations, classic mandap with traditional Indian vintage elements, old-world charm, sepia-toned color palette, vintage Indian brass items, heritage photographs, classic floral arrangements in vintage vases, traditional Indian vintage jewelry displays, old Bollywood music setup, heritage textiles, professional photography quality, capturing timeless Indian elegance and nostalgic charm.'
-    }
-      features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
-    },
-    
-    // Destination & Nature Themes (High Engagement)
-    { 
-      id: 'beach-destination-luxury', 
-      name: 'Beach Destination Luxury', 
-      description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
-      color: '#06B6D4',
-      image: '/images/themes/beach-destination.jpg',
-      features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
-    },
-    { 
-      id: 'mountain-retreat-celebration', 
-      name: 'Mountain Retreat Celebration', 
-      description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
-      color: '#059669',
-      image: '/images/themes/boho-garden.jpg',
-      features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
-    },
-    { 
-      id: 'garden-palace-affair', 
-      name: 'Garden Palace Affair', 
-      description: 'Natural elegance with outdoor charm in garden palace settings', 
-      color: '#10B981',
-      image: '/images/themes/boho-garden.jpg',
-      features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
-    },
-    { 
-      id: 'lakefront-wedding', 
-      name: 'Lakefront Wedding', 
-      description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
-      color: '#3B82F6',
-      image: '/images/themes/beach-destination.jpg',
-      features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
-    },
-    
-    // Cultural & Traditional Themes (High Engagement)
-    { 
-      id: 'traditional-hindu-grandeur', 
-      name: 'Traditional Hindu Grandeur', 
-      description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
-      color: '#DC2626',
-      image: '/images/themes/traditional-cultural.jpg',
-      features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
-    },
-    { 
-      id: 'sikh-anand-karaj', 
-      name: 'Sikh Anand Karaj', 
-      description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
-      color: '#F59E0B',
-      image: '/images/themes/traditional-cultural.jpg',
-      features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
-    },
-    { 
-      id: 'muslim-nikah-ceremony', 
-      name: 'Muslim Nikah Ceremony', 
-      description: 'Traditional Islamic wedding ceremonies with cultural diversity and traditional values', 
-      color: '#059669',
-      image: '/images/themes/traditional-cultural.jpg',
-      features: ['Nikah Ceremony', 'Islamic Traditions', 'Cultural Decor', 'Community Gathering']
-    },
-    { 
-      id: 'south-indian-temple', 
-      name: 'South Indian Temple Wedding', 
-      description: 'Traditional temple ceremonies with classical music and cultural authenticity', 
-      color: '#7C3AED',
-      image: '/images/themes/south-indian-temple.jpg',
-      features: ['Temple Ceremony', 'Classical Music', 'Traditional Attire', 'Cultural Rituals']
-    },
-    
-    // Modern & Contemporary Themes (Medium-High Engagement)
-    { 
-      id: 'modern-fusion-wedding', 
-      name: 'Modern Fusion Wedding', 
-      description: 'Contemporary celebrations blending traditional and modern elements', 
-      color: '#8B5CF6',
-      image: '/images/themes/minimalist-pastel.jpg',
-      features: ['Modern Decor', 'Fusion Cuisine', 'Contemporary Music', 'Cultural Blend']
-    },
-    { 
-      id: 'bollywood-sangeet', 
-      name: 'Bollywood Sangeet', 
-      description: 'Vibrant dance and music celebrations with Bollywood flair and entertainment', 
-      color: '#EC4899',
-      image: '/images/themes/bollywood-sangeet.jpg',
-      features: ['Dance Floor', 'Live Music', 'Bollywood Songs', 'Colorful Decorations']
-    },
-    { 
-      id: 'contemporary-luxury', 
-      name: 'Contemporary Luxury', 
-      description: 'Modern elegance with sophisticated style and contemporary luxury', 
-      color: '#1F2937',
-      image: '/images/themes/minimalist-pastel.jpg',
-      features: ['Modern Design', 'Luxury Amenities', 'Contemporary Style', 'Sophisticated Decor']
-    },
-    { 
-      id: 'minimalist-elegance', 
-      name: 'Minimalist Elegance', 
-      description: 'Clean and simple celebrations with understated elegance and modern minimalism', 
-      color: '#6B7280',
-      image: '/images/themes/minimalist-pastel.jpg',
-      features: ['Clean Design', 'Simple Decor', 'Modern Aesthetics', 'Understated Elegance']
-    },
-    { 
-      id: 'urban-chic-celebration', 
-      name: 'Urban Chic Celebration', 
-      description: 'City sophistication with modern urban style and contemporary charm', 
-      color: '#374151',
-      image: '/images/themes/minimalist-pastel.jpg',
-      features: ['City Views', 'Modern Venue', 'Urban Setting', 'Contemporary Style']
     }
   ];
 
@@ -519,8 +407,6 @@ const WeddingPreferences: React.FC = () => {
     }
   ];
 
-  // Venue categories for better organization
-
   // Tab configuration
   const tabs = [
     {
@@ -699,78 +585,6 @@ const WeddingPreferences: React.FC = () => {
         return false;
     }
   };
-
-  // Auto-save is handled in updatePreference function
-  // const savePreferences = async () => {
-  //   try {
-  //     // Save to localStorage first
-  //     localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
-  //     console.log('Preferences saved to localStorage');
-
-  //     // Save to NocoDB
-  //     const nocodbResult = await NocoDBService.savePreferences(preferences);
-  //     if (nocodbResult.success) {
-  //       console.log('✅ Preferences saved to NocoDB successfully');
-  //       // Also save couple data if we have basic details
-  //       if (preferences.basicDetails.yourName && preferences.basicDetails.partnerName) {
-  //         await NocoDBService.saveCoupleData({
-  //           yourName: preferences.basicDetails.yourName,
-  //           partnerName: preferences.basicDetails.partnerName,
-  //           contactNumber: preferences.basicDetails.contactNumber,
-  //           weddingDate: preferences.basicDetails.weddingDate,
-  //           location: preferences.basicDetails.location,
-  //           guestCount: preferences.basicDetails.guestCount,
-  //           budgetRange: preferences.basicDetails.budgetRange
-  //         });
-  //       }
-  //     } else {
-  //       console.warn('⚠️ Failed to save to NocoDB:', nocodbResult.error);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving preferences:', error);
-  //   }
-  // };
-
-  // Theme image generation is handled elsewhere
-  // const handleGenerateThemeImages = async () => {
-  //   if (!preferences.theme.selectedTheme) {
-  //     alert('Please select a wedding theme first');
-  //     return;
-  //   }
-
-  //   updatePreference('theme', 'isGeneratingImages', true);
-
-  //   try {
-  //     const selectedTheme = themes.find(t => t.id === preferences.theme.selectedTheme);
-  //     if (!selectedTheme) return;
-
-  //     const requestData = {
-  //       theme: selectedTheme.name,
-  //       style: 'Traditional',
-  //       colors: 'Red & Gold',
-  //       season: 'Wedding Season',
-  //       venueType: preferences.venue.venueType || 'Hotel',
-  //       customDescription: selectedTheme.description,
-  //       guestCount: preferences.basicDetails.guestCount,
-  //       location: preferences.basicDetails.location || 'India',
-  //       imageCount: 2
-  //     };
-
-  //     const response = await CloudflareAIService.generateWeddingThemeImages(requestData);
-  //     
-  //     if (response.success && response.images) {
-  //       updatePreference('theme', 'generatedImages', response.images);
-  //     } else {
-  //       console.error('Failed to generate images:', response.error);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error generating images:', error);
-  //   } finally {
-  //     updatePreference('theme', 'isGeneratingImages', false);
-  //   }
-  // };
-
-
 
   return (
     <div className="min-h-screen bg-white">
@@ -1532,4 +1346,4 @@ const WeddingPreferences: React.FC = () => {
   );
 };
 
-export default WeddingPreferences; 
+export default WeddingPreferences;
