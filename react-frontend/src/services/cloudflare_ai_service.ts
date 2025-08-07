@@ -31,7 +31,7 @@ export class CloudflareAIService {
   private static readonly WORKER_URL = 'https://wedding-ai-worker.aiyersneha19.workers.dev';
   
   // Cloudflare AI models
-  private static readonly IMAGE_MODEL = '@cf/lykon/dreamshaper-xl-10';
+  private static readonly IMAGE_MODEL = '@cf/runwayml/stable-diffusion-v1-5';
   private static readonly TEXT_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 
   /**
