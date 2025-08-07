@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { Heart, DollarSign, Camera, Utensils, Palette, Loader2, Sparkles, Clock, TrendingUp, FileText, Building2 } from 'lucide-react';
 import { WeddingBlueprintService } from '../services/wedding_blueprint_service';
+import { SimpleMockService } from '../services/simple_mock_service';
 
 // Venue Categories Data
 const venueCategories = [
@@ -284,7 +285,7 @@ interface BlueprintData {
     venue: number;
     catering: number;
     photography: number;
-    
+
     decor: number;
     total: number;
   };
@@ -300,13 +301,72 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
     setError(null);
 
     try {
-      const response = await WeddingBlueprintService.generateWeddingBlueprint(preferences);
+      // Removed Cloudflare AI calls and replaced with SimpleMockService
+      const venuePromises = preferences.venue?.selectedVenueType
+        ? venueCategories.flatMap(cat => cat.venues)
+            .filter(v => v.id === preferences.venue.selectedVenueType)
+            .map(async (venue) => {
+              const venueResult = await SimpleMockService.generateVenueImages(venue.prompt);
+              return venueResult.url || '/images/placeholder-venue.png';
+            })
+        : [Promise.resolve('/images/placeholder-venue.png')];
+
+      const themePromises = preferences.theme?.selectedTheme
+        ? themes.filter(t => t.id === preferences.theme.selectedTheme).map(async (theme) => {
+            const themeResult = await SimpleMockService.generateWeddingThemeImages({
+              themeName: theme.name,
+              description: theme.description,
+            });
+            return themeResult.url || '/images/placeholder-theme.png';
+          })
+        : [Promise.resolve('/images/placeholder-theme.png')];
+
+      const photographyPromises = preferences.photography?.style
+        ? [SimpleMockService.generatePhotographyStyleImages({
+            style: preferences.photography.style,
+            description: 'Example description for photography style',
+          }).then(res => res.url || '/images/placeholder-photo.png')]
+        : [Promise.resolve('/images/placeholder-photo.png')];
       
-      if (response.success && response.blueprint) {
-        setBlueprint(response.blueprint);
-      } else {
-        setError(response.error || 'Failed to generate wedding blueprint');
-      }
+      const [venueImage, themeImage, photographyImage] = await Promise.all([
+        Promise.all(venuePromises).then(urls => urls[0]),
+        Promise.all(themePromises).then(urls => urls[0]),
+        Promise.all(photographyPromises).then(urls => urls[0]),
+      ]);
+
+      // Mock response for blueprint generation
+      const mockBlueprint = {
+        summary: `A beautiful wedding celebration at a ${preferences.venue?.venueType || 'stunning location'} with a ${preferences.theme?.selectedTheme || 'charming theme'}. The day will be captured in ${preferences.photography?.style || 'a classic style'} by our photographers.`,
+        venueImage: venueImage,
+        themeImage: themeImage,
+        photographyImage: photographyImage,
+        recommendations: {
+          venue: ['Consider a personalized welcome for guests.', 'Arrange for shuttle services if parking is limited.'],
+          catering: ['Offer a mix of traditional and contemporary dishes.', 'Provide vegetarian and vegan options.'],
+          photography: ['Ensure a shot list includes all key family members.', 'Discuss a timeline for golden hour photos.'],
+          decor: ['Incorporate elements that reflect the chosen theme.', 'Use mood lighting for evening ambiance.'],
+        },
+        timeline: [
+          '10:00 AM: Bride\'s Makeup & Hair',
+          '12:00 PM: Groom & Groomsmen Preparation',
+          '02:00 PM: Ceremony Begins',
+          '03:00 PM: Cocktail Hour',
+          '04:30 PM: Reception Dinner',
+          '07:00 PM: First Dance',
+          '08:00 PM: Cake Cutting',
+          '10:00 PM: Grand Exit'
+        ],
+        budgetBreakdown: {
+          venue: 500000,
+          catering: 400000,
+          photography: 200000,
+          decor: 150000,
+          total: 1250000,
+        }
+      };
+      
+      setBlueprint(mockBlueprint);
+
     } catch (err) {
       setError('An unexpected error occurred while generating the blueprint');
       console.error('Error generating blueprint:', err);
@@ -415,7 +475,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                   <FileText className="w-6 h-6 text-blue-600 mr-2" />
                   <h2 className="text-xl font-bold text-gray-800">Executive Summary</h2>
                 </div>
-                
+
                 {/* Wedding Details Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div className="bg-white rounded-lg p-4">
@@ -437,7 +497,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                     </div>
                   </div>
                 </div>
-                
+
                 {/* AI-Generated Vision */}
                 <div className="bg-white rounded-lg p-4">
                   <h4 className="font-medium text-gray-800 mb-3">AI-Generated Vision</h4>
@@ -472,7 +532,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                   <Palette className="w-6 h-6 text-purple-600 mr-2" />
                   <h2 className="text-xl font-bold text-gray-800">Selected Visual Elements</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Selected Venue Image */}
                   <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
@@ -482,10 +542,10 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                     </div>
                     {(() => {
                       const selectedVenue = venueCategories?.flatMap(cat => cat.venues)?.find(v => v.id === preferences.venue?.venueType);
-                      return selectedVenue?.image ? (
+                      return blueprint.venueImage ? (
                         <img
-                          src={selectedVenue.image}
-                          alt={selectedVenue.name}
+                          src={blueprint.venueImage}
+                          alt={selectedVenue?.name || 'Venue'}
                           className="w-full h-32 object-cover rounded-lg mb-2"
                         />
                       ) : (
@@ -510,10 +570,10 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                     </div>
                     {(() => {
                       const selectedTheme = themes?.find(t => t.id === preferences.theme?.selectedTheme);
-                      return selectedTheme?.image ? (
+                      return blueprint.themeImage ? (
                         <img
-                          src={selectedTheme.image}
-                          alt={selectedTheme.name}
+                          src={blueprint.themeImage}
+                          alt={selectedTheme?.name || 'Theme'}
                           className="w-full h-32 object-cover rounded-lg mb-2"
                         />
                       ) : (
@@ -557,7 +617,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                   <TrendingUp className="w-6 h-6 text-green-600 mr-2" />
                   <h2 className="text-xl font-bold text-gray-800">Strategic Recommendations</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white rounded-lg p-4">
                     <div className="flex items-center mb-3">
@@ -627,7 +687,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                   <Clock className="w-6 h-6 text-indigo-600 mr-2" />
                   <h2 className="text-xl font-bold text-gray-800">Operational Planning</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Timeline */}
                   <div className="bg-white rounded-lg p-4">
@@ -663,7 +723,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                         <span className="text-gray-700 text-sm">Catering & Service</span>
                         <div className="text-right">
                           <div className="font-semibold text-gray-800 text-sm">{formatCurrency(blueprint.budgetBreakdown.catering)}</div>
-                          <div className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.catering, blueprint.budgetBreakdown.total)}%</div>
+                          <<span className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.catering, blueprint.budgetBreakdown.total)}%</span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
@@ -721,4 +781,4 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
   );
 };
 
-export default WeddingBlueprint; 
+export default WeddingBlueprint;

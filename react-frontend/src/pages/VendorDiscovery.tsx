@@ -7,6 +7,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { VendorDiscoveryService } from '../services/vendor_discovery_service';
 
+// Cloudflare AI service removed
+
 interface Vendor {
   id: string;
   name: string;
@@ -47,7 +49,7 @@ interface Vendor {
 const VendorDiscovery: React.FC = () => {
   // Add error boundary for this component
   const [hasError, setHasError] = useState(false);
-  
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -191,29 +193,29 @@ const VendorDiscovery: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const calculateAIScore = (vendor: Vendor, searchTerm: string): number => {
     let score = 0;
-    
+
     // Base score from rating
     score += vendor.rating * 10;
-    
+
     // Search term matching
     const searchLower = searchTerm.toLowerCase();
     if (vendor.name.toLowerCase().includes(searchLower)) score += 50;
     if (vendor.description.toLowerCase().includes(searchLower)) score += 30;
     if (vendor.category.toLowerCase().includes(searchLower)) score += 20;
-    
+
     // Special fields for different categories
     if (vendor.photography_styles?.some(style => 
       style.toLowerCase().includes(searchLower))) score += 25;
-    
+
     if (vendor.services_offered?.some(service => 
       service.toLowerCase().includes(searchLower))) score += 25;
-    
+
     if (vendor.specialties?.some(specialty => 
       specialty.toLowerCase().includes(searchLower))) score += 25;
-    
+
     // Contact score bonus
     score += vendor.contact_score * 0.5;
-    
+
     return score;
   };
 
@@ -231,7 +233,7 @@ const VendorDiscovery: React.FC = () => {
       };
 
       const response = await VendorDiscoveryService.searchVendors(searchParams);
-      
+
       if (response.success && response.vendors) {
         setVendors(response.vendors);
         setFilteredVendors(response.vendors);
@@ -855,7 +857,7 @@ const VendorDiscovery: React.FC = () => {
     if (category === 'beauty') {
       return generateBeautyVendors(location);
     }
-    
+
     const categoryImages = {
       photography: [
         'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop',
@@ -956,7 +958,7 @@ const VendorDiscovery: React.FC = () => {
         images: categoryImages[category as keyof typeof categoryImages] || []
       }
     ];
-    
+
     return vendors;
   };
 
@@ -1601,7 +1603,7 @@ const VendorDiscovery: React.FC = () => {
       };
 
       const response = await VendorDiscoveryService.searchVendors(searchParams);
-      
+
       if (response.success && response.vendors) {
         setVendors(response.vendors);
         setFilteredVendors(response.vendors);
@@ -1636,14 +1638,14 @@ const VendorDiscovery: React.FC = () => {
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
           const preferences = JSON.parse(savedPreferences);
-          
+
           // Set default location from preferences
           if (preferences.basicDetails?.location) {
             const location = preferences.basicDetails.location.toLowerCase();
             setSelectedLocation(location);
             setAppliedFilters(prev => ({ ...prev, location }));
           }
-          
+
           // Set default venue type as category if available
           if (preferences.venue?.venueType) {
             const venueType = preferences.venue.venueType.toLowerCase();
@@ -1666,12 +1668,12 @@ const VendorDiscovery: React.FC = () => {
               'luxury villas': 'venues',
               'industrial venues': 'venues'
             };
-            
+
             const category = categoryMapping[venueType] || 'venues';
             setSelectedCategory(category);
             setAppliedFilters(prev => ({ ...prev, category }));
           }
-          
+
           // Set default budget from preferences
           if (preferences.basicDetails?.budgetRange) {
             const budget = preferences.basicDetails.budgetRange.toLowerCase();
@@ -1682,12 +1684,12 @@ const VendorDiscovery: React.FC = () => {
               'luxury-30-50l': 'luxury',
               'ultra-luxury-50l+': 'luxury'
             };
-            
+
             const budgetFilter = budgetMapping[budget] || 'standard';
             setSelectedBudget(budgetFilter);
             setAppliedFilters(prev => ({ ...prev, budget: budgetFilter }));
           }
-          
+
           // Set default rating to 4.5+ for quality vendors
           setSelectedRating('4.5');
           setAppliedFilters(prev => ({ ...prev, rating: '4.5' }));
@@ -1696,7 +1698,7 @@ const VendorDiscovery: React.FC = () => {
         console.error('Error loading default preferences:', error);
       }
     };
-    
+
     loadDefaultPreferences();
   }, []);
 
@@ -1742,7 +1744,7 @@ const VendorDiscovery: React.FC = () => {
       rating: selectedRating
     });
     setFiltersChanged(false);
-    
+
     // Trigger vendor search with new filters
     searchVendors();
   };
@@ -1812,7 +1814,7 @@ const VendorDiscovery: React.FC = () => {
                   {/* Search and Filters */}
           <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
             <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>Search & Filters</h2>
-            
+
             {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -1913,7 +1915,7 @@ const VendorDiscovery: React.FC = () => {
                   Apply Filters
                 </button>
               )}
-              
+
               {(selectedCategory || selectedLocation || selectedBudget || selectedRating) && (
                 <button
                   onClick={clearFilters}
@@ -2196,4 +2198,4 @@ const VendorDiscovery: React.FC = () => {
   );
 };
 
-export default VendorDiscovery; 
+export default VendorDiscovery;

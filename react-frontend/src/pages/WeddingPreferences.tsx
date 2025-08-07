@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
-import { CloudflareAIService } from "../services/cloudflare_ai_service";
-import { NocoDBService } from "../services/nocodb_service";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
 interface WeddingPreferencesData {
@@ -79,7 +77,7 @@ interface WeddingPreferencesData {
 const WeddingPreferences: React.FC = () => {
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
-  const [savedSections, setSavedSections] = useState<Set<string>>(new Set());
+  
 
   const [preferences, setPreferences] = useState<WeddingPreferencesData>({
     basicDetails: {
@@ -226,8 +224,7 @@ const WeddingPreferences: React.FC = () => {
       color: '#92400E',
       image: '/images/themes/traditional-cultural.jpg',
       features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
-      imagePrompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.',
-      features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm']
+      imagePrompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.'
     }
   ];
 
@@ -553,9 +550,6 @@ const WeddingPreferences: React.FC = () => {
         : { ...currentSection, [key]: value }
     };
     localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
-
-    // Mark section as saved
-    setSavedSections(prev => new Set(Array.from(prev).concat(section)));
   };
 
   const handleTabChange = (tabId: string) => {
