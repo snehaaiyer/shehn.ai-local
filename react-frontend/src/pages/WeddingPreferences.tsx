@@ -222,7 +222,7 @@ const WeddingPreferences: React.FC = () => {
       name: 'Vintage Classic Theme', 
       description: 'Timeless celebrations with classic elegance, antique elements, and nostalgic charm', 
       color: '#92400E',
-      image: '/images/themes/vintage-classic-decor.jpg',
+      image: '/vintage.png',
       features: ['Antique Elements', 'Classic Elegance', 'Vintage Furniture', 'Nostalgic Charm'],
       imagePrompt: 'Vintage classic Indian wedding with timeless elegance and nostalgic charm. Heritage mandap with antique furniture and vintage lace decorations. Bride in classic heavy silk saree with traditional gold jewelry, groom in vintage-style achkan. Vintage Indian brass items, heritage photographs, classic floral arrangements in antique vases. Old Bollywood music setup, heritage textiles, sepia-toned lighting. Warm vintage color palette, 4K classic elegance, professional heritage photography style, old-world charm.'
     }
