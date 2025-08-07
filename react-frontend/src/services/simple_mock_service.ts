@@ -138,7 +138,7 @@ export class SimpleMockService {
     for (const [keyword, imagePath] of Object.entries(this.THEME_IMAGE_MAPPING)) {
       // Skip exact matches (already checked above)
       if (keyword === themeId) continue;
-      
+
       if (themeIdLower.includes(keyword.toLowerCase())) {
         console.log('✅ Found keyword match for', keyword, ':', imagePath);
         return imagePath;

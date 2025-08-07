@@ -43,7 +43,7 @@ class ReplitStorageService {
   async listImages(): Promise<string[]> {
     try {
       const objects = await this.client.list();
-      return objects.map(obj => obj.key);
+      return objects.map((obj: any) => obj.key);
     } catch (error) {
       console.error('Error listing images:', error);
       return [];
