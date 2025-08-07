@@ -11,9 +11,9 @@ class ReplitStorageService {
   async uploadImage(imageName: string, imageFile: File): Promise<string> {
     try {
       const arrayBuffer = await imageFile.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
+      const buffer = Buffer.from(arrayBuffer);
       
-      await this.client.uploadFromBytes(imageName, uint8Array);
+      await this.client.uploadFromBytes(imageName, buffer);
       return this.getImageUrl(imageName);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -25,9 +25,9 @@ class ReplitStorageService {
     try {
       const response = await fetch(imageUrl);
       const arrayBuffer = await response.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
+      const buffer = Buffer.from(arrayBuffer);
       
-      await this.client.uploadFromBytes(imageName, uint8Array);
+      await this.client.uploadFromBytes(imageName, buffer);
       return this.getImageUrl(imageName);
     } catch (error) {
       console.error('Error uploading image from URL:', error);
@@ -42,8 +42,13 @@ class ReplitStorageService {
 
   async listImages(): Promise<string[]> {
     try {
-      const objects = await this.client.list();
-      return objects.map((obj: any) => obj.key);
+      const result = await this.client.list();
+      if (result && 'success' in result && result.success && result.data) {
+        return result.data.map((obj: any) => obj.key);
+      } else if (Array.isArray(result)) {
+        return result.map((obj: any) => obj.key);
+      }
+      return [];
     } catch (error) {
       console.error('Error listing images:', error);
       return [];
