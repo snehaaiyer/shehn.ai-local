@@ -752,7 +752,7 @@ const WeddingPreferences: React.FC = () => {
                               <img
                                 src={venue.image}
                                 alt={venue.name}
-                                className="w-full h-full object-cover object-center"
+                                className="w-full h-full object-cover"
                                 style={{ objectPosition: 'center 30%' }}
                                 onError={(e) => {
                                   console.log(`❌ Failed to load venue image: ${venue.image}`);

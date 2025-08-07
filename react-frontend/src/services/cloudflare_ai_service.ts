@@ -175,9 +175,10 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
       console.log('Generated image prompt for Cloudflare AI:', imagePrompt);
 
       let images: string[] = [];
+      let response: Response | null = null; // Declare response here for broader scope
 
       try {
-        const response = await fetch(`${this.WORKER_URL}/generate-image`, {
+        response = await fetch(`${this.WORKER_URL}/generate-image`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -203,55 +204,84 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
           console.warn('Image generation failed, falling back to analysis only');
           console.error('Response status:', response.status);
           console.error('Response text:', await response.text());
+          // If image generation fails, we still want to proceed to analysis if possible
+          // but we need to handle potential errors from Cloudflare AI itself.
         }
       } catch (imageError) {
         console.warn('Image generation error, falling back to analysis:', imageError);
+        // This catch block will handle network errors or other issues during the fetch itself.
+        // If an error occurs here, it might be a connection issue or a service-level problem.
+        // We still want to attempt the analysis part.
       }
 
       // Step 2: Generate theme analysis for additional insights
       const analysisPrompt = this.generateAnalysisPrompt(request);
 
-      const analysisResponse = await fetch(`${this.WORKER_URL}/analyze-text`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: analysisPrompt,
-          model: this.TEXT_MODEL,
-          max_tokens: 2048
-        })
-      });
+      // We need to handle potential errors from the analyze-text call separately
+      let analysisResponse: Response | null = null;
+      let themeAnalysis: any = null;
 
-      let themeAnalysis = null;
-      if (analysisResponse.ok) {
-        const analysisResult = await analysisResponse.json();
-        const generatedText = analysisResult.response;
-        if (generatedText) {
-          themeAnalysis = this.parseCloudflareResponse(generatedText);
+      try {
+        analysisResponse = await fetch(`${this.WORKER_URL}/analyze-text`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: analysisPrompt,
+            model: this.TEXT_MODEL,
+            max_tokens: 2048
+          })
+        });
+
+        if (analysisResponse.ok) {
+          const analysisResult = await analysisResponse.json();
+          const generatedText = analysisResult.response;
+          if (generatedText) {
+            themeAnalysis = this.parseCloudflareResponse(generatedText);
+          }
+        } else {
+          console.warn('Theme analysis failed.');
+          console.error('Analysis response status:', analysisResponse.status);
+          console.error('Analysis response text:', await analysisResponse.text());
+          // If analysis fails, we can still return the images (if any) or indicate failure.
         }
+      } catch (analysisError) {
+        console.warn('Theme analysis error:', analysisError);
+        // Handle errors during the fetch for analysis
       }
 
       return {
         images,
-        success: true,
+        success: images.length > 0 || themeAnalysis !== null, // Consider success if either images or analysis is available
         generatedDescription: themeAnalysis?.description,
         themeAnalysis: themeAnalysis ? {
           keywords: themeAnalysis.keywords,
           mood: themeAnalysis.mood,
           style: themeAnalysis.style,
           colors: themeAnalysis.colors
-        } : undefined
+        } : undefined,
+        fallbackUsed: images.length === 0 && themeAnalysis === null // Indicate fallback if nothing was generated
       };
 
     } catch (error) {
-      console.error('Cloudflare AI service temporarily unavailable. Using fallback images.');
+      console.error('Cloudflare AI service error:', error);
 
-      // Return a graceful fallback instead of throwing
+      // Handle Cloudflare AI capacity issues specifically
+      if (error instanceof Error && error.message.includes('Capacity temporarily exceeded')) {
+        return {
+          success: false,
+          images: [],
+          error: 'AI service is currently at capacity. Please try again in a few minutes.',
+          fallbackUsed: true
+        };
+      }
+      
+      // General fallback for other Cloudflare AI service errors
       return {
         success: false,
         images: [],
-        error: 'AI service temporarily unavailable',
+        error: 'AI service temporarily unavailable. Please try again later.',
         fallbackUsed: true
       };
     }
@@ -316,6 +346,20 @@ ${venuePrompt}
             generatedDescription: detailedPrompt
           };
         }
+      } else {
+        // Handle potential Cloudflare AI capacity issues for venue image generation
+        if (response.status === 500) {
+          const errorText = await response.text();
+          if (errorText.includes('Capacity temporarily exceeded')) {
+            console.error('Venue image generation failed: AI service is currently at capacity.');
+            return {
+              images: [],
+              success: false,
+              error: 'AI service is currently at capacity. Please try again in a few minutes.',
+            };
+          }
+        }
+        console.error('Venue image generation failed:', response.status, await response.text());
       }
 
       return {
@@ -326,6 +370,14 @@ ${venuePrompt}
 
     } catch (error) {
       console.error('Error generating venue image:', error);
+      // Handle potential network errors or other exceptions during the fetch
+      if (error instanceof Error && error.message.includes('Capacity temporarily exceeded')) {
+        return {
+          images: [],
+          success: false,
+          error: 'AI service is currently at capacity. Please try again in a few minutes.',
+        };
+      }
       return {
         images: [],
         success: false,
@@ -343,7 +395,6 @@ ${venuePrompt}
 
       console.log('Generated analysis prompt for Cloudflare AI:', analysisPrompt);
 
-
       const response = await fetch(`${this.WORKER_URL}/analyze-text`, {
         method: 'POST',
         headers: {
@@ -357,6 +408,13 @@ ${venuePrompt}
       });
 
       if (!response.ok) {
+        // Handle potential Cloudflare AI capacity issues for theme analysis
+        if (response.status === 500) {
+          const errorText = await response.text();
+          if (errorText.includes('Capacity temporarily exceeded')) {
+            throw new Error('AI service is currently at capacity. Please try again in a few minutes.');
+          }
+        }
         throw new Error(`Cloudflare AI error: ${response.status} ${response.statusText}`);
       }
 
@@ -386,6 +444,14 @@ ${venuePrompt}
 
     } catch (error) {
       console.error('Error generating theme analysis:', error);
+      // Handle potential network errors or other exceptions during the fetch
+      if (error instanceof Error && error.message.includes('Capacity temporarily exceeded')) {
+        return {
+          images: [],
+          success: false,
+          error: 'AI service is currently at capacity. Please try again in a few minutes.',
+        };
+      }
       return {
         images: [],
         success: false,

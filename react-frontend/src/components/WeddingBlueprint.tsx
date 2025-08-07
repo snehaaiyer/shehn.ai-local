@@ -19,27 +19,27 @@ const venueCategories = [
         image: '/images/venues/heritage palace.png',
         prompt: 'A majestic heritage palace wedding venue with grand Mughal architecture, intricately carved marble walls, royal courtyards with fountains, ornate chandeliers, traditional Indian wedding mandap setup, elegant arches with floral decorations, and historical grandeur perfect for royal celebrations'
       },
-      { 
-        id: 'luxury-hotels', 
-        name: 'Luxury Hotels', 
+      {
+        id: 'luxury-hotels',
+        name: 'Luxury Hotels',
         description: 'Five-star hotel venues with world-class amenities and professional service',
         capacity: '200-1000 guests',
         features: ['Premium Service', 'Luxury Accommodations', 'International Cuisine', 'Professional Staff'],
         image: '/images/venues/luxury hotel.png',
         prompt: 'A luxurious five-star Indian hotel wedding venue with grand ballrooms, crystal chandeliers, sophisticated modern decor, premium white and gold color scheme, beautifully set tables with fine china, traditional Indian wedding mandap setup, and world-class amenities perfect for grand Indian celebrations'
       },
-      { 
-        id: 'heritage-havelis', 
-        name: 'Heritage Havelis', 
+      {
+        id: 'heritage-havelis',
+        name: 'Heritage Havelis',
         description: 'Regional heritage venues with cultural authenticity and traditional charm',
         capacity: '50-400 guests',
         features: ['Regional Architecture', 'Cultural Ambiance', 'Traditional Cuisine', 'Local Experience'],
         image: '/images/venues/heritagehaveli.png',
         prompt: 'A beautiful heritage haveli wedding venue with traditional Rajasthani architecture, ornate courtyards with jharokhas, colorful frescoes depicting Indian mythology, traditional wedding mandap setup with marigold decorations, and cultural authenticity perfect for traditional Indian weddings'
       },
-      { 
-        id: 'royal-forts', 
-        name: 'Royal Forts', 
+      {
+        id: 'royal-forts',
+        name: 'Royal Forts',
         description: 'Historical fort venues with royal grandeur and unique experience',
         capacity: '100-600 guests',
         features: ['Historical Fort', 'Royal Setting', 'Traditional Cuisine', 'Unique Experience'],
@@ -53,36 +53,36 @@ const venueCategories = [
     name: '🌴 Destination & Nature',
     description: 'Beach resorts, mountain venues, and natural settings',
     venues: [
-      { 
-        id: 'beach-resorts', 
-        name: 'Beach Resorts', 
+      {
+        id: 'beach-resorts',
+        name: 'Beach Resorts',
         description: 'Beachside celebrations with ocean views and tropical charm',
         capacity: '50-300 guests',
         features: ['Ocean Views', 'Beach Access', 'Seafood Menu', 'Sunset Ceremonies'],
         image: '/images/venues/beachresort.png',
         prompt: 'A stunning Indian beach resort wedding venue with pristine sandy beaches, Arabian Sea or Indian Ocean views, tropical palm trees, beachside wedding mandap setup, sunset ceremony area, and coastal elegance perfect for destination Indian weddings'
       },
-      { 
-        id: 'mountain-resorts', 
-        name: 'Mountain Resorts', 
+      {
+        id: 'mountain-resorts',
+        name: 'Mountain Resorts',
         description: 'Scenic mountain venues with breathtaking views and peaceful atmosphere',
         capacity: '30-200 guests',
         features: ['Mountain Views', 'Natural Setting', 'Adventure Activities', 'Peaceful Atmosphere'],
         image: '/images/venues/mountain.png',
         prompt: 'A breathtaking Indian mountain resort wedding venue with panoramic Himalayan or Western Ghats views, natural stone architecture, outdoor wedding mandap setup, pine trees, and peaceful mountain atmosphere perfect for intimate Indian weddings'
       },
-      { 
-        id: 'garden-venues', 
-        name: 'Garden Venues', 
+      {
+        id: 'garden-venues',
+        name: 'Garden Venues',
         description: 'Natural garden venues with outdoor beauty and floral charm',
         capacity: '50-300 guests',
         features: ['Garden Setting', 'Natural Beauty', 'Outdoor Space', 'Floral Decor'],
         image: '/images/venues/garden.png',
         prompt: 'A beautiful Indian garden wedding venue with lush greenery, colorful Indian flowers like marigolds and roses, outdoor wedding mandap setup, natural beauty, garden pathways, and traditional floral decorations perfect for romantic Indian weddings'
       },
-      { 
-        id: 'lakefront-resorts', 
-        name: 'Lakefront Resorts', 
+      {
+        id: 'lakefront-resorts',
+        name: 'Lakefront Resorts',
         description: 'Serene lakefront venues with water views and tranquil atmosphere',
         capacity: '50-250 guests',
         features: ['Lake Views', 'Waterfront Setting', 'Boat Ceremonies', 'Tranquil Atmosphere'],
@@ -96,36 +96,36 @@ const venueCategories = [
     name: '🏮 Traditional & Cultural',
     description: 'Temples, community halls, and cultural venues',
     venues: [
-      { 
-        id: 'banquet-halls', 
-        name: 'Banquet Halls', 
+      {
+        id: 'banquet-halls',
+        name: 'Banquet Halls',
         description: 'Traditional banquet halls with modern facilities and large capacity',
         capacity: '100-800 guests',
         features: ['Large Capacity', 'Modern Facilities', 'Traditional Cuisine', 'Convenient Location'],
         image: '/images/venues/banquet.png',
         prompt: 'A modern Indian banquet hall wedding venue with spacious interiors, elegant decor, professional lighting, large capacity setup, traditional Indian wedding mandap, and contemporary amenities perfect for grand Indian wedding celebrations'
       },
-      { 
-        id: 'temple-complexes', 
-        name: 'Temple Complexes', 
+      {
+        id: 'temple-complexes',
+        name: 'Temple Complexes',
         description: 'Sacred temple venues for traditional ceremonies and spiritual experience',
         capacity: '50-300 guests',
         features: ['Sacred Atmosphere', 'Traditional Rituals', 'Spiritual Experience', 'Cultural Heritage'],
         image: '/images/venues/temple.png',
         prompt: 'A sacred Indian temple complex wedding venue with traditional temple architecture, spiritual atmosphere, cultural heritage, traditional Indian wedding rituals, religious significance, and divine blessings perfect for spiritual Indian weddings'
       },
-      { 
-        id: 'community-halls', 
-        name: 'Community Halls', 
+      {
+        id: 'community-halls',
+        name: 'Community Halls',
         description: 'Traditional community venues with local support and cultural authenticity',
         capacity: '100-500 guests',
         features: ['Community Support', 'Traditional Setting', 'Local Cuisine', 'Cultural Authenticity'],
         image: '/images/venues/communityhall.png',
         prompt: 'A traditional Indian community hall wedding venue with local cultural elements, community support, traditional setting, authentic local experience, and traditional Indian wedding mandap setup perfect for community celebrations'
       },
-      { 
-        id: 'gurudwara-grounds', 
-        name: 'Gurudwara Grounds', 
+      {
+        id: 'gurudwara-grounds',
+        name: 'Gurudwara Grounds',
         description: 'Religious Sikh venues with spiritual significance and community celebration',
         capacity: '100-400 guests',
         features: ['Religious Significance', 'Community Celebration', 'Traditional Music', 'Spiritual Experience'],
@@ -139,36 +139,36 @@ const venueCategories = [
     name: '🏙️ Modern & Urban',
     description: 'Rooftop venues, farmhouses, and contemporary spaces',
     venues: [
-      { 
-        id: 'rooftop-venues', 
-        name: 'Rooftop Venues', 
+      {
+        id: 'rooftop-venues',
+        name: 'Rooftop Venues',
         description: 'Modern rooftop venues with city views and contemporary atmosphere',
         capacity: '50-200 guests',
         features: ['City Views', 'Modern Setting', 'Contemporary Style', 'Urban Atmosphere'],
         image: '/images/venues/rooftop.png',
         prompt: 'A modern Indian rooftop wedding venue with stunning city skyline views of Mumbai, Delhi, or Bangalore, contemporary urban atmosphere, modern decor, sophisticated rooftop setting, and traditional Indian wedding mandap perfect for modern Indian celebrations'
       },
-      { 
-        id: 'farmhouses', 
-        name: 'Farmhouses', 
+      {
+        id: 'farmhouses',
+        name: 'Farmhouses',
         description: 'Rustic farmhouse venues with natural charm and outdoor space',
         capacity: '50-300 guests',
         features: ['Rustic Charm', 'Natural Setting', 'Outdoor Space', 'Countryside Views'],
         image: '/images/venues/farmhouse.png',
         prompt: 'A charming Indian farmhouse wedding venue with rustic wooden beams, natural greenery, outdoor wedding mandap setup, countryside views of Indian villages, and natural charm perfect for rustic Indian wedding celebrations'
       },
-      { 
-        id: 'luxury-villas', 
-        name: 'Luxury Villas', 
+      {
+        id: 'luxury-villas',
+        name: 'Luxury Villas',
         description: 'Exclusive villa venues with privacy and luxury amenities',
         capacity: '30-150 guests',
         features: ['Privacy', 'Luxury Amenities', 'Exclusive Setting', 'Personalized Service'],
         image: '/images/venues/luxuryvilla.png',
         prompt: 'An exclusive Indian luxury villa wedding venue with private setting, high-end amenities, sophisticated decor, personalized service, intimate atmosphere, and traditional Indian wedding mandap setup perfect for luxury Indian celebrations'
       },
-      { 
-        id: 'industrial-venues', 
-        name: 'Industrial Venues', 
+      {
+        id: 'industrial-venues',
+        name: 'Industrial Venues',
         description: 'Modern industrial venues with unique character and contemporary style',
         capacity: '100-400 guests',
         features: ['Industrial Charm', 'Modern Design', 'Unique Character', 'Contemporary Style'],
@@ -181,82 +181,82 @@ const venueCategories = [
 
 // Wedding Themes Data
 const themes = [
-  { 
-    id: 'royal-palace-extravaganza', 
-    name: 'Royal Palace Extravaganza', 
-    description: 'Majestic palace celebrations with royal grandeur and heritage charm', 
+  {
+    id: 'royal-palace-extravaganza',
+    name: 'Royal Palace Extravaganza',
+    description: 'Majestic palace celebrations with royal grandeur and heritage charm',
     color: '#7C3AED',
     image: '/images/themes/royal-palace.jpg',
     features: ['Heritage Palace', 'Royal Decorations', 'Traditional Music', 'Cultural Experience']
   },
-  { 
-    id: 'heritage-palace-wedding', 
-    name: 'Heritage Palace Wedding', 
-    description: 'Elegant heritage palace celebrations with cultural authenticity', 
+  {
+    id: 'heritage-palace-wedding',
+    name: 'Heritage Palace Wedding',
+    description: 'Elegant heritage palace celebrations with cultural authenticity',
     color: '#DC2626',
     image: '/images/themes/heritage-palace-wedding.jpg',
     features: ['Historical Venue', 'Cultural Decor', 'Traditional Cuisine', 'Heritage Experience']
   },
-  { 
-    id: 'luxury-hotel-grandeur', 
-    name: 'Luxury Hotel Grandeur', 
-    description: 'Five-star celebrations with modern amenities and world-class service', 
+  {
+    id: 'luxury-hotel-grandeur',
+    name: 'Luxury Hotel Grandeur',
+    description: 'Five-star celebrations with modern amenities and world-class service',
     color: '#8B5CF6',
     image: '/images/themes/luxury-hotel-grandeur.jpg',
     features: ['Premium Service', 'Modern Amenities', 'International Cuisine', 'Luxury Accommodations']
   },
-  { 
-    id: 'heritage-haveli-celebration', 
-    name: 'Heritage Haveli Celebration', 
-    description: 'Regional charm with cultural authenticity in traditional havelis', 
+  {
+    id: 'heritage-haveli-celebration',
+    name: 'Heritage Haveli Celebration',
+    description: 'Regional charm with cultural authenticity in traditional havelis',
     color: '#F59E0B',
     image: '/images/themes/heritage-haveli-celebration.jpg',
     features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
   },
-  { 
-    id: 'beach-destination-luxury', 
-    name: 'Beach Destination Luxury', 
-    description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
+  {
+    id: 'beach-destination-luxury',
+    name: 'Beach Destination Luxury',
+    description: 'Luxurious beachside celebrations with ocean views and tropical charm',
     color: '#06B6D4',
     image: '/images/themes/beach-destination-luxury.jpg',
     features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
   },
-  { 
-    id: 'mountain-retreat-celebration', 
-    name: 'Mountain Retreat Celebration', 
-    description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
+  {
+    id: 'mountain-retreat-celebration',
+    name: 'Mountain Retreat Celebration',
+    description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere',
     color: '#059669',
     image: '/images/themes/mountain-retreat-celebration.jpg',
     features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
   },
-  { 
-    id: 'garden-palace-affair', 
-    name: 'Garden Palace Affair', 
-    description: 'Natural elegance with outdoor charm in garden palace settings', 
+  {
+    id: 'garden-palace-affair',
+    name: 'Garden Palace Affair',
+    description: 'Natural elegance with outdoor charm in garden palace settings',
     color: '#10B981',
     image: '/images/themes/garden-palace-affair.jpg',
     features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
   },
-  { 
-    id: 'lakefront-wedding', 
-    name: 'Lakefront Wedding', 
-    description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
+  {
+    id: 'lakefront-wedding',
+    name: 'Lakefront Wedding',
+    description: 'Serene lakefront celebrations with water views and tranquil atmosphere',
     color: '#3B82F6',
     image: '/images/themes/lakefront-wedding.jpg',
     features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
   },
-  { 
-    id: 'traditional-hindu-grandeur', 
-    name: 'Traditional Hindu Grandeur', 
-    description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
+  {
+    id: 'traditional-hindu-grandeur',
+    name: 'Traditional Hindu Grandeur',
+    description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs',
     color: '#DC2626',
     image: '/images/themes/traditional-hindu-grandeur.jpg',
     features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
   },
-  { 
-    id: 'sikh-anand-karaj', 
-    name: 'Sikh Anand Karaj', 
-    description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
+  {
+    id: 'sikh-anand-karaj',
+    name: 'Sikh Anand Karaj',
+    description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness',
     color: '#F59E0B',
     image: '/images/themes/sikh-anand-karaj.jpg',
     features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
@@ -426,7 +426,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
               <button
                 onClick={generateBlueprint}
                 className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 flex items-center mx-auto"
-                style={{ 
+                style={{
                   background: 'linear-gradient(90deg, #F5EADB 0%, #EFAFAB 100%)',
                   color: '#8B4513'
                 }}
@@ -515,7 +515,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                       <div className="text-gray-600 italic">
                         <p className="mb-2">✨ <strong>Your Dream Wedding Vision</strong></p>
                         <p className="mb-2">
-                          Based on your selections, we envision a celebration that perfectly blends your chosen venue, theme, and photography style. 
+                          Based on your selections, we envision a celebration that perfectly blends your chosen venue, theme, and photography style.
                           This will be a day filled with love, joy, and unforgettable moments.
                         </p>
                         <p>
@@ -759,7 +759,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                 <button
                   onClick={generateBlueprint}
                   className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 flex items-center"
-                  style={{ 
+                  style={{
                     background: 'linear-gradient(90deg, #F5EADB 0%, #EFAFAB 100%)',
                     color: '#8B4513'
                   }}

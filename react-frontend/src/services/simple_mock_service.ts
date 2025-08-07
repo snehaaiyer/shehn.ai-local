@@ -1,240 +1,25 @@
-// Simple Mock Service - No AI dependencies
-export interface MockImageGenerationRequest {
-  theme: string;
-  style: string;
-  colors: string;
-  season: string;
-  venueType: string;
-  customDescription: string;
-  guestCount: number;
-  location: string;
-  imageCount?: number;
-}
-
-export interface MockImageGenerationResponse {
-  images: string[];
-  success: boolean;
-  error?: string;
-  generatedDescription?: string;
-  themeAnalysis?: {
-    keywords: string[];
-    mood: string;
-    style: string;
-    colors: string[];
-  };
-}
+/**
+ * Simple Mock Service for AI Features
+ * Provides fallback when external AI services are unavailable
+ */
 
 export class SimpleMockService {
-  /**
-   * Mapping from theme names to image paths.
-   * This mapping is used to select appropriate images based on the wedding theme.
-   */
-  private static readonly THEME_IMAGE_MAPPING: { [key: string]: string } = {
-    // Exact theme ID mapping using uploaded images
-    'royal-palace-rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
-    'traditional-regional-roots': '/images/themes/traditional-temple-ceremony.jpg',
-    'eco-friendly-sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
-    'bollywood-glamour': '/images/themes/bollywood-glamour-stage.jpg',
-    'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
-    'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
-    'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-    'vintage-classic': '/images/themes/vintage-classic-premium.jpg',
-
-    // Keyword-based mapping for theme selection
-    'royal': '/images/themes/royal-rajasthani-mandap.jpg',
-    'rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
-    'palace': '/images/themes/royal-rajasthani-mandap.jpg',
-
-    'traditional': '/images/themes/traditional-temple-ceremony.jpg',
-    'temple': '/images/themes/traditional-temple-ceremony.jpg',
-    'regional': '/images/themes/traditional-temple-ceremony.jpg',
-    'hindu': '/images/themes/traditional-temple-ceremony.jpg',
-
-    'bollywood': '/images/themes/bollywood-glamour-stage.jpg',
-    'glamour': '/images/themes/bollywood-glamour-stage.jpg',
-    'sangeet': '/images/themes/bollywood-glamour-stage.jpg',
-
-    'minimalist': '/images/themes/minimalist-modern-white.jpg',
-    'modern': '/images/themes/minimalist-modern-white.jpg',
-    'contemporary': '/images/themes/minimalist-modern-white.jpg',
-
-    'floral': '/images/themes/floral-paradise-garden.jpg',
-    'paradise': '/images/themes/floral-paradise-garden.jpg',
-    'garden': '/images/themes/floral-paradise-garden.jpg',
-    'flower': '/images/themes/floral-paradise-garden.jpg',
-
-    'eco': '/images/themes/eco-sustainable-bamboo.jpg',
-    'sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
-    'green': '/images/themes/eco-sustainable-bamboo.jpg',
-    'bamboo': '/images/themes/eco-sustainable-bamboo.jpg',
-
-    'bohemian': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-    'boho': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-    'chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-
-    'beach': '/images/themes/beach-destination.jpg',
-    'destination': '/images/themes/beach-destination.jpg',
-    'luxury': '/images/themes/beach-destination.jpg',
-
-    'vintage': '/images/themes/vintage-classic-premium.jpg',
-    'classic': '/images/themes/vintage-classic-premium.jpg'
-  };
-
-  /**
-   * Generate mock wedding theme images using placeholder images
-   */
-  static async generateWeddingThemeImages(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
+  static async generateImage(prompt: string): Promise<string> {
     // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Return a placeholder image URL
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NzM4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFJIEltYWdlIEdlbmVyYXRpb24gVW5hdmFpbGFibGU8L3RleHQ+CiAgPHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzk3YTNiNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBsZWFzZSB0cnkgYWdhaW4gbGF0ZXI8L3RleHQ+Cjwvc3ZnPgo=';
+  }
+
+  static async generateText(prompt: string): Promise<string> {
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const { theme, style, colors, venueType } = request;
-
-    // Find appropriate image based on theme
-    let selectedImage = '/images/themes/traditional-cultural.jpg'; // default
-
-    const themeLower = theme.toLowerCase();
-    for (const [keyword, imagePath] of Object.entries(this.THEME_IMAGE_MAPPING)) {
-      if (themeLower.includes(keyword)) {
-        selectedImage = imagePath;
-        break;
-      }
-    }
-
-    // Generate mock analysis
-    const mockAnalysis = {
-      keywords: [theme, style, 'wedding', 'celebration', 'elegant', 'beautiful'],
-      mood: 'romantic',
-      style: style.toLowerCase(),
-      colors: colors.split(' ').map(c => c.toLowerCase())
-    };
-
-    const mockDescription = `A beautiful ${theme} wedding with ${style} styling in ${colors} colors. Perfect for ${venueType} venues with elegant decorations and romantic atmosphere.`;
-
-    return {
-      images: [selectedImage],
-      success: true,
-      generatedDescription: mockDescription,
-      themeAnalysis: mockAnalysis
-    };
+    return "AI text generation is temporarily unavailable. Please try again later.";
   }
 
-  /**
-   * Get the image path for a given theme ID.
-   * Prioritizes exact matches, then falls back to keyword matching, and finally a default image.
-   * @param themeId The ID of the theme.
-   * @returns The path to the corresponding image.
-   */
-  static getThemeImage(themeId: string): string {
-    console.log('🎨 Getting theme image for:', themeId);
-
-    // First try exact theme ID match
-    if (this.THEME_IMAGE_MAPPING[themeId]) {
-      console.log('✅ Found exact match:', this.THEME_IMAGE_MAPPING[themeId]);
-      return this.THEME_IMAGE_MAPPING[themeId];
-    }
-
-    // Then try keyword matching - check if theme ID contains any of the keywords
-    const themeIdLower = themeId.toLowerCase();
-    for (const [keyword, imagePath] of Object.entries(this.THEME_IMAGE_MAPPING)) {
-      // Skip exact matches (already checked above)
-      if (keyword === themeId) continue;
-
-      if (themeIdLower.includes(keyword.toLowerCase())) {
-        console.log('✅ Found keyword match for', keyword, ':', imagePath);
-        return imagePath;
-      }
-    }
-
-    // Default fallback to traditional temple ceremony
-    console.log('⚠️ No match found for', themeId, ', using traditional temple ceremony image');
-    return '/images/themes/traditional-temple-ceremony.jpg';
-  }
-
-  /**
-   * Generate venue images using mock data
-   */
-  static async generateVenueImages(venuePrompt: string): Promise<MockImageGenerationResponse> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Map venue prompts to appropriate images
-    const venueImageMappings: { [key: string]: string } = {
-      // Heritage & Luxury
-      'heritage': '/images/venues/heritage palace.png',
-      'palace': '/images/venues/heritage palace.png',
-      'luxury': '/images/venues/luxury hotel.png',
-      'hotel': '/images/venues/luxury hotel.png',
-      'haveli': '/images/venues/heritagehaveli.png',
-      'fort': '/images/venues/royal fort.png',
-      'royal': '/images/venues/royal fort.png',
-
-      // Destination & Nature
-      'beach': '/images/venues/beachresort.png',
-      'resort': '/images/venues/beachresort.png',
-      'mountain': '/images/venues/mountain.png',
-      'garden': '/images/venues/garden.png',
-      'lake': '/images/venues/lakeresort.png',
-      'lakefront': '/images/venues/lakeresort.png',
-
-      // Traditional & Cultural
-      'banquet': '/images/venues/banquet.png',
-      'hall': '/images/venues/banquet.png',
-      'temple': '/images/venues/temple.png',
-      'community': '/images/venues/communityhall.png',
-      'gurudwara': '/images/venues/gurudwara.png',
-
-      // Modern & Urban
-      'rooftop': '/images/venues/rooftop.png',
-      'farmhouse': '/images/venues/farmhouse.png',
-      'farm': '/images/venues/farmhouse.png',
-      'villa': '/images/venues/luxuryvilla.png',
-      'industrial': '/images/venues/industrial.png'
-    };
-
-    // Find appropriate image based on venue prompt
-    let selectedImage = '/images/venues/luxury hotel.png'; // default
-
-    const promptLower = venuePrompt.toLowerCase();
-    for (const [keyword, imagePath] of Object.entries(venueImageMappings)) {
-      if (promptLower.includes(keyword)) {
-        selectedImage = imagePath;
-        break;
-      }
-    }
-
-    return {
-      images: [selectedImage],
-      success: true,
-      generatedDescription: venuePrompt
-    };
-  }
-
-  /**
-   * Generate theme analysis only
-   */
-  static async generateThemeAnalysis(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    const mockAnalysis = {
-      keywords: [request.theme, request.style, 'wedding'],
-      mood: 'elegant',
-      style: request.style.toLowerCase(),
-      colors: ['white', 'gold']
-    };
-
-    return {
-      images: [],
-      success: true,
-      generatedDescription: `Analysis for ${request.theme} wedding theme`,
-      themeAnalysis: mockAnalysis
-    };
-  }
-
-  /**
-   * Always returns true for mock service
-   */
-  static async validateConnection(): Promise<boolean> {
-    return true;
+  static async isServiceAvailable(): Promise<boolean> {
+    return false; // Always return false to indicate fallback mode
   }
 }
+
+export default SimpleMockService;
