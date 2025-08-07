@@ -43,10 +43,9 @@ class ReplitStorageService {
   async listImages(): Promise<string[]> {
     try {
       const result = await this.client.list();
-      if (result && 'success' in result && result.success && result.data) {
-        return result.data.map((obj: any) => obj.key);
-      } else if (Array.isArray(result)) {
-        return result.map((obj: any) => obj.key);
+      // The list() method returns an array of StorageObject directly
+      if (Array.isArray(result)) {
+        return result.map((obj: any) => obj.name || obj.key);
       }
       return [];
     } catch (error) {
