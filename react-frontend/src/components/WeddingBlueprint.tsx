@@ -195,7 +195,7 @@ const themes = [
     name: 'Heritage Palace Wedding', 
     description: 'Elegant heritage palace celebrations with cultural authenticity', 
     color: '#DC2626',
-    image: '/images/themes/traditional-cultural.jpg',
+    image: '/images/themes/heritage-palace-wedding.jpg',
     features: ['Historical Venue', 'Cultural Decor', 'Traditional Cuisine', 'Heritage Experience']
   },
   { 
@@ -203,7 +203,7 @@ const themes = [
     name: 'Luxury Hotel Grandeur', 
     description: 'Five-star celebrations with modern amenities and world-class service', 
     color: '#8B5CF6',
-    image: '/images/themes/minimalist-pastel.jpg',
+    image: '/images/themes/luxury-hotel-grandeur.jpg',
     features: ['Premium Service', 'Modern Amenities', 'International Cuisine', 'Luxury Accommodations']
   },
   { 
@@ -211,7 +211,7 @@ const themes = [
     name: 'Heritage Haveli Celebration', 
     description: 'Regional charm with cultural authenticity in traditional havelis', 
     color: '#F59E0B',
-    image: '/images/themes/traditional-cultural.jpg',
+    image: '/images/themes/heritage-haveli-celebration.jpg',
     features: ['Regional Architecture', 'Cultural Decor', 'Traditional Cuisine', 'Local Experience']
   },
   { 
@@ -219,7 +219,7 @@ const themes = [
     name: 'Beach Destination Luxury', 
     description: 'Luxurious beachside celebrations with ocean views and tropical charm', 
     color: '#06B6D4',
-    image: '/images/themes/beach-destination.jpg',
+    image: '/images/themes/beach-destination-luxury.jpg',
     features: ['Ocean Views', 'Beach Setup', 'Seafood Menu', 'Sunset Ceremony']
   },
   { 
@@ -227,7 +227,7 @@ const themes = [
     name: 'Mountain Retreat Celebration', 
     description: 'Scenic mountain celebrations with breathtaking views and peaceful atmosphere', 
     color: '#059669',
-    image: '/images/themes/boho-garden.jpg',
+    image: '/images/themes/mountain-retreat-celebration.jpg',
     features: ['Mountain Views', 'Natural Setting', 'Peaceful Atmosphere', 'Adventure Activities']
   },
   { 
@@ -235,7 +235,7 @@ const themes = [
     name: 'Garden Palace Affair', 
     description: 'Natural elegance with outdoor charm in garden palace settings', 
     color: '#10B981',
-    image: '/images/themes/boho-garden.jpg',
+    image: '/images/themes/garden-palace-affair.jpg',
     features: ['Garden Setting', 'Natural Beauty', 'Outdoor Celebration', 'Floral Decor']
   },
   { 
@@ -243,7 +243,7 @@ const themes = [
     name: 'Lakefront Wedding', 
     description: 'Serene lakefront celebrations with water views and tranquil atmosphere', 
     color: '#3B82F6',
-    image: '/images/themes/beach-destination.jpg',
+    image: '/images/themes/lakefront-wedding.jpg',
     features: ['Lake Views', 'Waterfront Setting', 'Tranquil Atmosphere', 'Boat Ceremonies']
   },
   { 
@@ -251,7 +251,7 @@ const themes = [
     name: 'Traditional Hindu Grandeur', 
     description: 'Sacred ceremonies with Vedic rituals, mandap decorations, and traditional customs', 
     color: '#DC2626',
-    image: '/images/themes/traditional-cultural.jpg',
+    image: '/images/themes/traditional-hindu-grandeur.jpg',
     features: ['Mandap Setup', 'Vedic Rituals', 'Traditional Attire', 'Sacred Fire Ceremony']
   },
   { 
@@ -259,7 +259,7 @@ const themes = [
     name: 'Sikh Anand Karaj', 
     description: 'Sacred Sikh wedding ceremonies with religious significance and cultural richness', 
     color: '#F59E0B',
-    image: '/images/themes/traditional-cultural.jpg',
+    image: '/images/themes/sikh-anand-karaj.jpg',
     features: ['Gurudwara Ceremony', 'Religious Rituals', 'Traditional Music', 'Community Celebration']
   }
 ];
@@ -321,7 +321,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
         : [Promise.resolve('/images/placeholder-theme.png')];
 
       const photographyPromises = [Promise.resolve('/images/placeholder-photo.png')];
-      
+
       const [venueImage, themeImage, photographyImage] = await Promise.all([
         Promise.all(venuePromises).then(urls => urls[0]),
         Promise.all(themePromises).then(urls => urls[0]),
@@ -358,7 +358,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
           total: 1250000,
         }
       };
-      
+
       setBlueprint(mockBlueprint);
 
     } catch (err) {

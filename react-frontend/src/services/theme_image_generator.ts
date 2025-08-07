@@ -185,14 +185,14 @@ export class ThemeImageGenerator {
 
   // Map of existing images that can be reused for themes
   private static readonly EXISTING_IMAGE_MAPPINGS: { [themeId: string]: string } = {
-    // New Indian Wedding Themes
-    'royal-palace-rajasthani': '/images/themes/royal-palace.jpg',
-    'traditional-regional-roots': '/images/themes/traditional-cultural.jpg',
-    'eco-friendly-sustainable': '/images/themes/boho-garden.jpg',
-    'bollywood-glamour': '/images/themes/bollywood-sangeet.jpg',
-    'minimalist-modern': '/images/themes/minimalist-pastel.jpg',
-    'floral-paradise': '/images/themes/boho-garden.jpg',
-    'bohemian-chic': '/images/themes/boho-garden.jpg',
+    // New Indian Wedding Themes with updated high-quality images
+    'royal-palace-rajasthani': '/images/themes/royal-rajasthani-mandap.jpg',
+    'traditional-regional-roots': '/images/themes/traditional-temple-ceremony.jpg',
+    'eco-friendly-sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
+    'bollywood-glamour': '/images/themes/bollywood-glamour-stage.jpg',
+    'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
+    'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
+    'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
     'vintage-classic': '/images/themes/traditional-cultural.jpg'
   };
 
