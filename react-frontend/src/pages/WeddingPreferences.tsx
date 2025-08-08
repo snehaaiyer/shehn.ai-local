@@ -18,6 +18,8 @@ interface WeddingPreferencesData {
     partnerName: string;
     contactNumber: string;
     priorities: Priority[];
+    datesFlexible: boolean;
+    eventDuration: string;
   };
   theme: {
     selectedTheme: string;
@@ -104,7 +106,9 @@ const WeddingPreferences: React.FC = () => {
         { id: 'outfits', name: '👗 Wedding Outfits', description: 'Perfect attire for the couple' },
         { id: 'flowers', name: '🌸 Floral Arrangements', description: 'Beautiful flowers and bouquets' },
         { id: 'transportation', name: '🚗 Transportation', description: 'Getting to and from the venue' }
-      ]
+      ],
+      datesFlexible: false,
+      eventDuration: ''
     },
     theme: {
       selectedTheme: '',
@@ -528,7 +532,9 @@ const WeddingPreferences: React.FC = () => {
               { id: 'outfits', name: '👗 Wedding Outfits', description: 'Perfect attire for the couple' },
               { id: 'flowers', name: '🌸 Floral Arrangements', description: 'Beautiful flowers and bouquets' },
               { id: 'transportation', name: '🚗 Transportation', description: 'Getting to and from the venue' }
-            ]
+            ],
+            datesFlexible: parsed.basicDetails?.datesFlexible || false,
+            eventDuration: parsed.basicDetails?.eventDuration || ''
           },
           photography: {
             style: parsed.photography?.style || '',
