@@ -16,7 +16,7 @@ export class ThemeImageGenerator {
   private static readonly THEME_PROMPTS: ThemeImageMapping = {
     // New Indian Wedding Themes
     'royal-palace-rajasthani': {
-      name: 'Royal Palace/Rajasthani Theme',
+      name: 'Royal Palace/ Rajasthani Theme',
       description: 'Majestic Rajasthani palace celebrations with royal grandeur, mirror work, and desert charm',
       images: [],
       prompt: 'Cinematic wide shot of a magnificent Rajasthani royal palace Indian wedding ceremony. Traditional red sandstone architecture with intricate carved jharokhas and ornate mirror work. Golden mandap decorated with vibrant marigold garlands and roses. Bride in red lehenga with heavy gold jewelry, groom in cream sherwani with kalgi. Traditional Rajasthani musicians playing shehnai and tabla. Warm golden hour lighting, rich red and gold color palette, ultra-detailed, 4K quality, professional wedding photography style.',
@@ -87,7 +87,7 @@ export class ThemeImageGenerator {
       hasExistingImage: true,
       category: 'indian'
     },
-    
+
     // Destination & Nature Themes (High Engagement)
     'beach-destination-luxury': {
       name: 'Beach Destination Luxury',
@@ -121,7 +121,7 @@ export class ThemeImageGenerator {
       hasExistingImage: false,
       category: 'indian'
     },
-    
+
     // Cultural & Traditional Themes (High Engagement)
     'traditional-hindu-grandeur': {
       name: 'Traditional Hindu Grandeur',
@@ -155,7 +155,7 @@ export class ThemeImageGenerator {
       hasExistingImage: true,
       category: 'indian'
     },
-    
+
     // Modern & Contemporary Themes (Medium-High Engagement)
     'modern-fusion-wedding': {
       name: 'Modern Fusion Wedding',
@@ -210,20 +210,21 @@ export class ThemeImageGenerator {
     'floral-paradise': '/floralparadise.png',
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
-    'classic-contemporary': '/classic contemporary.png'
-    // Removed duplicate mappings - luxury-contemporary and contemporary-luxury will generate unique images
+    'classic-contemporary': '/classic contemporary.png',
+    'luxury-contemporary': '/luxury-contemporary.png',
+    'contemporary-luxury': '/contemporary-luxury.png'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
     console.log('🎨 Starting generation of missing theme images with RunwayML...');
-    
+
     const updatedThemes = { ...this.THEME_PROMPTS };
-    
+
     for (const [themeId, themeData] of Object.entries(this.THEME_PROMPTS)) {
       try {
         // Check if theme already has an existing image
         const existingImage = this.EXISTING_IMAGE_MAPPINGS[themeId];
-        
+
         if (existingImage) {
           // Use existing image
           updatedThemes[themeId].images = [existingImage];
@@ -232,7 +233,7 @@ export class ThemeImageGenerator {
         } else {
           // Generate new image with RunwayML
           console.log(`🖼️ Generating new image for: ${themeData.name} (${themeData.category}) with RunwayML`);
-          
+
           const runwayMLResponse = await RunwayMLService.generateThemeImage({
             prompt: themeData.prompt,
             width: 1024,
@@ -240,7 +241,7 @@ export class ThemeImageGenerator {
             guidance_scale: 8.0,
             num_inference_steps: 50
           });
-          
+
           if (runwayMLResponse.success && runwayMLResponse.image) {
             updatedThemes[themeId].images = [runwayMLResponse.image];
             updatedThemes[themeId].hasExistingImage = false;
@@ -248,7 +249,7 @@ export class ThemeImageGenerator {
           } else {
             // Fallback to LocalAI if RunwayML fails
             console.log(`⚠️ RunwayML failed for ${themeData.name}, trying LocalAI fallback`);
-            
+
             const requestData = {
               theme: themeData.name,
               style: 'Traditional',
@@ -262,7 +263,7 @@ export class ThemeImageGenerator {
             };
 
             const localResponse = await LocalAIService.generateWeddingThemeImages(requestData);
-            
+
             if (localResponse.success && localResponse.images) {
               updatedThemes[themeId].images = localResponse.images;
               updatedThemes[themeId].hasExistingImage = false;
@@ -273,18 +274,18 @@ export class ThemeImageGenerator {
               updatedThemes[themeId].hasExistingImage = false;
             }
           }
-          
+
           // Add delay between requests to avoid rate limiting
           await new Promise(resolve => setTimeout(resolve, 3000));
         }
-        
+
       } catch (error) {
         console.error(`❌ Error processing ${themeData.name}:`, error);
         updatedThemes[themeId].images = this.getFallbackImages(themeId);
         updatedThemes[themeId].hasExistingImage = false;
       }
     }
-    
+
     console.log('🎉 Theme image processing completed!');
     return updatedThemes;
   }
@@ -315,7 +316,7 @@ export class ThemeImageGenerator {
       'bohemian-chic': 'Farmhouse',
       'vintage-classic': 'Heritage Palaces'
     };
-    
+
     return venueMapping[themeId] || 'Heritage Palaces';
   }
 
@@ -324,7 +325,7 @@ export class ThemeImageGenerator {
     const fallbackImages: { [key: string]: string[] } = {
       'royal-palace-rajasthani': [
         'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1024&h=1024&fit=crop',
-        'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop'
+        'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop'
       ],
       'traditional-regional-roots': [
         'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop',
@@ -355,7 +356,7 @@ export class ThemeImageGenerator {
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-20'
       ]
     };
-    
+
     return fallbackImages[themeId] || [
       'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
       'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop'
@@ -368,7 +369,7 @@ export class ThemeImageGenerator {
     if (existingImage) {
       return [existingImage];
     }
-    
+
     // Then check for generated images
     return this.THEME_PROMPTS[themeId]?.images || this.getFallbackImages(themeId);
   }
@@ -388,4 +389,4 @@ export class ThemeImageGenerator {
       .filter(([themeId]) => this.hasExistingImage(themeId))
       .map(([themeId]) => themeId);
   }
-} 
+}
