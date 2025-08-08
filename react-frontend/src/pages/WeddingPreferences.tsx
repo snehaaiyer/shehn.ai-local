@@ -232,7 +232,7 @@ const WeddingPreferences: React.FC = () => {
           name: 'Luxury Contemporary', 
           description: 'High-end modern celebrations with premium decor, sophisticated lighting, and urban elegance', 
           color: '#1F2937',
-          image: '/luxury-contemporary.png',
+          image: '/classic contemporary.png',
           features: ['Premium Materials', 'Sophisticated Lighting', 'Urban Elegance', 'High-End Decor'],
           imagePrompt: 'Luxury contemporary Indian wedding in upscale urban venue. Premium materials like marble and crystal, sophisticated LED lighting systems, sleek modern mandap with metallic accents. Bride in designer contemporary lehenga, groom in luxury modern sherwani. High-end floral arrangements, premium table settings, urban city views. Sophisticated color palette of blacks, whites, and metallics. Professional lighting, 4K luxury aesthetic, five-star hotel setting.'
         }

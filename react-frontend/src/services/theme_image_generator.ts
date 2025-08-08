@@ -203,8 +203,7 @@ export class ThemeImageGenerator {
     'floral-paradise': '/floralparadise.png',
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
-    'classic-contemporary': '/classic contemporary.png'
-    // luxury-contemporary will use fallback generation for unique image
+    'luxury-contemporary': '/classic contemporary.png'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
