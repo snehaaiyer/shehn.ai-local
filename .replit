@@ -74,6 +74,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
+[[workflows.workflow]]
+name = "Enhanced Vendor Selection"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python enhanced_vendor_selection_api.py"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
