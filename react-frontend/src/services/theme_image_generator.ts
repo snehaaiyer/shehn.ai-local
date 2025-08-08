@@ -79,6 +79,14 @@ export class ThemeImageGenerator {
       hasExistingImage: true,
       category: 'indian'
     },
+    'classic-contemporary': {
+      name: 'Classic Contemporary Theme',
+      description: 'Modern elegance meets traditional charm with sophisticated contemporary design elements',
+      images: [],
+      prompt: 'Sophisticated classic contemporary Indian wedding with modern traditional fusion. Clean elegant mandap with contemporary design elements and classic Indian motifs. Bride in modern lehenga with contemporary styling, groom in designer Indo-western attire. Sophisticated lighting, contemporary furniture with traditional touches, modern floral arrangements. Neutral elegant color palette with gold accents, 4K sophisticated elegance, professional contemporary photography style.',
+      hasExistingImage: true,
+      category: 'indian'
+    },
     
     // Destination & Nature Themes (High Engagement)
     'beach-destination-luxury': {
@@ -193,7 +201,8 @@ export class ThemeImageGenerator {
     'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
     'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
     'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
-    'vintage-classic': '/images/themes/vintage-classic-decor.jpg'
+    'vintage-classic': '/images/themes/vintage-classic-decor.jpg',
+    'classic-contemporary': '/classic contemporary.png'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
