@@ -2210,227 +2210,224 @@ const VendorDiscovery: React.FC = () => {
           </div>
         </div>
 
-        </div>
-
-      {/* Vendor Details Modal */}
-      {showVendorModal && selectedVendor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden">
-                    {selectedVendor.images && selectedVendor.images.length > 0 ? (
-                      <img src={selectedVendor.images[0]} alt={selectedVendor.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <Building2 className="h-6 w-6 text-gray-400" />
+        {/* Vendor Details Modal */}
+        {showVendorModal && selectedVendor && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden">
+                      {selectedVendor.images && selectedVendor.images.length > 0 ? (
+                        <img src={selectedVendor.images[0]} alt={selectedVendor.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <Building2 className="h-6 w-6 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-800">{selectedVendor.name}</h2>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <MapPin className="h-4 w-4" />
+                        <span>{selectedVendor.location}</span>
                       </div>
-                    )}
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800">{selectedVendor.name}</h2>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <MapPin className="h-4 w-4" />
-                      <span>{selectedVendor.location}</span>
                     </div>
                   </div>
+                  <button
+                    onClick={closeVendorModal}
+                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button
-                  onClick={closeVendorModal}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  ✕
-                </button>
               </div>
-            </div>
 
-            {/* Modal Content */}
-            <div className="p-6 space-y-6">
-              {/* Image Gallery */}
-              {selectedVendor.images && selectedVendor.images.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {selectedVendor.images.map((image, index) => (
-                    <div key={index} className="h-48 rounded-lg overflow-hidden">
-                      <img src={image} alt={`${selectedVendor.name} ${index + 1}`} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Overview</h3>
-                  <p className="text-gray-600 mb-4">{selectedVendor.description}</p>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 text-yellow-400" />
-                      <span className="font-medium">{selectedVendor.rating}/5.0</span>
-                      <span className="text-sm text-gray-500">({selectedVendor.contact_score}% response rate)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-green-500" />
-                      <span>{selectedVendor.price_range}</span>
-                    </div>
-                    {selectedVendor.experience_years && (
-                      <div className="flex items-center gap-2">
-                        <Award className="h-4 w-4 text-blue-500" />
-                        <span>{selectedVendor.experience_years} years experience</span>
+              {/* Modal Content */}
+              <div className="p-6 space-y-6">
+                {/* Image Gallery */}
+                {selectedVendor.images && selectedVendor.images.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {selectedVendor.images.map((image, index) => (
+                      <div key={index} className="h-48 rounded-lg overflow-hidden">
+                        <img src={image} alt={`${selectedVendor.name} ${index + 1}`} className="w-full h-full object-cover" />
                       </div>
-                    )}
-                    {selectedVendor.weddings_planned && (
-                      <div className="flex items-center gap-2">
-                        <Heart className="h-4 w-4 text-red-500" />
-                        <span>{selectedVendor.weddings_planned} weddings completed</span>
-                      </div>
-                    )}
+                    ))}
                   </div>
-                </div>
+                )}
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
-                  <div className="space-y-3">
-                    {selectedVendor.phone && (
-                      <div className="flex gap-2">
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Overview</h3>
+                    <p className="text-gray-600 mb-4">{selectedVendor.description}</p>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-yellow-400" />
+                        <span className="font-medium">{selectedVendor.rating}/5.0</span>
+                        <span className="text-sm text-gray-500">({selectedVendor.contact_score}% response rate)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-green-500" />
+                        <span>{selectedVendor.price_range}</span>
+                      </div>
+                      {selectedVendor.experience_years && (
+                        <div className="flex items-center gap-2">
+                          <Award className="h-4 w-4 text-blue-500" />
+                          <span>{selectedVendor.experience_years} years experience</span>
+                        </div>
+                      )}
+                      {selectedVendor.weddings_planned && (
+                        <div className="flex items-center gap-2">
+                          <Heart className="h-4 w-4 text-red-500" />
+                          <span>{selectedVendor.weddings_planned} weddings completed</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
+                    <div className="space-y-3">
+                      {selectedVendor.phone && (
                         <button
                           onClick={() => handlePhoneCall(selectedVendor.phone!)}
-                          className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                          className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
                         >
                           📞 {selectedVendor.phone}
                         </button>
+                      )}
+
+                      {selectedVendor.email && (
+                        <button
+                          onClick={() => handleEmail(selectedVendor.email!, selectedVendor.name)}
+                          className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                        >
+                          📧 {selectedVendor.email}
+                        </button>
+                      )}
+
+                      <div className="flex gap-2">
+                        {selectedVendor.website && (
+                          <button
+                            onClick={() => handleWebsite(selectedVendor.website!)}
+                            className="flex-1 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
+                          >
+                            🌐 Website
+                          </button>
+                        )}
+                        {selectedVendor.instagram && (
+                          <button
+                            onClick={() => handleInstagram(selectedVendor.name, selectedVendor.instagram)}
+                            className="flex-1 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors flex items-center justify-center gap-2"
+                          >
+                            📸 Instagram
+                          </button>
+                        )}
                       </div>
-                    )}
-
-                    {selectedVendor.email && (
-                      <button
-                        onClick={() => handleEmail(selectedVendor.email!, selectedVendor.name)}
-                        className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
-                      >
-                        📧 {selectedVendor.email}
-                      </button>
-                    )}
-
-                    <div className="flex gap-2">
-                      {selectedVendor.website && (
-                        <button
-                          onClick={() => handleWebsite(selectedVendor.website!)}
-                          className="flex-1 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
-                        >
-                          🌐 Website
-                        </button>
-                      )}
-                      {selectedVendor.instagram && (
-                        <button
-                          onClick={() => handleInstagram(selectedVendor.name, selectedVendor.instagram)}
-                          className="flex-1 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors flex items-center justify-center gap-2"
-                        >
-                          📸 Instagram
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Specialties */}
-              {selectedVendor.specialties && selectedVendor.specialties.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Specialties</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedVendor.specialties.map((specialty, index) => (
-                      <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                        {specialty}
-                      </span>
-                    ))}
+                {/* Specialties */}
+                {selectedVendor.specialties && selectedVendor.specialties.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Specialties</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedVendor.specialties.map((specialty, index) => (
+                        <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                          {specialty}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Services Offered */}
-              {selectedVendor.services_offered && selectedVendor.services_offered.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Services Offered</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {selectedVendor.services_offered.map((service, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-sm">{service}</span>
+                {/* Services Offered */}
+                {selectedVendor.services_offered && selectedVendor.services_offered.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Services Offered</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {selectedVendor.services_offered.map((service, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-sm">{service}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Awards */}
+                {selectedVendor.awards && selectedVendor.awards.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Awards & Recognition</h3>
+                    <div className="space-y-2">
+                      {selectedVendor.awards.map((award, index) => (
+                        <div key={index} className="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg">
+                          <Award className="h-5 w-5 text-yellow-600" />
+                          <span className="text-sm">{award}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Testimonials */}
+                {selectedVendor.testimonials && selectedVendor.testimonials.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Client Testimonials</h3>
+                    <div className="space-y-4">
+                      {selectedVendor.testimonials.map((testimonial, index) => (
+                        <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(testimonial.rating)].map((_, i) => (
+                              <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                            ))}
+                          </div>
+                          <p className="text-gray-600 mb-2">"{testimonial.text}"</p>
+                          <div className="flex justify-between items-center text-sm text-gray-500">
+                            <span className="font-medium">{testimonial.name}</span>
+                            <span>{testimonial.date} • {testimonial.wedding_type}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Venue Specific Info */}
+                {selectedVendor.category === 'venues' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {selectedVendor.capacity && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2">Capacity</h3>
+                        <p className="text-2xl font-bold text-blue-600">{selectedVendor.capacity} guests</p>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    )}
 
-              {/* Awards */}
-              {selectedVendor.awards && selectedVendor.awards.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Awards & Recognition</h3>
-                  <div className="space-y-2">
-                    {selectedVendor.awards.map((award, index) => (
-                      <div key={index} className="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg">
-                        <Award className="h-5 w-5 text-yellow-600" />
-                        <span className="text-sm">{award}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Testimonials */}
-              {selectedVendor.testimonials && selectedVendor.testimonials.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Client Testimonials</h3>
-                  <div className="space-y-4">
-                    {selectedVendor.testimonials.map((testimonial, index) => (
-                      <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center gap-1 mb-2">
-                          {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                    {selectedVendor.amenities && selectedVendor.amenities.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">Amenities</h3>
+                        <div className="grid grid-cols-1 gap-2">
+                          {selectedVendor.amenities.map((amenity, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              <span className="text-sm">{amenity}</span>
+                            </div>
                           ))}
                         </div>
-                        <p className="text-gray-600 mb-2">"{testimonial.text}"</p>
-                        <div className="flex justify-between items-center text-sm text-gray-500">
-                          <span className="font-medium">{testimonial.name}</span>
-                          <span>{testimonial.date} • {testimonial.wedding_type}</span>
-                        </div>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              )}
-
-              {/* Venue Specific Info */}
-              {selectedVendor.category === 'venues' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {selectedVendor.capacity && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Capacity</h3>
-                      <p className="text-2xl font-bold text-blue-600">{selectedVendor.capacity} guests</p>
-                    </div>
-                  )}
-
-                  {selectedVendor.amenities && selectedVendor.amenities.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Amenities</h3>
-                      <div className="grid grid-cols-1 gap-2">
-                        {selectedVendor.amenities.map((amenity, index) => (
-                          <div key={index} className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span className="text-sm">{amenity}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
