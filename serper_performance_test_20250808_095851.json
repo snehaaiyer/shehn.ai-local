@@ -1,0 +1,61 @@
+{
+  "test_timestamp": "2025-08-08T09:58:51.265030",
+  "total_duration": 74.87340760231018,
+  "test_scenarios": [
+    {
+      "scenario": "Mumbai Wedding Venues",
+      "category": "venues",
+      "location": "Mumbai",
+      "success": true,
+      "duration": 21.06,
+      "vendors_found": 0,
+      "expected_vendors": 5,
+      "contact_info_rate": 0,
+      "individual_business_rate": 0,
+      "average_score": 0
+    },
+    {
+      "scenario": "Delhi Wedding Photographers",
+      "category": "photography",
+      "location": "Delhi",
+      "success": true,
+      "duration": 19.79,
+      "vendors_found": 0,
+      "expected_vendors": 5,
+      "contact_info_rate": 0,
+      "individual_business_rate": 0,
+      "average_score": 0
+    },
+    {
+      "scenario": "Bangalore Wedding Catering",
+      "category": "catering",
+      "location": "Bangalore",
+      "success": true,
+      "duration": 15.21,
+      "vendors_found": 0,
+      "expected_vendors": 5,
+      "contact_info_rate": 0,
+      "individual_business_rate": 0,
+      "average_score": 0
+    },
+    {
+      "scenario": "Chennai Wedding Decoration",
+      "category": "decoration",
+      "location": "Chennai",
+      "success": true,
+      "duration": 18.81,
+      "vendors_found": 0,
+      "expected_vendors": 5,
+      "contact_info_rate": 0,
+      "individual_business_rate": 0,
+      "average_score": 0
+    }
+  ],
+  "summary": {
+    "total_tests": 4,
+    "successful_tests": 4,
+    "success_rate": 100.0,
+    "average_duration": 18.7175,
+    "average_contact_rate": 0.0
+  }
+}
