@@ -206,7 +206,7 @@ export class ThemeImageGenerator {
     'traditional-regional-roots': '/images/themes/traditional-temple-ceremony.jpg',
     'eco-friendly-sustainable': '/images/themes/eco-sustainable-bamboo.jpg',
     'bollywood-glamour': '/images/themes/bollywood-glamour-stage.jpg',
-    'minimalist-modern': '/images/themes/minimalist-modern-white.jpg',
+    'minimalist-modern': '/minimalist pastel.png',
     'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
     'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
     'vintage-classic': '/images/themes/vintage-classic-decor.jpg',
