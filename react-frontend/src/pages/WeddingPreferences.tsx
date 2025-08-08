@@ -871,18 +871,18 @@ const WeddingPreferences: React.FC = () => {
                 </div>
 
                 {/* Priority Ranking Section */}
-                <div className="mt-8">
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2" style={{ color: '#2F4F4F' }}>
+                <div className="mt-6">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold mb-1" style={{ color: '#2F4F4F' }}>
                       🎯 Wedding Priorities
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Drag and drop to rank your wedding priorities in order of importance (most important at top)
+                      Drag to reorder by importance (most important at top)
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-xl border border-pink-100">
-                    <div className="space-y-2">
+                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-3 rounded-xl border border-pink-100">
+                    <div className="space-y-1.5">
                       {preferences.basicDetails.priorities.map((priority, index) => (
                         <div
                           key={priority.id}
@@ -891,78 +891,70 @@ const WeddingPreferences: React.FC = () => {
                           onDragEnd={handleDragEnd}
                           onDragOver={handleDragOver}
                           onDrop={(e) => handleDrop(e, index)}
-                          className={`bg-white rounded-lg p-3 border-2 border-gray-200 cursor-move transition-all duration-300 hover:shadow-md hover:border-pink-300 group ${
+                          className={`bg-white rounded-lg p-2.5 border border-gray-200 cursor-move transition-all duration-200 hover:shadow-sm hover:border-pink-300 group ${
                             draggedIndex === index ? 'opacity-50 scale-95' : ''
                           }`}
-                          style={{
-                            transform: draggedIndex === index ? 'rotate(5deg)' : 'none',
-                            transition: 'all 0.3s ease'
-                          }}
                         >
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-2.5 flex-1 min-w-0">
                               {/* Priority Rank Badge */}
-                              <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-xs" 
+                              <div className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center font-bold text-white text-xs" 
                                    style={{ backgroundColor: `hsl(${index * 45}, 70%, 60%)` }}>
                                 {index + 1}
                               </div>
 
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-gray-800 group-hover:text-pink-700 transition-colors duration-200 text-sm">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-medium text-gray-800 group-hover:text-pink-700 transition-colors text-sm truncate">
                                   {priority.name}
                                 </h4>
-                                <p className="text-xs text-gray-600 mt-0.5">
+                                <p className="text-xs text-gray-500 mt-0.5 truncate">
                                   {priority.description}
                                 </p>
                               </div>
                             </div>
 
-                            {/* Drag Handle */}
-                            <div className="flex-shrink-0 text-gray-400 group-hover:text-pink-500 transition-colors duration-200">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-                              </svg>
-                            </div>
-                          </div>
+                            <div className="flex items-center space-x-2 flex-shrink-0">
+                              {/* Priority Level Dots - Compact */}
+                              <div className="flex space-x-0.5">
+                                {Array.from({ length: Math.min(5, 8 - index) }).map((_, i) => (
+                                  <div
+                                    key={i}
+                                    className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-pink-400 to-purple-400"
+                                  />
+                                ))}
+                              </div>
 
-                          {/* Priority Level Indicator */}
-                          <div className="mt-2 flex items-center justify-between">
-                            <div className="flex space-x-0.5">
-                              {Array.from({ length: 8 }).map((_, i) => (
-                                <div
-                                  key={i}
-                                  className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-                                    i <= (7 - index) 
-                                      ? 'bg-gradient-to-r from-pink-400 to-purple-400' 
-                                      : 'bg-gray-200'
-                                  }`}
-                                />
-                              ))}
+                              {/* Priority Label */}
+                              <span className="text-xs font-medium text-gray-500 min-w-0">
+                                {index === 0 && '🔥 Top'}
+                                {index === 1 && '⭐ High'}
+                                {index === 2 && '📍 Important'}
+                                {index >= 3 && index <= 4 && '📝 Consider'}
+                                {index >= 5 && '💡 Nice'}
+                              </span>
+
+                              {/* Drag Handle */}
+                              <div className="text-gray-400 group-hover:text-pink-500 transition-colors">
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                                </svg>
+                              </div>
                             </div>
-                            <span className="text-xs font-medium text-gray-500">
-                              {index === 0 && '🔥 Top Priority'}
-                              {index === 1 && '⭐ High Priority'}
-                              {index === 2 && '📍 Important'}
-                              {index >= 3 && index <= 4 && '📝 Consider'}
-                              {index >= 5 && '💡 Nice to Have'}
-                            </span>
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    {/* Priority Summary */}
-                    <div className="mt-4 p-3 bg-white/70 rounded-lg border border-pink-200">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-sm">📊</span>
-                        <h4 className="font-medium text-gray-800 text-sm">Your Priority Summary</h4>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-xs">
-                        <div className="text-gray-600">
-                          <strong className="text-pink-600">Top Focus:</strong> {preferences.basicDetails.priorities[0]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}
+                    {/* Compact Priority Summary */}
+                    <div className="mt-3 p-2.5 bg-white/70 rounded-lg border border-pink-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="text-sm">📊</span>
+                          <h4 className="font-medium text-gray-800 text-sm">Priority Focus</h4>
                         </div>
-                        <div className="text-gray-600">
-                          <strong className="text-purple-600">Secondary:</strong> {preferences.basicDetails.priorities[1]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}
+                        <div className="text-xs text-gray-600 text-right">
+                          <div><strong className="text-pink-600">1st:</strong> {preferences.basicDetails.priorities[0]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}</div>
+                          <div><strong className="text-purple-600">2nd:</strong> {preferences.basicDetails.priorities[1]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}</div>
                         </div>
                       </div>
                     </div>
