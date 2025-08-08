@@ -786,7 +786,7 @@ const WeddingPreferences: React.FC = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
                   </div>
-                  
+
                   {/* Wedding Date */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
@@ -1236,7 +1236,7 @@ const WeddingPreferences: React.FC = () => {
                 {/* Multi-Day Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Multi-Day Coverage</h3>
-                  <p className="text-gray-600 mb-4">Select which events you'd like photographed:</p>
+                  <p className="text-gray-600 mb-4">Select which events you\'d like photographed:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
                       <input 
