@@ -1,0 +1,112 @@
+Compiled with problems:
+×
+ERROR in ./src/pages/VendorDiscovery.tsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/runner/workspace/react-frontend/src/pages/VendorDiscovery.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (2405:8)
+
+  2403 |             </div>
+  2404 |           </div>
+> 2405 |         </div>
+       |         ^
+  2406 |       </div>
+  2407 |     </div>
+  2408 |   );
+    at constructor (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:367:19)
+    at TypeScriptParserMixin.raise (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6627:19)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4772:18)
+    at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9790:39
+    at TypeScriptParserMixin.tryParse (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6935:20)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9790:18)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10795:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10795:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12494:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11674:28)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11326:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4794:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9852:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10894:61)
+    at TypeScriptParserMixin.parseExprOpBaseRightExpr (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10981:34)
+    at TypeScriptParserMixin.parseExprOpRightExpr (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10976:21)
+    at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10942:27)
+    at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9389:18)
+    at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10948:21)
+    at TypeScriptParserMixin.parseExprOp (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9389:18)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10903:17)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10876:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10826:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9801:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10779:23)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10775:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12427:12)
+    at TypeScriptParserMixin.parseExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10775:17)
+    at TypeScriptParserMixin.jsxParseExpressionContainer (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4662:31)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4741:36)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4728:32)
+    at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4779:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4789:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11076:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11061:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11041:23)
+ERROR
+[eslint] 
+src/pages/VendorDiscovery.tsx
+  Line 2405:8:  Parsing error: ')' expected
+
+ERROR in src/pages/VendorDiscovery.tsx:2405:9
+TS1005: ')' expected.
+    2403 |             </div>
+    2404 |           </div>
+  > 2405 |         </div>
+         |         ^^
+    2406 |       </div>
+    2407 |     </div>
+    2408 |   );
+ERROR in src/pages/VendorDiscovery.tsx:2407:5
+TS1005: ')' expected.
+    2405 |         </div>
+    2406 |       </div>
+  > 2407 |     </div>
+         |     ^^
+    2408 |   );
+    2409 | };
+    2410 |
+ERROR in src/pages/VendorDiscovery.tsx:2407:7
+TS2304: Cannot find name 'div'.
+    2405 |         </div>
+    2406 |       </div>
+  > 2407 |     </div>
+         |       ^^^
+    2408 |   );
+    2409 | };
+    2410 |
+ERROR in src/pages/VendorDiscovery.tsx:2408:3
+TS1109: Expression expected.
+    2406 |       </div>
+    2407 |     </div>
+  > 2408 |   );
+         |   ^
+    2409 | };
+    2410 |
+    2411 | export default VendorDiscovery;
+ERROR in src/pages/VendorDiscovery.tsx:2409:1
+TS1128: Declaration or statement expected.
+    2407 |     </div>
+    2408 |   );
+  > 2409 | };
+         | ^
+    2410 |
+    2411 | export default VendorDiscovery;
