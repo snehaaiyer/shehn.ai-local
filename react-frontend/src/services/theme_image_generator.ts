@@ -178,7 +178,15 @@ export class ThemeImageGenerator {
       description: 'Modern elegance with sophisticated style and contemporary luxury',
       images: [],
       prompt: 'Contemporary luxury wedding with modern design, luxury elements, sophisticated style, and contemporary elegance. Modern luxury with sophisticated contemporary atmosphere.',
-      hasExistingImage: false,
+      hasExistingImage: true,
+      category: 'indian'
+    },
+    'luxury-contemporary': {
+      name: 'Luxury Contemporary',
+      description: 'High-end modern celebrations with premium decor, sophisticated lighting, and urban elegance',
+      images: [],
+      prompt: 'Luxury contemporary Indian wedding with high-end modern design, premium decor, sophisticated lighting, and urban elegance. Premium materials, sophisticated lighting, contemporary luxury atmosphere.',
+      hasExistingImage: true,
       category: 'indian'
     },
     'urban-rooftop-wedding': {
@@ -202,7 +210,9 @@ export class ThemeImageGenerator {
     'floral-paradise': '/images/themes/floral-paradise-garden.jpg',
     'bohemian-chic': '/images/themes/bohemian-chic-dreamcatcher.jpg',
     'vintage-classic': '/images/themes/vintage-classic-decor.jpg',
-    'classic-contemporary': '/classic contemporary.png'
+    'classic-contemporary': '/classic contemporary.png',
+    'luxury-contemporary': '/classic contemporary.png',
+    'contemporary-luxury': '/classic contemporary.png'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
