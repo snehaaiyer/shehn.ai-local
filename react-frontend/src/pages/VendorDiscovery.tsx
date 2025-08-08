@@ -1879,7 +1879,7 @@ const VendorDiscovery: React.FC = () => {
               </button>
             </div>
           </div>
-                  {/* Search and Filters */}
+          {/* Search and Filters */}
           <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
             <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>Search & Filters</h2>
 
