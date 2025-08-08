@@ -173,20 +173,13 @@ export class ThemeImageGenerator {
       hasExistingImage: true,
       category: 'indian'
     },
-    'contemporary-luxury': {
-      name: 'Contemporary Luxury',
-      description: 'Modern elegance with sophisticated style and contemporary luxury',
-      images: [],
-      prompt: 'Contemporary luxury wedding with modern design, luxury elements, sophisticated style, and contemporary elegance. Modern luxury with sophisticated contemporary atmosphere.',
-      hasExistingImage: true,
-      category: 'indian'
-    },
+    
     'luxury-contemporary': {
       name: 'Luxury Contemporary',
       description: 'High-end modern celebrations with premium decor, sophisticated lighting, and urban elegance',
       images: [],
-      prompt: 'Luxury contemporary Indian wedding with high-end modern design, premium decor, sophisticated lighting, and urban elegance. Premium materials, sophisticated lighting, contemporary luxury atmosphere.',
-      hasExistingImage: true,
+      prompt: 'Luxury contemporary Indian wedding with high-end modern design, premium decor, sophisticated lighting, and urban elegance. Premium materials, sophisticated lighting, contemporary luxury atmosphere with glass elements, metallic accents, and sophisticated color palette.',
+      hasExistingImage: false,
       category: 'indian'
     },
     'urban-rooftop-wedding': {
@@ -210,9 +203,9 @@ export class ThemeImageGenerator {
     'floral-paradise': '/floralparadise.png',
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
-    'classic-contemporary': '/classic contemporary.png',
-    'luxury-contemporary': '/luxury-contemporary.png',
-    'contemporary-luxury': '/contemporary-luxury.png'
+    'classic-contemporary': '/classic contemporary.png'
+    // Removed luxury-contemporary and contemporary-luxury mappings since these images don't exist
+    // These themes will use fallback generation instead
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
