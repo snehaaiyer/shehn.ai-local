@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Enhanced Vendor Selection API with CrewAI Integration
@@ -30,22 +29,22 @@ class EnhancedVendorSelectionService:
     """
     Enhanced vendor selection service combining AI agents with business logic
     """
-    
+
     def __init__(self):
         # Initialize NocoDB API
         self.nocodb_api = NocoDBAPI()
-        
+
         # Initialize CrewAI vendor selection crew
         self.vendor_crew = get_intelligent_vendor_crew("19dd65af8ee73ed572d5b91d25a32d01eec1a31f")
-        
+
         # Initialize vendor selection engine
         self.selection_engine = VendorSelectionEngine()
-        
+
         # Initialize sophisticated matching algorithm
         self.sophisticated_matcher = SophisticatedVendorMatcher()
-        
+
         logger.info("✅ Enhanced Vendor Selection Service initialized")
-    
+
     def get_vendors_from_database(self, category: str = None, location: str = None) -> List[Dict]:
         """Get vendors from NocoDB with filtering"""
         try:
@@ -55,51 +54,51 @@ class EnhancedVendorSelectionService:
                 where_conditions.append(f"(Category,eq,{category})")
             if location:
                 where_conditions.append(f"(Location,like,%{location}%)")
-            
+
             params = {}
             if where_conditions:
                 params['where'] = "~and(" + ",".join(where_conditions) + ")"
-            
+
             # Fetch vendors from NocoDB
             vendors = self.nocodb_api.get_vendors(params)
-            
+
             logger.info(f"📊 Retrieved {len(vendors)} vendors from database")
             return vendors
-            
+
         except Exception as e:
             logger.error(f"Error fetching vendors from database: {e}")
             return self._get_mock_vendors(category, location)
-    
+
     def intelligent_vendor_selection(self, wedding_data: Dict) -> Dict:
         """
         Perform intelligent vendor selection using CrewAI + business logic
         """
         try:
             logger.info("🚀 Starting enhanced vendor selection process")
-            
+
             # Step 1: Get vendor pool from database
             location = wedding_data.get('city', 'Mumbai')
             all_vendors = []
-            
+
             # Get vendors by category
             categories = ['venue', 'photography', 'catering', 'decoration', 'makeup']
             for category in categories:
                 category_vendors = self.get_vendors_from_database(category, location)
                 all_vendors.extend(category_vendors)
-            
+
             logger.info(f"📊 Vendor pool: {len(all_vendors)} vendors")
-            
+
             # Step 2: Apply CrewAI intelligent selection
             ai_result = self.vendor_crew.intelligent_vendor_selection(wedding_data, all_vendors)
-            
+
             # Step 3: Apply business logic validation
             wedding_details = self._convert_to_wedding_details(wedding_data)
             validated_vendors = self.selection_engine.filter_and_rank_vendors(all_vendors, wedding_details)
-            
+
             # Step 3.5: Apply sophisticated matching algorithm
             user_prefs = self._convert_to_user_preferences(wedding_data)
             sophisticated_results = []
-            
+
             for vendor in validated_vendors[:20]:  # Apply to top 20 vendors
                 match_result = self.sophisticated_matcher.calculate_sophisticated_match_score(vendor, user_prefs)
                 vendor_enhanced = {
@@ -111,15 +110,15 @@ class EnhancedVendorSelectionService:
                     'optimization_suggestions': match_result.get('optimization_suggestions', [])
                 }
                 sophisticated_results.append(vendor_enhanced)
-            
+
             # Re-sort by sophisticated score
             sophisticated_results.sort(key=lambda x: x['sophisticated_score'], reverse=True)
-            
+
             # Step 4: Combine AI insights with business logic and sophisticated matching
             enhanced_recommendations = self._combine_ai_and_business_logic(
-                ai_result, sophisticated_results, wedding_data
+                wedding_data, sophisticated_results
             )
-            
+
             return {
                 "success": True,
                 "ai_powered": True,
@@ -132,7 +131,7 @@ class EnhancedVendorSelectionService:
                 "final_recommendations": enhanced_recommendations,
                 "agents_deployed": {
                     "vendor_filter": "Applied intelligent filtering criteria",
-                    "vendor_scoring": "Calculated multi-factor match scores", 
+                    "vendor_scoring": "Calculated multi-factor match scores",
                     "budget_validation": "Validated budget alignment",
                     "style_matching": "Analyzed aesthetic compatibility",
                     "vendor_research": "Performed credential verification"
@@ -145,7 +144,7 @@ class EnhancedVendorSelectionService:
                 },
                 "processing_time": datetime.now().isoformat()
             }
-            
+
         except Exception as e:
             logger.error(f"Error in intelligent vendor selection: {e}")
             return {
@@ -153,7 +152,7 @@ class EnhancedVendorSelectionService:
                 "error": str(e),
                 "fallback_applied": True
             }
-    
+
     def _convert_to_user_preferences(self, wedding_data: Dict) -> UserPreferences:
         """Convert wedding data to UserPreferences format for sophisticated matching"""
         return UserPreferences(
@@ -167,7 +166,7 @@ class EnhancedVendorSelectionService:
                 'budget': 0.2, 'location': 0.1, 'date': 0.3, 'style': 0.2
             })
         )
-    
+
     def _convert_to_wedding_details(self, wedding_data: Dict) -> WeddingDetails:
         """Convert wedding data to WeddingDetails format"""
         return WeddingDetails(
@@ -178,26 +177,41 @@ class EnhancedVendorSelectionService:
             style=wedding_data.get('weddingStyle', 'Traditional'),
             priorities=wedding_data.get('priorities', ['venue', 'catering'])
         )
-    
-    def _combine_ai_and_business_logic(self, ai_result: Dict, business_vendors: List[Dict], wedding_data: Dict) -> Dict:
-        """Combine AI insights with business logic validation"""
+
+    def _combine_ai_and_business_logic(self, wedding_data: Dict, basic_vendors: List[Dict]) -> Dict:
+        """Combine AI insights with RAG-enhanced business logic for final recommendations"""
         try:
-            # Extract top vendors from business logic
-            top_business_vendors = business_vendors[:15]
-            
-            # Create enhanced recommendations
-            recommendations = {
-                "venues": [],
-                "photography": [],
-                "catering": [], 
-                "decoration": [],
-                "makeup": []
+            # Initialize RAG extractor
+            from rag_enhanced_vendor_extraction import RAGEnhancedVendorExtractor
+            rag_extractor = RAGEnhancedVendorExtractor()
+
+            # RAG-enhance all vendors first
+            enhanced_vendors = []
+            search_context = {
+                'budget_range': wedding_data.get('budgetRange', ''),
+                'guest_count': wedding_data.get('guestCount', 100),
+                'wedding_date': wedding_data.get('weddingDate', ''),
+                'style_preference': wedding_data.get('weddingStyle', '')
             }
-            
-            for vendor in top_business_vendors:
+
+            for vendor in basic_vendors:
+                enhanced_vendor = rag_extractor.extract_enhanced_vendor_info(vendor, search_context)
+                enhanced_vendors.append(enhanced_vendor)
+
+            # Get AI insights from intelligent crew with enhanced data
+            ai_result = self.intelligent_crew.intelligent_vendor_selection(wedding_data, enhanced_vendors)
+
+            recommendations = {
+                'venue': [],
+                'photography': [],
+                'catering': [],
+                'decoration': []
+            }
+
+            for vendor in enhanced_vendors:
                 category = vendor.get('category', 'general')
                 if category in recommendations:
-                    enhanced_vendor = {
+                    enhanced_vendor_data = {
                         "id": vendor.get('id', f"vendor_{len(recommendations[category])}"),
                         "name": vendor.get('name', 'Vendor Name'),
                         "category": category,
@@ -214,16 +228,21 @@ class EnhancedVendorSelectionService:
                             "phone": vendor.get('phone', '+91 98765 43210'),
                             "email": vendor.get('email', 'contact@vendor.com'),
                             "website": vendor.get('website', '')
-                        }
+                        },
+                        "rag_enhanced_details": vendor.get('rag_enhanced_details', {}) # Include RAG details
                     }
-                    recommendations[category].append(enhanced_vendor)
+                    recommendations[category].append(enhanced_vendor_data)
             
+            # Sort recommendations by score or rating if needed
+            for category in recommendations:
+                recommendations[category].sort(key=lambda x: x.get('business_logic_score', 0), reverse=True)
+
             return recommendations
-            
+
         except Exception as e:
             logger.error(f"Error combining AI and business logic: {e}")
             return {}
-    
+
     def _extract_ai_insights_for_vendor(self, ai_result: Dict, vendor_name: str) -> str:
         """Extract AI insights for specific vendor"""
         try:
@@ -232,12 +251,12 @@ class EnhancedVendorSelectionService:
                 for vendor_info in ai_result["scored_vendors"]:
                     if vendor_name.lower() in str(vendor_info).lower():
                         return "AI recommends based on style compatibility and quality assessment"
-            
+
             return "AI analysis: Vendor meets selection criteria"
-            
+
         except Exception:
             return "AI analysis applied"
-    
+
     def _get_mock_vendors(self, category: str = None, location: str = "Mumbai") -> List[Dict]:
         """Get mock vendor data as fallback"""
         mock_vendors = [
@@ -253,7 +272,7 @@ class EnhancedVendorSelectionService:
                 "email": "events@royalpalace.com"
             },
             {
-                "id": "photo-1", 
+                "id": "photo-1",
                 "name": "Elite Photography Studio",
                 "category": "photography",
                 "location": location,
@@ -264,7 +283,7 @@ class EnhancedVendorSelectionService:
                 "email": "info@elitephoto.com"
             }
         ]
-        
+
         if category:
             return [v for v in mock_vendors if v['category'] == category]
         return mock_vendors
@@ -278,14 +297,14 @@ def intelligent_vendor_selection_endpoint():
     try:
         request_data = request.get_json()
         wedding_data = request_data.get('weddingData', {})
-        
+
         logger.info(f"🎯 Processing intelligent vendor selection for {wedding_data.get('city', 'Mumbai')}")
-        
+
         # Perform intelligent vendor selection
         result = vendor_service.intelligent_vendor_selection(wedding_data)
-        
+
         return jsonify(result)
-        
+
     except Exception as e:
         logger.error(f"❌ Error in intelligent vendor selection endpoint: {e}")
         return jsonify({
@@ -300,14 +319,14 @@ def vendor_business_logic_endpoint():
     try:
         request_data = request.get_json()
         wedding_data = request_data.get('weddingData', {})
-        
+
         # Convert to business logic format
         wedding_details = vendor_service._convert_to_wedding_details(wedding_data)
-        
+
         # Get vendors and apply business logic
         all_vendors = vendor_service.get_vendors_from_database()
         validated_vendors = vendor_service.selection_engine.filter_and_rank_vendors(all_vendors, wedding_details)
-        
+
         return jsonify({
             "success": True,
             "business_logic_only": True,
@@ -315,7 +334,7 @@ def vendor_business_logic_endpoint():
             "total_analyzed": len(all_vendors),
             "algorithm_applied": "Multi-factor scoring with budget validation"
         })
-        
+
     except Exception as e:
         return jsonify({
             "success": False,
@@ -333,7 +352,7 @@ def get_vendor_selection_agents():
                 "capabilities": ["Budget compatibility", "Capacity validation", "Location proximity", "Quality standards"]
             },
             "vendor_scoring_agent": {
-                "role": "Vendor Scoring Specialist", 
+                "role": "Vendor Scoring Specialist",
                 "purpose": "Calculate intelligent match scores",
                 "capabilities": ["Multi-factor scoring", "Budget alignment", "Style compatibility", "Quality rating"]
             },
@@ -344,7 +363,7 @@ def get_vendor_selection_agents():
             },
             "style_matching_agent": {
                 "role": "Style Matching Specialist",
-                "purpose": "Match aesthetic preferences", 
+                "purpose": "Match aesthetic preferences",
                 "capabilities": ["Theme compatibility", "Portfolio analysis", "Cultural appropriateness"]
             },
             "vendor_research_agent": {
@@ -361,7 +380,7 @@ def get_vendor_selection_agents():
         "integration_flow": [
             "1. Fetch vendors from NocoDB database",
             "2. Apply CrewAI intelligent selection with 5 specialized agents",
-            "3. Run business logic validation with scoring algorithm", 
+            "3. Run business logic validation with scoring algorithm",
             "4. Combine AI insights with business logic results",
             "5. Return enhanced recommendations with explanations"
         ]
@@ -386,5 +405,5 @@ if __name__ == '__main__':
     print("🧮 Business Logic: Multi-factor scoring algorithm")
     print("🗃️  Database: NocoDB integration")
     print("📡 Endpoints: /api/intelligent-vendor-selection")
-    
+
     app.run(debug=True, host='0.0.0.0', port=5002)
