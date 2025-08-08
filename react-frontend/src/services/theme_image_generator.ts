@@ -210,9 +210,9 @@ export class ThemeImageGenerator {
     'floral-paradise': '/floralparadise.png',
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
-    'classic-contemporary': '/minimalist pastel.png',
-    'luxury-contemporary': '/minimalist pastel.png',
-    'contemporary-luxury': '/minimalist pastel.png'
+    'classic-contemporary': '/classic contemporary.png',
+    'luxury-contemporary': '/classic contemporary.png',
+    'contemporary-luxury': '/classic contemporary.png'
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
