@@ -211,7 +211,7 @@ export class ThemeImageGenerator {
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
     'classic-contemporary': '/classic contemporary.png',
-    'luxury-contemporary': '/classic contemporary.png',
+    'luxury-contemporary': '/minimalist pastel.png',
     'contemporary-luxury': '/classic contemporary.png'
   };
 
