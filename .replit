@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Start React Frontend Only"
+runButton = "React Frontend Only"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -82,6 +82,33 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python enhanced_vendor_selection_api.py"
+
+[[workflows.workflow]]
+name = "Run Intelligent Vendor System"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python vendor_recommendations_api.py"
+
+[[workflows.workflow]]
+name = "Full Wedding System"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python enhanced_vendor_selection_api.py"
+
+[[workflows.workflow]]
+name = "Backend Services Only"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
 
 [[ports]]
 localPort = 3000
