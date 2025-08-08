@@ -204,8 +204,7 @@ export class ThemeImageGenerator {
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
     'classic-contemporary': '/classic contemporary.png'
-    // Removed luxury-contemporary and contemporary-luxury mappings since these images don't exist
-    // These themes will use fallback generation instead
+    // luxury-contemporary will use fallback generation for unique image
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
@@ -336,6 +335,10 @@ export class ThemeImageGenerator {
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-50',
         'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop&sat=-50'
       ],
+      'luxury-contemporary': [
+        'https://images.unsplash.com/photo-1520637836862-4d197d17c962?w=1024&h=1024&fit=crop',
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1024&h=1024&fit=crop'
+      ],
       'floral-paradise': [
         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1024&h=1024&fit=crop',
         'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop'
@@ -348,7 +351,7 @@ export class ThemeImageGenerator {
         'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop&sat=-20',
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-20'
       ]
-    };
+    };</old_str>
 
     return fallbackImages[themeId] || [
       'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
