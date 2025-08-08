@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
+interface Priority {
+  id: string;
+  name: string;
+  description: string;
+}
+
 interface WeddingPreferencesData {
   basicDetails: {
     guestCount: number;
@@ -11,6 +17,7 @@ interface WeddingPreferencesData {
     yourName: string;
     partnerName: string;
     contactNumber: string;
+    priorities: Priority[];
   };
   theme: {
     selectedTheme: string;
@@ -87,7 +94,17 @@ const WeddingPreferences: React.FC = () => {
       budgetRange: '',
       yourName: '',
       partnerName: '',
-      contactNumber: ''
+      contactNumber: '',
+      priorities: [
+        { id: 'venue', name: '🏛️ Perfect Venue', description: 'Finding the ideal location for your celebration' },
+        { id: 'photography', name: '📸 Photography & Videography', description: 'Capturing every precious moment' },
+        { id: 'catering', name: '🍽️ Food & Catering', description: 'Delicious cuisine for your guests' },
+        { id: 'decor', name: '🎨 Decor & Theme', description: 'Beautiful decorations and ambiance' },
+        { id: 'entertainment', name: '🎵 Music & Entertainment', description: 'DJ, band, and entertainment for guests' },
+        { id: 'outfits', name: '👗 Wedding Outfits', description: 'Perfect attire for the couple' },
+        { id: 'flowers', name: '🌸 Floral Arrangements', description: 'Beautiful flowers and bouquets' },
+        { id: 'transportation', name: '🚗 Transportation', description: 'Getting to and from the venue' }
+      ]
     },
     theme: {
       selectedTheme: '',
@@ -494,6 +511,25 @@ const WeddingPreferences: React.FC = () => {
         // Ensure the photography object has all required nested properties
         const enhancedParsed = {
           ...parsed,
+          basicDetails: {
+            guestCount: parsed.basicDetails?.guestCount || 100,
+            weddingDate: parsed.basicDetails?.weddingDate || '',
+            location: parsed.basicDetails?.location || '',
+            budgetRange: parsed.basicDetails?.budgetRange || '',
+            yourName: parsed.basicDetails?.yourName || '',
+            partnerName: parsed.basicDetails?.partnerName || '',
+            contactNumber: parsed.basicDetails?.contactNumber || '',
+            priorities: parsed.basicDetails?.priorities || [
+              { id: 'venue', name: '🏛️ Perfect Venue', description: 'Finding the ideal location for your celebration' },
+              { id: 'photography', name: '📸 Photography & Videography', description: 'Capturing every precious moment' },
+              { id: 'catering', name: '🍽️ Food & Catering', description: 'Delicious cuisine for your guests' },
+              { id: 'decor', name: '🎨 Decor & Theme', description: 'Beautiful decorations and ambiance' },
+              { id: 'entertainment', name: '🎵 Music & Entertainment', description: 'DJ, band, and entertainment for guests' },
+              { id: 'outfits', name: '👗 Wedding Outfits', description: 'Perfect attire for the couple' },
+              { id: 'flowers', name: '🌸 Floral Arrangements', description: 'Beautiful flowers and bouquets' },
+              { id: 'transportation', name: '🚗 Transportation', description: 'Getting to and from the venue' }
+            ]
+          },
           photography: {
             style: parsed.photography?.style || '',
             coverage: parsed.photography?.coverage || '',
@@ -546,6 +582,45 @@ const WeddingPreferences: React.FC = () => {
       }
     }
   }, []);
+
+  // Drag and Drop State
+  const [draggedPriority, setDraggedPriority] = useState<Priority | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number>(-1);
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, priority: Priority, index: number) => {
+    setDraggedPriority(priority);
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.style.opacity = '1';
+    setDraggedPriority(null);
+    setDraggedIndex(-1);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
+    e.preventDefault();
+    
+    if (draggedIndex === -1 || draggedIndex === dropIndex) return;
+
+    const newPriorities = [...preferences.basicDetails.priorities];
+    const draggedItem = newPriorities[draggedIndex];
+    
+    // Remove the dragged item
+    newPriorities.splice(draggedIndex, 1);
+    
+    // Insert at new position
+    newPriorities.splice(dropIndex, 0, draggedItem);
+
+    updatePreference('basicDetails', 'priorities', newPriorities);
+  };
 
   const updatePreference = (section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
     setPreferences(prev => {
@@ -746,6 +821,105 @@ const WeddingPreferences: React.FC = () => {
                       placeholder="City or venue"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
+                  </div>
+                </div>
+
+                {/* Priority Ranking Section */}
+                <div className="mt-8">
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-2" style={{ color: '#2F4F4F' }}>
+                      🎯 Wedding Priorities
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Drag and drop to rank your wedding priorities in order of importance (most important at top)
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl border border-pink-100">
+                    <div className="space-y-3">
+                      {preferences.basicDetails.priorities.map((priority, index) => (
+                        <div
+                          key={priority.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, priority, index)}
+                          onDragEnd={handleDragEnd}
+                          onDragOver={handleDragOver}
+                          onDrop={(e) => handleDrop(e, index)}
+                          className={`bg-white rounded-lg p-4 border-2 border-gray-200 cursor-move transition-all duration-300 hover:shadow-md hover:border-pink-300 group ${
+                            draggedIndex === index ? 'opacity-50 scale-95' : ''
+                          }`}
+                          style={{
+                            transform: draggedIndex === index ? 'rotate(5deg)' : 'none',
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              {/* Priority Rank Badge */}
+                              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm" 
+                                   style={{ backgroundColor: `hsl(${index * 45}, 70%, 60%)` }}>
+                                {index + 1}
+                              </div>
+                              
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-800 group-hover:text-pink-700 transition-colors duration-200">
+                                  {priority.name}
+                                </h4>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {priority.description}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            {/* Drag Handle */}
+                            <div className="flex-shrink-0 text-gray-400 group-hover:text-pink-500 transition-colors duration-200">
+                              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                              </svg>
+                            </div>
+                          </div>
+
+                          {/* Priority Level Indicator */}
+                          <div className="mt-3 flex items-center justify-between">
+                            <div className="flex space-x-1">
+                              {Array.from({ length: 8 }).map((_, i) => (
+                                <div
+                                  key={i}
+                                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                                    i <= (7 - index) 
+                                      ? 'bg-gradient-to-r from-pink-400 to-purple-400' 
+                                      : 'bg-gray-200'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-xs font-medium text-gray-500">
+                              {index === 0 && '🔥 Top Priority'}
+                              {index === 1 && '⭐ High Priority'}
+                              {index === 2 && '📍 Important'}
+                              {index >= 3 && index <= 4 && '📝 Consider'}
+                              {index >= 5 && '💡 Nice to Have'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Priority Summary */}
+                    <div className="mt-6 p-4 bg-white/70 rounded-lg border border-pink-200">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className="text-lg">📊</span>
+                        <h4 className="font-medium text-gray-800">Your Priority Summary</h4>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div className="text-gray-600">
+                          <strong className="text-pink-600">Top Focus:</strong> {preferences.basicDetails.priorities[0]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}
+                        </div>
+                        <div className="text-gray-600">
+                          <strong className="text-purple-600">Secondary:</strong> {preferences.basicDetails.priorities[1]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
