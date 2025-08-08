@@ -90,4 +90,4 @@ export interface VendorCategory {
   icon: string;
   count: number;
   vendors: Vendor[];
-} 
+}

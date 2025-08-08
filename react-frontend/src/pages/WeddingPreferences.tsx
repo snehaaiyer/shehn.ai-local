@@ -607,15 +607,15 @@ const WeddingPreferences: React.FC = () => {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
     e.preventDefault();
-    
+
     if (draggedIndex === -1 || draggedIndex === dropIndex) return;
 
     const newPriorities = [...preferences.basicDetails.priorities];
     const draggedItem = newPriorities[draggedIndex];
-    
+
     // Remove the dragged item
     newPriorities.splice(draggedIndex, 1);
-    
+
     // Insert at new position
     newPriorities.splice(dropIndex, 0, draggedItem);
 
@@ -780,15 +780,55 @@ const WeddingPreferences: React.FC = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Wedding Date</label>
-                    <input
-                      type="date"
-                      value={preferences.basicDetails.weddingDate}
-                      onChange={(e) => updatePreference('basicDetails', 'weddingDate', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                    />
-                  </div>
+                  
+                  {/* Wedding Date */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Wedding Date
+                </label>
+                <input
+                  type="date"
+                  value={preferences.basicDetails.weddingDate}
+                  onChange={(e) => updatePreference('basicDetails', 'weddingDate', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                  disabled={preferences.basicDetails.datesFlexible}
+                />
+              </div>
+
+              {/* Dates Flexible Checkbox */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="datesFlexible"
+                  checked={preferences.basicDetails.datesFlexible}
+                  onChange={(e) => updatePreference('basicDetails', 'datesFlexible', e.target.checked)}
+                  className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+                />
+                <label htmlFor="datesFlexible" className="text-sm font-medium text-gray-700">
+                  My dates are flexible
+                </label>
+              </div>
+
+              {/* Event Duration */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Number of Days of Event
+                </label>
+                <select
+                  value={preferences.basicDetails.eventDuration}
+                  onChange={(e) => updatePreference('basicDetails', 'eventDuration', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                >
+                  <option value="">Select duration</option>
+                  <option value="1">1 Day</option>
+                  <option value="2">2 Days</option>
+                  <option value="3">3 Days</option>
+                  <option value="4">4 Days</option>
+                  <option value="5">5 Days</option>
+                  <option value="7">1 Week</option>
+                </select>
+              </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Guest Count</label>
                     <input
@@ -834,7 +874,7 @@ const WeddingPreferences: React.FC = () => {
                       Drag and drop to rank your wedding priorities in order of importance (most important at top)
                     </p>
                   </div>
-                  
+
                   <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl border border-pink-100">
                     <div className="space-y-3">
                       {preferences.basicDetails.priorities.map((priority, index) => (
@@ -860,7 +900,7 @@ const WeddingPreferences: React.FC = () => {
                                    style={{ backgroundColor: `hsl(${index * 45}, 70%, 60%)` }}>
                                 {index + 1}
                               </div>
-                              
+
                               <div className="flex-1">
                                 <h4 className="font-semibold text-gray-800 group-hover:text-pink-700 transition-colors duration-200">
                                   {priority.name}
@@ -870,7 +910,7 @@ const WeddingPreferences: React.FC = () => {
                                 </p>
                               </div>
                             </div>
-                            
+
                             {/* Drag Handle */}
                             <div className="flex-shrink-0 text-gray-400 group-hover:text-pink-500 transition-colors duration-200">
                               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
