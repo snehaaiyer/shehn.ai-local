@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Search, Filter, MapPin, Star, DollarSign, 
+import {
+  Search, Filter, MapPin, Star, DollarSign,
   Building2, Camera, Utensils, Palette, Music, Sparkles, Hotel, Home, Castle,
   Award, Grid, List, Heart
 } from "lucide-react";
@@ -136,8 +136,8 @@ const VendorDiscovery: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleFavorite = (vendorId: string) => {
-    setFavorites(prev => 
-      prev.includes(vendorId) 
+    setFavorites(prev =>
+      prev.includes(vendorId)
         ? prev.filter(id => id !== vendorId)
         : [...prev, vendorId]
     );
@@ -206,13 +206,13 @@ const VendorDiscovery: React.FC = () => {
     if (vendor.category.toLowerCase().includes(searchLower)) score += 20;
 
     // Special fields for different categories
-    if (vendor.photography_styles?.some(style => 
+    if (vendor.photography_styles?.some(style =>
       style.toLowerCase().includes(searchLower))) score += 25;
 
-    if (vendor.services_offered?.some(service => 
+    if (vendor.services_offered?.some(service =>
       service.toLowerCase().includes(searchLower))) score += 25;
 
-    if (vendor.specialties?.some(specialty => 
+    if (vendor.specialties?.some(specialty =>
       specialty.toLowerCase().includes(searchLower))) score += 25;
 
     // Contact score bonus
@@ -1347,6 +1347,20 @@ const VendorDiscovery: React.FC = () => {
           'Intimate Elopements',
           'Corporate Events'
         ],
+        services_offered: [
+          'Creative Wedding Planning',
+          'Theme Development',
+          'Vendor Coordination',
+          'Budget Management',
+          'Timeline Planning',
+          'Day-of Coordination',
+          'Design Consultation',
+          'Guest Experience Planning',
+          'Venue Selection',
+          'Cultural Integration',
+          'Sustainable Wedding Planning',
+          'Outdoor Wedding Expertise'
+        ],
         testimonials: [
           {
             name: 'Priya & Arjun',
@@ -1417,6 +1431,20 @@ const VendorDiscovery: React.FC = () => {
           'Weekend Getaway Weddings',
           'Sustainable Weddings'
         ],
+        services_offered: [
+          'Creative Wedding Planning',
+          'Theme Development',
+          'Vendor Coordination',
+          'Budget Management',
+          'Timeline Planning',
+          'Day-of Coordination',
+          'Design Consultation',
+          'Guest Experience Planning',
+          'Venue Selection',
+          'Cultural Integration',
+          'Sustainable Wedding Planning',
+          'Outdoor Wedding Expertise'
+        ],
         testimonials: [
           {
             name: 'Maya & Dev',
@@ -1480,6 +1508,20 @@ const VendorDiscovery: React.FC = () => {
           'Multi-Cultural Celebrations',
           'Exclusive Venue Access'
         ],
+        services_offered: [
+          'Creative Wedding Planning',
+          'Theme Development',
+          'Vendor Coordination',
+          'Budget Management',
+          'Timeline Planning',
+          'Day-of Coordination',
+          'Design Consultation',
+          'Guest Experience Planning',
+          'Venue Selection',
+          'Cultural Integration',
+          'Sustainable Wedding Planning',
+          'Outdoor Wedding Expertise'
+        ],
         testimonials: [
           {
             name: 'Aisha & Zain',
@@ -1542,6 +1584,20 @@ const VendorDiscovery: React.FC = () => {
           'Budget-Friendly Options',
           'Last-Minute Weddings',
           'Family-Oriented Celebrations'
+        ],
+        services_offered: [
+          'Creative Wedding Planning',
+          'Theme Development',
+          'Vendor Coordination',
+          'Budget Management',
+          'Timeline Planning',
+          'Day-of Coordination',
+          'Design Consultation',
+          'Guest Experience Planning',
+          'Venue Selection',
+          'Cultural Integration',
+          'Sustainable Wedding Planning',
+          'Outdoor Wedding Expertise'
         ],
         testimonials: [
           {
@@ -1985,8 +2041,8 @@ const VendorDiscovery: React.FC = () => {
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-all duration-300 ${
-                    viewMode === 'grid' 
-                      ? 'bg-gray-200 text-gray-700' 
+                    viewMode === 'grid'
+                      ? 'bg-gray-200 text-gray-700'
                       : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                   }`}
                 >
@@ -1995,8 +2051,8 @@ const VendorDiscovery: React.FC = () => {
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg transition-all duration-300 ${
-                    viewMode === 'list' 
-                      ? 'bg-gray-200 text-gray-700' 
+                    viewMode === 'list'
+                      ? 'bg-gray-200 text-gray-700'
                       : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                   }`}
                 >
@@ -2023,8 +2079,8 @@ const VendorDiscovery: React.FC = () => {
                     {/* Vendor Images */}
                     <div className="h-40 relative overflow-hidden">
                       {vendor.images && vendor.images.length > 0 ? (
-                        <img 
-                          src={vendor.images[0]} 
+                        <img
+                          src={vendor.images[0]}
                           alt={vendor.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
@@ -2042,9 +2098,7 @@ const VendorDiscovery: React.FC = () => {
                         onClick={() => toggleFavorite(vendor.id)}
                         className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white transition-colors"
                       >
-                        <Heart 
-                          className={`h-4 w-4 ${favorites.includes(vendor.id) ? 'text-red-500 fill-current' : 'text-gray-400'}`} 
-                        />
+                        <Heart className={`h-4 w-4 ${favorites.includes(vendor.id) ? 'text-red-500 fill-current' : 'text-gray-400'}`} />
                       </button>
                     </div>
 
@@ -2094,7 +2148,7 @@ const VendorDiscovery: React.FC = () => {
                             </button>
                           )}
                         </div>
-                        
+
                         <button
                           onClick={() => openVendorModal(vendor)}
                           className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors font-medium"
@@ -2182,7 +2236,7 @@ const VendorDiscovery: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-3">Overview</h3>
                     <p className="text-gray-600 mb-4">{selectedVendor.description}</p>
-                    
+
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Star className="h-4 w-4 text-yellow-400" />
@@ -2221,7 +2275,7 @@ const VendorDiscovery: React.FC = () => {
                           </button>
                         </div>
                       )}
-                      
+
                       {selectedVendor.email && (
                         <button
                           onClick={() => handleEmail(selectedVendor.email!, selectedVendor.name)}
@@ -2230,7 +2284,7 @@ const VendorDiscovery: React.FC = () => {
                           📧 {selectedVendor.email}
                         </button>
                       )}
-                      
+
                       <div className="flex gap-2">
                         {selectedVendor.website && (
                           <button
@@ -2329,7 +2383,7 @@ const VendorDiscovery: React.FC = () => {
                         <p className="text-2xl font-bold text-blue-600">{selectedVendor.capacity} guests</p>
                       </div>
                     )}
-                    
+
                     {selectedVendor.amenities && selectedVendor.amenities.length > 0 && (
                       <div>
                         <h3 className="text-lg font-semibold mb-3">Amenities</h3>
@@ -2348,7 +2402,7 @@ const VendorDiscovery: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
