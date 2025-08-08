@@ -351,7 +351,10 @@ export class ThemeImageGenerator {
         'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1024&h=1024&fit=crop&sat=-20',
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-20'
       ]
-    };</old_str>
+    };
+
+    return fallbackImages[themeId] || [
+      'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',</old_str>
 
     return fallbackImages[themeId] || [
       'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
