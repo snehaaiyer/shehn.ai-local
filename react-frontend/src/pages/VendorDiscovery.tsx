@@ -1905,43 +1905,51 @@ const VendorDiscovery: React.FC = () => {
               </button>
             </div>
           </div>
-          {/* Search and Filters */}
+          {/* Vendor Search Tabs */}
+          <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <div className="flex overflow-x-auto gap-2 pb-2">
+              {categories.map((category) => {
+                const Icon = category.icon;
+                const isActive = selectedCategory === category.id;
+
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => handleFilterChange('category', category.id)}
+                    className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
+                      isActive 
+                        ? 'bg-deep-navy text-white shadow-lg' 
+                        : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
+                    }`}
+                  >
+                    {Icon}
+                    <span>{category.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Search and Quick Filters */}
           <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
-            <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>Search & Filters</h2>
+            <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>
+              {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.name} Search` : 'Vendor Search'}
+            </h2>
 
             {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search vendors, locations, or services..."
+                placeholder={`Search ${selectedCategory ? categories.find(c => c.id === selectedCategory)?.name.toLowerCase() : 'vendors'}, locations, or services...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
               />
             </div>
 
-            {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Category Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => handleFilterChange('category', e.target.value)}
-                  className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
-                >
-                  <option value="">All Categories</option>
-                  <option value="venues">Venues</option>
-                  <option value="photography">Photography</option>
-                  <option value="catering">Catering</option>
-                  <option value="decoration">Decoration</option>
-                  <option value="entertainment">Entertainment</option>
-                  <option value="beauty">Beauty & Wellness</option>
-                  <option value="planners">Wedding Planners</option>
-                </select>
-              </div>
-
+            {/* Quick Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Location Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
@@ -1983,7 +1991,7 @@ const VendorDiscovery: React.FC = () => {
 
               {/* Rating Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Rating</label>
                 <select
                   value={selectedRating}
                   onChange={(e) => handleFilterChange('rating', e.target.value)}
@@ -2024,26 +2032,26 @@ const VendorDiscovery: React.FC = () => {
             {/* Applied Filters Display */}
             {(appliedFilters.category || appliedFilters.location || appliedFilters.budget || appliedFilters.rating) && (
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Applied Filters:</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Active Filters:</h4>
                 <div className="flex flex-wrap gap-2">
                   {appliedFilters.category && (
                     <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      Category: {appliedFilters.category}
+                      {categories.find(c => c.id === appliedFilters.category)?.name}
                     </span>
                   )}
                   {appliedFilters.location && (
                     <span className="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                      Location: {appliedFilters.location}
+                      {appliedFilters.location.charAt(0).toUpperCase() + appliedFilters.location.slice(1)}
                     </span>
                   )}
                   {appliedFilters.budget && (
                     <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
-                      Budget: {appliedFilters.budget}
+                      {appliedFilters.budget.charAt(0).toUpperCase() + appliedFilters.budget.slice(1)} Budget
                     </span>
                   )}
                   {appliedFilters.rating && (
                     <span className="px-3 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
-                      Rating: {appliedFilters.rating}+ Stars
+                      {appliedFilters.rating}+ Stars
                     </span>
                   )}
                 </div>
