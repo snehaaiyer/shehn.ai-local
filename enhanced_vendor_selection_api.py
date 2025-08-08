@@ -16,6 +16,7 @@ import logging
 
 from intelligent_vendor_selection_crew import get_intelligent_vendor_crew
 from vendor_algorithm_implementation import VendorSelectionEngine, WeddingDetails, VendorCategory
+from enhanced_vendor_matching_algorithm import SophisticatedVendorMatcher, UserPreferences
 from fixed_nocodb_api import NocoDBAPI
 
 # Configure logging
@@ -39,6 +40,9 @@ class EnhancedVendorSelectionService:
         
         # Initialize vendor selection engine
         self.selection_engine = VendorSelectionEngine()
+        
+        # Initialize sophisticated matching algorithm
+        self.sophisticated_matcher = SophisticatedVendorMatcher()
         
         logger.info("✅ Enhanced Vendor Selection Service initialized")
     
@@ -92,9 +96,28 @@ class EnhancedVendorSelectionService:
             wedding_details = self._convert_to_wedding_details(wedding_data)
             validated_vendors = self.selection_engine.filter_and_rank_vendors(all_vendors, wedding_details)
             
-            # Step 4: Combine AI insights with business logic
+            # Step 3.5: Apply sophisticated matching algorithm
+            user_prefs = self._convert_to_user_preferences(wedding_data)
+            sophisticated_results = []
+            
+            for vendor in validated_vendors[:20]:  # Apply to top 20 vendors
+                match_result = self.sophisticated_matcher.calculate_sophisticated_match_score(vendor, user_prefs)
+                vendor_enhanced = {
+                    **vendor,
+                    'sophisticated_score': match_result['final_score'],
+                    'confidence_level': match_result['confidence_level'],
+                    'match_explanation': match_result['explanation'],
+                    'prediction_factors': match_result.get('prediction_factors', {}),
+                    'optimization_suggestions': match_result.get('optimization_suggestions', [])
+                }
+                sophisticated_results.append(vendor_enhanced)
+            
+            # Re-sort by sophisticated score
+            sophisticated_results.sort(key=lambda x: x['sophisticated_score'], reverse=True)
+            
+            # Step 4: Combine AI insights with business logic and sophisticated matching
             enhanced_recommendations = self._combine_ai_and_business_logic(
-                ai_result, validated_vendors, wedding_data
+                ai_result, sophisticated_results, wedding_data
             )
             
             return {
@@ -130,6 +153,20 @@ class EnhancedVendorSelectionService:
                 "error": str(e),
                 "fallback_applied": True
             }
+    
+    def _convert_to_user_preferences(self, wedding_data: Dict) -> UserPreferences:
+        """Convert wedding data to UserPreferences format for sophisticated matching"""
+        return UserPreferences(
+            budget=wedding_data.get('budgetRange', '₹20-30 Lakhs'),
+            guest_count=int(wedding_data.get('guestCount', 200)),
+            location=wedding_data.get('city', 'Mumbai'),
+            wedding_date=wedding_data.get('weddingDate', '2024-12-15'),
+            style=wedding_data.get('weddingStyle', 'Traditional'),
+            priorities=wedding_data.get('priorities', ['venue', 'catering']),
+            flexibility=wedding_data.get('flexibility', {
+                'budget': 0.2, 'location': 0.1, 'date': 0.3, 'style': 0.2
+            })
+        )
     
     def _convert_to_wedding_details(self, wedding_data: Dict) -> WeddingDetails:
         """Convert wedding data to WeddingDetails format"""
