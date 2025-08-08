@@ -881,8 +881,8 @@ const WeddingPreferences: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-xl border border-pink-100">
-                    <div className="space-y-3">
+                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-xl border border-pink-100">
+                    <div className="space-y-2">
                       {preferences.basicDetails.priorities.map((priority, index) => (
                         <div
                           key={priority.id}
@@ -891,7 +891,7 @@ const WeddingPreferences: React.FC = () => {
                           onDragEnd={handleDragEnd}
                           onDragOver={handleDragOver}
                           onDrop={(e) => handleDrop(e, index)}
-                          className={`bg-white rounded-lg p-4 border-2 border-gray-200 cursor-move transition-all duration-300 hover:shadow-md hover:border-pink-300 group ${
+                          className={`bg-white rounded-lg p-3 border-2 border-gray-200 cursor-move transition-all duration-300 hover:shadow-md hover:border-pink-300 group ${
                             draggedIndex === index ? 'opacity-50 scale-95' : ''
                           }`}
                           style={{
@@ -900,18 +900,18 @@ const WeddingPreferences: React.FC = () => {
                           }}
                         >
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-3">
                               {/* Priority Rank Badge */}
-                              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm" 
+                              <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-xs" 
                                    style={{ backgroundColor: `hsl(${index * 45}, 70%, 60%)` }}>
                                 {index + 1}
                               </div>
 
                               <div className="flex-1">
-                                <h4 className="font-semibold text-gray-800 group-hover:text-pink-700 transition-colors duration-200">
+                                <h4 className="font-semibold text-gray-800 group-hover:text-pink-700 transition-colors duration-200 text-sm">
                                   {priority.name}
                                 </h4>
-                                <p className="text-sm text-gray-600 mt-1">
+                                <p className="text-xs text-gray-600 mt-0.5">
                                   {priority.description}
                                 </p>
                               </div>
@@ -919,19 +919,19 @@ const WeddingPreferences: React.FC = () => {
 
                             {/* Drag Handle */}
                             <div className="flex-shrink-0 text-gray-400 group-hover:text-pink-500 transition-colors duration-200">
-                              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
                               </svg>
                             </div>
                           </div>
 
                           {/* Priority Level Indicator */}
-                          <div className="mt-3 flex items-center justify-between">
-                            <div className="flex space-x-1">
+                          <div className="mt-2 flex items-center justify-between">
+                            <div className="flex space-x-0.5">
                               {Array.from({ length: 8 }).map((_, i) => (
                                 <div
                                   key={i}
-                                  className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+                                  className={`w-2 h-2 rounded-full transition-colors duration-200 ${
                                     i <= (7 - index) 
                                       ? 'bg-gradient-to-r from-pink-400 to-purple-400' 
                                       : 'bg-gray-200'
@@ -952,12 +952,12 @@ const WeddingPreferences: React.FC = () => {
                     </div>
 
                     {/* Priority Summary */}
-                    <div className="mt-6 p-4 bg-white/70 rounded-lg border border-pink-200">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <span className="text-lg">📊</span>
-                        <h4 className="font-medium text-gray-800">Your Priority Summary</h4>
+                    <div className="mt-4 p-3 bg-white/70 rounded-lg border border-pink-200">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className="text-sm">📊</span>
+                        <h4 className="font-medium text-gray-800 text-sm">Your Priority Summary</h4>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1 text-xs">
                         <div className="text-gray-600">
                           <strong className="text-pink-600">Top Focus:</strong> {preferences.basicDetails.priorities[0]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}
                         </div>
