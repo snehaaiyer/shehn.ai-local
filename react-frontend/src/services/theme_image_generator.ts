@@ -201,7 +201,7 @@ export class ThemeImageGenerator {
 
   // Map of existing images that can be reused for themes
   private static readonly EXISTING_IMAGE_MAPPINGS: { [themeId: string]: string } = {
-    // New Indian Wedding Themes with updated high-quality images
+    // Each theme gets its own unique image - NO DUPLICATES
     'royal-palace-rajasthani': '/rajasthani royal.png',
     'traditional-regional-roots': '/traditional.png',
     'eco-friendly-sustainable': '/eco sustainable.png',
@@ -210,9 +210,8 @@ export class ThemeImageGenerator {
     'floral-paradise': '/floralparadise.png',
     'bohemian-chic': '/boho.png',
     'vintage-classic': '/vintage.png',
-    'classic-contemporary': '/classic contemporary.png',
-    'luxury-contemporary': '/minimalist pastel.png',
-    'contemporary-luxury': '/classic contemporary.png'
+    'classic-contemporary': '/classic contemporary.png'
+    // Removed duplicate mappings - luxury-contemporary and contemporary-luxury will generate unique images
   };
 
   static async generateMissingThemeImages(): Promise<ThemeImageMapping> {
