@@ -1648,6 +1648,32 @@ const VendorDiscovery: React.FC = () => {
     }));
   };
 
+  // Generate vendors based on category and location
+  const getAllVendors = useCallback((category?: string, searchLocation: string = 'all'): Vendor[] => {
+    // Generate vendors based on category and location
+    let allVendors: Vendor[] = [];
+
+    if (category === 'venues' || !category) {
+      allVendors = [...allVendors, ...generateVenueVendors(searchLocation)];
+    }
+
+    if (category && category !== 'venues') {
+      allVendors = [...allVendors, ...generateOtherVendors(category, searchLocation)];
+    }
+
+    if (!category) {
+      // If no category specified, include all categories
+      allVendors = [
+        ...allVendors,
+        ...generatePhotographyVendors(searchLocation),
+        ...generateCateringVendors(searchLocation),
+        ...generateWeddingPlanners(searchLocation)
+      ];
+    }
+
+    return allVendors;
+  }, []);
+
   // Filter vendors based on search criteria with AI enhancement
   const filterVendors = useCallback(async () => {
     setIsLoading(true);
