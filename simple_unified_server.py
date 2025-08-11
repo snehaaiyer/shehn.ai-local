@@ -63,7 +63,7 @@ def get_category_notes(category, wedding_days):
     """Get helpful notes about how costs scale for different categories"""
     if wedding_days == 1:
         return ""
-    
+
     notes = {
         'venue': f"Multi-day venue bookings often include package discounts. Consider venues that offer {wedding_days}-day packages.",
         'catering': f"Catering costs scale directly with days. Plan varied menus for each day to keep guests engaged over {wedding_days} days.",
@@ -72,7 +72,7 @@ def get_category_notes(category, wedding_days):
         'makeup': f"Full makeup services needed for each day. Consider bridal packages for {wedding_days}-day celebrations.",
         'miscellaneous': f"Transport, accommodation, and coordination costs increase with {wedding_days}-day celebrations. Plan logistics carefully."
     }
-    
+
     return notes.get(category, f"Costs may scale with {wedding_days} days of celebration.")
 
 def _calculate_contact_score(vendor: Dict) -> int:
@@ -94,7 +94,7 @@ def _is_collection_page(vendor: Dict) -> bool:
     """Check if vendor appears to be a collection/directory page rather than individual business"""
     name = vendor.get('name', '').lower()
     description = vendor.get('description', '').lower()
-    
+
     # Collection indicators
     collection_indicators = [
         'top', 'best', 'list of', 'find', 'search', 'compare', 'reviews',
@@ -104,7 +104,7 @@ def _is_collection_page(vendor: Dict) -> bool:
         'booking agents', 'venue booking', 'wedding vendors',
         'wedding planner', 'event planner', 'wedding coordinator'
     ]
-    
+
     # Check if name or description contains collection indicators
     return any(indicator in name or indicator in description for indicator in collection_indicators)
 
@@ -116,10 +116,10 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
     """
     import random
     from datetime import datetime, timedelta
-    
+
     # Default confidence based on vendor rating and type
     base_confidence = min(95, int(vendor_info.get('rating', 4.0) * 20))
-    
+
     # Factor in number of wedding days
     wedding_days = 1
     if date_preferences and 'weddingDays' in date_preferences:
@@ -127,7 +127,7 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
             wedding_days = int(date_preferences['weddingDays'])
         except (ValueError, TypeError):
             wedding_days = 1
-    
+
     # Adjust confidence and availability based on wedding duration
     if wedding_days > 1:
         # Multi-day weddings are harder to accommodate
@@ -136,7 +136,7 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
         base_confidence = max(60, base_confidence + confidence_adjustment)
     else:
         availability_adjustment = 0
-    
+
     if not date_preferences:
         return {
             'availability_status': 'Available - Contact to Confirm',
@@ -144,17 +144,17 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
             'availability_note': 'No specific dates provided. Contact vendor for availability.',
             'next_available_dates': []
         }
-    
+
     flexibility = date_preferences.get('dateFlexibility')
     specific_date = date_preferences.get('specificDate')
-    
+
     # Generate availability based on flexibility
     if specific_date:
         # For specific dates, simulate real availability checking
         try:
             target_date = datetime.strptime(specific_date, '%Y-%m-%d')
             days_ahead = (target_date - datetime.now()).days
-            
+
             if days_ahead < 30:
                 # Short notice - lower availability
                 availability_chance = 0.4 + availability_adjustment
@@ -167,12 +167,12 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
                 # 3+ months - good availability
                 availability_chance = 0.9 + availability_adjustment
                 confidence_adjustment = 5
-                
+
             # Ensure availability chance doesn't go below 0.1 or above 1.0
             availability_chance = max(0.1, min(1.0, availability_chance))
             is_available = random.random() < availability_chance
             final_confidence = max(50, min(95, base_confidence + confidence_adjustment))
-            
+
             if is_available:
                 duration_text = f" ({wedding_days} days)" if wedding_days > 1 else ""
                 return {
@@ -188,7 +188,7 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
                 for i in range(3):
                     alt_date = target_date + timedelta(days=random.randint(7, 21))
                     alt_dates.append(alt_date.strftime('%Y-%m-%d'))
-                
+
                 duration_note = f" for {wedding_days} consecutive days" if wedding_days > 1 else ""
                 return {
                     'availability_status': 'Not Available - Alternatives Suggested',
@@ -197,13 +197,13 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
                     'next_available_dates': alt_dates,
                     'wedding_days': wedding_days
                 }
-                
+
         except ValueError:
             pass  # Invalid date format, fall through to flexible handling
-    
+
     # Handle flexible date ranges
     duration_text = f" ({wedding_days} days)" if wedding_days > 1 else ""
-    
+
     if flexibility == '3months':
         availability_status = f'High Availability - 3 Month Window{duration_text}'
         confidence_score = min(90, base_confidence + 10)
@@ -220,14 +220,14 @@ def calculate_availability_confidence(vendor_info, date_preferences=None):
         availability_status = f'Available - Contact to Confirm{duration_text}'
         confidence_score = base_confidence
         note = f'Contact vendor directly to confirm availability for {wedding_days}-day celebration.'
-    
+
     # Generate sample available dates for flexible bookings
     available_dates = []
     start_date = datetime.now() + timedelta(days=30)
     for i in range(5):
         sample_date = start_date + timedelta(days=random.randint(0, 90))
         available_dates.append(sample_date.strftime('%Y-%m-%d'))
-    
+
     return {
         'availability_status': availability_status,
         'confidence_score': confidence_score,
@@ -324,7 +324,7 @@ Email: {customer_email}'''
     def generate_message(self, message_type, vendor_info, wedding_info, additional_info=None):
         try:
             template = self.templates.get(message_type, self.templates['inquiry'])
-            
+
             # Prepare data for formatting
             data = {
                 'vendor_name': vendor_info.get('name', 'Team'),
@@ -337,9 +337,9 @@ Email: {customer_email}'''
                 'customer_phone': wedding_info.get('customer_phone', '[Phone Number]'),
                 'customer_email': wedding_info.get('customer_email', '[Email Address]')
             }
-            
+
             return template['body'].format(**data)
-            
+
         except Exception as e:
             logger.error(f"Error generating message: {e}")
             return f"Hello {vendor_info.get('name', 'Team')},\n\nWe are interested in your {vendor_info.get('category', 'services')} for our wedding. Please contact us to discuss details.\n\nThank you!"
@@ -351,7 +351,7 @@ Email: {customer_email}'''
             date = wedding_info.get('date', '[Date]')
             guest_count = wedding_info.get('guest_count', '[Guest Count]')
             customer_name = wedding_info.get('customer_name', '[Name]')
-            
+
             message = f"""🌸 Wedding {category.title()} Inquiry 💍
 
 Hi {vendor_name}! 
@@ -365,9 +365,9 @@ We're {customer_name} planning our wedding and interested in your {category} ser
 Would love to discuss availability and packages. Could you share your pricing and portfolio?
 
 Thanks! 🙏"""
-            
+
             return message
-            
+
         except Exception as e:
             logger.error(f"Error generating WhatsApp message: {e}")
             return f"Hi! Interested in your {vendor_info.get('category', 'services')} for our wedding. Please contact us!"
@@ -377,7 +377,7 @@ comm_agent = CommunicationsAgent()
 
 class VendorDataValidator:
     """Comprehensive validation and cleaning system for vendor data"""
-    
+
     def __init__(self):
         self.professional_names = [
             'Elite Events', 'Royal Celebrations', 'Premium Planners', 'Grand Occasions',
@@ -386,30 +386,30 @@ class VendorDataValidator:
             'Crystal Celebrations', 'Artistic Affairs', 'Creative Concepts', 'Dream Designers',
             'Luxe Weddings', 'Pristine Events', 'Stellar Celebrations', 'Opulent Occasions'
         ]
-        
+
         self.invalid_name_patterns = [
             'justdial', 'indiamart', 'sulekha', 'urbanpro', 'wedmegood', 'weddingz',
             'top', 'best', 'list of', 'find', 'search', 'directory', 'booking agents',
             'wedding decoration in', 'catering services in', 'photographers in'
         ]
-    
+
     def validate_vendor_list(self, vendors: List[Dict]) -> List[Dict]:
         """Validate and clean entire vendor list with deduplication"""
         validated_vendors = []
         seen_names = set()
         seen_phones = set()
-        
+
         for vendor in vendors:
             cleaned_vendor = self.validate_single_vendor(vendor)
             if cleaned_vendor:
                 # Check for duplicates by name and phone
                 vendor_name = cleaned_vendor.get('name', '').lower().strip()
                 vendor_phone = cleaned_vendor.get('phone', '').strip()
-                
+
                 # Skip if we've seen this name or phone before
                 if vendor_name in seen_names or (vendor_phone and vendor_phone in seen_phones):
                     continue
-                
+
                 # Check for fuzzy name matches (similar names)
                 is_duplicate = False
                 for existing_name in seen_names:
@@ -417,60 +417,60 @@ class VendorDataValidator:
                     if similarity > 0.8:  # 80% similarity threshold
                         is_duplicate = True
                         break
-                
+
                 if is_duplicate:
                     continue
-                
+
                 # Add to seen sets
                 seen_names.add(vendor_name)
                 if vendor_phone:
                     seen_phones.add(vendor_phone)
-                
+
                 validated_vendors.append(cleaned_vendor)
-        
+
         return validated_vendors
-    
+
     def validate_single_vendor(self, vendor: Dict) -> Dict:
         """Validate and clean single vendor data with contact validation"""
         if not vendor:
             return None
-        
+
         # Clean vendor name (but preserve if it's already a valid business name)
         original_name = vendor.get('name', '')
         if not self._is_obviously_invalid_name(original_name):
             vendor['name'] = original_name  # Keep original if it seems valid
         else:
             vendor['name'] = self.clean_vendor_name(original_name, vendor.get('category', ''), vendor.get('location', 'Mumbai'))
-        
+
         # Validate and clean all contact information
         vendor['phone'] = self.clean_phone_number(vendor.get('phone', ''))
         vendor['email'] = self.validate_email(vendor.get('email', ''), vendor['name'])
         vendor['google_maps'] = self.generate_clean_maps_link(vendor['name'], vendor.get('location', 'Mumbai'))
         vendor['instagram'] = self.validate_instagram_handle(vendor.get('instagram', ''), vendor['name'])
         vendor['whatsapp'] = self.validate_whatsapp_number(vendor.get('phone', ''))
-        
+
         # Add contact validation flags
         vendor['has_valid_phone'] = self.is_valid_phone(vendor['phone'])
         vendor['has_valid_email'] = self.is_valid_email_format(vendor['email'])
         vendor['has_valid_maps'] = self.is_valid_maps_link(vendor['google_maps'])
         vendor['has_valid_instagram'] = self.is_valid_instagram_handle(vendor['instagram'])
         vendor['has_valid_whatsapp'] = self.is_valid_phone(vendor['phone'])  # Use same validation as phone
-        
+
         # Ensure reasonable rating
         vendor['rating'] = self.validate_rating(vendor.get('rating', 4.0))
-        
+
         # Clean description
         vendor['description'] = self.clean_description(vendor.get('description', ''))
-        
+
         return vendor
 
     def _is_obviously_invalid_name(self, name: str) -> bool:
         """Check if name is obviously invalid and should be replaced"""
         if not name or len(name.strip()) < 3:
             return True
-        
+
         name_lower = name.lower().strip()
-        
+
         # Obviously invalid patterns
         invalid_patterns = [
             'vendor', 'business', 'service', 'company', 'contact', 'phone', 
@@ -482,99 +482,99 @@ class VendorDataValidator:
             'booking agents', 'venue booking', 'wedding vendors',
             'wedding planner', 'event planner', 'wedding coordinator'
         ]
-        
+
         # Check for invalid patterns
         if any(pattern in name_lower for pattern in invalid_patterns):
             return True
-        
+
         # Check for generic business names
         generic_names = [
             'wedding services', 'event services', 'catering services',
             'photography services', 'decoration services', 'venue services',
             'wedding planner', 'event planner', 'wedding coordinator'
         ]
-        
+
         if any(generic in name_lower for generic in generic_names):
             return True
-        
+
         # Check for very short or numeric names
         if len(name.strip()) < 5 or name.strip().isdigit():
             return True
-        
+
         return False
-    
+
     def is_valid_phone(self, phone: str) -> bool:
         """Check if phone number is valid"""
         if not phone:
             return False
-        
+
         # Extract digits
         digits = re.sub(r'[^\d]', '', phone)
-        
+
         # Indian mobile numbers should be 10 digits or 12 digits with country code
         return len(digits) in [10, 12] and digits.startswith(('91', '6', '7', '8', '9'))
-    
+
     def is_valid_email_format(self, email: str) -> bool:
         """Check if email format is valid"""
         if not email:
             return False
-        
+
         # Basic email validation
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         is_valid = bool(re.match(email_pattern, email))
-        
+
         # Also check for generic domains that might be fake
         if is_valid:
             generic_domains = ['weddingservices.com', 'example.com', 'test.com']
             domain = email.split('@')[1].lower()
             if domain in generic_domains:
                 return False
-        
+
         return is_valid
-    
+
     def is_valid_maps_link(self, maps_link: str) -> bool:
         """Check if Google Maps link is valid"""
         if not maps_link:
             return False
-        
+
         # Check for malformed characters or overly long URLs
         if len(maps_link) > 200 or '%E0%A4%' in maps_link:  # Hindi characters encoded
             return False
-        
+
         return maps_link.startswith('https://www.google.com/maps/search/')
-    
+
     def is_valid_instagram_handle(self, instagram: str) -> bool:
         """Check if Instagram handle is valid"""
         if not instagram:
             return False
-        
+
         # Should be a proper Instagram URL
         if not instagram.startswith('https://instagram.com/'):
             return False
-        
+
         # Extract handle and validate
         handle = instagram.replace('https://instagram.com/', '').split('/')[0]
         if not handle or len(handle) < 3 or len(handle) > 30:
             return False
-        
+
         # Check for valid characters
         if not re.match(r'^[a-zA-Z0-9._]+$', handle):
             return False
-        
+
         return True
-    
+
     def validate_instagram_handle(self, instagram: str, business_name: str) -> str:
         """Validate and generate Instagram handle"""
         if self.is_valid_instagram_handle(instagram):
             return instagram
-        
+
         # Generate from business name
         handle = re.sub(r'[^\w]', '', business_name.lower())[:20]
         if handle and len(handle) >= 3:
             return f"https://instagram.com/{handle}"
-        
+
         return ""  # Return empty if can't generate valid handle
-    
+
     def validate_whatsapp_number(self, phone: str) -> str:
         """Validate WhatsApp number"""
         if self.is_valid_phone(phone):
@@ -584,39 +584,39 @@ class VendorDataValidator:
                 return digits
             elif len(digits) == 10:
                 return f"91{digits}"
-        
+
         return ""  # Return empty if invalid
-    
+
     def clean_vendor_name(self, name: str, category: str = "", location: str = "Mumbai") -> str:
         """Clean vendor name aggressively"""
         if not name or len(name) < 2:
             return self._generate_category_specific_name(category, location)
-        
+
         # Check if name contains invalid patterns
         name_lower = name.lower()
         for pattern in self.invalid_name_patterns:
             if pattern in name_lower:
                 return self._generate_category_specific_name(category, location)
-        
+
         # Remove directory sites and suffixes
         name = re.sub(r'\s*-\s*(?:Justdial|IndiaMART|Sulekha|UrbanPro|WedMeGood).*', '', name, flags=re.IGNORECASE)
         name = re.sub(r'\s*\|\s*.*', '', name)
-        
+
         # Remove location and generic terms
         name = re.sub(r'(?:in|near|at)\s+\w+(?:\s*,\s*\w+)*', '', name, flags=re.IGNORECASE)
         name = re.sub(r'(?:Wedding|Event|Marriage|Party)\s+(?:Decoration|Catering|Photography|Planning|Services?)', '', name, flags=re.IGNORECASE)
         name = re.sub(r'(?:Best|Top|Leading|Professional|Find|Search)', '', name, flags=re.IGNORECASE)
-        
+
         # Clean special characters and normalize
         name = re.sub(r'[^\w\s&\'-]', ' ', name)
         name = re.sub(r'\s+', ' ', name).strip()
-        
+
         # If result is too short, generic, or has non-English characters
         if (len(name) < 5 or 
             any(word in name.lower() for word in ['services', 'company', 'business']) or
-            len([c for c in name if c.isascii() and c.isalpha()]) < len(name) * 0.7):
+            any(c.isalpha() and not c.isascii() for c in name)): # Check for non-ASCII alpha chars
             return self._generate_category_specific_name(category, location)
-        
+
         # Capitalize properly
         return name.title()[:40]
 
@@ -644,29 +644,29 @@ class VendorDataValidator:
                 'Royal Bridal Makeup', 'Elite Beauty Services', 'Stunning Bridal Makeup'
             ]
         }
-        
+
         names = category_patterns.get(category, self.professional_names)
         return random.choice(names)
-    
+
     def generate_clean_maps_link(self, vendor_name: str, location: str = "Mumbai") -> str:
         """Generate clean Google Maps link"""
         # Use only clean business name and location
         clean_name = re.sub(r'[^\w\s]', ' ', vendor_name)
         clean_name = re.sub(r'\s+', ' ', clean_name).strip()
-        
+
         search_query = f"{clean_name} {location}"
         encoded_query = urllib.parse.quote_plus(search_query)
-        
+
         return f"https://www.google.com/maps/search/{encoded_query}"
-    
+
     def clean_phone_number(self, phone: str) -> str:
         """Clean and format phone number"""
         if not phone:
             return f"+91 {random.randint(90000, 99999)} {random.randint(10000, 99999)}"
-        
+
         # Extract digits only
         digits = re.sub(r'[^\d]', '', phone)
-        
+
         # Format Indian mobile number
         if len(digits) == 10:
             return f"+91 {digits[:5]} {digits[5:]}"
@@ -676,25 +676,25 @@ class VendorDataValidator:
             # Use last 10 digits
             last_ten = digits[-10:]
             return f"+91 {last_ten[:5]} {last_ten[5:]}"
-        
+
         # Generate random if invalid
         return f"+91 {random.randint(90000, 99999)} {random.randint(10000, 99999)}"
-    
+
     def validate_email(self, email: str, business_name: str) -> str:
         """Validate and generate professional email"""
         # Check if email is valid
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if email and re.match(email_pattern, email) and not any(domain in email.lower() for domain in ['weddingservices.com', 'example.com']):
             return email
-        
+
         # Generate professional email from business name
         email_prefix = re.sub(r'[^\w]', '', business_name.lower())[:15]
         if not email_prefix:
             email_prefix = 'info'
-        
+
         domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'weddingservices.com']
         return f"{email_prefix}@{random.choice(domains)}"
-    
+
     def validate_rating(self, rating: float) -> float:
         """Ensure rating is reasonable"""
         try:
@@ -704,24 +704,24 @@ class VendorDataValidator:
             return round(rating, 1)
         except (ValueError, TypeError):
             return round(random.uniform(3.8, 4.8), 1)
-    
+
     def clean_description(self, description: str) -> str:
         """Clean vendor description"""
         if not description:
             return "Professional wedding services with experienced team and quality commitment."
-        
+
         # Remove contact info and promotional text
         description = re.sub(r'(?:Call|Contact|Phone|Mobile|WhatsApp).*?(?:\.|$)', '', description, flags=re.IGNORECASE)
         description = re.sub(r'(?:Visit|Check)\s+(?:our\s+)?(?:website|site).*?(?:\.|$)', '', description, flags=re.IGNORECASE)
         description = re.sub(r'(?:Book|Order|Hire)\s+(?:online|now).*?(?:\.|$)', '', description, flags=re.IGNORECASE)
-        
+
         # Clean up and limit length
         description = re.sub(r'\s+', ' ', description).strip()
         if len(description) > 150:
             description = description[:147] + "..."
-        
+
         return description if description else "Professional wedding services with experienced team and quality commitment."
-    
+
     def generate_instagram_handle(self, business_name: str) -> str:
         """Generate Instagram handle from business name"""
         handle = re.sub(r'[^\w]', '', business_name.lower())[:20]
@@ -802,12 +802,12 @@ async def serve_vendor_discovery():
     vendor_file = STATIC_DIR / "vendor-discovery.html"
     if vendor_file.exists():
         return FileResponse(vendor_file, media_type="text/html")
-    
+
     # Fallback
     index_file = STATIC_DIR / "index.html"
     if index_file.exists():
         return FileResponse(index_file, media_type="text/html")
-    
+
     raise HTTPException(status_code=404, detail="Vendor discovery page not found")
 
 @app.api_route("/api/vendor-data/{category}", methods=["GET", "POST"])
@@ -879,15 +879,15 @@ async def get_vendor_data(category: str, request: Request):
         if isinstance(use_serper, str):
             use_serper = use_serper.lower() == 'true'
         location = relevant.get('city', 'Mumbai')
-        
+
         # Initialize vendor database
         vendor_db = get_vendor_database()
-        
+
         # First, try to get vendors from NocoDB
         try:
             logger.info(f"🔍 Checking NocoDB for {category} vendors in {location}")
             db_vendors = vendor_db.search_vendors(category, location, search_params=relevant)
-            
+
             if db_vendors and len(db_vendors) >= 3:
                 logger.info(f"✅ Found {len(db_vendors)} vendors in NocoDB for {category} in {location}")
                 return JSONResponse({
@@ -905,7 +905,7 @@ async def get_vendor_data(category: str, request: Request):
                 logger.info(f"⚠️ Insufficient vendors in NocoDB for {category} in {location}, fetching from Serper AI")
         except Exception as e:
             logger.error(f"❌ Error fetching from NocoDB: {e}")
-        
+
         # Fallback to Serper AI if NocoDB doesn't have enough data
         if use_serper:
             try:
@@ -949,10 +949,10 @@ async def get_vendor_data(category: str, request: Request):
                             'contact_score': _calculate_contact_score(vendor)
                         }
                         serper_vendors.append(enhanced_vendor)
-                    
+
                     # Apply enhanced validation to ensure individual vendors
                     validated_vendors = vendor_validator.validate_vendor_list(serper_vendors)
-                    
+
                     # Additional filtering to ensure individual contact details
                     individual_vendors = []
                     for vendor in validated_vendors:
@@ -963,20 +963,20 @@ async def get_vendor_data(category: str, request: Request):
                             vendor.get('has_valid_website') or
                             vendor.get('has_valid_whatsapp')
                         )
-                        
+
                         # Must not be a collection/directory page
                         is_individual = not _is_collection_page(vendor)
-                        
+
                         if has_contact and is_individual:
                             individual_vendors.append(vendor)
-                    
+
                     # Store vendors in NocoDB for future use
                     try:
                         stored_count = vendor_db.store_vendors(individual_vendors, category, location, f"{category} vendors in {location}")
                         logger.info(f"💾 Stored {stored_count} vendors in NocoDB for {category} in {location}")
                     except Exception as e:
                         logger.error(f"❌ Error storing vendors in NocoDB: {e}")
-                    
+
                     logger.info(f"✅ Found {len(individual_vendors)} individual vendors via Serper AI")
                     return JSONResponse({
                         'success': True,
@@ -1256,7 +1256,7 @@ async def get_vendor_data(category: str, request: Request):
                 }
             ]
         }
-        
+
         # Get mock vendors for the category
         mock_vendors = vendor_data.get(category, [])
 
@@ -1301,7 +1301,7 @@ async def get_vendor_data(category: str, request: Request):
             return True
         filtered_vendors = [v for v in mock_vendors if matches(v)]
         validated_mock_vendors = vendor_validator.validate_vendor_list(filtered_vendors)
-        
+
         return JSONResponse({
             'success': True,
             'vendors': validated_mock_vendors,
@@ -1313,7 +1313,7 @@ async def get_vendor_data(category: str, request: Request):
             'validation_applied': True,
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error fetching vendor data: {e}")
         return JSONResponse({
@@ -1326,23 +1326,23 @@ async def get_vendor_data(category: str, request: Request):
 async def generate_message(request: Request):
     try:
         data = await request.json()
-        
+
         message_type = data.get('message_type', 'inquiry')
         vendor_info = data.get('vendor_info', {})
         wedding_info = data.get('wedding_info', {})
         additional_info = data.get('additional_info', {})
-        
+
         message = comm_agent.generate_message(
             message_type, vendor_info, wedding_info, additional_info
         )
-        
+
         return JSONResponse({
             'success': True,
             'message': message,
             'message_type': message_type,
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error generating message: {e}")
         return JSONResponse({
@@ -1355,19 +1355,19 @@ async def generate_message(request: Request):
 async def generate_whatsapp_message(request: Request):
     try:
         data = await request.json()
-        
+
         vendor_info = data.get('vendor_info', {})
         wedding_info = data.get('wedding_info', {})
-        
+
         message = comm_agent.generate_whatsapp_message(vendor_info, wedding_info)
-        
+
         return JSONResponse({
             'success': True,
             'message': message,
             'platform': 'whatsapp',
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error generating WhatsApp message: {e}")
         return JSONResponse({
@@ -1386,7 +1386,7 @@ async def test_communication():
             'location': 'Mumbai',
             'price': '₹2,00,000 - ₹5,00,000'
         }
-        
+
         wedding_info = {
             'date': 'December 15, 2024',
             'guest_count': '500',
@@ -1396,12 +1396,12 @@ async def test_communication():
             'customer_phone': '+91 98765 43210',
             'customer_email': 'test@email.com'
         }
-        
+
         # Generate test messages
         inquiry_message = comm_agent.generate_message('inquiry', vendor_info, wedding_info)
         quote_message = comm_agent.generate_message('quote', vendor_info, wedding_info)
         whatsapp_message = comm_agent.generate_whatsapp_message(vendor_info, wedding_info)
-        
+
         return JSONResponse({
             'success': True,
             'test_results': {
@@ -1411,7 +1411,7 @@ async def test_communication():
             },
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error in communication test: {e}")
         return JSONResponse({
@@ -1419,6 +1419,152 @@ async def test_communication():
             'error': str(e),
             'timestamp': datetime.now().isoformat()
         }, status_code=500)
+
+# Add communication endpoints
+@app.post("/api/send-vendor-inquiry")
+async def send_vendor_inquiry(request: Request):
+    try:
+        data = await request.json()
+        vendor_info = data.get('vendor_info', {})
+        wedding_info = data.get('wedding_info', {})
+
+        # Generate inquiry message
+        message = comm_agent.generate_message('inquiry', vendor_info, wedding_info)
+
+        return {
+            "success": True,
+            "message": message,
+            "timestamp": datetime.now().isoformat()
+        }
+
+    except Exception as e:
+        logger.error(f"Error sending vendor inquiry: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# WhatsApp Integration Endpoints
+@app.post("/api/whatsapp/send-vendor-inquiry")
+async def send_whatsapp_vendor_inquiry(request: Request):
+    try:
+        data = await request.json()
+        phone_number = data.get('phoneNumber')
+        message = data.get('message')
+        vendor_name = data.get('vendorName')
+
+        # In sandbox mode, just log and return success
+        sandbox_mode = os.getenv('REACT_APP_SANDBOX_MODE') == 'true'
+
+        if sandbox_mode:
+            logger.info(f"🧪 SANDBOX - WhatsApp to {phone_number}: {message[:50]}...")
+            return {
+                "success": True,
+                "messageId": f"sandbox_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "sandboxMode": True
+            }
+
+        # Here you would integrate with actual WhatsApp Business API
+        # For now, return sandbox response
+        return {
+            "success": True,
+            "messageId": f"msg_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "note": "WhatsApp Business API integration needed for production"
+        }
+
+    except Exception as e:
+        logger.error(f"WhatsApp send error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/whatsapp/send-guest-invitation")
+async def send_whatsapp_guest_invitation(request: Request):
+    try:
+        data = await request.json()
+        phone_number = data.get('phoneNumber')
+        message = data.get('message')
+        guest_name = data.get('guestName')
+
+        sandbox_mode = os.getenv('REACT_APP_SANDBOX_MODE') == 'true'
+
+        if sandbox_mode:
+            logger.info(f"🧪 SANDBOX - WhatsApp Invitation to {guest_name} ({phone_number})")
+            return {
+                "success": True,
+                "messageId": f"invite_sandbox_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "sandboxMode": True
+            }
+
+        return {
+            "success": True,
+            "messageId": f"invite_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "note": "WhatsApp Business API integration needed for production"
+        }
+
+    except Exception as e:
+        logger.error(f"WhatsApp invitation error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/whatsapp/send-rsvp-reminder")
+async def send_whatsapp_rsvp_reminder(request: Request):
+    try:
+        data = await request.json()
+        phone_number = data.get('phoneNumber')
+        message = data.get('message')
+        guest_name = data.get('guestName')
+
+        sandbox_mode = os.getenv('REACT_APP_SANDBOX_MODE') == 'true'
+
+        if sandbox_mode:
+            logger.info(f"🧪 SANDBOX - RSVP Reminder to {guest_name} ({phone_number})")
+            return {
+                "success": True,
+                "messageId": f"rsvp_sandbox_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "sandboxMode": True
+            }
+
+        return {
+            "success": True,
+            "messageId": f"rsvp_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "note": "WhatsApp Business API integration needed for production"
+        }
+
+    except Exception as e:
+        logger.error(f"RSVP reminder error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Google Calendar Integration Endpoints
+@app.post("/api/calendar/create-wedding-timeline")
+async def create_wedding_timeline(request: Request):
+    try:
+        data = await request.json()
+        wedding_data = data.get('weddingData', {})
+
+        # Generate wedding timeline events
+        timeline_events = [
+            {
+                "title": f"Wedding Ceremony - {wedding_data.get('coupleNames', 'Wedding')}",
+                "description": "Main wedding ceremony",
+                "startDate": wedding_data.get('date'),
+                "duration": 4,  # hours
+                "location": wedding_data.get('venue', ''),
+                "eventType": "ceremony"
+            },
+            {
+                "title": f"Wedding Reception - {wedding_data.get('coupleNames', 'Wedding')}",
+                "description": "Wedding reception celebration",
+                "startDate": wedding_data.get('date'),
+                "duration": 6,  # hours
+                "location": wedding_data.get('venue', ''),
+                "eventType": "reception"
+            }
+        ]
+
+        return {
+            "success": True,
+            "events": timeline_events,
+            "message": "Wedding timeline created successfully"
+        }
+
+    except Exception as e:
+        logger.error(f"Calendar timeline error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Serper AI Image Search Endpoints
 @app.options("/api/theme-images")
@@ -1440,7 +1586,7 @@ async def get_all_theme_images():
     try:
         logger.info("🖼️ Fetching images for all wedding themes...")
         images = get_theme_images()
-        
+
         return JSONResponse(
             content={
                 'success': True,
@@ -1456,7 +1602,7 @@ async def get_all_theme_images():
                 "Cache-Control": "no-cache, no-store, must-revalidate"
             }
         )
-        
+
     except Exception as e:
         logger.error(f"Error fetching theme images: {e}")
         return JSONResponse(
@@ -1480,14 +1626,14 @@ async def get_specific_theme_images(theme: str):
     try:
         logger.info(f"🖼️ Fetching images for theme: {theme}")
         images = get_theme_images(theme)
-        
+
         return JSONResponse({
             'success': True,
             'theme': theme,
             'images': images,
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error fetching images for theme {theme}: {e}")
         return JSONResponse({
@@ -1504,17 +1650,17 @@ async def search_custom_images(request: Request):
         data = await request.json()
         query = data.get('query', '')
         num_results = data.get('num_results', 5)
-        
+
         if not query:
             return JSONResponse({
                 'success': False,
                 'error': 'Query parameter is required',
                 'timestamp': datetime.now().isoformat()
             }, status_code=400)
-        
+
         logger.info(f"🔍 Searching images for query: {query}")
         images = serper_client.search_images(query, num_results)
-        
+
         return JSONResponse({
             'success': True,
             'query': query,
@@ -1522,7 +1668,7 @@ async def search_custom_images(request: Request):
             'count': len(images),
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error searching custom images: {e}")
         return JSONResponse({
@@ -1538,7 +1684,7 @@ async def search_real_vendors(category: str = "venues", location: str = "Mumbai"
     try:
         logger.info(f"🔍 Searching {category} vendors in {location} using Serper AI...")
         result = search_vendors(category, location, num_results)
-        
+
         return JSONResponse({
             'success': result.get('success', True),
             'category': category,
@@ -1548,7 +1694,7 @@ async def search_real_vendors(category: str = "venues", location: str = "Mumbai"
             'source': 'serper_ai',
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error searching vendors: {e}")
         return JSONResponse({
@@ -1566,7 +1712,7 @@ async def get_all_real_vendors(location: str = "Mumbai"):
     try:
         logger.info(f"🔍 Fetching all vendor categories in {location} using Serper AI...")
         result = get_all_vendors(location)
-        
+
         return JSONResponse({
             'success': result.get('success', True),
             'location': location,
@@ -1575,7 +1721,7 @@ async def get_all_real_vendors(location: str = "Mumbai"):
             'source': 'serper_ai',
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error fetching all vendors: {e}")
         return JSONResponse({
@@ -1594,10 +1740,10 @@ async def search_custom_vendors(request: Request):
         category = data.get('category', 'wedding services')
         location = data.get('location', 'Mumbai')
         num_results = data.get('num_results', 10)
-        
+
         logger.info(f"🔍 Custom vendor search: {category} in {location}")
         result = search_vendors(category, location, num_results)
-        
+
         return JSONResponse({
             'success': result.get('success', True),
             'search_params': {
@@ -1610,7 +1756,7 @@ async def search_custom_vendors(request: Request):
             'source': 'serper_ai',
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error in custom vendor search: {e}")
         return JSONResponse({
@@ -1627,7 +1773,7 @@ async def budget_analysis(request: Request):
         data = await request.json()
         budget_range = data.get('budget_range', '₹20-30 Lakhs')
         wedding_days = int(data.get('wedding_days', 1))
-        
+
         # Base budget allocation percentages
         base_allocations = {
             'venue': 35,
@@ -1637,7 +1783,7 @@ async def budget_analysis(request: Request):
             'makeup': 8,
             'miscellaneous': 5
         }
-        
+
         # Calculate day multipliers for different categories
         day_multipliers = {
             'venue': min(wedding_days * 0.8, wedding_days * 1.0),  # Venues often have package deals
@@ -1647,7 +1793,7 @@ async def budget_analysis(request: Request):
             'makeup': wedding_days * 1.0,  # Full makeup needed each day
             'miscellaneous': wedding_days * 0.8  # Some misc costs scale
         }
-        
+
         # Extract base budget amount (assuming middle of range for calculation)
         import re
         numbers = re.findall(r'₹(\d+)', budget_range)
@@ -1655,16 +1801,16 @@ async def budget_analysis(request: Request):
             base_amount = (int(numbers[0]) + int(numbers[1])) / 2
         else:
             base_amount = 25  # Default to 25L
-            
+
         # Calculate adjusted allocations
         allocations = {}
         total_multiplied_percentage = sum(base_allocations[cat] * day_multipliers[cat] for cat in base_allocations)
-        
+
         for category, base_percentage in base_allocations.items():
             multiplier = day_multipliers[category]
             adjusted_percentage = (base_percentage * multiplier) / total_multiplied_percentage * 100
             adjusted_amount = base_amount * adjusted_percentage / 100
-            
+
             allocations[category] = {
                 'percentage': round(adjusted_percentage, 1),
                 'amount_formatted': f'₹{adjusted_amount:.1f} L',
@@ -1672,7 +1818,7 @@ async def budget_analysis(request: Request):
                 'day_multiplier': multiplier,
                 'notes': get_category_notes(category, wedding_days)
             }
-        
+
         return JSONResponse({
             'success': True,
             'budget_range': budget_range,
@@ -1682,7 +1828,7 @@ async def budget_analysis(request: Request):
             'notes': f'Budget calculated for {wedding_days}-day wedding celebration',
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error in budget analysis: {e}")
         return JSONResponse({
@@ -1697,7 +1843,7 @@ async def save_wedding_data(request: Request):
     try:
         data = await request.json()
         logger.info(f"Received wedding data: {data}")
-        
+
         # Transform data for NocoDB couples table
         couple_data = {
             'partner1_name': data.get('partner1Name', data.get('yourName', '')),
@@ -1711,14 +1857,14 @@ async def save_wedding_data(request: Request):
             'preferences': json.dumps(data.get('datePreferences', {})),
             'created_at': datetime.now().isoformat()
         }
-        
+
         # Save to NocoDB
         from vendor_database import get_vendor_database
         vendor_db = get_vendor_database()
-        
+
         # Store in couples table
         result = vendor_db.store_couple_data(couple_data)
-        
+
         if result.get('success'):
             logger.info(f"Wedding data saved successfully: {result.get('id')}")
             return JSONResponse({
@@ -1735,7 +1881,7 @@ async def save_wedding_data(request: Request):
                 'error': result.get('error', 'Failed to save to database'),
                 'timestamp': datetime.now().isoformat()
             }, status_code=500)
-            
+
     except Exception as e:
         logger.error(f"Error saving wedding data: {e}")
         return JSONResponse({
@@ -1746,32 +1892,31 @@ async def save_wedding_data(request: Request):
 
 @app.post("/api/visual-preferences")
 async def save_visual_preferences(request: Request):
-    """Save visual preferences from the frontend"""
     try:
         data = await request.json()
         logger.info(f"Received visual preferences data: {data}")
-        
+
         from vendor_database import store_user_inputs
         result = store_user_inputs(data)  # Pass the full user input
-        
+
         logger.info(f"Store result: {result}")
-        
+
         # Check if any save operation succeeded
         has_success = False
         error_messages = []
-        
+
         if result and 'results' in result:
             for table, table_result in result['results'].items():
                 if table_result and not (isinstance(table_result, dict) and 'error' in table_result):
                     has_success = True
                 elif isinstance(table_result, dict) and 'error' in table_result:
                     error_messages.append(f"{table}: {table_result['error']}")
-        
+
         if result and 'errors' in result:
             for table, error in result['errors'].items():
                 if error:
                     error_messages.append(f"{table}: {error}")
-        
+
         if has_success:
             return JSONResponse({
                 'success': True,
@@ -1786,7 +1931,7 @@ async def save_visual_preferences(request: Request):
                 'result': result,
                 'timestamp': datetime.now().isoformat()
             }, status_code=500)
-            
+
     except Exception as e:
         logger.error(f"Error saving visual preferences: {e}")
         return JSONResponse({
@@ -1800,16 +1945,16 @@ async def get_vendors(category: str = "venues", location: str = "bangalore"):
     """Get vendors for the frontend"""
     try:
         from serper_images import search_vendors
-        
+
         # Use the working search_vendors function
         vendor_response = search_vendors(category, location)
-        
+
         # Extract vendors list from the response
         if isinstance(vendor_response, dict) and 'vendors' in vendor_response:
             vendors_list = vendor_response['vendors']
         else:
             vendors_list = vendor_response if isinstance(vendor_response, list) else []
-        
+
         # Format response to match frontend expectations
         return JSONResponse({
             'success': True,
@@ -1851,7 +1996,7 @@ async def get_ai_vendor_analysis(request: Request):
         data = await request.json()
         vendors = data.get('vendors', [])
         preferences = data.get('preferences', {})
-        
+
         analysis = await ollama_service.get_vendor_analysis(vendors, preferences)
         return JSONResponse(analysis)
     except Exception as e:
@@ -1884,7 +2029,7 @@ async def get_ai_vendor_recommendations(request: Request):
         data = await request.json()
         search_query = data.get('search_query', '')
         wedding_context = data.get('wedding_context', {})
-        
+
         recommendations = await ollama_service.get_vendor_recommendations(search_query, wedding_context)
         return JSONResponse(recommendations)
     except Exception as e:
@@ -1902,7 +2047,7 @@ async def ai_chat_assistant(request: Request):
         data = await request.json()
         message = data.get('message', '')
         context = data.get('context', {})
-        
+
         # Use Ollama AI service for real AI responses
         response = await ollama_service.chat_assistant(message, context)
         return JSONResponse(response)
@@ -1939,9 +2084,9 @@ async def get_wedding_data(couple_id: str):
     try:
         from vendor_database import get_vendor_database
         vendor_db = get_vendor_database()
-        
+
         result = vendor_db.get_couple_data(couple_id)
-        
+
         if result.get('success'):
             return JSONResponse({
                 'success': True,
@@ -1954,7 +2099,7 @@ async def get_wedding_data(couple_id: str):
                 'error': result.get('error', 'Failed to retrieve data'),
                 'timestamp': datetime.now().isoformat()
             }, status_code=404)
-            
+
     except Exception as e:
         logger.error(f"Error retrieving wedding data: {e}")
         return JSONResponse({
@@ -1969,9 +2114,9 @@ async def get_all_wedding_data():
     try:
         from vendor_database import get_vendor_database
         vendor_db = get_vendor_database()
-        
+
         result = vendor_db.get_couple_data()
-        
+
         if result.get('success'):
             return JSONResponse({
                 'success': True,
@@ -1984,7 +2129,7 @@ async def get_all_wedding_data():
                 'error': result.get('error', 'Failed to retrieve data'),
                 'timestamp': datetime.now().isoformat()
             }, status_code=500)
-            
+
     except Exception as e:
         logger.error(f"Error retrieving wedding data: {e}")
         return JSONResponse({
@@ -2005,25 +2150,25 @@ async def serve_index():
 async def serve_spa_routes(path: str):
     # For SPA routes, serve index.html or specific files
     spa_routes = ["dashboard", "wedding-form", "visual-preferences", "vendor-discovery"]
-    
+
     # Remove hash and query params
     clean_path = path.split('#')[0].split('?')[0]
-    
+
     if clean_path in spa_routes or not clean_path:
         index_file = STATIC_DIR / "index.html"
         if index_file.exists():
             return FileResponse(index_file, media_type="text/html")
-    
+
     # Try to serve as static file
     file_location = STATIC_DIR / path
     if file_location.exists() and file_location.is_file():
         return FileResponse(file_location)
-    
+
     # Fallback to index for unknown routes (SPA behavior)
     index_file = STATIC_DIR / "index.html"
     if index_file.exists():
         return FileResponse(index_file, media_type="text/html")
-    
+
     raise HTTPException(status_code=404, detail="File not found")
 
 def main():
@@ -2044,7 +2189,7 @@ def main():
     logger.info("   - NocoDB Integration")
     logger.info("   - Ollama AI Service")
     logger.info("=" * 60)
-    
+
     uvicorn.run(
         "simple_unified_server:app",
         host="0.0.0.0",
@@ -2054,4 +2199,4 @@ def main():
     )
 
 if __name__ == "__main__":
-    main() 
+    main()

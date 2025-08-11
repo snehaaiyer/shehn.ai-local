@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Menu } from "lucide-react";
+import { Menu, Calendar, MessageCircle } from "lucide-react"; // Added MessageCircle here
 import { AnimatedSidebar } from './components/AnimatedSidebar';
 import { NotificationProvider } from './components/NotificationProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -14,9 +14,10 @@ const BudgetManagement = React.lazy(() => import('./pages/BudgetManagement'));
 const WeddingPreferences = React.lazy(() => import('./pages/WeddingPreferences'));
 const AIChat = React.lazy(() => import('./pages/AIChat'));
 const GoogleIntegration = React.lazy(() => import('./components/GoogleIntegration'));
+const CommunicationHub = React.lazy(() => import('./components/CommunicationHub')); // Added CommunicationHub import
 
 const App: React.FC = () => {
-  const { setSidebarOpen, theme } = useAppStore();
+  const { setSidebarOpen, theme, currentPage, setCurrentPage } = useAppStore(); // Assuming setCurrentPage is available in the store
 
   // Add error handling for any uncaught errors
   React.useEffect(() => {
@@ -75,6 +76,7 @@ const App: React.FC = () => {
                     <Route path="/preferences" element={<WeddingPreferences />} />
                     <Route path="/chat" element={<AIChat />} />
                     <Route path="/google-integration" element={<GoogleIntegration />} />
+                    <Route path="/communication-hub" element={<CommunicationHub />} /> {/* Added Communication Hub route */}
                   </Routes>
                 </Suspense>
               </ErrorBoundary>
@@ -86,4 +88,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App; 
+export default App;

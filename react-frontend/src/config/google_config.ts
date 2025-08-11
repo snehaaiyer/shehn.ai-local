@@ -1,35 +1,28 @@
-// Google API Configuration
-// Replace these with your actual Google API credentials
+// Google API Configuration for Wedding Planning App
 
 export const GOOGLE_CONFIG = {
-  // Google Cloud Console credentials
-  CLIENT_ID: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
   API_KEY: process.env.REACT_APP_GOOGLE_API_KEY || '',
-  
-  // API Discovery documents
+  CLIENT_ID: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
   DISCOVERY_DOCS: [
     'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
     'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'
   ],
-  
-  // Required scopes for wedding planning functionality
   SCOPES: [
     'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/calendar.events',
     'https://www.googleapis.com/auth/gmail.send',
-    'https://www.googleapis.com/auth/gmail.readonly'
-  ].join(' '),
-  
-  // Application settings
-  APP_NAME: 'BID AI Wedding Assistant',
-  APP_VERSION: '1.0.0',
-  
-  // Feature flags
-  FEATURES: {
-    CALENDAR_INTEGRATION: true,
-    GMAIL_INTEGRATION: true,
-    BULK_INVITATIONS: true,
-    VENDOR_COMMUNICATIONS: true
-  }
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/gmail.compose',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email'
+  ].join(' ')
+};
+
+// Sandbox configuration for testing
+export const SANDBOX_CONFIG = {
+  TEST_EMAIL: process.env.REACT_APP_TEST_EMAIL || '',
+  TEST_PHONE: process.env.REACT_APP_TEST_PHONE || '',
+  SANDBOX_MODE: process.env.REACT_APP_SANDBOX_MODE === 'true'
 };
 
 // Google API endpoints
@@ -67,7 +60,7 @@ Best regards,
 {coupleNames}
     `.trim()
   },
-  
+
   VENDOR_INQUIRY: {
     subject: "Wedding Vendor Inquiry - {serviceType}",
     body: `
@@ -90,7 +83,7 @@ Best regards,
 {coupleNames}
     `.trim()
   },
-  
+
   VENDOR_CONFIRMATION: {
     subject: "Wedding Vendor Confirmation - {serviceType}",
     body: `
@@ -111,7 +104,7 @@ Best regards,
 {coupleNames}
     `.trim()
   },
-  
+
   GUEST_RSVP_REMINDER: {
     subject: "RSVP Reminder - Our Wedding",
     body: `
@@ -151,7 +144,7 @@ export const CALENDAR_TEMPLATES = {
       minutes: 60
     }
   },
-  
+
   WEDDING_RECEPTION: {
     title: "Wedding Reception",
     description: "Wedding reception and celebration",
@@ -163,7 +156,7 @@ export const CALENDAR_TEMPLATES = {
       minutes: 60
     }
   },
-  
+
   REHEARSAL_DINNER: {
     title: "Rehearsal Dinner",
     description: "Wedding rehearsal and dinner",
@@ -175,7 +168,7 @@ export const CALENDAR_TEMPLATES = {
       minutes: 60
     }
   },
-  
+
   VENDOR_MEETING: {
     title: "Vendor Meeting - {vendorName}",
     description: "Meeting with {vendorName} to discuss {serviceType}",
@@ -198,7 +191,7 @@ export const DEFAULT_SETTINGS = {
     SEND_UPDATES: true,
     TIMEZONE: Intl.DateTimeFormat().resolvedOptions().timeZone
   },
-  
+
   // Email settings
   EMAIL: {
     AUTO_SAVE_DRAFTS: true,
@@ -206,7 +199,7 @@ export const DEFAULT_SETTINGS = {
     BCC_COUPLE: true,
     DEFAULT_SIGNATURE: true
   },
-  
+
   // Notification settings
   NOTIFICATIONS: {
     EMAIL_REMINDERS: true,
@@ -235,4 +228,4 @@ export const SUCCESS_MESSAGES = {
   EMAIL_SENT: "Email sent successfully!",
   BULK_INVITATIONS_SENT: "Bulk invitations sent successfully!",
   VENDOR_EMAIL_SENT: "Vendor inquiry sent successfully!"
-}; 
+};
