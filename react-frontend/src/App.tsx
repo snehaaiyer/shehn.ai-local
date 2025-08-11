@@ -17,7 +17,7 @@ const GoogleIntegration = React.lazy(() => import('./components/GoogleIntegratio
 const CommunicationHub = React.lazy(() => import('./components/CommunicationHub')); // Added CommunicationHub import
 
 const App: React.FC = () => {
-  const { setSidebarOpen, theme, currentPage, setCurrentPage } = useAppStore(); // Assuming setCurrentPage is available in the store
+  const { setSidebarOpen, theme } = useAppStore();
 
   // Add error handling for any uncaught errors
   React.useEffect(() => {
