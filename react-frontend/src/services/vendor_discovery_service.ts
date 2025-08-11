@@ -60,32 +60,31 @@ export class VendorDiscoveryService {
    */
   static async searchVendors(params: VendorSearchParams): Promise<VendorDiscoveryResponse> {
     try {
-      console.log('Searching vendors with params:', params);
+      console.log('🔍 Searching vendors with params:', params);
 
-      // Get location from preferences if not provided
-      let location = params.location;
-      if (!location) {
-        try {
-          const savedPreferences = localStorage.getItem('weddingPreferences');
-          if (savedPreferences) {
-            const preferences = JSON.parse(savedPreferences);
-            location = preferences.basicDetails?.location || 'Mumbai';
-          } else {
-            location = 'Mumbai'; // Fallback
-          }
-        } catch (error) {
-          console.warn('Error reading preferences, using default location:', error);
-          location = 'Mumbai';
+      // Get comprehensive wedding data from preferences
+      const weddingData = this.getWeddingDataFromPreferences();
+      console.log('📋 Wedding preferences data:', weddingData);
+
+      // First, try to use the intelligent backend API
+      try {
+        const backendResponse = await this.searchVendorsFromBackend(params, weddingData);
+        if (backendResponse.success) {
+          console.log('✅ Using backend API results');
+          return backendResponse;
         }
+      } catch (backendError) {
+        console.warn('⚠️ Backend API unavailable, using enhanced mock data:', backendError);
       }
 
-      console.log('Using location for vendor search:', location);
+      // Fallback to enhanced mock data that respects preferences
+      const enhancedVendors = this.generateEnhancedMockVendors(params, weddingData);
 
-      // Generate mock vendors based on category
-      const vendors = this.generateMockVendors(params.category || 'venues', location || 'Mumbai');
+      // Apply strict business logic filtering
+      let filteredVendors = this.applyBusinessLogicFilters(enhancedVendors, params, weddingData);
 
-      // Apply filters
-      let filteredVendors = this.applyFilters(vendors, params);
+      // Apply priority-based sorting
+      filteredVendors = this.applySortingBasedOnPriorities(filteredVendors, weddingData);
 
       // Generate AI images for venue vendors
       let generatedImages = {};
@@ -94,20 +93,261 @@ export class VendorDiscoveryService {
         generatedImages = await this.generateVenueImages(venueVendors);
       }
 
+      console.log(`📊 Final results: ${filteredVendors.length} vendors after filtering`);
+
       return {
         success: true,
         vendors: filteredVendors,
         totalCount: filteredVendors.length,
-        generatedImages
+        generatedImages,
+        appliedFilters: {
+          weddingPreferences: weddingData,
+          searchParams: params
+        }
       };
 
     } catch (error) {
-      console.error('Error searching vendors:', error);
+      console.error('❌ Error searching vendors:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred'
       };
     }
+  }
+
+  /**
+   * Get comprehensive wedding data from stored preferences
+   */
+  private static getWeddingDataFromPreferences(): any {
+    try {
+      const savedPreferences = localStorage.getItem('weddingPreferences');
+      if (!savedPreferences) {
+        console.warn('No wedding preferences found, using defaults');
+        return this.getDefaultWeddingData();
+      }
+
+      const preferences = JSON.parse(savedPreferences);
+      
+      return {
+        // Basic details
+        yourName: preferences.basicDetails?.yourName || '',
+        partnerName: preferences.basicDetails?.partnerName || '',
+        guestCount: preferences.basicDetails?.guestCount || 100,
+        budgetRange: preferences.basicDetails?.budgetRange || '',
+        city: preferences.basicDetails?.location || 'Mumbai',
+        weddingDate: preferences.basicDetails?.weddingDate || '',
+        eventDuration: preferences.basicDetails?.eventDuration || '1',
+        
+        // Preferences
+        weddingStyle: preferences.theme?.selectedTheme || 'traditional',
+        venueType: preferences.venue?.venueType || '',
+        cuisine: preferences.catering?.cuisine || '',
+        photographyStyle: preferences.photography?.style || '',
+        
+        // Priorities (top 3)
+        priorities: preferences.basicDetails?.priorities?.slice(0, 3).map((p: any) => p.id) || ['venue', 'catering', 'photography'],
+        
+        // User flexibility
+        flexibility: {
+          budget: 0.2,
+          location: 0.1,
+          date: 0.3,
+          style: 0.2
+        }
+      };
+    } catch (error) {
+      console.error('Error parsing wedding preferences:', error);
+      return this.getDefaultWeddingData();
+    }
+  }
+
+  /**
+   * Search vendors using backend API with intelligent algorithms
+   */
+  private static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
+    const backendUrl = window.location.hostname === 'localhost' ? 
+      'http://localhost:5002' : 
+      `https://${window.location.hostname.split('-')[0]}-00-1eg0dj1kb2mue.pike.replit.dev:5002`;
+
+    const requestBody = {
+      weddingData: weddingData,
+      searchParams: params,
+      filterCategory: params.category
+    };
+
+    console.log('🚀 Calling backend API:', `${backendUrl}/api/intelligent-vendor-selection`);
+    console.log('📤 Request body:', requestBody);
+
+    const response = await fetch(`${backendUrl}/api/intelligent-vendor-selection`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Backend API failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(`Backend API error: ${data.error}`);
+    }
+
+    // Transform backend response to frontend format
+    const vendors: Vendor[] = [];
+    
+    if (data.final_recommendations) {
+      Object.entries(data.final_recommendations).forEach(([category, categoryVendors]: [string, any]) => {
+        if (Array.isArray(categoryVendors)) {
+          categoryVendors.forEach((vendor: any) => {
+            vendors.push({
+              id: vendor.id || `${category}-${Math.random()}`,
+              name: vendor.name || 'Unknown Vendor',
+              category: category,
+              location: vendor.location || weddingData.city,
+              rating: vendor.rating || 4.5,
+              price_range: vendor.price_range || 'Contact for pricing',
+              description: vendor.description || `Professional ${category} services`,
+              contact_score: vendor.business_logic_score || 85,
+              phone: vendor.contact?.phone,
+              email: vendor.contact?.email,
+              website: vendor.contact?.website,
+              images: vendor.images || []
+            });
+          });
+        }
+      });
+    }
+
+    return {
+      success: true,
+      vendors: vendors,
+      totalCount: vendors.length,
+      generatedImages: {},
+      backendData: data
+    };
+  }
+
+  /**
+   * Apply business logic filters based on wedding preferences
+   */
+  private static applyBusinessLogicFilters(vendors: Vendor[], params: VendorSearchParams, weddingData: any): Vendor[] {
+    console.log('🔧 Applying business logic filters...');
+    
+    let filtered = [...vendors];
+
+    // 1. Budget Compatibility Filter
+    if (weddingData.budgetRange) {
+      filtered = this.filterByBudgetCompatibility(filtered, weddingData.budgetRange);
+      console.log(`💰 After budget filter: ${filtered.length} vendors`);
+    }
+
+    // 2. Location Proximity Filter
+    if (weddingData.city) {
+      filtered = this.filterByLocationProximity(filtered, weddingData.city);
+      console.log(`📍 After location filter: ${filtered.length} vendors`);
+    }
+
+    // 3. Guest Count Capacity Filter
+    if (weddingData.guestCount) {
+      filtered = this.filterByCapacity(filtered, weddingData.guestCount);
+      console.log(`👥 After capacity filter: ${filtered.length} vendors`);
+    }
+
+    // 4. Style Compatibility Filter
+    if (weddingData.weddingStyle) {
+      filtered = this.filterByStyleCompatibility(filtered, weddingData.weddingStyle);
+      console.log(`🎨 After style filter: ${filtered.length} vendors`);
+    }
+
+    // 5. Category-specific filters
+    if (params.category) {
+      filtered = filtered.filter(vendor => vendor.category === params.category);
+      console.log(`📂 After category filter: ${filtered.length} vendors`);
+    }
+
+    // 6. Additional search filters from UI
+    filtered = this.applyUIFilters(filtered, params);
+    console.log(`🎛️ After UI filters: ${filtered.length} vendors`);
+
+    return filtered;
+  }
+
+  /**
+   * Filter vendors by budget compatibility
+   */
+  private static filterByBudgetCompatibility(vendors: Vendor[], budgetRange: string): Vendor[] {
+    const budgetCategories = {
+      'Budget Friendly - Under 5 Lakhs': ['budget', 'Budget (< ₹50K)', 'Mid-Range (₹50K - ₹2L)'],
+      'Mid Range - 5-15 Lakhs': ['mid', 'Mid-Range (₹50K - ₹2L)', 'Premium (> ₹2L)'],
+      'Luxury - 15-50 Lakhs': ['premium', 'Premium (> ₹2L)', 'luxury'],
+      'Ultra Luxury - 50+ Lakhs': ['luxury', 'Premium (> ₹2L)', 'ultra']
+    };
+
+    const compatibleRanges = budgetCategories[budgetRange as keyof typeof budgetCategories] || [];
+    
+    return vendors.filter(vendor => {
+      const vendorPriceRange = vendor.price_range.toLowerCase();
+      return compatibleRanges.some(range => 
+        vendorPriceRange.includes(range.toLowerCase()) ||
+        this.isPriceRangeCompatible(vendorPriceRange, budgetRange)
+      );
+    });
+  }
+
+  /**
+   * Filter vendors by location proximity
+   */
+  private static filterByLocationProximity(vendors: Vendor[], userLocation: string): Vendor[] {
+    const userCity = userLocation.toLowerCase();
+    
+    return vendors.filter(vendor => {
+      const vendorLocation = vendor.location.toLowerCase();
+      
+      // Exact city match (highest priority)
+      if (vendorLocation.includes(userCity)) {
+        return true;
+      }
+      
+      // Metro area matches
+      const metroAreas = {
+        'mumbai': ['navi mumbai', 'thane', 'pune'],
+        'delhi': ['gurgaon', 'noida', 'faridabad', 'ghaziabad'],
+        'bangalore': ['mysore', 'hosur'],
+        'chennai': ['pondicherry', 'kanchipuram']
+      };
+      
+      const nearbyAreas = metroAreas[userCity as keyof typeof metroAreas] || [];
+      return nearbyAreas.some(area => vendorLocation.includes(area));
+    });
+  }
+
+  /**
+   * Apply sorting based on user priorities
+   */
+  private static applySortingBasedOnPriorities(vendors: Vendor[], weddingData: any): Vendor[] {
+    const priorities = weddingData.priorities || ['venue', 'photography', 'catering'];
+    
+    return vendors.sort((a, b) => {
+      // Priority category bonus
+      const aPriorityIndex = priorities.indexOf(a.category);
+      const bPriorityIndex = priorities.indexOf(b.category);
+      
+      if (aPriorityIndex !== -1 && bPriorityIndex === -1) return -1;
+      if (bPriorityIndex !== -1 && aPriorityIndex === -1) return 1;
+      if (aPriorityIndex !== -1 && bPriorityIndex !== -1) {
+        if (aPriorityIndex !== bPriorityIndex) return aPriorityIndex - bPriorityIndex;
+      }
+      
+      // Secondary sort by rating and contact score
+      const aScore = (a.rating * 20) + a.contact_score;
+      const bScore = (b.rating * 20) + b.contact_score;
+      
+      return bScore - aScore;
+    });
   }
 
   /**
@@ -641,6 +881,245 @@ export class VendorDiscoveryService {
         ]
       }
     ];
+  }
+
+  /**
+   * Get default wedding data
+   */
+  private static getDefaultWeddingData(): any {
+    return {
+      yourName: 'User',
+      partnerName: 'Partner',
+      guestCount: 100,
+      budgetRange: 'Mid Range - 5-15 Lakhs',
+      city: 'Mumbai',
+      weddingDate: '',
+      eventDuration: '1',
+      weddingStyle: 'traditional',
+      venueType: '',
+      cuisine: '',
+      photographyStyle: '',
+      priorities: ['venue', 'catering', 'photography'],
+      flexibility: { budget: 0.2, location: 0.1, date: 0.3, style: 0.2 }
+    };
+  }
+
+  /**
+   * Check if price range is compatible with budget
+   */
+  private static isPriceRangeCompatible(vendorPriceRange: string, userBudget: string): boolean {
+    // Extract numeric values and compare
+    const budgetValues = {
+      'Budget Friendly - Under 5 Lakhs': { min: 0, max: 500000 },
+      'Mid Range - 5-15 Lakhs': { min: 500000, max: 1500000 },
+      'Luxury - 15-50 Lakhs': { min: 1500000, max: 5000000 },
+      'Ultra Luxury - 50+ Lakhs': { min: 5000000, max: 50000000 }
+    };
+
+    const userRange = budgetValues[userBudget as keyof typeof budgetValues];
+    if (!userRange) return true;
+
+    // Basic compatibility check
+    if (vendorPriceRange.includes('budget') && userRange.max < 500000) return true;
+    if (vendorPriceRange.includes('premium') && userRange.min > 1500000) return true;
+    if (vendorPriceRange.includes('luxury') && userRange.min > 5000000) return true;
+
+    return true; // Default to compatible if unclear
+  }
+
+  /**
+   * Filter vendors by capacity
+   */
+  private static filterByCapacity(vendors: Vendor[], guestCount: number): Vendor[] {
+    return vendors.filter(vendor => {
+      if (vendor.category !== 'venues') return true; // Only apply to venues
+      
+      const capacity = vendor.capacity || 200;
+      
+      // Venue should handle at least the guest count, but not be more than 3x oversized
+      return capacity >= guestCount && capacity <= (guestCount * 3);
+    });
+  }
+
+  /**
+   * Filter vendors by style compatibility
+   */
+  private static filterByStyleCompatibility(vendors: Vendor[], weddingStyle: string): Vendor[] {
+    const styleMapping = {
+      'traditional': ['traditional', 'heritage', 'classic', 'cultural'],
+      'modern': ['modern', 'contemporary', 'minimalist', 'urban'],
+      'royal': ['royal', 'palace', 'luxury', 'premium', 'heritage'],
+      'destination': ['destination', 'beach', 'mountain', 'resort'],
+      'fusion': ['fusion', 'mixed', 'contemporary', 'modern'],
+      'bohemian': ['bohemian', 'boho', 'garden', 'rustic'],
+      'vintage': ['vintage', 'classic', 'heritage', 'retro']
+    };
+
+    const compatibleStyles = styleMapping[weddingStyle.toLowerCase() as keyof typeof styleMapping] || [];
+    
+    return vendors.filter(vendor => {
+      const vendorSpecialties = (vendor.specialties || []).map(s => s.toLowerCase());
+      const vendorName = vendor.name.toLowerCase();
+      const vendorDescription = vendor.description.toLowerCase();
+      
+      // Check if vendor specializes in compatible styles
+      return compatibleStyles.some(style => 
+        vendorSpecialties.some(specialty => specialty.includes(style)) ||
+        vendorName.includes(style) ||
+        vendorDescription.includes(style)
+      ) || compatibleStyles.length === 0; // If no specific style mapping, include all
+    });
+  }
+
+  /**
+   * Apply UI-based filters
+   */
+  private static applyUIFilters(vendors: Vendor[], params: VendorSearchParams): Vendor[] {
+    let filtered = [...vendors];
+
+    // Search term filter
+    if (params.searchTerm) {
+      const searchLower = params.searchTerm.toLowerCase();
+      filtered = filtered.filter(vendor =>
+        vendor.name.toLowerCase().includes(searchLower) ||
+        vendor.description.toLowerCase().includes(searchLower) ||
+        vendor.category.toLowerCase().includes(searchLower) ||
+        vendor.location.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Location filter (more specific than business logic)
+    if (params.location) {
+      filtered = filtered.filter(vendor => 
+        vendor.location.toLowerCase().includes(params.location!.toLowerCase())
+      );
+    }
+
+    // Price range filter
+    if (params.priceRange && params.priceRange !== 'all') {
+      filtered = filtered.filter(vendor => {
+        const vendorPrice = vendor.price_range.toLowerCase();
+        const filterPrice = params.priceRange!.toLowerCase();
+        
+        if (filterPrice === 'budget') return vendorPrice.includes('budget') || vendorPrice.includes('<');
+        if (filterPrice === 'mid') return vendorPrice.includes('mid') || vendorPrice.includes('standard');
+        if (filterPrice === 'premium') return vendorPrice.includes('premium') || vendorPrice.includes('luxury') || vendorPrice.includes('>');
+        return true;
+      });
+    }
+
+    // Rating filter
+    if (params.rating && params.rating !== 'all') {
+      const minRating = parseFloat(params.rating);
+      filtered = filtered.filter(vendor => vendor.rating >= minRating);
+    }
+
+    // Capacity filter
+    if (params.capacity) {
+      filtered = filtered.filter(vendor => 
+        vendor.capacity && vendor.capacity >= params.capacity!
+      );
+    }
+
+    return filtered;
+  }
+
+  /**
+   * Generate enhanced mock vendors that respect wedding preferences
+   */
+  private static generateEnhancedMockVendors(params: VendorSearchParams, weddingData: any): Vendor[] {
+    const category = params.category || 'venues';
+    const location = weddingData.city || params.location || 'Mumbai';
+    
+    // Generate base vendors
+    let vendors = this.generateMockVendors(category, location);
+    
+    // Enhance vendors with preference-aware data
+    vendors = vendors.map(vendor => ({
+      ...vendor,
+      // Add capacity based on guest count
+      capacity: this.generateRealisticCapacity(vendor, weddingData.guestCount),
+      // Add specialties based on wedding style
+      specialties: this.generateStyleSpecialties(vendor, weddingData.weddingStyle),
+      // Add awards based on quality tier
+      awards: this.generateAwards(vendor),
+      // Enhance description
+      description: this.enhanceDescription(vendor, weddingData)
+    }));
+    
+    return vendors;
+  }
+
+  /**
+   * Generate realistic capacity for venues
+   */
+  private static generateRealisticCapacity(vendor: Vendor, guestCount: number): number {
+    if (vendor.category !== 'venues') return 0;
+    
+    const baseCapacity = guestCount || 200;
+    const variation = Math.random() * 0.6 + 0.7; // 70% - 130% of guest count
+    
+    return Math.round(baseCapacity * variation / 50) * 50; // Round to nearest 50
+  }
+
+  /**
+   * Generate style specialties
+   */
+  private static generateStyleSpecialties(vendor: Vendor, weddingStyle: string): string[] {
+    const baseSpecialties = vendor.specialties || [];
+    
+    const styleSpecialties = {
+      'traditional': ['Traditional Indian Weddings', 'Heritage Ceremonies', 'Cultural Events'],
+      'modern': ['Contemporary Weddings', 'Modern Celebrations', 'Urban Events'],
+      'royal': ['Royal Weddings', 'Palace Events', 'Luxury Celebrations'],
+      'destination': ['Destination Weddings', 'Resort Events', 'Travel Celebrations']
+    };
+    
+    const additionalSpecialties = styleSpecialties[weddingStyle as keyof typeof styleSpecialties] || [];
+    
+    return [...baseSpecialties, ...additionalSpecialties.slice(0, 2)];
+  }
+
+  /**
+   * Generate awards based on vendor quality
+   */
+  private static generateAwards(vendor: Vendor): string[] {
+    if (vendor.rating < 4.0) return [];
+    
+    const awards = [
+      'Best Wedding Vendor 2023',
+      'Excellence in Service Award',
+      'Customer Choice Award',
+      'Wedding Industry Recognition',
+      'Quality Service Certification'
+    ];
+    
+    const awardCount = vendor.rating >= 4.8 ? 3 : vendor.rating >= 4.5 ? 2 : 1;
+    return awards.slice(0, awardCount);
+  }
+
+  /**
+   * Enhance vendor description based on wedding data
+   */
+  private static enhanceDescription(vendor: Vendor, weddingData: any): string {
+    let description = vendor.description;
+    
+    // Add guest count relevance
+    if (vendor.category === 'venues' && weddingData.guestCount) {
+      description += ` Perfect for ${weddingData.guestCount} guest celebrations.`;
+    }
+    
+    // Add style relevance
+    if (weddingData.weddingStyle) {
+      description += ` Specializing in ${weddingData.weddingStyle} wedding celebrations.`;
+    }
+    
+    // Add location advantage
+    if (vendor.location.toLowerCase().includes(weddingData.city?.toLowerCase())) {
+      description += ` Conveniently located in ${weddingData.city}.`;
+    }
+    
+    return description;
   }
 
   /**

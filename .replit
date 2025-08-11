@@ -110,6 +110,23 @@ mode = "sequential"
 task = "shell.exec"
 args = "python simple_unified_server.py"
 
+[[workflows.workflow]]
+name = "Test Vendor Search Integration"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python enhanced_vendor_selection_api.py &"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 3"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python test_vendor_search_integration.py"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
