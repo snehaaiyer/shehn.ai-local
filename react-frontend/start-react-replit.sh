@@ -12,7 +12,7 @@ fi
 
 # Set environment variables for Replit
 export HOST=0.0.0.0
-export PORT=3000
+export PORT=5000
 export BROWSER=none
 
 echo "🚀 Starting React development server..."

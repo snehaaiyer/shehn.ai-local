@@ -37,7 +37,7 @@ start_backend() {
 # Function to start React frontend
 start_frontend() {
     echo "🎨 Starting React Frontend on port 3000..."
-    check_port 3000
+    check_port 5000
     cd react-frontend
     
     # Install dependencies if needed
@@ -48,7 +48,7 @@ start_frontend() {
     
     # Set environment variables
     export HOST=0.0.0.0
-    export PORT=3000
+    export PORT=5000
     export BROWSER=none
     
     echo "🚀 Starting React development server..."
@@ -67,7 +67,7 @@ echo ""
 echo "🎉 BID AI Wedding Assistant is starting up!"
 echo "=================================================="
 echo "🔧 Backend API: http://0.0.0.0:5000"
-echo "🎨 React Frontend: http://0.0.0.0:3000"
+echo "🎨 React Frontend: http://0.0.0.0:5000"
 echo "📊 Health Check: http://0.0.0.0:5000/health"
 echo "📋 API Docs: http://0.0.0.0:5000/api/docs"
 echo "=================================================="
