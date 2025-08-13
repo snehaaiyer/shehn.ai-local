@@ -54,42 +54,53 @@ class EnhancedSerperAPI:
     def _generate_targeted_search_queries(self, category: str, location: str, 
                                          budget_range: Tuple[int, int], guest_count: int,
                                          wedding_theme: str) -> List[str]:
-        """Generate relaxed search queries for better vendor discovery"""
+        """Generate simple, effective search queries for better vendor discovery"""
 
         queries = []
+        
+        # Much simpler approach - remove over-filtering
+        if category == "venues":
+            queries = [
+                f'{location} wedding venues',
+                f'{location} banquet halls',
+                f'{location} marriage halls contact',
+                f'site:justdial.com {location} wedding venue',
+                f'site:weddingz.in {location} venues',
+                f'{location} wedding venue booking',
+                f'{location} banquet hall phone number',
+                f'{location} marriage hall enquiry'
+            ]
+        elif category == "photography":
+            queries = [
+                f'{location} wedding photographer',
+                f'{location} wedding photography services',
+                f'site:justdial.com {location} photographer',
+                f'{location} wedding photographer contact',
+                f'{location} photography studio wedding',
+                f'{location} candid photographer',
+                f'{location} pre wedding photographer'
+            ]
+        elif category == "catering":
+            queries = [
+                f'{location} wedding catering',
+                f'{location} catering services',
+                f'site:justdial.com {location} catering',
+                f'{location} wedding food catering',
+                f'{location} catering contact',
+                f'{location} wedding caterer'
+            ]
+        else:
+            # Generic approach for other categories
+            queries = [
+                f'{location} wedding {category}',
+                f'{location} {category} services',
+                f'site:justdial.com {location} {category}',
+                f'{location} wedding {category} contact'
+            ]
 
-        # Simplified search patterns with less aggressive filtering
-        location_terms = self._get_location_variations(location)
-        category_terms = self._get_category_search_terms(category)
+        logger.info(f"🎯 Generated {len(queries)} simple queries for {category} in {location}")
 
-        # Generate more permissive queries
-        for loc_term in location_terms[:2]:  # Limit location variations
-            for cat_term in category_terms[:3]:  # Limit category variations
-
-                # Strategy 1: Simple business search
-                queries.append(f'{cat_term} {loc_term} contact phone')
-
-                # Strategy 2: Business directory search (less restrictive)
-                queries.append(f'{cat_term} {loc_term} booking contact')
-
-                # Strategy 3: Specific business directory sites
-                for domain in ['justdial.com', 'sulekha.com', 'urbanpro.com']:
-                    queries.append(f'site:{domain} {loc_term} {cat_term} contact')
-
-                # Strategy 4: Service-specific searches (relaxed)
-                if category == "venues":
-                    queries.append(f'{loc_term} wedding venue contact details')
-                    queries.append(f'{loc_term} banquet hall phone number')
-                elif category == "photography":
-                    queries.append(f'{loc_term} wedding photographer contact')
-                    queries.append(f'{loc_term} photography services phone')
-
-        # Remove duplicates and limit total queries
-        unique_queries = list(dict.fromkeys(queries))[:10]  # Reduced to 10 queries
-
-        logger.info(f"🎯 Generated {len(unique_queries)} relaxed queries for {category} in {location}")
-
-        return unique_queries
+        return queries
 
     def _filter_vendor_results(self, search_results: List[Dict], category: str) -> List[Dict]:
         """
