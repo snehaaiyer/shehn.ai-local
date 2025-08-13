@@ -132,16 +132,13 @@ const VendorDiscovery: React.FC = () => {
       const response = await VendorDiscoveryService.searchVendors(searchParams);
 
       if (response.success && response.vendors) {
-        setVendors(response.vendors);
         setFilteredVendors(response.vendors);
       } else {
         console.error('Error searching vendors:', response.error);
-        setVendors([]);
         setFilteredVendors([]);
       }
     } catch (error) {
       console.error('Error fetching vendors:', error);
-      setVendors([]);
       setFilteredVendors([]);
     } finally {
       setIsLoading(false);
