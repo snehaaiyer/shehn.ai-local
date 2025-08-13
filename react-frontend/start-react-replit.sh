@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 echo "🎉 Starting React Wedding Planner on Replit"

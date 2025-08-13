@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "React Frontend Only"
+runButton = "React Frontend Port 5000"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -126,6 +126,15 @@ args = "sleep 3"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python test_vendor_search_integration.py"
+
+[[workflows.workflow]]
+name = "React Frontend Port 5000"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
 
 [[ports]]
 localPort = 3000
