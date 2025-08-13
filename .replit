@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "React Frontend Port 3001"
+runButton = "React Frontend Port 5000"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"

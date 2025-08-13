@@ -173,7 +173,7 @@ export class ThemeImageGenerator {
       hasExistingImage: true,
       category: 'indian'
     },
-    
+
     'luxury-contemporary': {
       name: 'Luxury Contemporary',
       description: 'High-end modern celebrations with premium decor, sophisticated lighting, and urban elegance',
@@ -352,9 +352,6 @@ export class ThemeImageGenerator {
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-20'
       ]
     };
-
-    return fallbackImages[themeId] || [
-      'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',</old_str>
 
     return fallbackImages[themeId] || [
       'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',

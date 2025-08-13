@@ -47,7 +47,7 @@ interface Vendor {
 const VendorDiscovery: React.FC = () => {
   // Core state
   const [hasError, setHasError] = useState(false);
-  const [vendors, setVendors] = useState<Vendor[]>([]);
+  // Removed unused vendors state - using filteredVendors instead
   const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);

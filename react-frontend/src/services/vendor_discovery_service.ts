@@ -52,6 +52,8 @@ interface VendorDiscoveryResponse {
   vendors?: Vendor[];
   totalCount?: number;
   generatedImages?: { [vendorName: string]: any };
+  appliedFilters?: any;
+  backendData?: any;
 }
 
 export class VendorDiscoveryService {
