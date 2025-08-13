@@ -145,6 +145,24 @@ mode = "sequential"
 task = "shell.exec"
 args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3001 BROWSER=none npm start"
 
+[[workflows.workflow]]
+name = "Start RAG-Enhanced Vendor API"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python enhanced_rag_vendor_api.py"
+
+[[workflows.workflow]]
+name = "Start RAG-Enhanced Vendor API"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python enhanced_rag_vendor_api.py"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
