@@ -163,6 +163,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "python enhanced_rag_vendor_api.py"
 
+[[workflows.workflow]]
+name = "RAG Enhanced Vendor API"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python enhanced_vendor_selection_with_rag.py"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000

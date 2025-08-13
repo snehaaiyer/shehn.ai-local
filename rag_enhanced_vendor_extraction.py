@@ -1,280 +1,513 @@
 
 #!/usr/bin/env python3
 """
-RAG-Enhanced Vendor Information Extraction
-Uses retrieval-augmented generation for more accurate vendor data extraction
+RAG-Enhanced Vendor Extraction Service
+Uses wedding preferences and context to intelligently extract and enhance vendor data
 """
 
 import json
 import logging
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
-import numpy as np
+import requests
 from datetime import datetime
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @dataclass
-class VendorKnowledgeBase:
-    """RAG knowledge base for vendor information"""
-    vendor_profiles: Dict[str, Dict]
-    market_intelligence: Dict[str, Any]
-    pricing_patterns: Dict[str, List]
-    quality_indicators: Dict[str, List]
-    seasonal_trends: Dict[str, Dict]
+class VendorContext:
+    """Context information for vendor extraction"""
+    budget_range: str
+    guest_count: int
+    wedding_date: str
+    location: str
+    style_preference: str
+    venue_type: str
+    photography_style: str
+    cuisine_preference: str
+    priorities: List[str]
+
+@dataclass
+class EnhancedVendor:
+    """Enhanced vendor information with RAG processing"""
+    id: str
+    name: str
+    category: str
+    location: str
+    rating: float
+    price_range: str
+    description: str
+    contact_score: int
+    
+    # Enhanced fields from RAG processing
+    context_match_score: int
+    preference_alignment: Dict[str, float]
+    extracted_specialties: List[str]
+    availability_likelihood: str
+    budget_compatibility: str
+    capacity_suitability: str
+    
+    # Contact and business info
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    website: Optional[str] = None
+    instagram: Optional[str] = None
+    
+    # Additional metadata
+    years_experience: int = 0
+    weddings_completed: int = 0
+    awards: List[str] = None
+    testimonials: List[Dict] = None
 
 class RAGEnhancedVendorExtractor:
-    """
-    RAG-powered vendor information extraction and refinement
-    """
+    """RAG-Enhanced Vendor Extraction with contextual intelligence"""
     
     def __init__(self):
-        self.knowledge_base = self._load_vendor_knowledge_base()
-        self.extraction_patterns = self._load_extraction_patterns()
-        self.quality_validators = self._load_quality_validators()
+        self.preference_weights = {
+            'budget': 0.25,
+            'style': 0.20,
+            'location': 0.15,
+            'capacity': 0.15,
+            'experience': 0.10,
+            'specialties': 0.10,
+            'availability': 0.05
+        }
+    
+    def extract_enhanced_vendor_info(self, vendor: Dict, context: VendorContext) -> EnhancedVendor:
+        """Extract and enhance vendor information using RAG context"""
         
-    def extract_enhanced_vendor_info(self, raw_vendor_data: Dict, search_context: Dict) -> Dict:
-        """
-        Extract vendor information using RAG enhancement
-        """
         try:
-            # Step 1: Basic extraction from search results
-            basic_info = self._extract_basic_vendor_info(raw_vendor_data)
+            # Calculate context match score
+            context_score = self._calculate_context_match_score(vendor, context)
             
-            # Step 2: RAG enhancement using knowledge base
-            enhanced_info = self._enhance_with_rag_context(basic_info, search_context)
+            # Analyze preference alignment
+            preference_alignment = self._analyze_preference_alignment(vendor, context)
             
-            # Step 3: Validate and refine using historical patterns
-            validated_info = self._validate_with_market_intelligence(enhanced_info)
+            # Extract specialties based on context
+            extracted_specialties = self._extract_contextual_specialties(vendor, context)
             
-            # Step 4: Generate confidence scores
-            confidence_scores = self._calculate_extraction_confidence(validated_info)
+            # Assess availability likelihood
+            availability_likelihood = self._assess_availability_likelihood(vendor, context)
             
-            return {
-                **validated_info,
-                'extraction_confidence': confidence_scores,
-                'rag_enhanced': True,
-                'knowledge_sources': self._get_knowledge_sources_used(basic_info)
-            }
+            # Determine budget compatibility
+            budget_compatibility = self._determine_budget_compatibility(vendor, context)
+            
+            # Check capacity suitability
+            capacity_suitability = self._check_capacity_suitability(vendor, context)
+            
+            # Create enhanced vendor
+            enhanced_vendor = EnhancedVendor(
+                id=vendor.get('id', f"vendor-{hash(vendor.get('name', 'unknown'))}"),
+                name=vendor.get('name', 'Unknown Vendor'),
+                category=vendor.get('category', 'unknown'),
+                location=vendor.get('location', context.location),
+                rating=float(vendor.get('rating', 4.0)),
+                price_range=vendor.get('price_range', 'Contact for pricing'),
+                description=self._enhance_description(vendor, context),
+                contact_score=int(vendor.get('contact_score', 75)),
+                
+                # Enhanced RAG fields
+                context_match_score=context_score,
+                preference_alignment=preference_alignment,
+                extracted_specialties=extracted_specialties,
+                availability_likelihood=availability_likelihood,
+                budget_compatibility=budget_compatibility,
+                capacity_suitability=capacity_suitability,
+                
+                # Contact information
+                phone=vendor.get('phone'),
+                email=vendor.get('email'),
+                website=vendor.get('website'),
+                instagram=vendor.get('instagram'),
+                
+                # Business metadata
+                years_experience=vendor.get('experience_years', 0),
+                weddings_completed=vendor.get('weddings_planned', 0),
+                awards=vendor.get('awards', []),
+                testimonials=vendor.get('testimonials', [])
+            )
+            
+            logger.info(f"✅ Enhanced vendor: {enhanced_vendor.name} (Score: {context_score}/100)")
+            return enhanced_vendor
             
         except Exception as e:
-            logger.error(f"RAG extraction error: {e}")
-            return raw_vendor_data
+            logger.error(f"❌ Error enhancing vendor {vendor.get('name', 'Unknown')}: {e}")
+            # Return basic vendor info if enhancement fails
+            return self._create_basic_enhanced_vendor(vendor)
     
-    def _enhance_with_rag_context(self, basic_info: Dict, context: Dict) -> Dict:
-        """Enhance vendor info using RAG knowledge base"""
+    def _calculate_context_match_score(self, vendor: Dict, context: VendorContext) -> int:
+        """Calculate how well vendor matches wedding context"""
         
-        vendor_name = basic_info.get('name', '').lower()
-        category = basic_info.get('category', '')
-        location = basic_info.get('location', '')
+        score = 0
+        max_score = 100
         
-        enhanced_info = basic_info.copy()
+        # Budget compatibility (25 points)
+        budget_score = self._score_budget_match(vendor.get('price_range', ''), context.budget_range)
+        score += budget_score * 0.25
         
-        # 1. Price Range Enhancement
-        if vendor_name in self.knowledge_base.vendor_profiles:
-            known_vendor = self.knowledge_base.vendor_profiles[vendor_name]
-            enhanced_info.update({
-                'verified_pricing': known_vendor.get('pricing_history', {}),
-                'actual_capacity': known_vendor.get('capacity_details', {}),
-                'service_quality_scores': known_vendor.get('quality_metrics', {}),
-                'client_feedback_summary': known_vendor.get('feedback_analysis', {})
-            })
+        # Style compatibility (20 points)
+        style_score = self._score_style_match(vendor, context)
+        score += style_score * 0.20
         
-        # 2. Market Intelligence Enhancement
-        market_data = self.knowledge_base.market_intelligence.get(f"{category}_{location}", {})
-        if market_data:
-            enhanced_info.update({
-                'market_position': self._calculate_market_position(basic_info, market_data),
-                'competitive_analysis': market_data.get('competitors', []),
-                'pricing_percentile': self._calculate_pricing_percentile(basic_info, market_data)
-            })
+        # Location proximity (15 points)
+        location_score = self._score_location_match(vendor.get('location', ''), context.location)
+        score += location_score * 0.15
         
-        # 3. Seasonal Pattern Enhancement
-        seasonal_data = self.knowledge_base.seasonal_trends.get(category, {})
-        if seasonal_data:
-            enhanced_info.update({
-                'seasonal_availability': self._predict_seasonal_availability(context, seasonal_data),
-                'pricing_fluctuations': seasonal_data.get('pricing_patterns', {}),
-                'demand_forecasting': self._calculate_demand_forecast(context, seasonal_data)
-            })
+        # Capacity suitability (15 points)
+        capacity_score = self._score_capacity_match(vendor, context.guest_count)
+        score += capacity_score * 0.15
         
-        # 4. Quality Indicator Enhancement
-        quality_patterns = self.knowledge_base.quality_indicators.get(category, [])
-        enhanced_info['quality_assessment'] = self._assess_quality_indicators(
-            basic_info, quality_patterns
-        )
+        # Experience and rating (10 points)
+        experience_score = min(100, (vendor.get('rating', 0) * 20) + (vendor.get('experience_years', 0) * 5))
+        score += experience_score * 0.10
         
-        return enhanced_info
+        # Specialty alignment (10 points)
+        specialty_score = self._score_specialty_match(vendor, context)
+        score += specialty_score * 0.10
+        
+        # Availability likelihood (5 points)
+        availability_score = self._score_availability(vendor, context.wedding_date)
+        score += availability_score * 0.05
+        
+        return min(100, int(score))
     
-    def _validate_with_market_intelligence(self, vendor_info: Dict) -> Dict:
-        """Validate extracted information against market intelligence"""
+    def _analyze_preference_alignment(self, vendor: Dict, context: VendorContext) -> Dict[str, float]:
+        """Analyze how vendor aligns with specific preferences"""
         
-        validated_info = vendor_info.copy()
+        alignment = {}
         
-        # Price validation
-        if 'price_range' in vendor_info and 'market_position' in vendor_info:
-            price_confidence = self._validate_pricing_accuracy(
-                vendor_info['price_range'],
-                vendor_info['market_position']
-            )
-            validated_info['price_validation_score'] = price_confidence
+        # Budget alignment
+        alignment['budget'] = self._score_budget_match(vendor.get('price_range', ''), context.budget_range) / 100
         
-        # Capacity validation
-        if 'capacity' in vendor_info:
-            capacity_confidence = self._validate_capacity_claims(
-                vendor_info['capacity'],
-                vendor_info.get('category', ''),
-                vendor_info.get('location', '')
-            )
-            validated_info['capacity_validation_score'] = capacity_confidence
+        # Style alignment
+        alignment['style'] = self._score_style_match(vendor, context) / 100
         
-        # Service validation
-        if 'services' in vendor_info:
-            service_confidence = self._validate_service_offerings(
-                vendor_info['services'],
-                vendor_info.get('category', '')
-            )
-            validated_info['service_validation_score'] = service_confidence
+        # Location alignment  
+        alignment['location'] = self._score_location_match(vendor.get('location', ''), context.location) / 100
         
-        return validated_info
+        # Category priority alignment
+        vendor_category = vendor.get('category', '')
+        priority_score = 0.0
+        if vendor_category in context.priorities:
+            priority_index = context.priorities.index(vendor_category)
+            priority_score = 1.0 - (priority_index / len(context.priorities))
+        
+        alignment['priority'] = priority_score
+        
+        return alignment
     
-    def _calculate_extraction_confidence(self, vendor_info: Dict) -> Dict:
-        """Calculate confidence scores for extracted information"""
+    def _extract_contextual_specialties(self, vendor: Dict, context: VendorContext) -> List[str]:
+        """Extract vendor specialties relevant to wedding context"""
         
-        confidence_scores = {}
+        specialties = []
         
-        # Data completeness score
-        required_fields = ['name', 'category', 'location', 'contact_info']
-        completeness = sum(1 for field in required_fields if field in vendor_info) / len(required_fields)
-        confidence_scores['data_completeness'] = completeness * 100
+        # Base specialties from vendor data
+        vendor_specialties = vendor.get('specialties', [])
+        if vendor_specialties:
+            specialties.extend(vendor_specialties)
         
-        # Validation scores
-        validation_fields = [
-            'price_validation_score',
-            'capacity_validation_score', 
-            'service_validation_score'
-        ]
+        # Context-based specialty inference
+        category = vendor.get('category', '')
+        style = context.style_preference.lower()
         
-        validation_scores = [
-            vendor_info.get(field, 50) for field in validation_fields
-            if field in vendor_info
-        ]
+        if category == 'venues':
+            if 'royal' in style or 'heritage' in style:
+                specialties.append('Royal Weddings')
+            if 'traditional' in style:
+                specialties.append('Traditional Indian Ceremonies')
+            if 'modern' in style:
+                specialties.append('Contemporary Celebrations')
         
-        if validation_scores:
-            confidence_scores['validation_confidence'] = np.mean(validation_scores)
+        elif category == 'photography':
+            if context.photography_style:
+                specialties.append(f"{context.photography_style.title()} Photography")
+            if 'traditional' in style:
+                specialties.append('Cultural Wedding Photography')
+        
+        elif category == 'catering':
+            if context.cuisine_preference:
+                specialties.append(f"{context.cuisine_preference.title()} Cuisine")
+        
+        # Remove duplicates and return
+        return list(set(specialties))
+    
+    def _assess_availability_likelihood(self, vendor: Dict, context: VendorContext) -> str:
+        """Assess likelihood of vendor availability"""
+        
+        rating = vendor.get('rating', 0)
+        experience = vendor.get('experience_years', 0)
+        
+        # High-demand vendors (high rating + experience) may be less available
+        if rating >= 4.8 and experience >= 10:
+            return 'Low - High Demand Vendor'
+        elif rating >= 4.5 and experience >= 5:
+            return 'Medium - Popular Vendor'
         else:
-            confidence_scores['validation_confidence'] = 50.0
+            return 'High - Available Vendor'
+    
+    def _determine_budget_compatibility(self, vendor: Dict, context: VendorContext) -> str:
+        """Determine budget compatibility level"""
         
-        # Knowledge base match score
-        vendor_name = vendor_info.get('name', '').lower()
-        if vendor_name in self.knowledge_base.vendor_profiles:
-            confidence_scores['knowledge_base_match'] = 95.0
+        vendor_price = vendor.get('price_range', '').lower()
+        budget = context.budget_range.lower()
+        
+        if 'budget' in vendor_price and ('budget' in budget or 'under 5' in budget):
+            return 'Perfect Match'
+        elif 'mid' in vendor_price and ('mid' in budget or '5-15' in budget):
+            return 'Perfect Match'
+        elif 'premium' in vendor_price and ('luxury' in budget or '15-50' in budget):
+            return 'Perfect Match'
+        elif 'luxury' in vendor_price and ('ultra' in budget or '50+' in budget):
+            return 'Perfect Match'
         else:
-            confidence_scores['knowledge_base_match'] = 30.0
-        
-        # Overall confidence
-        confidence_scores['overall_confidence'] = np.mean([
-            confidence_scores['data_completeness'],
-            confidence_scores['validation_confidence'],
-            confidence_scores['knowledge_base_match']
-        ])
-        
-        return confidence_scores
+            return 'Requires Discussion'
     
-    def _load_vendor_knowledge_base(self) -> VendorKnowledgeBase:
-        """Load RAG knowledge base with vendor intelligence"""
+    def _check_capacity_suitability(self, vendor: Dict, context: VendorContext) -> str:
+        """Check if vendor can handle guest capacity"""
         
-        # Sample knowledge base structure
-        return VendorKnowledgeBase(
-            vendor_profiles={
-                'taj palace hotel': {
-                    'pricing_history': {'2023': '₹8-15L', '2024': '₹10-18L'},
-                    'capacity_details': {'ballroom': 500, 'garden': 300},
-                    'quality_metrics': {'service': 9.2, 'food': 8.8, 'ambiance': 9.5},
-                    'feedback_analysis': {'positive_themes': ['luxury', 'service'], 'concerns': ['pricing']}
-                }
-            },
-            market_intelligence={
-                'venues_mumbai': {
-                    'avg_pricing': '₹5-12L',
-                    'top_performers': ['Taj Palace', 'Grand Hyatt'],
-                    'pricing_trends': 'increasing'
-                }
-            },
-            pricing_patterns={
-                'venues': ['peak_season_20%_increase', 'weekend_premium_15%'],
-                'photography': ['destination_charges_variable', 'editing_time_factor']
-            },
-            quality_indicators={
-                'venues': ['guest_capacity_match', 'amenities_availability', 'service_quality'],
-                'photography': ['portfolio_quality', 'equipment_standards', 'delivery_time']
-            },
-            seasonal_trends={
-                'venues': {
-                    'peak_months': ['Nov', 'Dec', 'Jan', 'Feb'],
-                    'availability_patterns': {'peak': 0.3, 'normal': 0.7, 'low': 0.9}
-                }
-            }
-        )
+        if vendor.get('category') != 'venues':
+            return 'Not Applicable'
+        
+        vendor_capacity = vendor.get('capacity', 0)
+        guest_count = context.guest_count
+        
+        if vendor_capacity >= guest_count and vendor_capacity <= guest_count * 1.5:
+            return 'Perfect Size'
+        elif vendor_capacity >= guest_count:
+            return 'Can Accommodate'
+        else:
+            return 'Too Small'
     
-    def _load_extraction_patterns(self) -> Dict:
-        """Load extraction patterns for different vendor types"""
-        return {
-            'venues': {
-                'price_patterns': [r'₹[\d,]+-[\d,]+', r'starting from ₹[\d,]+'],
-                'capacity_patterns': [r'(\d+)\s*guests?', r'capacity.{0,10}(\d+)'],
-                'amenities_patterns': [r'amenities?[:\s]*(.*?)(?:\.|$)', r'facilities[:\s]*(.*?)(?:\.|$)']
-            },
-            'photography': {
-                'price_patterns': [r'₹[\d,]+-[\d,]+', r'package starting ₹[\d,]+'],
-                'style_patterns': [r'style[:\s]*(.*?)(?:\.|$)', r'specializ[es]+ in (.*?)(?:\.|$)'],
-                'equipment_patterns': [r'equipment[:\s]*(.*?)(?:\.|$)', r'camera[:\s]*(.*?)(?:\.|$)']
-            }
+    def _enhance_description(self, vendor: Dict, context: VendorContext) -> str:
+        """Enhance vendor description with context-aware details"""
+        
+        base_description = vendor.get('description', '')
+        
+        enhancements = []
+        
+        # Add capacity relevance
+        if vendor.get('category') == 'venues' and context.guest_count:
+            enhancements.append(f"Suitable for {context.guest_count} guests")
+        
+        # Add style relevance
+        if context.style_preference:
+            enhancements.append(f"Specializes in {context.style_preference} weddings")
+        
+        # Add location advantage
+        if vendor.get('location', '').lower() in context.location.lower():
+            enhancements.append(f"Conveniently located in {context.location}")
+        
+        # Combine base description with enhancements
+        if enhancements:
+            enhanced_desc = f"{base_description} • {' • '.join(enhancements)}"
+        else:
+            enhanced_desc = base_description
+        
+        return enhanced_desc
+    
+    # Helper scoring methods
+    def _score_budget_match(self, vendor_price: str, user_budget: str) -> int:
+        """Score budget compatibility (0-100)"""
+        # Implementation similar to existing budget compatibility logic
+        if not vendor_price or not user_budget:
+            return 50
+        
+        budget_mapping = {
+            'budget friendly': 1,
+            'mid range': 2, 
+            'luxury': 3,
+            'ultra luxury': 4
         }
+        
+        vendor_level = 2  # default
+        user_level = 2    # default
+        
+        for key, level in budget_mapping.items():
+            if key in vendor_price.lower():
+                vendor_level = level
+            if key in user_budget.lower():
+                user_level = level
+        
+        # Score based on how close the levels are
+        diff = abs(vendor_level - user_level)
+        if diff == 0:
+            return 100
+        elif diff == 1:
+            return 80
+        elif diff == 2:
+            return 60
+        else:
+            return 40
+    
+    def _score_style_match(self, vendor: Dict, context: VendorContext) -> int:
+        """Score style compatibility (0-100)"""
+        vendor_name = vendor.get('name', '').lower()
+        vendor_desc = vendor.get('description', '').lower()
+        style = context.style_preference.lower()
+        
+        style_keywords = {
+            'traditional': ['traditional', 'heritage', 'cultural', 'classic'],
+            'modern': ['modern', 'contemporary', 'minimalist', 'urban'],
+            'royal': ['royal', 'palace', 'luxury', 'premium'],
+            'destination': ['destination', 'beach', 'resort'],
+            'bohemian': ['bohemian', 'boho', 'garden', 'rustic']
+        }
+        
+        keywords = style_keywords.get(style, [style])
+        matches = sum(1 for keyword in keywords if keyword in vendor_name or keyword in vendor_desc)
+        
+        return min(100, matches * 30)
+    
+    def _score_location_match(self, vendor_location: str, user_location: str) -> int:
+        """Score location proximity (0-100)"""
+        if not vendor_location or not user_location:
+            return 50
+        
+        if user_location.lower() in vendor_location.lower():
+            return 100
+        
+        # Check for metro area matches
+        metro_areas = {
+            'mumbai': ['navi mumbai', 'thane', 'pune'],
+            'delhi': ['gurgaon', 'noida', 'faridabad'],
+            'bangalore': ['mysore', 'hosur'],
+            'chennai': ['pondicherry', 'kanchipuram']
+        }
+        
+        user_city = user_location.lower()
+        vendor_city = vendor_location.lower()
+        
+        if user_city in metro_areas:
+            nearby_cities = metro_areas[user_city]
+            if any(city in vendor_city for city in nearby_cities):
+                return 80
+        
+        return 30
+    
+    def _score_capacity_match(self, vendor: Dict, guest_count: int) -> int:
+        """Score capacity suitability (0-100)"""
+        if vendor.get('category') != 'venues':
+            return 100  # Not applicable
+        
+        vendor_capacity = vendor.get('capacity', 0)
+        if not vendor_capacity:
+            return 50
+        
+        if vendor_capacity >= guest_count and vendor_capacity <= guest_count * 1.5:
+            return 100
+        elif vendor_capacity >= guest_count:
+            return 80
+        else:
+            return 20
+    
+    def _score_specialty_match(self, vendor: Dict, context: VendorContext) -> int:
+        """Score specialty alignment (0-100)"""
+        vendor_specialties = vendor.get('specialties', [])
+        if not vendor_specialties:
+            return 50
+        
+        context_keywords = [
+            context.style_preference,
+            context.venue_type,
+            context.photography_style,
+            context.cuisine_preference
+        ]
+        
+        matches = 0
+        for specialty in vendor_specialties:
+            for keyword in context_keywords:
+                if keyword and keyword.lower() in specialty.lower():
+                    matches += 1
+        
+        return min(100, matches * 25)
+    
+    def _score_availability(self, vendor: Dict, wedding_date: str) -> int:
+        """Score availability likelihood (0-100)"""
+        # Simplified availability scoring
+        rating = vendor.get('rating', 0)
+        
+        if rating >= 4.8:
+            return 30  # High-demand vendors less available
+        elif rating >= 4.5:
+            return 60
+        else:
+            return 90
+    
+    def _create_basic_enhanced_vendor(self, vendor: Dict) -> EnhancedVendor:
+        """Create basic enhanced vendor if full enhancement fails"""
+        
+        return EnhancedVendor(
+            id=vendor.get('id', f"vendor-{hash(vendor.get('name', 'unknown'))}"),
+            name=vendor.get('name', 'Unknown Vendor'),
+            category=vendor.get('category', 'unknown'),
+            location=vendor.get('location', ''),
+            rating=float(vendor.get('rating', 4.0)),
+            price_range=vendor.get('price_range', 'Contact for pricing'),
+            description=vendor.get('description', ''),
+            contact_score=int(vendor.get('contact_score', 75)),
+            
+            # Default enhanced fields
+            context_match_score=75,
+            preference_alignment={},
+            extracted_specialties=[],
+            availability_likelihood='Unknown',
+            budget_compatibility='Requires Discussion',
+            capacity_suitability='Unknown',
+            
+            phone=vendor.get('phone'),
+            email=vendor.get('email'),
+            website=vendor.get('website'),
+            instagram=vendor.get('instagram')
+        )
 
-def integrate_rag_with_existing_system():
-    """Integration example with existing vendor search"""
+def create_vendor_context_from_preferences(preferences_data: Dict) -> VendorContext:
+    """Create VendorContext from wedding preferences data"""
     
-    # Enhance the existing vendor search with RAG
-    print("🧠 RAG-Enhanced Vendor Extraction Integration")
-    print("=" * 60)
+    return VendorContext(
+        budget_range=preferences_data.get('budgetRange', ''),
+        guest_count=int(preferences_data.get('guestCount', 100)),
+        wedding_date=preferences_data.get('weddingDate', ''),
+        location=preferences_data.get('city', ''),
+        style_preference=preferences_data.get('weddingStyle', ''),
+        venue_type=preferences_data.get('venueType', ''),
+        photography_style=preferences_data.get('photographyStyle', ''),
+        cuisine_preference=preferences_data.get('cuisine', ''),
+        priorities=preferences_data.get('priorities', [])
+    )
+
+# Example usage
+if __name__ == "__main__":
+    # Test the RAG-enhanced vendor extraction
+    extractor = RAGEnhancedVendorExtractor()
     
-    # Sample integration
-    rag_extractor = RAGEnhancedVendorExtractor()
-    
-    # Example raw vendor data from search
-    raw_vendor = {
-        'name': 'Taj Palace Hotel',
+    sample_vendor = {
+        'id': 'venue-1',
+        'name': 'Royal Palace Hotel',
         'category': 'venues',
         'location': 'Mumbai',
-        'description': 'Luxury hotel with grand ballrooms starting from ₹10L',
-        'rating': 4.8
+        'rating': 4.8,
+        'price_range': 'Premium (> ₹2L)',
+        'description': 'Luxury hotel with grand ballrooms',
+        'contact_score': 95,
+        'capacity': 300,
+        'experience_years': 15
     }
     
-    search_context = {
-        'budget_range': '₹25-30L',
-        'guest_count': 300,
-        'wedding_date': '2024-12-15',
-        'style_preference': 'luxury'
-    }
+    sample_context = VendorContext(
+        budget_range='Luxury - 15-50 Lakhs',
+        guest_count=250,
+        wedding_date='2024-12-15',
+        location='Mumbai',
+        style_preference='Royal',
+        venue_type='hotels',
+        photography_style='cinematic',
+        cuisine_preference='multi-cuisine',
+        priorities=['venue', 'photography', 'catering']
+    )
     
-    # RAG enhancement
-    enhanced_vendor = rag_extractor.extract_enhanced_vendor_info(raw_vendor, search_context)
-    
-    print("📊 RAG Enhancement Results:")
-    print(f"   Overall Confidence: {enhanced_vendor.get('extraction_confidence', {}).get('overall_confidence', 0):.1f}%")
-    print(f"   Market Position: {enhanced_vendor.get('market_position', 'Unknown')}")
-    print(f"   Price Validation: {enhanced_vendor.get('price_validation_score', 0):.1f}%")
-    print(f"   Knowledge Sources: {len(enhanced_vendor.get('knowledge_sources', []))}")
-    
-    return enhanced_vendor
-
-if __name__ == "__main__":
-    # Test RAG enhancement
-    enhanced_result = integrate_rag_with_existing_system()
-    
-    print("\n🎯 RAG Benefits for Vendor Extraction:")
-    print("   ✅ 40% more accurate pricing information")
-    print("   ✅ 60% better quality assessment")  
-    print("   ✅ 80% improved availability prediction")
-    print("   ✅ 90% more reliable vendor validation")
+    enhanced_vendor = extractor.extract_enhanced_vendor_info(sample_vendor, sample_context)
+    print(f"Enhanced Vendor: {enhanced_vendor.name}")
+    print(f"Context Match Score: {enhanced_vendor.context_match_score}/100")
+    print(f"Budget Compatibility: {enhanced_vendor.budget_compatibility}")
+    print(f"Extracted Specialties: {enhanced_vendor.extracted_specialties}")

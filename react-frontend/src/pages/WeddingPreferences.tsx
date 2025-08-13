@@ -663,7 +663,46 @@ const WeddingPreferences: React.FC = () => {
         : { ...currentSection, [key]: value }
     };
     localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
+
+    // Auto-save to NocoDB (debounced)
+    saveToNocoDB(updatedPreferences);
   };
+
+  // Import NocoDB service at the top
+  const { NocoDBService } = require('../services/nocodb_service');
+
+  // Debounced save function to prevent excessive API calls
+  const saveToNocoDB = React.useCallback(
+    debounce(async (preferencesData: WeddingPreferencesData) => {
+      try {
+        console.log('🔄 Auto-saving preferences to NocoDB...');
+        const result = await NocoDBService.savePreferences(preferencesData);
+        
+        if (result.success) {
+          console.log('✅ Preferences saved to NocoDB successfully');
+          // Optional: Show success toast
+        } else {
+          console.warn('⚠️ Failed to save to NocoDB:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ Error saving to NocoDB:', error);
+      }
+    }, 2000), // 2 second debounce
+    []
+  );
+
+  // Simple debounce function
+  function debounce(func: Function, wait: number) {
+    let timeout: NodeJS.Timeout;
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
 
   const handleTabChange = (tabId: string) => {
     if (tabId === 'blueprint' && !(preferences.venue.venueType && preferences.theme.selectedTheme)) {

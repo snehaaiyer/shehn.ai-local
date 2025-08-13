@@ -72,26 +72,65 @@ export class NocoDBService {
    */
   static async savePreferences(preferences: PreferencesData): Promise<{ success: boolean; error?: string; recordId?: string }> {
     try {
-      console.log('Saving preferences to NocoDB:', preferences);
+      console.log('💾 Saving comprehensive preferences to NocoDB:', preferences);
 
-      // Map preferences to NocoDB format
+      // Enhanced mapping to NocoDB format with all preference data
       const nocodbData = {
+        // Basic Wedding Details
+        "Partner1 Name": preferences.basicDetails.yourName,
+        "Partner2 Name": preferences.basicDetails.partnerName,
+        "Wedding Date": preferences.basicDetails.weddingDate,
+        "City": preferences.basicDetails.location,
+        "Guest Count": preferences.basicDetails.guestCount,
+        "Budget": preferences.basicDetails.budgetRange,
+        
+        // Theme and Style Preferences
         "Event Theme": preferences.theme.selectedTheme,
         "Style Preference": preferences.photography.style,
         "Venue Location": preferences.venue.venueType,
         "Design Style": preferences.catering.cuisine,
         "Color Theme": JSON.stringify(preferences.theme.generatedImages),
-        "Cultural Notes": JSON.stringify({
-          guestCount: preferences.basicDetails.guestCount,
-          budgetRange: preferences.basicDetails.budgetRange,
-          location: preferences.basicDetails.location,
-          venueCapacity: preferences.venue.capacity,
-          mealType: preferences.catering.mealType,
-          dietaryRestrictions: preferences.catering.dietaryRestrictions,
-          photographyCoverage: preferences.photography.coverage,
+        
+        // Detailed Photography Preferences
+        "Photography Details": JSON.stringify({
+          style: preferences.photography.style,
+          coverage: preferences.photography.coverage,
+          multiDayCoverage: preferences.photography.multiDayCoverage,
+          videography: preferences.photography.videography,
+          culturalCoverage: preferences.photography.culturalCoverage,
+          deliverables: preferences.photography.deliverables,
+          technicalPreferences: preferences.photography.technicalPreferences,
+          budgetRange: preferences.photography.budgetRange,
           specialRequests: preferences.photography.specialRequests
         }),
-        "Special Notes": `Created by ${preferences.basicDetails.yourName} and ${preferences.basicDetails.partnerName}`
+        
+        // Venue and Catering Details
+        "Venue Details": JSON.stringify({
+          selectedVenue: preferences.venue.selectedVenue,
+          venueType: preferences.venue.venueType,
+          capacity: preferences.venue.capacity
+        }),
+        
+        "Catering Details": JSON.stringify({
+          cuisine: preferences.catering.cuisine,
+          mealType: preferences.catering.mealType,
+          dietaryRestrictions: preferences.catering.dietaryRestrictions
+        }),
+        
+        // Priority Rankings
+        "Priorities": JSON.stringify(preferences.basicDetails.priorities),
+        
+        // Additional Information
+        "Cultural Notes": JSON.stringify({
+          eventDuration: preferences.basicDetails.eventDuration,
+          datesFlexible: preferences.basicDetails.datesFlexible,
+          contactNumber: preferences.basicDetails.contactNumber,
+          weddingStyle: preferences.theme.selectedTheme
+        }),
+        
+        "Special Notes": `Comprehensive preferences for ${preferences.basicDetails.yourName} and ${preferences.basicDetails.partnerName}`,
+        "Status": "Active",
+        "Created At": new Date().toISOString()
       };
 
       const response = await fetch(this.getApiUrl('preferences'), {
