@@ -9,7 +9,7 @@ import json
 import logging
 from typing import List, Dict, Optional, Tuple
 import os
-from datetime datetime, timedelta
+from datetime import datetime, timedelta
 import hashlib
 import re
 from enhanced_vendor_search import EnhancedVendorSearch, SearchCriteria, VendorCategory, VendorProfile
