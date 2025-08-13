@@ -140,22 +140,162 @@ export class VendorDiscoveryService {
         weddingDate: preferences.basicDetails?.weddingDate || '',
         eventDuration: preferences.basicDetails?.eventDuration || '1',
         
-        // Preferences
+        // Enhanced theme and style preferences
+        weddingTheme: preferences.theme?.selectedTheme || 'traditional',
         weddingStyle: preferences.theme?.selectedTheme || 'traditional',
-        venueType: preferences.venue?.venueType || '',
-        cuisine: preferences.catering?.cuisine || '',
-        photographyStyle: preferences.photography?.style || '',
         
-        // Priorities (top 3)
+        // Detailed venue preferences
+        venueType: preferences.venue?.venueType || '',
+        venueStyle: preferences.venue?.venueType || '',
+
+
+  /**
+   * Extract indoor/outdoor preference from venue type
+   */
+  private static extractIndoorOutdoorPreference(venueType: string): string {
+    if (!venueType) return '';
+    
+    const outdoorTypes = ['garden', 'beach', 'farmhouse', 'mountain', 'rooftop'];
+    const indoorTypes = ['banquet-hall', 'heritage-palace', 'luxury-hotel', 'temple', 'gurudwara'];
+    
+    if (outdoorTypes.some(type => venueType.toLowerCase().includes(type))) {
+      return 'outdoor';
+    } else if (indoorTypes.some(type => venueType.toLowerCase().includes(type))) {
+      return 'indoor';
+    }
+    return 'flexible';
+  }
+
+  /**
+   * Infer decor style from wedding theme
+   */
+  private static inferDecorFromTheme(theme: string): string {
+    const decorMapping: Record<string, string> = {
+      'royal': 'luxury-opulent',
+      'traditional': 'traditional',
+      'modern': 'minimalist',
+      'boho': 'rustic',
+      'vintage': 'vintage',
+      'beach': 'tropical',
+      'garden': 'floral'
+    };
+    
+    return decorMapping[theme?.toLowerCase()] || 'traditional';
+  }
+
+  /**
+   * Infer color theme from wedding theme
+   */
+  private static inferColorFromTheme(theme: string): string {
+    const colorMapping: Record<string, string> = {
+      'royal': 'burgundy-gold',
+      'traditional': 'red-gold',
+      'modern': 'monochrome',
+      'boho': 'earth-tones',
+      'vintage': 'dusty-pastels',
+      'beach': 'aqua-coral',
+      'garden': 'sage-cream'
+    };
+    
+    return colorMapping[theme?.toLowerCase()] || 'red-gold';
+  }
+
+  /**
+   * Infer floral style from wedding theme
+   */
+  private static inferFloralFromTheme(theme: string): string {
+    const floralMapping: Record<string, string> = {
+      'royal': 'opulent',
+      'traditional': 'marigold-roses',
+      'modern': 'minimalist',
+      'boho': 'wildflowers',
+      'vintage': 'vintage-roses',
+      'beach': 'tropical',
+      'garden': 'garden-fresh'
+    };
+    
+    return floralMapping[theme?.toLowerCase()] || 'traditional';
+  }
+
+  /**
+   * Extract cultural requirements from preferences
+   */
+  private static extractCulturalRequirements(preferences: any): string[] {
+    const requirements: string[] = [];
+    
+    const theme = preferences.theme?.selectedTheme?.toLowerCase();
+    if (theme?.includes('traditional') || theme?.includes('royal')) {
+      requirements.push('mandap', 'traditional-music', 'cultural-ceremonies');
+    }
+    
+    if (theme?.includes('south-indian')) {
+      requirements.push('south-indian-traditions', 'temple-style');
+    }
+    
+    if (theme?.includes('punjabi') || theme?.includes('sikh')) {
+      requirements.push('gurudwara-style', 'punjabi-traditions');
+    }
+    
+    return requirements;
+  }
+
+  /**
+   * Extract seasonal preferences from wedding date
+   */
+  private static extractSeasonalPreferences(weddingDate: string): string {
+    if (!weddingDate) return '';
+    
+    try {
+      const date = new Date(weddingDate);
+      const month = date.getMonth();
+      
+      if (month >= 2 && month <= 4) return 'spring';
+      if (month >= 5 && month <= 7) return 'summer';
+      if (month >= 8 && month <= 10) return 'monsoon';
+      return 'winter';
+    } catch {
+      return '';
+    }
+  }
+
+        venueCapacity: preferences.venue?.capacity || preferences.basicDetails?.guestCount || 100,
+        indoorOutdoor: this.extractIndoorOutdoorPreference(preferences.venue?.venueType),
+        
+        // Catering preferences
+        cuisine: preferences.catering?.cuisine || '',
+        cuisineStyle: preferences.catering?.cuisine || '',
+        mealType: preferences.catering?.mealType || '',
+        dietaryRestrictions: preferences.catering?.dietaryRestrictions || [],
+        
+        // Photography style preferences
+        photographyStyle: preferences.photography?.style || '',
+        photographyCoverage: preferences.photography?.coverage || '',
+        videographyRequired: preferences.photography?.videography?.required || false,
+        droneCoverage: preferences.photography?.videography?.droneCoverage || false,
+        
+        // Decor and styling (if available in future)
+        decorStyle: preferences.decor?.style || this.inferDecorFromTheme(preferences.theme?.selectedTheme),
+        colorTheme: preferences.decor?.colorTheme || this.inferColorFromTheme(preferences.theme?.selectedTheme),
+        floralStyle: preferences.decor?.floralStyle || this.inferFloralFromTheme(preferences.theme?.selectedTheme),
+        
+        // Budget and priorities
         priorities: preferences.basicDetails?.priorities?.slice(0, 3).map((p: any) => p.id) || ['venue', 'catering', 'photography'],
         
-        // User flexibility
+        // Enhanced flexibility preferences
         flexibility: {
           budget: 0.2,
           location: 0.1,
           date: 0.3,
-          style: 0.2
-        }
+          style: 0.2,
+          venue: 0.15,
+          decor: 0.25
+        },
+        
+        // Additional attributes for enhanced filtering
+        specialRequirements: preferences.basicDetails?.specialRequirements || '',
+        culturalRequirements: this.extractCulturalRequirements(preferences),
+        accessibilityNeeds: preferences.basicDetails?.accessibilityNeeds || '',
+        seasonalPreferences: this.extractSeasonalPreferences(preferences.basicDetails?.weddingDate)
       };
     } catch (error) {
       console.error('Error parsing wedding preferences:', error);
@@ -355,7 +495,18 @@ export class VendorDiscoveryService {
    * Apply business logic filters based on wedding preferences
    */
   private static applyBusinessLogicFilters(vendors: Vendor[], params: VendorSearchParams, weddingData: any): Vendor[] {
-    console.log('🔧 Applying business logic filters...');
+    console.log('🔧 Applying comprehensive business logic filters...');
+    console.log('📋 Wedding data being used for filtering:', {
+      theme: weddingData.weddingTheme,
+      venueType: weddingData.venueType,
+      decorStyle: weddingData.decorStyle,
+      cuisineStyle: weddingData.cuisineStyle,
+      photographyStyle: weddingData.photographyStyle,
+      indoorOutdoor: weddingData.indoorOutdoor,
+      budget: weddingData.budgetRange,
+      guestCount: weddingData.guestCount,
+      city: weddingData.city
+    });
     
     let filtered = [...vendors];
 
@@ -377,19 +528,49 @@ export class VendorDiscoveryService {
       console.log(`👥 After capacity filter: ${filtered.length} vendors`);
     }
 
-    // 4. Style Compatibility Filter
-    if (weddingData.weddingStyle) {
-      filtered = this.filterByStyleCompatibility(filtered, weddingData.weddingStyle);
-      console.log(`🎨 After style filter: ${filtered.length} vendors`);
+    // 4. Enhanced Theme & Style Compatibility Filter
+    if (weddingData.weddingTheme) {
+      filtered = this.filterByThemeCompatibility(filtered, weddingData.weddingTheme);
+      console.log(`🎨 After theme filter: ${filtered.length} vendors`);
     }
 
-    // 5. Category-specific filters
+    // 5. Venue Type Specific Filtering
+    if (weddingData.venueType && params.category === 'venues') {
+      filtered = this.filterByVenueTypeCompatibility(filtered, weddingData.venueType, weddingData.indoorOutdoor);
+      console.log(`🏛️ After venue type filter: ${filtered.length} vendors`);
+    }
+
+    // 6. Cuisine Style Filtering for Catering
+    if (weddingData.cuisineStyle && params.category === 'catering') {
+      filtered = this.filterByCuisineCompatibility(filtered, weddingData.cuisineStyle, weddingData.dietaryRestrictions);
+      console.log(`🍽️ After cuisine filter: ${filtered.length} vendors`);
+    }
+
+    // 7. Photography Style Filtering
+    if (weddingData.photographyStyle && params.category === 'photography') {
+      filtered = this.filterByPhotographyStyleCompatibility(filtered, weddingData.photographyStyle, weddingData.videographyRequired);
+      console.log(`📸 After photography style filter: ${filtered.length} vendors`);
+    }
+
+    // 8. Decor Style Filtering
+    if (weddingData.decorStyle && (params.category === 'decoration' || params.category === 'venues')) {
+      filtered = this.filterByDecorCompatibility(filtered, weddingData.decorStyle, weddingData.colorTheme);
+      console.log(`🎪 After decor filter: ${filtered.length} vendors`);
+    }
+
+    // 9. Cultural Requirements Filter
+    if (weddingData.culturalRequirements && weddingData.culturalRequirements.length > 0) {
+      filtered = this.filterByCulturalRequirements(filtered, weddingData.culturalRequirements);
+      console.log(`🏮 After cultural requirements filter: ${filtered.length} vendors`);
+    }
+
+    // 10. Category-specific filters
     if (params.category) {
       filtered = filtered.filter(vendor => vendor.category === params.category);
       console.log(`📂 After category filter: ${filtered.length} vendors`);
     }
 
-    // 6. Additional search filters from UI
+    // 11. Additional search filters from UI
     filtered = this.applyUIFilters(filtered, params);
     console.log(`🎛️ After UI filters: ${filtered.length} vendors`);
 
@@ -516,6 +697,151 @@ export class VendorDiscoveryService {
 
       } catch (error) {
         console.error(`Error generating images for ${vendor.name}:`, error);
+
+
+  /**
+   * Filter vendors by theme compatibility (enhanced)
+   */
+  private static filterByThemeCompatibility(vendors: Vendor[], weddingTheme: string): Vendor[] {
+    const themeMapping = {
+      'royal': ['royal', 'palace', 'luxury', 'premium', 'heritage', 'opulent', 'grand', 'regal'],
+      'traditional': ['traditional', 'heritage', 'classic', 'cultural', 'ethnic', 'authentic', 'ceremonial'],
+      'modern': ['modern', 'contemporary', 'minimalist', 'urban', 'sleek', 'stylish', 'chic'],
+      'boho': ['bohemian', 'boho', 'garden', 'rustic', 'natural', 'outdoor', 'earthy', 'free-spirit'],
+      'vintage': ['vintage', 'classic', 'heritage', 'retro', 'antique', 'old-world', 'timeless'],
+      'beach': ['beach', 'coastal', 'destination', 'resort', 'tropical', 'seaside', 'ocean'],
+      'garden': ['garden', 'outdoor', 'floral', 'nature', 'botanical', 'greenhouse', 'lawn']
+    };
+
+    const compatibleKeywords = themeMapping[weddingTheme.toLowerCase() as keyof typeof themeMapping] || [];
+    
+    return vendors.filter(vendor => {
+      const vendorSpecialties = (vendor.specialties || []).map(s => s.toLowerCase());
+      const vendorName = vendor.name.toLowerCase();
+      const vendorDescription = vendor.description.toLowerCase();
+      
+      // Check if vendor specializes in compatible themes
+      return compatibleKeywords.some(keyword => 
+        vendorSpecialties.some(specialty => specialty.includes(keyword)) ||
+        vendorName.includes(keyword) ||
+        vendorDescription.includes(keyword)
+      ) || compatibleKeywords.length === 0; // If no specific theme mapping, include all
+    });
+  }
+
+  /**
+   * Filter venues by type compatibility
+   */
+  private static filterByVenueTypeCompatibility(vendors: Vendor[], venueType: string, indoorOutdoor: string): Vendor[] {
+    return vendors.filter(vendor => {
+      if (vendor.category !== 'venues') return true;
+      
+      const venueText = `${vendor.name} ${vendor.description} ${vendor.venue_type || ''}`.toLowerCase();
+      
+      // Check venue type match
+      const venueTypeMatch = venueType ? venueText.includes(venueType.toLowerCase().replace('-', ' ')) : true;
+      
+      // Check indoor/outdoor preference
+      let indoorOutdoorMatch = true;
+      if (indoorOutdoor === 'outdoor') {
+        indoorOutdoorMatch = ['garden', 'beach', 'farm', 'rooftop', 'lawn', 'outdoor'].some(keyword => 
+          venueText.includes(keyword)
+        );
+      } else if (indoorOutdoor === 'indoor') {
+        indoorOutdoorMatch = ['banquet', 'hall', 'hotel', 'palace', 'ballroom', 'indoor'].some(keyword => 
+          venueText.includes(keyword)
+        );
+      }
+      
+      return venueTypeMatch && indoorOutdoorMatch;
+    });
+  }
+
+  /**
+   * Filter catering by cuisine compatibility
+   */
+  private static filterByCuisineCompatibility(vendors: Vendor[], cuisineStyle: string, dietaryRestrictions: string[]): Vendor[] {
+    return vendors.filter(vendor => {
+      if (vendor.category !== 'catering') return true;
+      
+      const cateringText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
+      
+      // Check cuisine style match
+      const cuisineMatch = cuisineStyle ? cateringText.includes(cuisineStyle.toLowerCase().replace('-', ' ')) : true;
+      
+      // Check dietary restrictions
+      let dietaryMatch = true;
+      if (dietaryRestrictions && dietaryRestrictions.length > 0) {
+        dietaryMatch = dietaryRestrictions.every(restriction => 
+          cateringText.includes(restriction.toLowerCase())
+        );
+      }
+      
+      return cuisineMatch && dietaryMatch;
+    });
+  }
+
+  /**
+   * Filter photography by style compatibility
+   */
+  private static filterByPhotographyStyleCompatibility(vendors: Vendor[], photographyStyle: string, videographyRequired: boolean): Vendor[] {
+    return vendors.filter(vendor => {
+      if (vendor.category !== 'photography') return true;
+      
+      const photoText = `${vendor.name} ${vendor.description} ${(vendor.photography_styles || []).join(' ')}`.toLowerCase();
+      
+      // Check photography style match
+      const styleMatch = photographyStyle ? photoText.includes(photographyStyle.toLowerCase()) : true;
+      
+      // Check videography requirement
+      let videographyMatch = true;
+      if (videographyRequired) {
+        videographyMatch = ['video', 'cinematic', 'film', 'videography'].some(keyword => 
+          photoText.includes(keyword)
+        );
+      }
+      
+      return styleMatch && videographyMatch;
+    });
+  }
+
+  /**
+   * Filter by decor compatibility
+   */
+  private static filterByDecorCompatibility(vendors: Vendor[], decorStyle: string, colorTheme: string): Vendor[] {
+    return vendors.filter(vendor => {
+      if (vendor.category !== 'decoration' && vendor.category !== 'venues') return true;
+      
+      const decorText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
+      
+      // Check decor style match
+      const decorMatch = decorStyle ? decorText.includes(decorStyle.toLowerCase().replace('-', ' ')) : true;
+      
+      // Check color theme match (basic keywords)
+      let colorMatch = true;
+      if (colorTheme) {
+        const colorKeywords = colorTheme.toLowerCase().split('-');
+        colorMatch = colorKeywords.some(color => decorText.includes(color));
+      }
+      
+      return decorMatch && colorMatch;
+    });
+  }
+
+  /**
+   * Filter by cultural requirements
+   */
+  private static filterByCulturalRequirements(vendors: Vendor[], culturalRequirements: string[]): Vendor[] {
+    return vendors.filter(vendor => {
+      const vendorText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
+      
+      // Check if vendor mentions cultural requirements
+      return culturalRequirements.some(requirement => 
+        vendorText.includes(requirement.toLowerCase().replace('-', ' '))
+      );
+    });
+  }
+
         // Use fallback images
         const fallbackResponse = VenueImageGenerator.generateFallbackVenueImages({
           venueType: vendor.venue_type || 'hotels',

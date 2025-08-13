@@ -168,14 +168,25 @@ class EnhancedVendorSelectionService:
         )
 
     def _convert_to_wedding_details(self, wedding_data: Dict) -> WeddingDetails:
-        """Convert wedding data to WeddingDetails format"""
+        """Convert wedding data to WeddingDetails format with enhanced attributes"""
         return WeddingDetails(
             total_budget=wedding_data.get('budgetRange', '₹20-30 Lakhs'),
             guest_count=int(wedding_data.get('guestCount', 200)),
             location=wedding_data.get('city', 'Mumbai'),
             wedding_date=wedding_data.get('weddingDate'),
-            style=wedding_data.get('weddingStyle', 'Traditional'),
-            priorities=wedding_data.get('priorities', ['venue', 'catering'])
+            style=wedding_data.get('weddingTheme', wedding_data.get('weddingStyle', 'Traditional')),
+            priorities=wedding_data.get('priorities', ['venue', 'catering']),
+            # Enhanced attributes
+            venue_type=wedding_data.get('venueType', ''),
+            venue_style=wedding_data.get('venueStyle', ''),
+            cuisine_style=wedding_data.get('cuisineStyle', ''),
+            photography_style=wedding_data.get('photographyStyle', ''),
+            decor_style=wedding_data.get('decorStyle', ''),
+            indoor_outdoor=wedding_data.get('indoorOutdoor', ''),
+            cultural_requirements=wedding_data.get('culturalRequirements', []),
+            dietary_restrictions=wedding_data.get('dietaryRestrictions', []),
+            videography_required=wedding_data.get('videographyRequired', False),
+            special_requirements=wedding_data.get('specialRequirements', '')
         )
 
     def _combine_ai_and_business_logic(self, wedding_data: Dict, basic_vendors: List[Dict]) -> Dict:
@@ -299,6 +310,16 @@ def intelligent_vendor_selection_endpoint():
         wedding_data = request_data.get('weddingData', {})
 
         logger.info(f"🎯 Processing intelligent vendor selection for {wedding_data.get('city', 'Mumbai')}")
+        logger.info(f"📋 Enhanced wedding preferences:")
+        logger.info(f"   Theme: {wedding_data.get('weddingTheme', 'Not specified')}")
+        logger.info(f"   Venue Type: {wedding_data.get('venueType', 'Not specified')}")
+        logger.info(f"   Decor Style: {wedding_data.get('decorStyle', 'Not specified')}")
+        logger.info(f"   Cuisine: {wedding_data.get('cuisineStyle', 'Not specified')}")
+        logger.info(f"   Photography: {wedding_data.get('photographyStyle', 'Not specified')}")
+        logger.info(f"   Indoor/Outdoor: {wedding_data.get('indoorOutdoor', 'Not specified')}")
+        logger.info(f"   Cultural Reqs: {wedding_data.get('culturalRequirements', 'None')}")
+        logger.info(f"   Budget: {wedding_data.get('budgetRange', 'Not specified')}")
+        logger.info(f"   Guest Count: {wedding_data.get('guestCount', 'Not specified')}")
 
         # Perform intelligent vendor selection
         result = vendor_service.intelligent_vendor_selection(wedding_data)
