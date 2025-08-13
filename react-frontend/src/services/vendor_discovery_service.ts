@@ -167,7 +167,7 @@ export class VendorDiscoveryService {
   private static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
     const backendUrl = window.location.hostname === 'localhost' ? 
       'http://localhost:5002' : 
-      `https://${window.location.hostname.split('-')[0]}-00-1eg0dj1kb2mue.pike.replit.dev:5002`;
+      `https://${window.location.hostname}`;
 
     const requestBody = {
       weddingData: weddingData,
@@ -1028,11 +1028,17 @@ export class VendorDiscoveryService {
    * Generate enhanced mock vendors that respect wedding preferences
    */
   private static generateEnhancedMockVendors(params: VendorSearchParams, weddingData: any): Vendor[] {
-    const category = params.category || 'venues';
     const location = weddingData.city || params.location || 'Mumbai';
+    let vendors: Vendor[] = [];
     
-    // Generate base vendors
-    let vendors = this.generateMockVendors(category, location);
+    if (params.category) {
+      // Generate vendors for specific category
+      vendors = this.generateMockVendors(params.category, location);
+    } else {
+      // Generate vendors for all categories when no specific category is selected
+      const categories = ['venues', 'photography', 'catering', 'planners', 'decoration', 'entertainment', 'beauty'];
+      vendors = categories.flatMap(category => this.generateMockVendors(category, location));
+    }
     
     // Enhance vendors with preference-aware data
     vendors = vendors.map(vendor => ({

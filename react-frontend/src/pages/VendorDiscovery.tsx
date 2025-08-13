@@ -162,10 +162,9 @@ const VendorDiscovery: React.FC = () => {
             setAppliedFilters(prev => ({ ...prev, location }));
           }
 
-          if (preferences.venue?.venueType) {
-            setSelectedCategory('venues');
-            setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
-          }
+          // Always default to venues category for initial load
+          setSelectedCategory('venues');
+          setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
 
           if (preferences.basicDetails?.budgetRange) {
             const budget = preferences.basicDetails.budgetRange.toLowerCase();
@@ -183,9 +182,16 @@ const VendorDiscovery: React.FC = () => {
 
           setSelectedRating('4.5');
           setAppliedFilters(prev => ({ ...prev, rating: '4.5' }));
+        } else {
+          // Default to venues even without preferences
+          setSelectedCategory('venues');
+          setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
         }
       } catch (error) {
         console.error('Error loading default preferences:', error);
+        // Default to venues on error
+        setSelectedCategory('venues');
+        setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
       }
     };
 
@@ -201,20 +207,36 @@ const VendorDiscovery: React.FC = () => {
     }
   }, [searchVendors]);
 
+  // Trigger search immediately when applied category changes
+  useEffect(() => {
+    if (appliedFilters.category) {
+      try {
+        searchVendors();
+      } catch (error) {
+        console.error('Error searching vendors on category change:', error);
+        setHasError(true);
+      }
+    }
+  }, [appliedFilters.category, searchVendors]);
+
   const handleFilterChange = (filterType: string, value: string) => {
-    setFiltersChanged(true);
     switch (filterType) {
       case 'category':
         setSelectedCategory(value);
+        setAppliedFilters(prev => ({ ...prev, category: value }));
+        setFiltersChanged(false); // Category changes are applied immediately
         break;
       case 'location':
         setSelectedLocation(value);
+        setFiltersChanged(true);
         break;
       case 'budget':
         setSelectedBudget(value);
+        setFiltersChanged(true);
         break;
       case 'rating':
         setSelectedRating(value);
+        setFiltersChanged(true);
         break;
     }
   };
