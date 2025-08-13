@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "React Frontend Port 5000"
+runButton = "RAG-Enhanced Vendor Search"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -171,6 +171,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python enhanced_vendor_selection_with_rag.py"
+
+[[workflows.workflow]]
+name = "RAG-Enhanced Vendor Search"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python install_rag_dependencies.py && python start_rag_system.py"
 
 [[ports]]
 localPort = 3000

@@ -402,43 +402,43 @@ export class VendorDiscoveryService {
   }
 
   /**
-   * Search vendors using backend API with RAG-enhanced intelligent algorithms
+   * Search vendors using RAG-enhanced semantic search backend API
    */
   private static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
     const backendUrl = window.location.hostname === 'localhost' ? 
-      'http://localhost:5002' : 
+      'http://localhost:5003' : 
       `https://${window.location.hostname}`;
 
-    // Enhanced request body with detailed preferences for RAG processing
+    // Enhanced request body for RAG-enhanced semantic search
     const requestBody = {
       weddingData: {
         ...weddingData,
-        // Add detailed preference context for RAG
+        // Add detailed preference context for semantic matching
         detailedPreferences: this.getDetailedPreferencesFromStorage(),
         ragContext: {
+          searchMethod: 'semantic_embedding_search',
           preferenceWeights: {
-            budget: 0.25,
-            style: 0.20,
-            location: 0.15,
-            capacity: 0.15,
-            experience: 0.10,
-            specialties: 0.10,
-            availability: 0.05
+            style: 0.30,      // Wedding theme, decor style, aesthetic preferences
+            cultural: 0.20,   // Cultural requirements, cuisine, traditions
+            service: 0.30,    // Photography style, catering type, service quality
+            practical: 0.20   // Budget, capacity, location, timing
           },
-          enhancementMode: 'full',
+          enhancementMode: 'full_semantic',
           includeContextScore: true,
-          extractSpecialties: true
+          extractSpecialties: true,
+          semanticMatching: true
         }
       },
       searchParams: params,
       filterCategory: params.category,
-      ragEnabled: true // Flag to enable RAG processing
+      maxResults: 20,
+      ragEnabled: true
     };
 
-    console.log('🚀 Calling RAG-enhanced backend API:', `${backendUrl}/api/intelligent-vendor-selection`);
-    console.log('📤 Enhanced request body:', requestBody);
+    console.log('🚀 Calling RAG-Enhanced Semantic Search API:', `${backendUrl}/api/rag-vendor-search`);
+    console.log('📤 Semantic search request:', requestBody);
 
-    const response = await fetch(`${backendUrl}/api/intelligent-vendor-selection`, {
+    const response = await fetch(`${backendUrl}/api/rag-vendor-search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -447,38 +447,40 @@ export class VendorDiscoveryService {
     });
 
     if (!response.ok) {
-      throw new Error(`Backend API failed: ${response.status}`);
+      throw new Error(`RAG API failed: ${response.status}`);
     }
 
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(`Backend API error: ${data.error}`);
+      throw new Error(`RAG API error: ${data.error}`);
     }
 
-    // Transform backend response to frontend format
+    // Transform RAG API response to frontend format
     const vendors: Vendor[] = [];
     
-    if (data.final_recommendations) {
-      Object.entries(data.final_recommendations).forEach(([category, categoryVendors]: [string, any]) => {
-        if (Array.isArray(categoryVendors)) {
-          categoryVendors.forEach((vendor: any) => {
-            vendors.push({
-              id: vendor.id || `${category}-${Math.random()}`,
-              name: vendor.name || 'Unknown Vendor',
-              category: category,
-              location: vendor.location || weddingData.city,
-              rating: vendor.rating || 4.5,
-              price_range: vendor.price_range || 'Contact for pricing',
-              description: vendor.description || `Professional ${category} services`,
-              contact_score: vendor.business_logic_score || 85,
-              phone: vendor.contact?.phone,
-              email: vendor.contact?.email,
-              website: vendor.contact?.website,
-              images: vendor.images || []
-            });
-          });
-        }
+    if (data.vendors && Array.isArray(data.vendors)) {
+      data.vendors.forEach((vendor: any) => {
+        vendors.push({
+          id: vendor.id || `vendor-${Math.random()}`,
+          name: vendor.name || 'Unknown Vendor',
+          category: vendor.category,
+          location: vendor.location || weddingData.city,
+          rating: vendor.rating || 4.5,
+          price_range: vendor.budget_tier || 'Contact for pricing',
+          description: `Professional ${vendor.category} services with ${vendor.rag_scores?.final_score?.toFixed(2) || 'high'} compatibility score`,
+          contact_score: Math.round((vendor.rag_scores?.final_score || 0.7) * 100),
+          phone: vendor.contact?.phone,
+          email: vendor.contact?.email,
+          website: vendor.contact?.website,
+          images: vendor.images || [],
+          
+          // Add RAG-specific fields
+          rag_scores: vendor.rag_scores || {},
+          semantic_match_score: vendor.rag_scores?.composite_score || 0,
+          business_logic_score: vendor.rag_scores?.business_score || 0,
+          final_rag_score: vendor.rag_scores?.final_score || 0
+        });
       });
     }
 
@@ -487,7 +489,11 @@ export class VendorDiscoveryService {
       vendors: vendors,
       totalCount: vendors.length,
       generatedImages: {},
-      backendData: data
+      backendData: {
+        ...data,
+        searchMethod: 'RAG-Enhanced Semantic Search',
+        ragAnalytics: data.rag_analytics || {}
+      }
     };
   }
 
