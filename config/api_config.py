@@ -53,4 +53,4 @@ def test_nocodb_connection():
             return False
     except Exception as e:
         print(f"❌ Error testing NocoDB connection: {e}")
-        return False 
+        return False
