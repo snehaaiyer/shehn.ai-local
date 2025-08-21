@@ -182,7 +182,7 @@ const AIChat: React.FC = () => {
                   <Sparkles className="h-6 w-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Bid AI Assistant</h1>
+                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Shehnai AI Assistant</h1>
                   <p className="text-gray-600">Your wedding planning companion</p>
                 </div>
               </div>

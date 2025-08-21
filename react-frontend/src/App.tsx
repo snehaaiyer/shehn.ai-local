@@ -56,7 +56,11 @@ const App: React.FC = () => {
                 >
                   <Menu className="h-6 w-6" />
                 </button>
-                <h1 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-deep-navy'}`}>BID AI Wedding</h1>
+                <img 
+                  src="/shehnai-logo.png" 
+                  alt="Shehnai.AI" 
+                  className="h-6 w-auto"
+                />
                 <div className="w-10"></div>
               </div>
             </div>

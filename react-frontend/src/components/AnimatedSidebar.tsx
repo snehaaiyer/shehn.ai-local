@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, Search, DollarSign, Heart, MessageCircle, 
+import {
+  Home, Search, DollarSign, Heart, MessageCircle,
   X, Settings, User, LogOut, Sun, Moon, Calendar
 } from "lucide-react";
 import { useAppStore } from '../store/useAppStore';
@@ -114,14 +114,18 @@ export const AnimatedSidebar: React.FC = () => {
           >
             <div className={`flex h-full flex-col shadow-2xl border-r transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
               {/* Header */}
-              <motion.div 
+              <motion.div
                 className={`flex h-16 items-center justify-between px-6 border-b transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}
                 custom={0}
                 variants={menuItemVariants}
               >
-                <h2 className={`text-lg font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-deep-navy'}`}>
-                  BID AI Wedding
-                </h2>
+                <div className="flex items-center space-x-3 mb-8">
+                  <img
+                    src="/shehnai-logo.png"
+                    alt="Shehnai.AI"
+                    className="h-10 w-auto"
+                  />
+                </div>
                 <motion.button
                   onClick={() => setSidebarOpen(false)}
                   className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-pastel-rose/20 text-deep-navy'}`}
@@ -144,9 +148,9 @@ export const AnimatedSidebar: React.FC = () => {
                       to={item.href}
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${
-                                            location.pathname === item.href
-                      ? theme === 'dark' ? 'text-white shadow-lg' : 'bg-salmon-pink text-white shadow-lg'
-                      : theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-deep-navy hover:bg-pastel-rose/20'
+                        location.pathname === item.href
+                          ? theme === 'dark' ? 'text-white shadow-lg' : 'bg-salmon-pink text-white shadow-lg'
+                          : theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-deep-navy hover:bg-pastel-rose/20'
                       }`}
                     >
                       <motion.div
@@ -161,7 +165,7 @@ export const AnimatedSidebar: React.FC = () => {
               </nav>
 
               {/* Footer */}
-              <motion.div 
+              <motion.div
                 className={`border-t p-4 space-y-2 transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}
                 custom={navigation.length + 1}
                 variants={menuItemVariants}
@@ -194,7 +198,7 @@ export const AnimatedSidebar: React.FC = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <motion.div 
+      <motion.div
         className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -202,9 +206,13 @@ export const AnimatedSidebar: React.FC = () => {
       >
         <div className={`flex flex-col flex-grow shadow-xl border-r transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className={`flex h-16 items-center px-6 border-b transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-            <h2 className={`text-lg font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-deep-navy'}`}>
-              BID AI Wedding
-            </h2>
+            <div className="flex items-center space-x-3 mb-8">
+              <img
+                src="/shehnai-logo.png"
+                alt="Shehnai.AI"
+                className="h-10 w-auto"
+              />
+            </div>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navigation.map((item, index) => (
@@ -232,7 +240,7 @@ export const AnimatedSidebar: React.FC = () => {
               </motion.div>
             ))}
           </nav>
-          <motion.div 
+          <motion.div
             className={`border-t p-4 space-y-2 transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -264,4 +272,4 @@ export const AnimatedSidebar: React.FC = () => {
       </motion.div>
     </>
   );
-}; 
+};
