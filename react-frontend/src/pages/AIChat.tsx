@@ -184,8 +184,13 @@ const AIChat: React.FC = () => {
                 alt="Shehnai.AI" 
                 className="w-6 h-6 mr-2"
                 onError={(e) => {
-                  // Hide image if it fails to load
-                  (e.target as HTMLImageElement).style.display = 'none';
+                  // Replace with text fallback if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = document.createElement('div');
+                  fallback.className = 'w-6 h-6 mr-2 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-xs';
+                  fallback.textContent = 'S';
+                  target.parentNode?.insertBefore(fallback, target);
                 }}
               />
                 </div>
