@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Menu, Calendar, MessageCircle } from "lucide-react"; // Added MessageCircle here
+import { Menu, Calendar, MessageCircle, Users } from "lucide-react"; // Added MessageCircle and Users here
 import { AnimatedSidebar } from './components/AnimatedSidebar';
 import { NotificationProvider } from './components/NotificationProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -13,7 +13,7 @@ const VendorDiscovery = React.lazy(() => import('./pages/VendorDiscovery'));
 const BudgetManagement = React.lazy(() => import('./pages/BudgetManagement'));
 const WeddingPreferences = React.lazy(() => import('./pages/WeddingPreferences'));
 const AIChat = React.lazy(() => import('./pages/AIChat'));
-const GoogleIntegration = React.lazy(() => import('./components/GoogleIntegration'));
+const ManageVendors = React.lazy(() => import('./components/ManageVendors')); // Changed from GoogleIntegration
 const CommunicationHub = React.lazy(() => import('./components/CommunicationHub')); // Added CommunicationHub import
 
 const App: React.FC = () => {
@@ -75,7 +75,7 @@ const App: React.FC = () => {
                     <Route path="/budget" element={<BudgetManagement />} />
                     <Route path="/preferences" element={<WeddingPreferences />} />
                     <Route path="/chat" element={<AIChat />} />
-                    <Route path="/google-integration" element={<GoogleIntegration />} />
+                    <Route path="/manage-vendors" element={<ManageVendors />} /> {/* Changed route path and element */}
                     <Route path="/communication-hub" element={<CommunicationHub />} /> {/* Added Communication Hub route */}
                   </Routes>
                 </Suspense>

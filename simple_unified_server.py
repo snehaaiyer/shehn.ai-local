@@ -27,6 +27,9 @@ from vendor_database import get_vendor_database
 # Import Ollama AI service
 from ollama_ai_service import ollama_service
 
+# Import Gmail integration service
+from gmail_integration_service import GmailIntegrationService
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -375,6 +378,9 @@ Thanks! 🙏"""
 # Initialize communications agent
 comm_agent = CommunicationsAgent()
 
+# Gmail Integration Service instance
+gmail_service = GmailIntegrationService()
+
 class VendorDataValidator:
     """Comprehensive validation and cleaning system for vendor data"""
 
@@ -599,7 +605,7 @@ class VendorDataValidator:
                 return self._generate_category_specific_name(category, location)
 
         # Remove directory sites and suffixes
-        name = re.sub(r'\s*-\s*(?:Justdial|IndiaMART|Sulekha|UrbanPro|WedMeGood).*', '', name, flags=re.IGNORECASE)
+        name = re.sub(r'\s*-\s*(?:Justdial|IndiaMART|Sulekha|UrbanPro|WedMeGood|Weddingz).*', '', name, flags=re.IGNORECASE)
         name = re.sub(r'\s*\|\s*.*', '', name)
 
         # Remove location and generic terms
@@ -1431,11 +1437,31 @@ async def send_vendor_inquiry(request: Request):
         # Generate inquiry message
         message = comm_agent.generate_message('inquiry', vendor_info, wedding_info)
 
-        return {
-            "success": True,
-            "message": message,
-            "timestamp": datetime.now().isoformat()
-        }
+        # Use Gmail integration service to send the email
+        subject = f"Wedding {vendor_info.get('category', 'service')} Inquiry - {wedding_info.get('date', '')}"
+        to_email = vendor_info.get('email')
+        from_email = "your_wedding_assistant@gmail.com" # Replace with your sender email
+        
+        if to_email:
+            email_sent = gmail_service.send_email(to_email, subject, message, from_email)
+            if email_sent:
+                return {
+                    "success": True,
+                    "message": "Vendor inquiry sent successfully via email.",
+                    "timestamp": datetime.now().isoformat()
+                }
+            else:
+                return {
+                    "success": False,
+                    "message": "Failed to send vendor inquiry email.",
+                    "timestamp": datetime.now().isoformat()
+                }
+        else:
+            return {
+                "success": False,
+                "message": "Vendor email not provided.",
+                "timestamp": datetime.now().isoformat()
+            }
 
     except Exception as e:
         logger.error(f"Error sending vendor inquiry: {e}")
