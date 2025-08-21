@@ -28,7 +28,7 @@ NOCODB_HEADERS = {
 }
 
 # Other API Configurations
-SERPER_API_KEY = "67ee394aa7bacdd675d3e89a83d5bcbf02f45fa4"
+SERPER_API_KEY = "44f3982e40a663fc992acb96f7763f3c9f79bed7"
 OLLAMA_HOST = "http://localhost:11434"
 
 def get_api_headers():
