@@ -57,10 +57,14 @@ const App: React.FC = () => {
                   <Menu className="h-6 w-6" />
                 </button>
                 <img 
-                  src="/shehnai-logo.png" 
-                  alt="Shehnai.AI" 
-                  className="h-6 w-auto"
-                />
+              src="/api/storage/shehnai-logo.png" 
+              alt="Shehnai.AI" 
+              className="w-8 h-8 mr-3"
+              onError={(e) => {
+                // Fallback to local if storage fails
+                (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+              }}
+            />
                 <div className="w-10"></div>
               </div>
             </div>

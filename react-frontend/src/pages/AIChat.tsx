@@ -29,7 +29,7 @@ const AIChat: React.FC = () => {
       if (savedPreferences) {
         try {
           const preferences = JSON.parse(savedPreferences);
-          
+
           // Add welcome message with user context
           const welcomeMessage = generateWelcomeMessage(preferences);
           setMessages([{
@@ -64,13 +64,13 @@ const AIChat: React.FC = () => {
     const weddingDate = preferences.basicDetails?.weddingDate;
     const location = preferences.basicDetails?.location;
     const budget = preferences.basicDetails?.budgetRange;
-    
+
     let welcome = "🎉 Welcome to Bid AI! I'm your intelligent wedding planning assistant.\n\n";
-    
+
     if (weddingDate && location && budget) {
       welcome += `I can see you're planning a ${budget} wedding in ${location} on ${weddingDate}.\n\n`;
     }
-    
+
     welcome += "I can help you with:\n";
     welcome += "📅 Schedule meetings with vendors\n";
     welcome += "🔍 Find vendors based on your preferences\n";
@@ -79,15 +79,15 @@ const AIChat: React.FC = () => {
     welcome += "📋 Create wedding timelines\n";
     welcome += "💰 Analyze your budget\n";
     welcome += "💬 Communicate with vendors\n\n";
-    
+
     // Check if in demo mode
     const isDemoMode = !process.env.REACT_APP_GOOGLE_API_KEY || !process.env.REACT_APP_GEMINI_API_KEY;
     if (isDemoMode) {
       welcome += "🔄 Demo Mode: I'm running in demo mode without API keys. Add your API keys for full functionality!\n\n";
     }
-    
+
     welcome += "Just tell me what you need help with!";
-    
+
     return welcome;
   };
 
@@ -127,7 +127,7 @@ const AIChat: React.FC = () => {
       // Use the AI assistant service
       // Demo response for now
     const result = { action: 'message', data: { response: 'This is a demo response. Add API keys for full functionality.' } };
-      
+
       setMessages(prev => {
         const filtered = prev.filter(msg => !msg.loading);
         return [...filtered, {
@@ -179,7 +179,15 @@ const AIChat: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
-                  <Sparkles className="h-6 w-6" style={{ color: '#FFFFFF' }} />
+                  <img 
+                src="/api/storage/shehnai-logo.png" 
+                alt="Shehnai.AI" 
+                className="w-6 h-6 mr-2"
+                onError={(e) => {
+                  // Fallback to local if storage fails
+                  (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+                }}
+              />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Shehnai AI Assistant</h1>
@@ -326,4 +334,4 @@ const AIChat: React.FC = () => {
   );
 };
 
-export default AIChat; 
+export default AIChat;

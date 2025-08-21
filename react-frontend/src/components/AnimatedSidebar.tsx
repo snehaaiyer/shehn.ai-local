@@ -121,9 +121,13 @@ export const AnimatedSidebar: React.FC = () => {
               >
                 <div className="flex items-center space-x-3 mb-8">
                   <img
-                    src="/shehnai-logo.png"
+                    src="/api/storage/shehnai-logo.png"
                     alt="Shehnai.AI"
                     className="h-10 w-auto"
+                    onError={(e) => {
+                      // Fallback to local if storage fails
+                      (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+                    }}
                   />
                 </div>
                 <motion.button
@@ -208,9 +212,13 @@ export const AnimatedSidebar: React.FC = () => {
           <div className={`flex h-16 items-center px-6 border-b transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <div className="flex items-center space-x-3 mb-8">
               <img
-                src="/shehnai-logo.png"
+                src="/api/storage/shehnai-logo.png"
                 alt="Shehnai.AI"
                 className="h-10 w-auto"
+                onError={(e) => {
+                  // Fallback to local if storage fails
+                  (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+                }}
               />
             </div>
           </div>
