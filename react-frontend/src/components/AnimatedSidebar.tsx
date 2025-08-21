@@ -7,6 +7,29 @@ import {
 } from "lucide-react";
 import { useAppStore } from '../store/useAppStore';
 
+// Logo component with proper React fallback
+const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-10 w-auto" }) => {
+  const [imageError, setImageError] = React.useState(false);
+
+  if (imageError) {
+    return (
+      <div className={`${size} mr-3 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-sm`}>
+        S
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src="/shehnai-logo.png"
+      alt="Shehnai.AI"
+      className={`${size}`}
+      onError={() => setImageError(true)}
+    />
+  );
+};
+
+
 interface NavItem {
   name: string;
   href: string;
@@ -119,20 +142,8 @@ export const AnimatedSidebar: React.FC = () => {
                 custom={0}
                 variants={menuItemVariants}
               >
-                <div className="flex items-center space-x-3 mb-8">
-                  <img
-                    src="/shehnai-logo.png"
-                    alt="Shehnai.AI"
-                    className="h-10 w-auto"
-                    onError={(e) => {
-                      // Fallback to text if image fails
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      target.parentElement!.innerHTML = `
-                        <div class="text-xl font-bold text-salmon-pink">Shehnai.AI</div>
-                      `;
-                    }}
-                  />
+                <div className="flex items-center space-x-3">
+                  <LogoWithFallback size="h-10 w-auto" />
                 </div>
                 <motion.button
                   onClick={() => setSidebarOpen(false)}
@@ -214,20 +225,8 @@ export const AnimatedSidebar: React.FC = () => {
       >
         <div className={`flex flex-col flex-grow shadow-xl border-r transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className={`flex h-16 items-center px-6 border-b transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-            <div className="flex items-center space-x-3 mb-8">
-              <img
-                src="/shehnai-logo.png"
-                alt="Shehnai.AI"
-                className="h-10 w-auto"
-                onError={(e) => {
-                  // Fallback to text if image fails
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.parentElement!.innerHTML = `
-                    <div class="text-xl font-bold text-salmon-pink">Shehnai.AI</div>
-                  `;
-                }}
-              />
+            <div className="flex items-center space-x-3">
+              <LogoWithFallback size="h-10 w-auto" />
             </div>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">

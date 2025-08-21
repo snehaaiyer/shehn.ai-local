@@ -188,7 +188,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd react-frontend && npm install && PORT=3000 HOST=0.0.0.0 BROWSER=none npm start"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3001 BROWSER=none FAST_REFRESH=false npm start"
 
 [[workflows.workflow]]
 name = "Full Wedding System with Backend"

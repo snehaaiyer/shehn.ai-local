@@ -7,6 +7,28 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { useAppStore } from './store/useAppStore';
 import './App.css';
 
+// Logo component with proper React fallback
+const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => {
+  const [imageError, setImageError] = React.useState(false);
+  
+  if (imageError) {
+    return (
+      <div className={`${size} mr-3 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-sm`}>
+        S
+      </div>
+    );
+  }
+  
+  return (
+    <img 
+      src="/shehnai-logo.png" 
+      alt="Shehnai.AI" 
+      className={`${size} mr-3`}
+      onError={() => setImageError(true)}
+    />
+  );
+};
+
 // Lazy load pages for better performance
 const Index = React.lazy(() => import('./pages/Index'));
 const VendorDiscovery = React.lazy(() => import('./pages/VendorDiscovery'));
@@ -56,20 +78,7 @@ const App: React.FC = () => {
                 >
                   <Menu className="h-6 w-6" />
                 </button>
-                <img 
-              src="/shehnai-logo.png" 
-              alt="Shehnai.AI" 
-              className="w-8 h-8 mr-3"
-              onError={(e) => {
-                // Replace with text fallback if image fails to load
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const fallback = document.createElement('div');
-                fallback.className = 'w-8 h-8 mr-3 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-sm';
-                fallback.textContent = 'S';
-                target.parentNode?.insertBefore(fallback, target);
-              }}
-            />
+                <LogoWithFallback />
                 <div className="w-10"></div>
               </div>
             </div>

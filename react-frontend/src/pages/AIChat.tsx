@@ -14,6 +14,28 @@ interface Message {
   };
 }
 
+// Logo component with proper React fallback
+const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => {
+  const [imageError, setImageError] = React.useState(false);
+
+  if (imageError) {
+    return (
+      <div className={`${size} mr-2 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-xs`}>
+        S
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src="/shehnai-logo.png" 
+      alt="Shehnai.AI" 
+      className={`${size} mr-2`}
+      onError={() => setImageError(true)}
+    />
+  );
+};
+
 const AIChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -179,20 +201,7 @@ const AIChat: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
-                  <img 
-                src="/shehnai-logo.png" 
-                alt="Shehnai.AI" 
-                className="w-6 h-6 mr-2"
-                onError={(e) => {
-                  // Replace with text fallback if image fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallback = document.createElement('div');
-                  fallback.className = 'w-6 h-6 mr-2 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-xs';
-                  fallback.textContent = 'S';
-                  target.parentNode?.insertBefore(fallback, target);
-                }}
-              />
+                  <LogoWithFallback size="w-6 h-6" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Shehnai AI Assistant</h1>
@@ -258,6 +267,7 @@ const AIChat: React.FC = () => {
                     )}
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
 
               {/* Input Area */}
