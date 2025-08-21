@@ -367,6 +367,13 @@ class EnhancedSerperAPI:
             }
 
             response = requests.post(self.search_url, headers=headers, json=payload, timeout=15)
+            
+            # Debug API response
+            if response.status_code != 200:
+                logger.error(f"API Error {response.status_code}: {response.text}")
+                logger.error(f"Request payload: {payload}")
+                logger.error(f"Request headers: {headers}")
+            
             response.raise_for_status()
 
             data = response.json()
