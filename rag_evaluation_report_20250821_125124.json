@@ -1,0 +1,138 @@
+{
+  "evaluation_summary": {
+    "total_scenarios": 3,
+    "average_quality_score": 1.11,
+    "average_relevance_score": 2.0,
+    "rag_wins": 1,
+    "traditional_wins": 0,
+    "ties": 2
+  },
+  "detailed_results": [
+    {
+      "scenario_name": "Luxury Traditional Wedding - Mumbai",
+      "preferences": {
+        "weddingTheme": "traditional royal",
+        "decorStyle": "royal rajasthani",
+        "colorTheme": "red gold",
+        "venueStyle": "heritage palace",
+        "culturalRequirements": [
+          "traditional indian",
+          "religious ceremonies"
+        ],
+        "cuisineStyle": "north indian",
+        "photographyStyle": "traditional",
+        "budgetRange": "\u20b930-50 Lakhs",
+        "guestCount": 500,
+        "city": "Mumbai",
+        "indoorOutdoor": "indoor",
+        "priorities": [
+          "venue",
+          "photography",
+          "catering"
+        ]
+      },
+      "rag_results_count": 1,
+      "traditional_results_count": 0,
+      "quality_analysis": {
+        "overall_quality_score": 3.33,
+        "relevance_score": 6.0,
+        "diversity_score": 2,
+        "match_explanations": [
+          "Average RAG Score: 0.333",
+          "Location Matches: 1/1 (100.0%)",
+          "Budget Tier Matches: 1/1 (100.0%)",
+          "Relevance Matches: 0/1 (0.0%)",
+          "Category Distribution: {'venues': 1}"
+        ]
+      },
+      "comparison_analysis": {
+        "rag_advantages": [
+          "More results found (1 vs 0)",
+          "More contact info (1 vs 0)"
+        ],
+        "traditional_advantages": [],
+        "overall_winner": "rag"
+      },
+      "timestamp": "2025-08-21T12:17:42.565660"
+    },
+    {
+      "scenario_name": "Modern Minimalist Wedding - Bangalore",
+      "preferences": {
+        "weddingTheme": "minimalist contemporary",
+        "decorStyle": "minimalist pastel",
+        "colorTheme": "white pastel",
+        "venueStyle": "modern luxury hotel",
+        "culturalRequirements": [
+          "fusion ceremonies"
+        ],
+        "cuisineStyle": "international fusion",
+        "photographyStyle": "candid artistic",
+        "budgetRange": "\u20b920-35 Lakhs",
+        "guestCount": 200,
+        "city": "Bangalore",
+        "indoorOutdoor": "indoor",
+        "priorities": [
+          "photography",
+          "venue",
+          "decoration"
+        ]
+      },
+      "rag_results_count": 0,
+      "traditional_results_count": 0,
+      "quality_analysis": {
+        "overall_quality_score": 0,
+        "relevance_score": 0,
+        "diversity_score": 0,
+        "match_explanations": [
+          "No results found"
+        ]
+      },
+      "comparison_analysis": {
+        "rag_advantages": [],
+        "traditional_advantages": [],
+        "overall_winner": "tie"
+      },
+      "timestamp": "2025-08-21T12:34:33.474719"
+    },
+    {
+      "scenario_name": "Destination Beach Wedding - Goa",
+      "preferences": {
+        "weddingTheme": "beach destination",
+        "decorStyle": "bohemian coastal",
+        "colorTheme": "ocean blue",
+        "venueStyle": "beach resort",
+        "culturalRequirements": [
+          "outdoor ceremonies",
+          "casual"
+        ],
+        "cuisineStyle": "coastal seafood",
+        "photographyStyle": "candid outdoor",
+        "budgetRange": "\u20b925-40 Lakhs",
+        "guestCount": 150,
+        "city": "Goa",
+        "indoorOutdoor": "outdoor",
+        "priorities": [
+          "venue",
+          "photography"
+        ]
+      },
+      "rag_results_count": 0,
+      "traditional_results_count": 0,
+      "quality_analysis": {
+        "overall_quality_score": 0,
+        "relevance_score": 0,
+        "diversity_score": 0,
+        "match_explanations": [
+          "No results found"
+        ]
+      },
+      "comparison_analysis": {
+        "rag_advantages": [],
+        "traditional_advantages": [],
+        "overall_winner": "tie"
+      },
+      "timestamp": "2025-08-21T12:51:24.642787"
+    }
+  ],
+  "timestamp": "2025-08-21T12:51:24.645847"
+}
