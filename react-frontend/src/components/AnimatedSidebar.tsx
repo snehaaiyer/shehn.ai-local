@@ -121,12 +121,16 @@ export const AnimatedSidebar: React.FC = () => {
               >
                 <div className="flex items-center space-x-3 mb-8">
                   <img
-                    src="/api/storage/shehnai-logo.png"
+                    src="/shehnai-logo.png"
                     alt="Shehnai.AI"
                     className="h-10 w-auto"
                     onError={(e) => {
-                      // Fallback to local if storage fails
-                      (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+                      // Fallback to text if image fails
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.parentElement!.innerHTML = `
+                        <div class="text-xl font-bold text-salmon-pink">Shehnai.AI</div>
+                      `;
                     }}
                   />
                 </div>
@@ -212,12 +216,16 @@ export const AnimatedSidebar: React.FC = () => {
           <div className={`flex h-16 items-center px-6 border-b transition-colors duration-300 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <div className="flex items-center space-x-3 mb-8">
               <img
-                src="/api/storage/shehnai-logo.png"
+                src="/shehnai-logo.png"
                 alt="Shehnai.AI"
                 className="h-10 w-auto"
                 onError={(e) => {
-                  // Fallback to local if storage fails
-                  (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+                  // Fallback to text if image fails
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.parentElement!.innerHTML = `
+                    <div class="text-xl font-bold text-salmon-pink">Shehnai.AI</div>
+                  `;
                 }}
               />
             </div>

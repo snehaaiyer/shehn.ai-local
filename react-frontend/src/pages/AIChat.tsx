@@ -180,12 +180,12 @@ const AIChat: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
                   <img 
-                src="/api/storage/shehnai-logo.png" 
+                src="/shehnai-logo.png" 
                 alt="Shehnai.AI" 
                 className="w-6 h-6 mr-2"
                 onError={(e) => {
-                  // Fallback to local if storage fails
-                  (e.target as HTMLImageElement).src = "/shehnai-logo.png";
+                  // Hide image if it fails to load
+                  (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
                 </div>
