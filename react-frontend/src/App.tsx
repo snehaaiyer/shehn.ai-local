@@ -37,6 +37,7 @@ const WeddingPreferences = React.lazy(() => import('./pages/WeddingPreferences')
 const AIChat = React.lazy(() => import('./pages/AIChat'));
 const ManageVendors = React.lazy(() => import('./components/ManageVendors')); // Changed from GoogleIntegration
 const CommunicationHub = React.lazy(() => import('./components/CommunicationHub')); // Added CommunicationHub import
+const VendorCommunication = React.lazy(() => import('./pages/VendorCommunication')); // Added VendorCommunication import
 
 const App: React.FC = () => {
   const { setSidebarOpen, theme } = useAppStore();
@@ -100,7 +101,7 @@ const App: React.FC = () => {
                     <Route path="/manage-vendors" element={<ManageVendors />} /> {/* Changed from GoogleIntegration */}
                     <Route path="/vendor-communication" element={
                       <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div></div>}>
-                        <GoogleIntegration />
+                        <VendorCommunication />
                       </Suspense>
                     } /> {/* Updated route path */}
                     <Route path="/communication-hub" element={<CommunicationHub />} /> {/* Added Communication Hub route */}
