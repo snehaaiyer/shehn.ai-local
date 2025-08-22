@@ -8,12 +8,12 @@ import {
 import { useAppStore } from '../store/useAppStore';
 
 // Logo component with proper React fallback
-const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-10 w-auto" }) => {
+const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-10 h-10" }) => {
   const [imageError, setImageError] = React.useState(false);
 
   if (imageError) {
     return (
-      <div className={`${size} mr-3 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-sm`}>
+      <div className="w-10 h-10 mr-3 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-lg">
         S
       </div>
     );
@@ -23,8 +23,9 @@ const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-10 w-auto" })
     <img
       src="/shehnai-logo.png"
       alt="Shehnai.AI"
-      className={`${size}`}
+      className="w-10 h-10 mr-3"
       onError={() => setImageError(true)}
+      onLoad={() => console.log('✅ Logo loaded successfully')}
     />
   );
 };

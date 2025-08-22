@@ -507,86 +507,101 @@ const WeddingPreferences: React.FC = () => {
   ];
 
   useEffect(() => {
-    const savedPreferences = localStorage.getItem('weddingPreferences');
-    if (savedPreferences) {
+    const loadDefaultPreferences = () => {
       try {
-        const parsed = JSON.parse(savedPreferences);
+        const savedPreferences = localStorage.getItem('weddingPreferences');
+        if (savedPreferences) {
+          const preferences = JSON.parse(savedPreferences);
+          console.log('📋 Loading saved preferences:', preferences);
 
-        // Ensure the photography object has all required nested properties
-        const enhancedParsed = {
-          ...parsed,
-          basicDetails: {
-            guestCount: parsed.basicDetails?.guestCount || 100,
-            weddingDate: parsed.basicDetails?.weddingDate || '',
-            location: parsed.basicDetails?.location || '',
-            budgetRange: parsed.basicDetails?.budgetRange || '',
-            yourName: parsed.basicDetails?.yourName || '',
-            partnerName: parsed.basicDetails?.partnerName || '',
-            contactNumber: parsed.basicDetails?.contactNumber || '',
-            priorities: parsed.basicDetails?.priorities || [
-              { id: 'venue', name: '🏛️ Perfect Venue', description: 'Finding the ideal location for your celebration' },
-              { id: 'photography', name: '📸 Photography & Videography', description: 'Capturing every precious moment' },
-              { id: 'catering', name: '🍽️ Food & Catering', description: 'Delicious cuisine for your guests' },
-              { id: 'decor', name: '🎨 Decor & Theme', description: 'Beautiful decorations and ambiance' },
-              { id: 'entertainment', name: '🎵 Music & Entertainment', description: 'DJ, band, and entertainment for guests' },
-              { id: 'outfits', name: '👗 Wedding Outfits', description: 'Perfect attire for the couple' },
-              { id: 'flowers', name: '🌸 Floral Arrangements', description: 'Beautiful flowers and bouquets' },
-              { id: 'transportation', name: '🚗 Transportation', description: 'Getting to and from the venue' }
-            ],
-            datesFlexible: parsed.basicDetails?.datesFlexible || false,
-            eventDuration: parsed.basicDetails?.eventDuration || ''
-          },
-          photography: {
-            style: parsed.photography?.style || '',
-            coverage: parsed.photography?.coverage || '',
-            specialRequests: parsed.photography?.specialRequests || '',
-            multiDayCoverage: {
-              preWeddingShoot: parsed.photography?.multiDayCoverage?.preWeddingShoot || false,
-              engagementShoot: parsed.photography?.multiDayCoverage?.engagementShoot || false,
-              mehendiCeremony: parsed.photography?.multiDayCoverage?.mehendiCeremony || false,
-              haldiCeremony: parsed.photography?.multiDayCoverage?.haldiCeremony || false,
-              sangeetCeremony: parsed.photography?.multiDayCoverage?.sangeetCeremony || false,
-              weddingCeremony: parsed.photography?.multiDayCoverage?.weddingCeremony || true,
-              reception: parsed.photography?.multiDayCoverage?.reception || true,
-              postWeddingShoot: parsed.photography?.multiDayCoverage?.postWeddingShoot || false
-            },
-            videography: {
-              required: parsed.photography?.videography?.required || false,
-              style: parsed.photography?.videography?.style || '',
-              droneCoverage: parsed.photography?.videography?.droneCoverage || false,
-              coverageDuration: parsed.photography?.videography?.coverageDuration || ''
-            },
-            culturalCoverage: {
-              mandapCeremony: parsed.photography?.culturalCoverage?.mandapCeremony || true,
-              agniCeremony: parsed.photography?.culturalCoverage?.agniCeremony || true,
-              familyPortraits: parsed.photography?.culturalCoverage?.familyPortraits || true,
-              traditionalAttire: parsed.photography?.culturalCoverage?.traditionalAttire || true,
-              culturalPerformances: parsed.photography?.culturalCoverage?.culturalPerformances || false,
-              specificRituals: parsed.photography?.culturalCoverage?.specificRituals || []
-            },
-            deliverables: {
-              digitalGallery: parsed.photography?.deliverables?.digitalGallery || true,
-              physicalAlbum: parsed.photography?.deliverables?.physicalAlbum || false,
-              videoHighlights: parsed.photography?.deliverables?.videoHighlights || false,
-              fullVideo: parsed.photography?.deliverables?.fullVideo || false,
-              prints: parsed.photography?.deliverables?.prints || false,
-              socialMediaSharing: parsed.photography?.deliverables?.socialMediaSharing || true
-            },
-            technicalPreferences: {
-              equipmentType: parsed.photography?.technicalPreferences?.equipmentType || '',
-              lightingStyle: parsed.photography?.technicalPreferences?.lightingStyle || '',
-              backupPhotographer: parsed.photography?.technicalPreferences?.backupPhotographer || false,
-              editingStyle: parsed.photography?.technicalPreferences?.editingStyle || ''
-            },
-            budgetRange: parsed.photography?.budgetRange || ''
+          // Set basic details
+          if (preferences.basicDetails) {
+            Object.keys(preferences.basicDetails).forEach(key => {
+              if (preferences.basicDetails[key] !== undefined) {
+                updatePreference('basicDetails', key, preferences.basicDetails[key]);
+              }
+            });
           }
-        };
 
-        setPreferences(prev => ({ ...prev, ...enhancedParsed }));
+          // Set other sections
+          if (preferences.theme) {
+            Object.keys(preferences.theme).forEach(key => {
+              if (preferences.theme[key] !== undefined) {
+                updatePreference('theme', key, preferences.theme[key]);
+              }
+            });
+          }
+
+          if (preferences.venue) {
+            Object.keys(preferences.venue).forEach(key => {
+              if (preferences.venue[key] !== undefined) {
+                updatePreference('venue', key, preferences.venue[key]);
+              }
+            });
+          }
+
+          if (preferences.catering) {
+            Object.keys(preferences.catering).forEach(key => {
+              if (preferences.catering[key] !== undefined) {
+                updatePreference('catering', key, preferences.catering[key]);
+              }
+            });
+          }
+
+          // Load photography preferences with all nested objects
+          if (preferences.photography) {
+            const photoPrefs = preferences.photography;
+
+            // Basic photography fields
+            ['style', 'coverage', 'specialRequests', 'budgetRange'].forEach(key => {
+              if (photoPrefs[key] !== undefined) {
+                updatePreference('photography', key, photoPrefs[key]);
+              }
+            });
+
+            // Nested objects
+            if (photoPrefs.multiDayCoverage) {
+              Object.keys(photoPrefs.multiDayCoverage).forEach(key => {
+                updatePreference('photography', 'multiDayCoverage', photoPrefs.multiDayCoverage[key], key);
+              });
+            }
+
+            if (photoPrefs.videography) {
+              Object.keys(photoPrefs.videography).forEach(key => {
+                updatePreference('photography', 'videography', photoPrefs.videography[key], key);
+              });
+            }
+
+            if (photoPrefs.culturalCoverage) {
+              Object.keys(photoPrefs.culturalCoverage).forEach(key => {
+                updatePreference('photography', 'culturalCoverage', photoPrefs.culturalCoverage[key], key);
+              });
+            }
+
+            if (photoPrefs.deliverables) {
+              Object.keys(photoPrefs.deliverables).forEach(key => {
+                updatePreference('photography', 'deliverables', photoPrefs.deliverables[key], key);
+              });
+            }
+
+            if (photoPrefs.technicalPreferences) {
+              Object.keys(photoPrefs.technicalPreferences).forEach(key => {
+                updatePreference('photography', 'technicalPreferences', photoPrefs.technicalPreferences[key], key);
+              });
+            }
+          }
+
+          console.log('✅ Successfully loaded preferences');
+        } else {
+          console.log('📝 No saved preferences found, using defaults');
+        }
       } catch (error) {
-        console.error('Error parsing saved preferences:', error);
+        console.error('❌ Error loading preferences:', error);
+        // Continue with default values
       }
-    }
+    };
+
+    loadDefaultPreferences();
   }, []);
 
   // Drag and Drop State
@@ -630,37 +645,36 @@ const WeddingPreferences: React.FC = () => {
 
   const updatePreference = (section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
     setPreferences(prev => {
-      if (subKey) {
-        // Handle nested objects (e.g., photography.multiDayCoverage.preWeddingShoot)
-        const currentSection = prev[section] as any;
-        const currentKey = currentSection[key] as any;
+      // Handle deeply nested updates carefully
+      let updatedSection = { ...prev[section] as any };
 
-        return {
-          ...prev,
-          [section]: {
-            ...currentSection,
-            [key]: {
-              ...currentKey,
-              [subKey]: value
-            }
+      if (subKey) {
+        // Check if the key and subKey path exists, create if not
+        const keys = key.split('.');
+        let currentLevel = updatedSection;
+        for (let i = 0; i < keys.length - 1; i++) {
+          if (!currentLevel[keys[i]]) {
+            currentLevel[keys[i]] = {};
           }
-        };
+          currentLevel = currentLevel[keys[i]];
+        }
+        currentLevel[key.split('.').pop()!] = { ...currentLevel[key.split('.').pop()], [subKey]: value };
       } else {
-        // Handle direct properties
-        return {
-          ...prev,
-          [section]: { ...prev[section] as any, [key]: value }
-        };
+        updatedSection[key] = value;
       }
+      
+      return {
+        ...prev,
+        [section]: updatedSection
+      };
     });
 
     // Auto-save to localStorage
-    const currentSection = preferences[section] as any;
     const updatedPreferences = {
       ...preferences,
       [section]: subKey 
-        ? { ...currentSection, [key]: { ...currentSection[key], [subKey]: value } }
-        : { ...currentSection, [key]: value }
+        ? { ...preferences[section], [key]: { ...(preferences[section] as any)[key], [subKey]: value } }
+        : { ...preferences[section], [key]: value }
     };
     localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
 
@@ -677,7 +691,7 @@ const WeddingPreferences: React.FC = () => {
       try {
         console.log('🔄 Auto-saving preferences to NocoDB...');
         const result = await NocoDBService.savePreferences(preferencesData);
-        
+
         if (result.success) {
           console.log('✅ Preferences saved to NocoDB successfully');
           // Optional: Show success toast
@@ -695,9 +709,11 @@ const WeddingPreferences: React.FC = () => {
   function debounce(func: Function, wait: number) {
     let timeout: NodeJS.Timeout;
     return function executedFunction(...args: any[]) {
+      const context = this;
       const later = () => {
-        clearTimeout(timeout);
-        func(...args);
+        timeout = setTimeout(function() {
+          func.apply(context, args);
+        }, wait);
       };
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
@@ -1267,7 +1283,7 @@ const WeddingPreferences: React.FC = () => {
                 {/* Multi-Day Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Multi-Day Coverage</h3>
-                  <p className="text-gray-600 mb-4">Select which events you\'d like photographed:</p>
+                  <p className="text-gray-600 mb-4">Select which events you'd like photographed:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
                       <input 

@@ -47,9 +47,9 @@ interface Vendor {
 const VendorDiscovery: React.FC = () => {
   // Core state
   const [hasError, setHasError] = useState(false);
-  // Removed unused vendors state - using filteredVendors instead
+  const [errorMessage, setErrorMessage] = useState('');
   const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('venues'); // Default to venues
   const [favorites, setFavorites] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState('grid');
   const [isLoading, setIsLoading] = useState(false);
@@ -120,6 +120,9 @@ const VendorDiscovery: React.FC = () => {
 
   const searchVendors = useCallback(async () => {
     setIsLoading(true);
+    setHasError(false);
+    setErrorMessage('');
+    
     try {
       const searchParams = {
         category: appliedFilters.category || selectedCategory,
@@ -129,16 +132,22 @@ const VendorDiscovery: React.FC = () => {
         searchTerm: searchQuery
       };
 
+      console.log('🔍 Searching vendors with params:', searchParams);
+
       const response = await VendorDiscoveryService.searchVendors(searchParams);
 
       if (response.success && response.vendors) {
         setFilteredVendors(response.vendors);
+        console.log(`✅ Found ${response.vendors.length} vendors`);
       } else {
-        console.error('Error searching vendors:', response.error);
+        console.error('❌ Error searching vendors:', response.error);
+        setErrorMessage(response.error || 'Failed to search vendors');
         setFilteredVendors([]);
       }
     } catch (error) {
-      console.error('Error fetching vendors:', error);
+      console.error('❌ Critical error fetching vendors:', error);
+      setHasError(true);
+      setErrorMessage(error instanceof Error ? error.message : 'Unknown error occurred');
       setFilteredVendors([]);
     } finally {
       setIsLoading(false);
@@ -273,19 +282,36 @@ const VendorDiscovery: React.FC = () => {
     setShowVendorModal(false);
   };
 
-  // Show error state if there's an error
+  // Show error state if there's a critical error
   if (hasError) {
     return (
-      <div className="min-h-screen bg-soft-beige flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-deep-navy mb-4">Something went wrong</h2>
-          <p className="text-gray-600 mb-4">There was an error loading the vendor discovery page.</p>
-          <button
-            onClick={() => setHasError(false)}
-            className="px-4 py-2 bg-salmon-pink text-white rounded-lg hover:shadow-lg transition-all duration-300"
-          >
-            Try Again
-          </button>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center p-8 bg-white rounded-2xl shadow-lg border border-red-100">
+          <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+            <span className="text-red-500 text-2xl">⚠️</span>
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Something went wrong</h2>
+          <p className="text-gray-600 mb-4">
+            {errorMessage || 'There was an error loading the vendor discovery page.'}
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                setHasError(false);
+                setErrorMessage('');
+                searchVendors();
+              }}
+              className="w-full px-4 py-2 bg-salmon-pink text-white rounded-lg hover:shadow-lg transition-all duration-300"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-300"
+            >
+              Refresh Page
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -580,8 +606,30 @@ const VendorDiscovery: React.FC = () => {
               </div>
             )}
 
+            {/* Error Message */}
+            {!isLoading && errorMessage && !hasError && (
+              <div className="text-center py-8">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 max-w-md mx-auto">
+                  <div className="w-12 h-12 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <span className="text-yellow-600 text-xl">⚠️</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-yellow-800 mb-2">Search Error</h3>
+                  <p className="text-yellow-700 mb-4 text-sm">{errorMessage}</p>
+                  <button
+                    onClick={() => {
+                      setErrorMessage('');
+                      searchVendors();
+                    }}
+                    className="px-6 py-2 rounded-lg font-medium bg-yellow-600 text-white hover:bg-yellow-700 transition-all duration-300"
+                  >
+                    Retry Search
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* No Results */}
-            {!isLoading && filteredVendors.length === 0 && (
+            {!isLoading && !errorMessage && filteredVendors.length === 0 && (
               <div className="text-center py-12">
                 <div className="bg-gray-50 rounded-xl p-8 max-w-md mx-auto">
                   <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
