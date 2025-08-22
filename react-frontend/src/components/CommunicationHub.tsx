@@ -389,7 +389,7 @@ ${details.coupleNames}`;
                 }`}
               >
                 <Calendar className="w-5 h-5" />
-                Calendar Integration
+                Vendor Communication
               </button>
             </div>
           </div>
@@ -597,7 +597,7 @@ ${details.coupleNames}`;
           {/* Calendar Integration Tab */}
           {activeTab === 'calendar' && (
             <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Calendar Integration</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Vendor Communication</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>

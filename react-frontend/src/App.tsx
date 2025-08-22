@@ -10,7 +10,7 @@ import './App.css';
 // Logo component with proper React fallback
 const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => {
   const [imageError, setImageError] = React.useState(false);
-  
+
   if (imageError) {
     return (
       <div className={`${size} mr-3 bg-salmon-pink rounded-full flex items-center justify-center text-white font-bold text-sm`}>
@@ -18,7 +18,7 @@ const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => 
       </div>
     );
   }
-  
+
   return (
     <img 
       src="/shehnai-logo.png" 
@@ -97,7 +97,12 @@ const App: React.FC = () => {
                     <Route path="/budget" element={<BudgetManagement />} />
                     <Route path="/preferences" element={<WeddingPreferences />} />
                     <Route path="/chat" element={<AIChat />} />
-                    <Route path="/manage-vendors" element={<ManageVendors />} /> {/* Changed route path and element */}
+                    <Route path="/manage-vendors" element={<ManageVendors />} /> {/* Changed from GoogleIntegration */}
+                    <Route path="/vendor-communication" element={
+                      <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div></div>}>
+                        <GoogleIntegration />
+                      </Suspense>
+                    } /> {/* Updated route path */}
                     <Route path="/communication-hub" element={<CommunicationHub />} /> {/* Added Communication Hub route */}
                   </Routes>
                 </Suspense>

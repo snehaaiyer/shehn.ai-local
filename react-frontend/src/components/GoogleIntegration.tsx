@@ -307,7 +307,7 @@ const GoogleIntegration: React.FC = () => {
               <Calendar className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {isDemoMode ? 'Google Integration (Demo Mode)' : 'Connect Your Google Account'}
+              {isDemoMode ? 'Vendor Communication (Demo Mode)' : 'Connect Your Google Account'}
             </h2>
             <p className="text-gray-600 mb-6">
               {isDemoMode 
@@ -353,7 +353,7 @@ const GoogleIntegration: React.FC = () => {
                 <Calendar className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Google Integration</h1>
+                <h1 className="text-xl font-bold text-gray-800">Vendor Communication</h1>
                 <p className="text-sm text-gray-600">
                   Manage calendar & emails for {userProfile?.name}
                 </p>
