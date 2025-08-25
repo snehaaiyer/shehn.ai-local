@@ -44,3 +44,36 @@ export class CloudflareAIService {
 }
 
 export const cloudflareAIService = new CloudflareAIService();
+// Cloudflare AI Service for venue image generation
+export class CloudflareAIService {
+  private baseUrl = 'https://wedding-ai-worker.aiyersneha19.workers.dev';
+
+  async generateImage(prompt: string, options = {}) {
+    try {
+      const response = await fetch(`${this.baseUrl}/generate-image`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          num_images: 1,
+          width: 1024,
+          height: 1024,
+          ...options
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Cloudflare AI Service Error:', error);
+      throw error;
+    }
+  }
+}
+
+export const cloudflareAI = new CloudflareAIService();

@@ -7,7 +7,7 @@ Includes vendor discovery functionality with communications agent
 import uvicorn
 import json
 from fastapi import FastAPI, Request, HTTPException, Body
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
@@ -66,64 +66,40 @@ app.add_middleware(
 )
 
 # Check if build directory exists and mount static files
-react_build_path = "react-frontend/build"
-react_public_path = "react-frontend/public"
+react_build_path = Path("react-frontend/build")
+react_public_path = Path("react-frontend/public")
 
-# Use build if available, otherwise fall back to public for development
-if os.path.exists(react_build_path):
-    # Production build exists
-    if os.path.exists(f"{react_build_path}/static"):
-        app.mount("/static", StaticFiles(directory=f"{react_build_path}/static"), name="static")
-    
-    @app.get("/")
-    async def serve_react_app():
-        try:
-            with open(f"{react_build_path}/index.html", "r") as f:
-                return HTMLResponse(content=f.read())
-        except FileNotFoundError:
-            return HTMLResponse("<h1>React app not built. Building now...</h1>")
+# Serve React static files only if build exists
+if react_build_path.exists() and (react_build_path / "static").exists():
+    app.mount("/static", StaticFiles(directory=f"{react_build_path}/static"), name="static")
 
     @app.get("/{path:path}")
-    async def serve_react_routes(path: str):
-        # For React Router - serve index.html for all routes that don't match API
-        if not path.startswith("api/"):
-            try:
-                with open(f"{react_build_path}/index.html", "r") as f:
-                    return HTMLResponse(content=f.read())
-            except FileNotFoundError:
-                return HTMLResponse("<h1>React app not built. Building now...</h1>")
-        raise HTTPException(status_code=404, detail="Not found")
-        
-elif os.path.exists(react_public_path):
-    # Development mode - serve from public
-    @app.get("/")
-    async def serve_development_app():
-        try:
-            with open(f"{react_public_path}/index.html", "r") as f:
-                return HTMLResponse(content=f.read())
-        except FileNotFoundError:
-            return HTMLResponse("<h1>React development server starting... Please wait.</h1>")
+    async def serve_react(request: Request, path: str = ""):
+        # API routes
+        if path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API endpoint not found")
 
-    @app.get("/{path:path}")
-    async def serve_development_routes(path: str):
-        if not path.startswith("api/"):
-            try:
-                with open(f"{react_public_path}/index.html", "r") as f:
-                    return HTMLResponse(content=f.read())
-            except FileNotFoundError:
-                return HTMLResponse("<h1>React development server starting... Please wait.</h1>")
-        raise HTTPException(status_code=404, detail="Not found")
-        
+        # Serve index.html for all other routes (SPA)
+        return FileResponse(f"{react_build_path}/index.html", media_type="text/html")
+
 else:
-    # Fallback
+    # Development fallback - redirect to React dev server
     @app.get("/")
     async def serve_fallback():
-        return HTMLResponse("<h1>React frontend not found. Please check react-frontend directory.</h1>")
+        return HTMLResponse("""
+        <h1>React Development Server</h1>
+        <p>The React app is running in development mode.</p>
+        <p>Visit <a href="http://localhost:3000">http://localhost:3000</a> for the React app.</p>
+        """)
 
     @app.get("/{path:path}")
     async def serve_fallback_routes(path: str):
         if not path.startswith("api/"):
-            return HTMLResponse("<h1>React frontend not found. Please check react-frontend directory.</h1>")
+            return HTMLResponse("""
+            <h1>React Development Server</h1>
+            <p>The React app is running in development mode.</p>
+            <p>Visit <a href="http://localhost:3000">http://localhost:3000</a> for the React app.</p>
+            """)
         raise HTTPException(status_code=404, detail="Not found")
 
 
