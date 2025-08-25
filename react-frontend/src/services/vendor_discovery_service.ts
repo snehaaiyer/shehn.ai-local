@@ -305,8 +305,8 @@ export class VendorDiscoveryService {
    * Search vendors using RAG-enhanced semantic search backend API
    */
   static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
-    const backendUrl = window.location.hostname === 'localhost' ? 
-      'http://localhost:5003' : 
+    const backendUrl = window.location.hostname === 'localhost' ?
+      'http://localhost:5003' :
       `https://${window.location.hostname}`;
 
     // Enhanced request body for RAG-enhanced semantic search
@@ -407,7 +407,7 @@ export class VendorDiscoveryService {
         // Complete basic details
         basicDetails: preferences.basicDetails || {},
 
-        // Complete theme preferences  
+        // Complete theme preferences
         theme: preferences.theme || {},
 
         // Complete venue preferences
@@ -461,7 +461,7 @@ export class VendorDiscoveryService {
   static calculatePreferencesCompletionLevel(preferences: any): number {
     const requiredFields = [
       'basicDetails.yourName',
-      'basicDetails.partnerName', 
+      'basicDetails.partnerName',
       'basicDetails.guestCount',
       'basicDetails.location',
       'basicDetails.budgetRange',
@@ -538,7 +538,7 @@ export class VendorDiscoveryService {
 
     return vendors.filter(vendor => {
       const vendorPriceRange = vendor.price_range.toLowerCase();
-      return compatibleRanges.some(range => 
+      return compatibleRanges.some(range =>
         vendorPriceRange.includes(range.toLowerCase()) ||
         this.isPriceRangeCompatible(vendorPriceRange, budgetRange)
       );
@@ -710,7 +710,7 @@ export class VendorDiscoveryService {
 
     // Location filter (more specific than business logic)
     if (params.location) {
-      filtered = filtered.filter(vendor => 
+      filtered = filtered.filter(vendor =>
         vendor.location.toLowerCase().includes(params.location!.toLowerCase())
       );
     }
@@ -736,7 +736,7 @@ export class VendorDiscoveryService {
 
     // Capacity filter
     if (params.capacity) {
-      filtered = filtered.filter(vendor => 
+      filtered = filtered.filter(vendor =>
         vendor.capacity && vendor.capacity >= params.capacity!
       );
     }
