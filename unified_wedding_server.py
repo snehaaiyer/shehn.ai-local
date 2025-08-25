@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Unified Wedding Planning Server
@@ -61,7 +60,7 @@ async def serve_root():
     index_file = react_build_path / "index.html"
     if index_file.exists():
         return FileResponse(str(index_file), media_type="text/html")
-    
+
     # Fallback HTML
     return HTMLResponse("""
     <!DOCTYPE html>
@@ -97,11 +96,11 @@ async def serve_spa_routes(path: str):
     """Serve React SPA routes"""
     if path.startswith("api/"):
         raise HTTPException(status_code=404, detail="API endpoint not found")
-    
+
     index_file = react_build_path / "index.html"
     if index_file.exists():
         return FileResponse(str(index_file), media_type="text/html")
-    
+
     return await serve_root()
 
 # Health Check
@@ -114,7 +113,7 @@ async def health_check():
         "timestamp": datetime.now().isoformat(),
         "features": {
             "vendor_discovery": "✅ Active",
-            "ai_assistant": "✅ Active", 
+            "ai_assistant": "✅ Active",
             "communications": "✅ Active",
             "rag_search": "✅ Active",
             "database": "✅ Active"
@@ -161,13 +160,13 @@ async def get_vendor_data(category: str, request: Request):
                 result = search_vendors(category, location, 8)
                 if result.get('success') and result.get('vendors'):
                     vendors = result['vendors']
-                    
+
                     # Store in NocoDB for future use
                     try:
                         vendor_db.store_vendors(vendors, category, location, f"{category} in {location}")
                     except Exception as e:
                         logger.error(f"Storage error: {e}")
-                    
+
                     return JSONResponse({
                         'success': True,
                         'vendors': vendors,
@@ -323,7 +322,7 @@ async def save_wedding_data(request: Request):
     """Save wedding couple data"""
     try:
         data = await request.json()
-        
+
         couple_data = {
             'partner1_name': data.get('partner1Name', ''),
             'partner2_name': data.get('partner2Name', ''),
@@ -361,12 +360,12 @@ async def generate_message(request: Request):
     """Generate vendor communication message"""
     try:
         data = await request.json()
-        
+
         # Simple message generation
         vendor_info = data.get('vendor_info', {})
         wedding_info = data.get('wedding_info', {})
         message_type = data.get('message_type', 'inquiry')
-        
+
         message = f"""Dear {vendor_info.get('name', 'Vendor')},
 
 We are planning our wedding for {wedding_info.get('wedding_date', 'soon')} and are interested in your {vendor_info.get('category', 'services')}.
@@ -397,7 +396,7 @@ async def budget_analysis(request: Request):
     try:
         data = await request.json()
         budget_range = data.get('budget_range', '₹20-30 Lakhs')
-        
+
         # Simple budget breakdown
         allocations = {
             'venue': {'percentage': 35, 'amount_formatted': '₹7-10.5 L'},
@@ -423,16 +422,15 @@ async def budget_analysis(request: Request):
 
 def main():
     logger.info("🌸 Starting Unified Shehnai.AI Wedding Assistant")
-    logger.info("=" * 50)
-    logger.info("🚀 Server: http://0.0.0.0:8000")
+    logger.info("==================================================")
+    logger.info("🚀 Server: http://0.0.0.0:8001")
     logger.info("📱 Frontend: Served from React build or fallback")
-    logger.info("🤖 API Docs: http://0.0.0.0:8000/api/docs")
-    logger.info("=" * 50)
-    
+    logger.info("🤖 API Docs: http://0.0.0.0:8001/api/docs")
+    logger.info("==================================================")
     uvicorn.run(
         "unified_wedding_server:app",
         host="0.0.0.0",
-        port=8000,
+        port=8001,
         reload=False,
         log_level="info"
     )
