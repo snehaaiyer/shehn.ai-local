@@ -547,7 +547,7 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python simple_unified_server.py"
+args = "python unified_wedding_server.py"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
