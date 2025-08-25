@@ -49,7 +49,12 @@ function App() {
   const { sidebarOpen, setSidebarOpen } = useAppStore();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <div className="min-h-screen bg-gray-50">
         {/* Mobile menu button */}
         <button
