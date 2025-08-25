@@ -1,4 +1,18 @@
 import { create } from 'zustand';
+
+interface AppState {
+  sidebarOpen: boolean;
+  theme: 'light' | 'dark';
+  setSidebarOpen: (open: boolean) => void;
+  setTheme: (theme: 'light' | 'dark') => void;
+}
+
+export const useAppStore = create<AppState>((set) => ({
+  sidebarOpen: false,
+  theme: 'light',
+  setSidebarOpen: (open) => set({ sidebarOpen: open }),
+  setTheme: (theme) => set({ theme }),
+}));
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface WeddingData {
