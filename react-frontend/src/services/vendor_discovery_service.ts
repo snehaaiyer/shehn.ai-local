@@ -129,7 +129,7 @@ export class VendorDiscoveryService {
       }
 
       const preferences = JSON.parse(savedPreferences);
-      
+
       return {
         // Basic details
         yourName: preferences.basicDetails?.yourName || '',
@@ -139,11 +139,11 @@ export class VendorDiscoveryService {
         city: preferences.basicDetails?.location || 'Mumbai',
         weddingDate: preferences.basicDetails?.weddingDate || '',
         eventDuration: preferences.basicDetails?.eventDuration || '1',
-        
+
         // Enhanced theme and style preferences
         weddingTheme: preferences.theme?.selectedTheme || 'traditional',
         weddingStyle: preferences.theme?.selectedTheme || 'traditional',
-        
+
         // Detailed venue preferences
         venueType: preferences.venue?.venueType || '',
         venueStyle: preferences.venue?.venueType || '',
@@ -154,10 +154,10 @@ export class VendorDiscoveryService {
    */
   private static extractIndoorOutdoorPreference(venueType: string): string {
     if (!venueType) return '';
-    
+
     const outdoorTypes = ['garden', 'beach', 'farmhouse', 'mountain', 'rooftop'];
     const indoorTypes = ['banquet-hall', 'heritage-palace', 'luxury-hotel', 'temple', 'gurudwara'];
-    
+
     if (outdoorTypes.some(type => venueType.toLowerCase().includes(type))) {
       return 'outdoor';
     } else if (indoorTypes.some(type => venueType.toLowerCase().includes(type))) {
@@ -179,7 +179,7 @@ export class VendorDiscoveryService {
       'beach': 'tropical',
       'garden': 'floral'
     };
-    
+
     return decorMapping[theme?.toLowerCase()] || 'traditional';
   }
 
@@ -196,7 +196,7 @@ export class VendorDiscoveryService {
       'beach': 'aqua-coral',
       'garden': 'sage-cream'
     };
-    
+
     return colorMapping[theme?.toLowerCase()] || 'red-gold';
   }
 
@@ -213,7 +213,7 @@ export class VendorDiscoveryService {
       'beach': 'tropical',
       'garden': 'garden-fresh'
     };
-    
+
     return floralMapping[theme?.toLowerCase()] || 'traditional';
   }
 
@@ -222,20 +222,20 @@ export class VendorDiscoveryService {
    */
   static extractCulturalRequirements(preferences: any): string[] {
     const requirements: string[] = [];
-    
+
     const theme = preferences.theme?.selectedTheme?.toLowerCase();
     if (theme?.includes('traditional') || theme?.includes('royal')) {
       requirements.push('mandap', 'traditional-music', 'cultural-ceremonies');
     }
-    
+
     if (theme?.includes('south-indian')) {
       requirements.push('south-indian-traditions', 'temple-style');
     }
-    
+
     if (theme?.includes('punjabi') || theme?.includes('sikh')) {
       requirements.push('gurudwara-style', 'punjabi-traditions');
     }
-    
+
     return requirements;
   }
 
@@ -244,11 +244,11 @@ export class VendorDiscoveryService {
    */
   static extractSeasonalPreferences(weddingDate: string): string {
     if (!weddingDate) return '';
-    
+
     try {
       const date = new Date(weddingDate);
       const month = date.getMonth();
-      
+
       if (month >= 2 && month <= 4) return 'spring';
       if (month >= 5 && month <= 7) return 'summer';
       if (month >= 8 && month <= 10) return 'monsoon';
@@ -260,27 +260,27 @@ export class VendorDiscoveryService {
 
         venueCapacity: preferences.venue?.capacity || preferences.basicDetails?.guestCount || 100,
         indoorOutdoor: this.extractIndoorOutdoorPreference(preferences.venue?.venueType),
-        
+
         // Catering preferences
         cuisine: preferences.catering?.cuisine || '',
         cuisineStyle: preferences.catering?.cuisine || '',
         mealType: preferences.catering?.mealType || '',
         dietaryRestrictions: preferences.catering?.dietaryRestrictions || [],
-        
+
         // Photography style preferences
         photographyStyle: preferences.photography?.style || '',
         photographyCoverage: preferences.photography?.coverage || '',
         videographyRequired: preferences.photography?.videography?.required || false,
         droneCoverage: preferences.photography?.videography?.droneCoverage || false,
-        
+
         // Decor and styling (if available in future)
         decorStyle: preferences.decor?.style || this.inferDecorFromTheme(preferences.theme?.selectedTheme),
         colorTheme: preferences.decor?.colorTheme || this.inferColorFromTheme(preferences.theme?.selectedTheme),
         floralStyle: preferences.decor?.floralStyle || this.inferFloralFromTheme(preferences.theme?.selectedTheme),
-        
+
         // Budget and priorities
         priorities: preferences.basicDetails?.priorities?.slice(0, 3).map((p: any) => p.id) || ['venue', 'catering', 'photography'],
-        
+
         // Enhanced flexibility preferences
         flexibility: {
           budget: 0.2,
@@ -290,7 +290,7 @@ export class VendorDiscoveryService {
           venue: 0.15,
           decor: 0.25
         },
-        
+
         // Additional attributes for enhanced filtering
         specialRequirements: preferences.basicDetails?.specialRequirements || '',
         culturalRequirements: this.extractCulturalRequirements(preferences),
@@ -314,45 +314,45 @@ export class VendorDiscoveryService {
       }
 
       const preferences = JSON.parse(savedPreferences);
-      
+
       return {
         // Complete basic details
         basicDetails: preferences.basicDetails || {},
-        
+
         // Complete theme preferences  
         theme: preferences.theme || {},
-        
+
         // Complete venue preferences
         venue: preferences.venue || {},
-        
+
         // Complete catering preferences
         catering: preferences.catering || {},
-        
+
         // Complete photography preferences with all nested details
         photography: {
           style: preferences.photography?.style || '',
           coverage: preferences.photography?.coverage || '',
           specialRequests: preferences.photography?.specialRequests || '',
-          
+
           // Multi-day coverage details
           multiDayCoverage: preferences.photography?.multiDayCoverage || {},
-          
+
           // Videography preferences
           videography: preferences.photography?.videography || {},
-          
+
           // Cultural coverage requirements
           culturalCoverage: preferences.photography?.culturalCoverage || {},
-          
+
           // Deliverables preferences
           deliverables: preferences.photography?.deliverables || {},
-          
+
           // Technical preferences
           technicalPreferences: preferences.photography?.technicalPreferences || {},
-          
+
           // Budget for photography
           budgetRange: preferences.photography?.budgetRange || ''
         },
-        
+
         // Metadata for RAG processing
         ragMetadata: {
           lastUpdated: new Date().toISOString(),
@@ -382,22 +382,22 @@ export class VendorDiscoveryService {
       'catering.cuisine',
       'photography.style'
     ];
-    
+
     let completedFields = 0;
-    
+
     for (const field of requiredFields) {
       const fieldParts = field.split('.');
       let value = preferences;
-      
+
       for (const part of fieldParts) {
         value = value?.[part];
       }
-      
+
       if (value && value !== '') {
         completedFields++;
       }
     }
-    
+
     return Math.round((completedFields / requiredFields.length) * 100);
   }
 
@@ -451,14 +451,14 @@ export class VendorDiscoveryService {
     }
 
     const data = await response.json();
-    
+
     if (!data.success) {
       throw new Error(`RAG API error: ${data.error}`);
     }
 
     // Transform RAG API response to frontend format
     const vendors: Vendor[] = [];
-    
+
     if (data.vendors && Array.isArray(data.vendors)) {
       data.vendors.forEach((vendor: any) => {
         vendors.push({
@@ -474,7 +474,7 @@ export class VendorDiscoveryService {
           email: vendor.contact?.email,
           website: vendor.contact?.website,
           images: vendor.images || [],
-          
+
           // Add RAG-specific fields
           rag_scores: vendor.rag_scores || {},
           semantic_match_score: vendor.rag_scores?.composite_score || 0,
@@ -513,7 +513,7 @@ export class VendorDiscoveryService {
       guestCount: weddingData.guestCount,
       city: weddingData.city
     });
-    
+
     let filtered = [...vendors];
 
     // 1. Budget Compatibility Filter
@@ -595,7 +595,7 @@ export class VendorDiscoveryService {
     };
 
     const compatibleRanges = budgetCategories[budgetRange as keyof typeof budgetCategories] || [];
-    
+
     return vendors.filter(vendor => {
       const vendorPriceRange = vendor.price_range.toLowerCase();
       return compatibleRanges.some(range => 
@@ -610,15 +610,15 @@ export class VendorDiscoveryService {
    */
   static filterByLocationProximity(vendors: Vendor[], userLocation: string): Vendor[] {
     const userCity = userLocation.toLowerCase();
-    
+
     return vendors.filter(vendor => {
       const vendorLocation = vendor.location.toLowerCase();
-      
+
       // Exact city match (highest priority)
       if (vendorLocation.includes(userCity)) {
         return true;
       }
-      
+
       // Metro area matches
       const metroAreas = {
         'mumbai': ['navi mumbai', 'thane', 'pune'],
@@ -626,7 +626,7 @@ export class VendorDiscoveryService {
         'bangalore': ['mysore', 'hosur'],
         'chennai': ['pondicherry', 'kanchipuram']
       };
-      
+
       const nearbyAreas = metroAreas[userCity as keyof typeof metroAreas] || [];
       return nearbyAreas.some(area => vendorLocation.includes(area));
     });
@@ -637,22 +637,22 @@ export class VendorDiscoveryService {
    */
   static applySortingBasedOnPriorities(vendors: Vendor[], weddingData: any): Vendor[] {
     const priorities = weddingData.priorities || ['venue', 'photography', 'catering'];
-    
+
     return vendors.sort((a, b) => {
       // Priority category bonus
       const aPriorityIndex = priorities.indexOf(a.category);
       const bPriorityIndex = priorities.indexOf(b.category);
-      
+
       if (aPriorityIndex !== -1 && bPriorityIndex === -1) return -1;
       if (bPriorityIndex !== -1 && aPriorityIndex === -1) return 1;
       if (aPriorityIndex !== -1 && bPriorityIndex !== -1) {
         if (aPriorityIndex !== bPriorityIndex) return aPriorityIndex - bPriorityIndex;
       }
-      
+
       // Secondary sort by rating and contact score
       const aScore = (a.rating * 20) + a.contact_score;
       const bScore = (b.rating * 20) + b.contact_score;
-      
+
       return bScore - aScore;
     });
   }
@@ -676,10 +676,10 @@ export class VendorDiscoveryService {
         };
 
         const imageResponse = await VenueImageGenerator.generateVenueImages(venueRequest);
-        
+
         if (imageResponse.success && imageResponse.images) {
           generatedImages[vendor.name] = imageResponse;
-          
+
           // Update vendor images with generated ones
           vendor.images = [
             imageResponse.images.mainImage,
@@ -690,7 +690,7 @@ export class VendorDiscoveryService {
           // Use fallback images
           const fallbackResponse = VenueImageGenerator.generateFallbackVenueImages(venueRequest);
           generatedImages[vendor.name] = fallbackResponse;
-          
+
           vendor.images = [
             fallbackResponse.images?.mainImage,
             fallbackResponse.images?.ceremonyImage,
@@ -720,12 +720,12 @@ export class VendorDiscoveryService {
     };
 
     const compatibleKeywords = themeMapping[weddingTheme.toLowerCase() as keyof typeof themeMapping] || [];
-    
+
     return vendors.filter(vendor => {
       const vendorSpecialties = (vendor.specialties || []).map(s => s.toLowerCase());
       const vendorName = vendor.name.toLowerCase();
       const vendorDescription = vendor.description.toLowerCase();
-      
+
       // Check if vendor specializes in compatible themes
       return compatibleKeywords.some(keyword => 
         vendorSpecialties.some(specialty => specialty.includes(keyword)) ||
@@ -741,12 +741,12 @@ export class VendorDiscoveryService {
   static filterByVenueTypeCompatibility(vendors: Vendor[], venueType: string, indoorOutdoor: string): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'venues') return true;
-      
+
       const venueText = `${vendor.name} ${vendor.description} ${vendor.venue_type || ''}`.toLowerCase();
-      
+
       // Check venue type match
       const venueTypeMatch = venueType ? venueText.includes(venueType.toLowerCase().replace('-', ' ')) : true;
-      
+
       // Check indoor/outdoor preference
       let indoorOutdoorMatch = true;
       if (indoorOutdoor === 'outdoor') {
@@ -758,7 +758,7 @@ export class VendorDiscoveryService {
           venueText.includes(keyword)
         );
       }
-      
+
       return venueTypeMatch && indoorOutdoorMatch;
     });
   }
@@ -769,12 +769,12 @@ export class VendorDiscoveryService {
   static filterByCuisineCompatibility(vendors: Vendor[], cuisineStyle: string, dietaryRestrictions: string[]): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'catering') return true;
-      
+
       const cateringText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
-      
+
       // Check cuisine style match
       const cuisineMatch = cuisineStyle ? cateringText.includes(cuisineStyle.toLowerCase().replace('-', ' ')) : true;
-      
+
       // Check dietary restrictions
       let dietaryMatch = true;
       if (dietaryRestrictions && dietaryRestrictions.length > 0) {
@@ -782,7 +782,7 @@ export class VendorDiscoveryService {
           cateringText.includes(restriction.toLowerCase())
         );
       }
-      
+
       return cuisineMatch && dietaryMatch;
     });
   }
@@ -793,12 +793,12 @@ export class VendorDiscoveryService {
   static filterByPhotographyStyleCompatibility(vendors: Vendor[], photographyStyle: string, videographyRequired: boolean): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'photography') return true;
-      
+
       const photoText = `${vendor.name} ${vendor.description} ${(vendor.photography_styles || []).join(' ')}`.toLowerCase();
-      
+
       // Check photography style match
       const styleMatch = photographyStyle ? photoText.includes(photographyStyle.toLowerCase()) : true;
-      
+
       // Check videography requirement
       let videographyMatch = true;
       if (videographyRequired) {
@@ -806,7 +806,7 @@ export class VendorDiscoveryService {
           photoText.includes(keyword)
         );
       }
-      
+
       return styleMatch && videographyMatch;
     });
   }
@@ -817,19 +817,19 @@ export class VendorDiscoveryService {
   static filterByDecorCompatibility(vendors: Vendor[], decorStyle: string, colorTheme: string): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'decoration' && vendor.category !== 'venues') return true;
-      
+
       const decorText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
-      
+
       // Check decor style match
       const decorMatch = decorStyle ? decorText.includes(decorStyle.toLowerCase().replace('-', ' ')) : true;
-      
+
       // Check color theme match (basic keywords)
       let colorMatch = true;
       if (colorTheme) {
         const colorKeywords = colorTheme.toLowerCase().split('-');
         colorMatch = colorKeywords.some(color => decorText.includes(color));
       }
-      
+
       return decorMatch && colorMatch;
     });
   }
@@ -840,7 +840,7 @@ export class VendorDiscoveryService {
   static filterByCulturalRequirements(vendors: Vendor[], culturalRequirements: string[]): Vendor[] {
     return vendors.filter(vendor => {
       const vendorText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
-      
+
       // Check if vendor mentions cultural requirements
       return culturalRequirements.some(requirement => 
         vendorText.includes(requirement.toLowerCase().replace('-', ' '))
@@ -858,7 +858,7 @@ export class VendorDiscoveryService {
           amenities: vendor.amenities || [],
           description: vendor.description
         });
-        
+
         generatedImages[vendor.name] = fallbackResponse;
         vendor.images = [
           fallbackResponse.images?.mainImage,
@@ -905,7 +905,7 @@ export class VendorDiscoveryService {
       filtered = filtered.filter(vendor => {
         const vendorPrice = vendor.price_range.toLowerCase();
         const filterPrice = params.priceRange!.toLowerCase();
-        
+
         if (filterPrice === 'budget') return vendorPrice.includes('budget') || vendorPrice.includes('<');
         if (filterPrice === 'mid') return vendorPrice.includes('mid') || vendorPrice.includes('standard');
         if (filterPrice === 'premium') return vendorPrice.includes('premium') || vendorPrice.includes('luxury') || vendorPrice.includes('>');
@@ -1385,9 +1385,9 @@ export class VendorDiscoveryService {
   static filterByCapacity(vendors: Vendor[], guestCount: number): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'venues') return true; // Only apply to venues
-      
+
       const capacity = vendor.capacity || 200;
-      
+
       // Venue should handle at least the guest count, but not be more than 3x oversized
       return capacity >= guestCount && capacity <= (guestCount * 3);
     });
@@ -1408,12 +1408,12 @@ export class VendorDiscoveryService {
     };
 
     const compatibleStyles = styleMapping[weddingStyle.toLowerCase() as keyof typeof styleMapping] || [];
-    
+
     return vendors.filter(vendor => {
       const vendorSpecialties = (vendor.specialties || []).map(s => s.toLowerCase());
       const vendorName = vendor.name.toLowerCase();
       const vendorDescription = vendor.description.toLowerCase();
-      
+
       // Check if vendor specializes in compatible styles
       return compatibleStyles.some(style => 
         vendorSpecialties.some(specialty => specialty.includes(style)) ||
@@ -1452,7 +1452,7 @@ export class VendorDiscoveryService {
       filtered = filtered.filter(vendor => {
         const vendorPrice = vendor.price_range.toLowerCase();
         const filterPrice = params.priceRange!.toLowerCase();
-        
+
         if (filterPrice === 'budget') return vendorPrice.includes('budget') || vendorPrice.includes('<');
         if (filterPrice === 'mid') return vendorPrice.includes('mid') || vendorPrice.includes('standard');
         if (filterPrice === 'premium') return vendorPrice.includes('premium') || vendorPrice.includes('luxury') || vendorPrice.includes('>');
@@ -1482,7 +1482,7 @@ export class VendorDiscoveryService {
   static generateEnhancedMockVendors(params: VendorSearchParams, weddingData: any): Vendor[] {
     const location = weddingData.city || params.location || 'Mumbai';
     let vendors: Vendor[] = [];
-    
+
     if (params.category) {
       // Generate vendors for specific category
       vendors = this.generateMockVendors(params.category, location);
@@ -1491,7 +1491,7 @@ export class VendorDiscoveryService {
       const categories = ['venues', 'photography', 'catering', 'planners', 'decoration', 'entertainment', 'beauty'];
       vendors = categories.flatMap(category => this.generateMockVendors(category, location));
     }
-    
+
     // Enhance vendors with preference-aware data
     vendors = vendors.map(vendor => ({
       ...vendor,
@@ -1504,7 +1504,7 @@ export class VendorDiscoveryService {
       // Enhance description
       description: this.enhanceDescription(vendor, weddingData)
     }));
-    
+
     return vendors;
   }
 
@@ -1513,10 +1513,10 @@ export class VendorDiscoveryService {
    */
   static generateRealisticCapacity(vendor: Vendor, guestCount: number): number {
     if (vendor.category !== 'venues') return 0;
-    
+
     const baseCapacity = guestCount || 200;
     const variation = Math.random() * 0.6 + 0.7; // 70% - 130% of guest count
-    
+
     return Math.round(baseCapacity * variation / 50) * 50; // Round to nearest 50
   }
 
@@ -1525,16 +1525,16 @@ export class VendorDiscoveryService {
    */
   static generateStyleSpecialties(vendor: Vendor, weddingStyle: string): string[] {
     const baseSpecialties = vendor.specialties || [];
-    
+
     const styleSpecialties = {
       'traditional': ['Traditional Indian Weddings', 'Heritage Ceremonies', 'Cultural Events'],
       'modern': ['Contemporary Weddings', 'Modern Celebrations', 'Urban Events'],
       'royal': ['Royal Weddings', 'Palace Events', 'Luxury Celebrations'],
       'destination': ['Destination Weddings', 'Resort Events', 'Travel Celebrations']
     };
-    
+
     const additionalSpecialties = styleSpecialties[weddingStyle as keyof typeof styleSpecialties] || [];
-    
+
     return [...baseSpecialties, ...additionalSpecialties.slice(0, 2)];
   }
 
@@ -1543,7 +1543,7 @@ export class VendorDiscoveryService {
    */
   static generateAwards(vendor: Vendor): string[] {
     if (vendor.rating < 4.0) return [];
-    
+
     const awards = [
       'Best Wedding Vendor 2023',
       'Excellence in Service Award',
@@ -1551,7 +1551,7 @@ export class VendorDiscoveryService {
       'Wedding Industry Recognition',
       'Quality Service Certification'
     ];
-    
+
     const awardCount = vendor.rating >= 4.8 ? 3 : vendor.rating >= 4.5 ? 2 : 1;
     return awards.slice(0, awardCount);
   }
@@ -1561,22 +1561,22 @@ export class VendorDiscoveryService {
    */
   static enhanceDescription(vendor: Vendor, weddingData: any): string {
     let description = vendor.description;
-    
+
     // Add guest count relevance
     if (vendor.category === 'venues' && weddingData.guestCount) {
       description += ` Perfect for ${weddingData.guestCount} guest celebrations.`;
     }
-    
+
     // Add style relevance
     if (weddingData.weddingStyle) {
       description += ` Specializing in ${weddingData.weddingStyle} wedding celebrations.`;
     }
-    
+
     // Add location advantage
     if (vendor.location.toLowerCase().includes(weddingData.city?.toLowerCase())) {
       description += ` Conveniently located in ${weddingData.city}.`;
     }
-    
+
     return description;
   }
 
@@ -1647,17 +1647,17 @@ export class VendorDiscoveryService {
     try {
       // Generate recommendations based on preferences
       const recommendations: Vendor[] = [];
-      
+
       if (preferences.venue) {
         const venueVendors = this.generateVenueVendors(preferences.location || 'Mumbai');
         recommendations.push(...venueVendors.slice(0, 3));
       }
-      
+
       if (preferences.photography) {
         const photoVendors = this.generatePhotographyVendors(preferences.location || 'Mumbai');
         recommendations.push(...photoVendors.slice(0, 2));
       }
-      
+
       if (preferences.catering) {
         const cateringVendors = this.generateCateringVendors(preferences.location || 'Mumbai');
         recommendations.push(...cateringVendors.slice(0, 2));
@@ -1669,4 +1669,4 @@ export class VendorDiscoveryService {
       return [];
     }
   }
-} 
+}
