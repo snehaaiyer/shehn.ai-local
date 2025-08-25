@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Heart, Bell, Settings, Menu, X, Home, Palette, DollarSign, Search, MessageCircle } from 'lucide-react';
@@ -98,7 +96,7 @@ const App: React.FC = () => {
         <div className={`fixed left-0 top-0 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:static lg:transform-none`}>
-          
+
           {/* Logo Section */}
           <div className="p-8 border-b-2 border-orange-200 bg-gradient-to-r from-orange-50 to-pink-50">
             <LogoWithFallback />
@@ -152,7 +150,7 @@ const App: React.FC = () => {
                 </button>
                 <LogoWithFallback className="lg:hidden" />
               </div>
-              
+
               <div className="flex items-center space-x-4">
                 <button className="p-4 text-gray-600 hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-400 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
                   <Bell size={24} />
