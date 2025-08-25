@@ -6,7 +6,8 @@ channel = "stable-25_05"
 packages = ["bash", "geckodriver", "libxcrypt"]
 
 [deployment]
-run = ["sh", "-c", "node index.js"]
+run = ["sh", "-c", "cd react-frontend && npm install && serve -s build -l 3000"]
+build = ["sh", "-c", "cd react-frontend && npm install && npm run build"]
 
 [workflows]
 runButton = "Start Shehnai.AI App"
