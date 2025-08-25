@@ -1,5 +1,6 @@
 import { CloudflareAIService } from './cloudflare_ai_service';
 import { ThemePromptGenerator } from './theme_prompt_generator';
+import { AIImageResponse } from '../types/ai';
 
 interface WeddingBlueprintRequest {
   basicDetails: {
@@ -86,13 +87,13 @@ export class WeddingBlueprintService {
       }
 
       // Step 3: Generate ceremony image using Cloudflare AI
-      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generateVenueImagePrompt(preferences));
 
       // Step 4: Generate reception image using Cloudflare AI
-      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generateThemeImagePrompt(preferences));
 
       // Step 5: Generate detail image using Cloudflare AI
-      const detailImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+      const detailImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generatePhotographyImagePrompt(preferences));
 
       // Step 5: Generate recommendations using Gemini API
       const recommendationsPrompt = this.generateRecommendationsPrompt(preferences);
@@ -111,7 +112,7 @@ export class WeddingBlueprintService {
       const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.images && ceremonyImageResponse.images.length > 0 ? ceremonyImageResponse.images[0] : '';
       const receptionImage = receptionImageResponse.success && receptionImageResponse.images && receptionImageResponse.images.length > 0 ? receptionImageResponse.images[0] : '';
       const detailImage = detailImageResponse.success && detailImageResponse.images && detailImageResponse.images.length > 0 ? detailImageResponse.images[0] : '';
-      
+
       const recommendations = this.parseRecommendations(recommendationsResponse.success && recommendationsResponse.text ? recommendationsResponse.text : '');
       const timeline = this.parseTimeline(timelineResponse.success && timelineResponse.text ? timelineResponse.text : '');
       const budgetBreakdown = this.parseBudgetBreakdown(budgetResponse.success && budgetResponse.text ? budgetResponse.text : '', preferences.basicDetails.budgetRange);
@@ -449,4 +450,4 @@ The percentages should add up to 100% and be realistic for the budget range and 
         return 1000000; // Default 10 Lakhs
     }
   }
-} 
+}
