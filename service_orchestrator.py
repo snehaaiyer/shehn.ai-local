@@ -12,6 +12,11 @@ import requests
 import threading
 from typing import Dict, List
 import logging
+import os
+
+# Set default SERPER_API_KEY if not available
+if not os.getenv('SERPER_API_KEY'):
+    os.environ['SERPER_API_KEY'] = 'demo_key_for_testing'
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

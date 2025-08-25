@@ -2220,13 +2220,7 @@ def main():
     logger.info("   - Ollama AI Service")
     logger.info("=" * 60)
 
-    uvicorn.run(
-        "main:app",  # Changed from "simple_unified_server:app" to "main:app" assuming the file is named main.py
-        host="0.0.0.0",
-        port=5000,
-        reload=False,
-        log_level="info"
-    )
+    uvicorn.run("simple_unified_server:app", host="0.0.0.0", port=5000, reload=False, log_level="info")
 
 if __name__ == "__main__":
     main()

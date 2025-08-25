@@ -6,6 +6,7 @@ import { NotificationProvider } from './components/NotificationProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useAppStore } from './store/useAppStore';
 import './App.css';
+import { AIChatWidget } from './components/AIChatWidget';
 
 // Logo component with proper React fallback
 const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => {
@@ -111,6 +112,7 @@ const App: React.FC = () => {
             </main>
           </div>
         </div>
+      <AIChatWidget />
       </BrowserRouter>
     </NotificationProvider>
   );

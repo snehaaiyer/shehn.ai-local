@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Create missing database tables for wedding planning app
@@ -25,21 +24,21 @@ def create_budget_tracking_table():
             {"column_name": "notes", "title": "Notes", "uidt": "LongText"}
         ]
     }
-    
+
     try:
         response = requests.post(
             f"{NOCODB_CONFIG['base_url']}/api/v1/db/meta/projects/{NOCODB_CONFIG['project_id']}/tables",
             headers={"xc-token": NOCODB_CONFIG['api_token']},
             json=table_schema
         )
-        
+
         if response.status_code == 200:
             print("✅ Budget tracking table created successfully")
             return True
         else:
             print(f"❌ Failed to create budget tracking table: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Error creating budget tracking table: {e}")
         return False
@@ -62,33 +61,33 @@ def create_communications_log_table():
             {"column_name": "follow_up_needed", "title": "Follow Up Needed", "uidt": "Checkbox"}
         ]
     }
-    
+
     try:
         response = requests.post(
             f"{NOCODB_CONFIG['base_url']}/api/v1/db/meta/projects/{NOCODB_CONFIG['project_id']}/tables",
             headers={"xc-token": NOCODB_CONFIG['api_token']},
             json=table_schema
         )
-        
+
         if response.status_code == 200:
             print("✅ Communications log table created successfully")
             return True
         else:
             print(f"❌ Failed to create communications log table: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Error creating communications log table: {e}")
         return False
 
 if __name__ == "__main__":
     print("🗄️ Creating missing database tables...")
-    
+
     success_count = 0
     if create_budget_tracking_table():
         success_count += 1
-    
+
     if create_communications_log_table():
         success_count += 1
-    
+
     print(f"\n✅ Created {success_count}/2 tables successfully")

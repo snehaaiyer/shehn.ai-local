@@ -1,7 +1,7 @@
 // Cloudflare AI service has been removed
 // Use static images and Gemini API instead
 export class CloudflareAIService {
-  static async generateWeddingThemeImages(): Promise<any> {
+  static async generateWeddingThemeImages(): Promise<WeddingThemeImageResponse> {
     throw new Error('Cloudflare AI service has been removed. Use static images instead.');
   }
 
