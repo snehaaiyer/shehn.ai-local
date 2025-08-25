@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
+// Removed Cloudflare AI service
+
 interface Priority {
   id: string;
   name: string;
@@ -663,7 +665,7 @@ const WeddingPreferences: React.FC = () => {
       } else {
         updatedSection[key] = value;
       }
-      
+
       return {
         ...prev,
         [section]: updatedSection
@@ -685,6 +687,23 @@ const WeddingPreferences: React.FC = () => {
 
   // Import NocoDB service at the top
   const { NocoDBService } = require('../services/nocodb_service');
+
+  // Mock service for AI image generation
+  const MockCloudflareAIService = {
+    generateWeddingThemeImages: async (params: any) => {
+      console.log('Mock AI service called with:', params);
+      // Simulate API response for testing
+      return {
+        success: true,
+        data: {
+          images: [
+            'https://via.placeholder.com/300x200?text=Generated+Image+1',
+            'https://via.placeholder.com/300x200?text=Generated+Image+2',
+          ],
+        },
+      };
+    },
+  };
 
   // Debounced save function to prevent excessive API calls
   const saveToNocoDB = React.useCallback(

@@ -1,0 +1,31 @@
+
+export interface AIImageResponse {
+  success: boolean;
+  images?: string[];
+  error?: string;
+  generatedDescription?: string;
+  themeAnalysis?: {
+    keywords: string[];
+    mood: string;
+    style: string;
+    colorScheme: string[];
+  };
+}
+
+export interface AIThemeAnalysis {
+  keywords: string[];
+  mood: string;
+  style: string;
+  colorScheme: string[];
+}
+
+export interface VenueImageGenerationParams {
+  theme: string;
+  style: string;
+  colors: string;
+  season: string;
+  venueType: string;
+  customDescription?: string;
+  guestCount?: number;
+  location?: string;
+}
