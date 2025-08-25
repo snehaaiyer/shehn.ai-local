@@ -20,9 +20,9 @@ const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => 
   }
 
   return (
-    <img 
-      src="/shehnai-logo.png" 
-      alt="Shehnai.AI" 
+    <img
+      src="/shehnai-logo.png"
+      alt="Shehnai.AI"
       className={`${size} mr-3`}
       onError={() => setImageError(true)}
     />
