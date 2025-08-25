@@ -14,16 +14,18 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.11.56",
-    "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "framer-motion": "^12.23.12",
+    "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
     "react-scripts": "5.0.1",
+    "serve": "^14.2.0",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4",
-    "serve": "^14.2.0",
-    "lucide-react": "^0.263.1"
+    "zustand": "^5.0.8"
   },
   "eslintConfig": {
     "extends": [
