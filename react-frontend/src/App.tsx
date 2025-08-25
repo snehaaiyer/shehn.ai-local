@@ -154,7 +154,7 @@ const App = () => {
 
         {/* Main Content */}
         <div className="lg:pl-64">
-          <main className="min-h-screen">
+          <main className="min-h-screen p-6">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/preferences" element={<WeddingPreferences />} />
