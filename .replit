@@ -10,7 +10,7 @@ run = ["sh", "-c", "python unified_wedding_server.py"]
 build = ["sh", "-c", "cd react-frontend && npm install --legacy-peer-deps && npm run build"]
 
 [workflows]
-runButton = "Start Wedding App"
+runButton = "React App Port 3000 Clean"
 
 [[workflows.workflow]]
 name = "Start Wedding App"
