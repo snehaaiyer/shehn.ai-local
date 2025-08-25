@@ -53,16 +53,16 @@ class ServiceOrchestrator:
                 text=True
             )
             
-            # Wait for service to start (longer wait for complex services)
-            wait_time = 8 if 'rag' in service_name.lower() else 5
+            # Wait for service to start
+            wait_time = 5
             time.sleep(wait_time)
             
-            # Multiple health check attempts
-            for attempt in range(3):
+            # Multiple health check attempts with longer intervals
+            for attempt in range(5):
                 if self.check_service_health(service_name):
                     logger.info(f"✅ {service_name} started successfully")
                     return True
-                time.sleep(2)
+                time.sleep(3)
             
             # Check process status
             if service['process'].poll() is None:

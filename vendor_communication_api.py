@@ -19,8 +19,8 @@ import logging
 from dataclasses import dataclass, asdict
 import asyncio
 import smtplib
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import requests
 
 # Configure logging
@@ -439,7 +439,7 @@ class EmailService:
             msg['To'] = to_email
             msg['Subject'] = subject
             
-            msg.attach(MimeText(content, 'plain'))
+            msg.attach(MIMEText(content, 'plain'))
             
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()
