@@ -28,7 +28,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Venue',
       allocated: 15000,
       spent: 12000,
-      color: '#ec4899',
+      color: '#3B82F6',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -36,7 +36,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Catering',
       allocated: 12000,
       spent: 8000,
-      color: '#d946ef',
+      color: '#10B981',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -44,7 +44,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Photography',
       allocated: 8000,
       spent: 6000,
-      color: '#ec4899',
+      color: '#F59E0B',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -52,7 +52,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Decoration',
       allocated: 6000,
       spent: 4500,
-      color: '#d946ef',
+      color: '#EF4444',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -60,7 +60,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Entertainment',
       allocated: 4000,
       spent: 3000,
-      color: '#ec4899',
+      color: '#8B5CF6',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -68,7 +68,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Attire',
       allocated: 5000,
       spent: 3500,
-      color: '#d946ef',
+      color: '#06B6D4',
       icon: <Eye className="h-4 w-4 text-white" />
     }
   ]);
@@ -133,23 +133,23 @@ const BudgetManagement: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-orange-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-r from-pink-600 to-purple-700 p-2 rounded-lg">
+              <div className="bg-blue-600 p-2 rounded-lg">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Budget Management</h1>
+                <h1 className="text-xl font-bold text-gray-900">Budget Management</h1>
                 <p className="text-sm text-gray-600">Track and manage your wedding expenses</p>
               </div>
             </div>
             <button 
               onClick={() => setShowAddTransaction(true)}
-              className="bg-gradient-to-r from-pink-600 to-purple-700 text-white px-6 py-2 rounded-lg hover:from-pink-700 hover:to-purple-800 transition-all duration-300 flex items-center space-x-2 shadow-lg"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>Add Transaction</span>
@@ -163,14 +163,14 @@ const BudgetManagement: React.FC = () => {
           {/* Budget Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Total Budget Card */}
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+            <div className="bg-white rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Budget</p>
-                  <p className="text-2xl font-bold text-gray-800">₹{totalBudget.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-gray-900">₹{totalBudget.toLocaleString()}</p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-pink-600" />
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
@@ -180,49 +180,49 @@ const BudgetManagement: React.FC = () => {
             </div>
 
             {/* Spent Amount Card */}
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+            <div className="bg-white rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                  <p className="text-2xl font-bold text-gray-800">₹{totalSpent.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-gray-900">₹{totalSpent.toLocaleString()}</p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <TrendingDown className="w-6 h-6 text-pink-600" />
+                <div className="bg-red-100 p-3 rounded-lg">
+                  <TrendingDown className="w-6 h-6 text-red-600" />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
-                <div className="w-2 h-2 rounded-full bg-pink-600"></div>
+                <div className="w-2 h-2 rounded-full bg-red-600"></div>
                 <span>{budgetUtilization.toFixed(1)}% of budget used</span>
               </div>
             </div>
 
             {/* Remaining Budget Card */}
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+            <div className="bg-white rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Remaining</p>
-                  <p className="text-2xl font-bold text-gray-800">₹{remainingBudget.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-gray-900">₹{remainingBudget.toLocaleString()}</p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-pink-600" />
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
-                <div className="w-2 h-2 rounded-full bg-pink-600"></div>
+                <div className="w-2 h-2 rounded-full bg-green-600"></div>
                 <span>{(100 - budgetUtilization).toFixed(1)}% remaining</span>
               </div>
             </div>
           </div>
 
           {/* Budget Categories */}
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 mb-8">
-            <div className="p-6 border-b border-gray-100">
+          <div className="bg-white rounded-lg shadow-md mb-8">
+            <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <BarChart3 className="w-6 h-6 text-pink-600" />
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-800">Budget Categories</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Budget Categories</h2>
                   <p className="text-sm text-gray-600">Track spending across different categories</p>
                 </div>
               </div>
@@ -230,7 +230,7 @@ const BudgetManagement: React.FC = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {categories.map((category) => (
-                  <div key={category.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
+                  <div key={category.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: category.color }}>
@@ -265,14 +265,14 @@ const BudgetManagement: React.FC = () => {
           </div>
 
           {/* Recent Transactions */}
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
-            <div className="p-6 border-b border-gray-100">
+          <div className="bg-white rounded-lg shadow-md">
+            <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-pink-600" />
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-800">Recent Transactions</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
                   <p className="text-sm text-gray-600">Your latest expenses and payments</p>
                 </div>
               </div>
@@ -280,9 +280,9 @@ const BudgetManagement: React.FC = () => {
             <div className="p-6">
               <div className="space-y-3">
                 {transactions.slice(0, 5).map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:bg-pink-50/30 transition-colors">
+                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#ec4899' : '#d946ef' }}>
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#EF4444' : '#10B981' }}>
                         {transaction.type === 'expense' ? (
                           <TrendingDown className="h-5 w-5 text-white" />
                         ) : (
@@ -310,7 +310,7 @@ const BudgetManagement: React.FC = () => {
           {/* Add Transaction Modal */}
           {showAddTransaction && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Add Transaction</h3>
                 
                 <div className="space-y-4">
@@ -319,7 +319,7 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.category}
                       onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                     >
                       <option value="">Select category</option>
                       {categories.map(cat => (
@@ -334,7 +334,7 @@ const BudgetManagement: React.FC = () => {
                       type="text"
                       value={newTransaction.description}
                       onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                       placeholder="Enter transaction description"
                     />
                   </div>
@@ -345,7 +345,7 @@ const BudgetManagement: React.FC = () => {
                       type="number"
                       value={newTransaction.amount}
                       onChange={(e) => setNewTransaction({...newTransaction, amount: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                       placeholder="Enter amount"
                     />
                   </div>
@@ -355,7 +355,7 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.type}
                       onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value as 'expense' | 'income'})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                     >
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
@@ -366,13 +366,13 @@ const BudgetManagement: React.FC = () => {
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setShowAddTransaction(false)}
-                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={addTransaction}
-                    className="flex-1 px-4 py-3 rounded-xl font-medium hover:opacity-90 transition-all duration-300 bg-gradient-to-r from-pink-600 to-purple-700 text-white"
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                   >
                     Add Transaction
                   </button>
