@@ -116,10 +116,10 @@ export class NocoDBService {
 
         // Additional Information
         "Cultural Notes": JSON.stringify({
-          eventDuration: preferences.basicDetails?.eventDuration || '1 day',
+          eventDuration: preferences.basicDetails?.eventDuration || "1 day",
           datesFlexible: preferences.basicDetails?.datesFlexible || false,
-          contactNumber: preferences.basicDetails?.contactNumber || '',
-          weddingStyle: preferences.theme?.selectedTheme || 'Traditional'
+          contactNumber: preferences.basicDetails?.contactNumber || "",
+          weddingStyle: preferences.theme?.selectedTheme || "Traditional"
         }),
 
         "Special Notes": `Comprehensive preferences for ${preferences.basicDetails.yourName} and ${preferences.basicDetails.partnerName}`,
