@@ -41,11 +41,11 @@ REACT_PUBLIC_DIR = Path(__file__).parent / "react-frontend" / "public"
 # Use public directory if build doesn't exist (development mode)
 if not STATIC_DIR.exists() and REACT_PUBLIC_DIR.exists():
     STATIC_DIR = REACT_PUBLIC_DIR
-    logging.warning("Build directory not found, serving from public directory")
+    logger.warning("Build directory not found, serving from public directory")
 
 if not STATIC_DIR.exists():
     STATIC_DIR.mkdir(parents=True, exist_ok=True)
-    logging.warning(f"Static directory created: {STATIC_DIR}")
+    logger.warning(f"Static directory created: {STATIC_DIR}")
 
 # FastAPI App Setup
 app = FastAPI(
@@ -69,39 +69,59 @@ app.add_middleware(
 react_build_path = Path("react-frontend/build")
 react_public_path = Path("react-frontend/public")
 
-# Serve React static files only if build exists
-if react_build_path.exists() and (react_build_path / "static").exists():
-    app.mount("/static", StaticFiles(directory=f"{react_build_path}/static"), name="static")
+# Development mode - proxy to React dev server
+@app.get("/")
+async def serve_root():
+    return HTMLResponse("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>BID AI Wedding Assistant</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+            .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1 { color: #e91e63; margin-bottom: 30px; }
+            .links { margin-top: 30px; }
+            .link { display: inline-block; margin: 10px 20px 10px 0; padding: 10px 20px; background: #e91e63; color: white; text-decoration: none; border-radius: 5px; }
+            .link:hover { background: #c2185b; }
+            .status { margin: 20px 0; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🌸 BID AI Wedding Assistant</h1>
+            <div class="status">
+                <strong>✅ Backend API Running</strong> - Port 5000<br>
+                All API endpoints are available at <code>/api/*</code>
+            </div>
 
-    @app.get("/{path:path}")
-    async def serve_react(request: Request, path: str = ""):
-        # API routes
-        if path.startswith("api/"):
-            raise HTTPException(status_code=404, detail="API endpoint not found")
+            <h3>🚀 Quick Access</h3>
+            <div class="links">
+                <a href="/health" class="link">Health Check</a>
+                <a href="/api/docs" class="link">API Documentation</a>
+                <a href="/api/database-stats" class="link">Database Stats</a>
+            </div>
 
-        # Serve index.html for all other routes (SPA)
-        return FileResponse(f"{react_build_path}/index.html", media_type="text/html")
+            <h3>📱 React Frontend</h3>
+            <p>Your React app should be running on a separate port (3000). If it's not accessible:</p>
+            <ol>
+                <li>Check if the React dev server is running in the terminal</li>
+                <li>Make sure all dependencies are installed</li>
+                <li>Try restarting the workflow</li>
+            </ol>
+        </div>
+    </body>
+    </html>
+    """)
 
-else:
-    # Development fallback - redirect to React dev server
-    @app.get("/")
-    async def serve_fallback():
-        return HTMLResponse("""
-        <h1>React Development Server</h1>
-        <p>The React app is running in development mode.</p>
-        <p>Visit <a href="http://localhost:3000">http://localhost:3000</a> for the React app.</p>
-        """)
+@app.get("/{path:path}")
+async def serve_spa_routes(path: str):
+    # API routes
+    if path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
 
-    @app.get("/{path:path}")
-    async def serve_fallback_routes(path: str):
-        if not path.startswith("api/"):
-            return HTMLResponse("""
-            <h1>React Development Server</h1>
-            <p>The React app is running in development mode.</p>
-            <p>Visit <a href="http://localhost:3000">http://localhost:3000</a> for the React app.</p>
-            """)
-        raise HTTPException(status_code=404, detail="Not found")
-
+    # For non-API routes, redirect to root
+    return await serve_root()
 
 # Health check endpoint
 @app.get("/health")
@@ -1655,43 +1675,6 @@ async def get_all_wedding_data():
             'error': str(e),
             'timestamp': datetime.now().isoformat()
         }, status_code=500)
-
-# The following routes were previously used for serving React.
-# They are now handled by the app.mount and @app.get("/") decorators above.
-# These can be removed if not needed for other purposes.
-
-# @app.get("/")
-# async def serve_index():
-#     index_file = STATIC_DIR / "index.html"
-#     if index_file.exists():
-#         return FileResponse(index_file, media_type="text/html")
-#     raise HTTPException(status_code=404, detail="Index file not found")
-
-# @app.get("/{path:path}")
-# async def serve_spa_routes(path: str):
-#     # For SPA routes, serve index.html or specific files
-#     spa_routes = ["dashboard", "wedding-form", "visual-preferences", "vendor-discovery"]
-
-#     # Remove hash and query params
-#     clean_path = path.split('#')[0].split('?')[0]
-
-#     if clean_path in spa_routes or not clean_path:
-#         index_file = STATIC_DIR / "index.html"
-#         if index_file.exists():
-#             return FileResponse(index_file, media_type="text/html")
-
-#     # Try to serve as static file
-#     file_location = STATIC_DIR / path
-#     if file_location.exists() and file_location.is_file():
-#         return FileResponse(file_location)
-
-#     # Fallback to index for unknown routes (SPA behavior)
-#     index_file = STATIC_DIR / "index.html"
-#     if index_file.exists():
-#         return FileResponse(index_file, media_type="text/html")
-
-#     raise HTTPException(status_code=404, detail="File not found")
-
 
 def main():
     logger.info("🌸 Shehnai.AI Wedding Assistant - Simplified Unified Server")
