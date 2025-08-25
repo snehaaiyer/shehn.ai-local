@@ -82,20 +82,20 @@ const AnimatedSidebar = () => {
 
   return (
     <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex items-center justify-center mt-4 mb-4">
+      <div className="flex items-center justify-center mt-2 mb-2">
         <LogoWithFallback size={50} />
         <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
           Shehnai.AI
         </span>
       </div>
-      <nav className="px-4 space-y-2">
+      <nav className="px-4 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.id}
               onClick={() => handleMenuClick(item)}
-              className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-colors ${
+              className={`flex items-center space-x-3 p-2 rounded-xl cursor-pointer transition-colors ${
                 activeTab === item.id
                   ? 'text-white'
                   : 'hover:bg-gray-100 text-gray-700'
@@ -111,7 +111,7 @@ const AnimatedSidebar = () => {
           );
         })}
       </nav>
-      <button onClick={() => setSidebarOpen(false)} className="absolute top-3 right-3 lg:hidden">
+      <button onClick={() => setSidebarOpen(false)} className="absolute top-2 right-3 lg:hidden">
         <X size={24} />
       </button>
     </div>
@@ -125,7 +125,7 @@ const App = () => {
     <BrowserRouter>
       <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
         {/* Mobile Header */}
-        <div className={`lg:hidden shadow-sm border-b px-4 py-2 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className={`lg:hidden shadow-sm border-b px-4 py-1 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center space-x-3">
             <LogoWithFallback size={32} />
             <span className={`text-xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -153,7 +153,7 @@ const App = () => {
 
         {/* Main Content */}
         <div className="lg:pl-64">
-          <main className="min-h-screen p-2">
+          <main className="min-h-screen p-1">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/preferences" element={<WeddingPreferences />} />
