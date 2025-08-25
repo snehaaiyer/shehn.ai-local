@@ -226,3 +226,28 @@ class CloudflareAIService {
 }
 
 export default CloudflareAIService;
+// Mock Cloudflare AI Service for development
+export interface AIImageResponse {
+  success: boolean;
+  images: string[];
+  error?: string;
+}
+
+export class CloudflareAIService {
+  static async generateVenueImages(prompt: string): Promise<AIImageResponse> {
+    // Mock implementation - returns sample images
+    return {
+      success: true,
+      images: [
+        '/images/venues/banquet.png',
+        '/images/venues/garden.png',
+        '/images/venues/luxury hotel.png',
+        '/images/venues/farmhouse.png'
+      ]
+    };
+  }
+
+  static async generateImage(prompt: string, style?: string): Promise<AIImageResponse> {
+    return this.generateVenueImages(prompt);
+  }
+}
