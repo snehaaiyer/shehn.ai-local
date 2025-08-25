@@ -1,4 +1,5 @@
 import { CloudflareAIService } from './cloudflare_ai_service';
+import { AIImageResponse } from '../types/ai';
 
 interface VenueImageRequest {
   venueType: string;
@@ -36,15 +37,15 @@ export class VenueImageGenerator {
 
       // Generate main venue image
       const mainImagePrompt = this.generateMainVenuePrompt(venue);
-      const mainImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+      const mainImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Generate ceremony area image
       const ceremonyImagePrompt = this.generateCeremonyAreaPrompt(venue);
-      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+      const ceremonyImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Generate reception area image
       const receptionImagePrompt = this.generateReceptionAreaPrompt(venue);
-      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+      const receptionImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Parse responses
       const mainImage = mainImageResponse.success && mainImageResponse.images && mainImageResponse.images.length > 0 
@@ -86,7 +87,7 @@ export class VenueImageGenerator {
     Capacity: ${venue.capacity} guests. 
     Price Range: ${venue.priceRange}. 
     ${venue.description}
-    
+
     The image should showcase the venue's main features, elegant architecture, and wedding-ready atmosphere. 
     Professional photography quality, high resolution, magazine-worthy composition with beautiful lighting and sophisticated decor.`;
   }
@@ -96,12 +97,12 @@ export class VenueImageGenerator {
    */
   private static generateCeremonyAreaPrompt(venue: VenueImageRequest): string {
     const ceremonyElements = this.getCeremonyElements(venue.venueType);
-    
+
     return `A beautiful ceremony area at ${venue.venueName} ${venue.venueType} in ${venue.location}. 
     Features: ${ceremonyElements.join(', ')}. 
     Capacity: ${venue.capacity} guests for ceremony. 
     ${venue.description}
-    
+
     The image should show the sacred ceremony space with elegant decorations, proper seating arrangement, 
     and romantic atmosphere. Professional photography quality, high resolution, capturing the spiritual 
     and emotional essence of wedding ceremonies.`;
@@ -112,12 +113,12 @@ export class VenueImageGenerator {
    */
   private static generateReceptionAreaPrompt(venue: VenueImageRequest): string {
     const receptionElements = this.getReceptionElements(venue.venueType);
-    
+
     return `A luxurious reception area at ${venue.venueName} ${venue.venueType} in ${venue.location}. 
     Features: ${receptionElements.join(', ')}. 
     Capacity: ${venue.capacity} guests for reception. 
     ${venue.description}
-    
+
     The image should showcase the dining and celebration space with elegant table settings, 
     beautiful lighting, and sophisticated decor. Professional photography quality, high resolution, 
     capturing the celebration atmosphere and dining experience.`;
@@ -186,7 +187,7 @@ export class VenueImageGenerator {
       try {
         const result = await this.generateVenueImages(venue);
         results[venue.venueName] = result;
-        
+
         // Add delay between requests to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (error) {
@@ -249,4 +250,4 @@ export class VenueImageGenerator {
       }
     };
   }
-} 
+}
