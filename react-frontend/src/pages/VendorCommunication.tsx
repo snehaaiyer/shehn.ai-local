@@ -412,50 +412,50 @@ const VendorCommunication: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Analytics Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-green">Total Vendors</p>
+                  <p className="text-sm font-medium text-gray-600">Total Vendors</p>
                   <p className="text-2xl font-bold text-deep-navy">{communications.length}</p>
                 </div>
-                <div className="bg-pastel-peach p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-muted-green" />
+                <div className="bg-soft-beige p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-salmon-pink" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-green">Active Negotiations</p>
+                  <p className="text-sm font-medium text-gray-600">Active Negotiations</p>
                   <p className="text-2xl font-bold text-deep-navy">
                     {communications.filter(c => c.status === 'negotiating').length}
                   </p>
                 </div>
-                <div className="bg-pastel-peach p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-muted-green" />
+                <div className="bg-soft-beige p-3 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-salmon-pink" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-green">Total Savings</p>
+                  <p className="text-sm font-medium text-gray-600">Total Savings</p>
                   <p className="text-2xl font-bold text-deep-navy">
                     ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-pastel-peach p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-muted-green" />
+                <div className="bg-soft-beige p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-salmon-pink" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-green">Avg Response Time</p>
+                  <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
                   <p className="text-2xl font-bold text-deep-navy">
                     {(communications
                       .filter(c => c.responseTime)
@@ -464,8 +464,8 @@ const VendorCommunication: React.FC = () => {
                     ).toFixed(1)}h
                   </p>
                 </div>
-                <div className="bg-pastel-peach p-3 rounded-lg">
-                  <Timer className="w-6 h-6 text-muted-green" />
+                <div className="bg-soft-beige p-3 rounded-lg">
+                  <Timer className="w-6 h-6 text-salmon-pink" />
                 </div>
               </div>
             </div>
@@ -570,7 +570,7 @@ const VendorCommunication: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-soft-beige">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-gradient-to-br from-pastel-peach to-muted-green rounded-lg flex items-center justify-center">
@@ -653,7 +653,7 @@ const VendorCommunication: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-soft-beige">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-pastel-peach to-pink-100 rounded-lg flex items-center justify-center">
@@ -749,7 +749,7 @@ const VendorCommunication: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-soft-beige">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-pastel-peach to-pink-100 rounded-lg flex items-center justify-center">
@@ -832,7 +832,7 @@ const VendorCommunication: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-soft-beige">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-pastel-peach to-pink-100 rounded-lg flex items-center justify-center">
