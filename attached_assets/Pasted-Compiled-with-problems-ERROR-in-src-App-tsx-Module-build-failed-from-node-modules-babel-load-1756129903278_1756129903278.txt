@@ -1,0 +1,319 @@
+Compiled with problems:
+×
+ERROR in ./src/App.tsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/runner/workspace/react-frontend/src/App.tsx: Expected corresponding JSX closing tag for <BrowserRouter>. (116:6)
+
+  114 |         </div>
+  115 |         <AIChatWidget />
+> 116 |       </div>
+      |       ^
+  117 |     </BrowserRouter>
+  118 |   );
+  119 | };
+    at constructor (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:367:19)
+    at TypeScriptParserMixin.raise (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6630:19)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4760:16)
+    at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4782:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4792:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9857:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10831:21)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9795:39
+    at TypeScriptParserMixin.tryParse (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6938:20)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9795:18)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10800:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12432:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10800:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12499:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11679:28)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11331:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4797:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9857:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10831:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9806:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10784:23)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10780:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12427:16)
+    at TypeScriptParserMixin.parseExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10780:17)
+    at TypeScriptParserMixin.parseReturnStatement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13147:28)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12803:21)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9532:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12772:17)
+    at TypeScriptParserMixin.parseStatementListItem (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12752:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13321:61)
+    at TypeScriptParserMixin.parseBlockBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13314:10)
+    at TypeScriptParserMixin.parseBlock (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13302:10)
+    at TypeScriptParserMixin.parseFunctionBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12106:24)
+    at TypeScriptParserMixin.parseArrowExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12081:10)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11691:12)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11331:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4797:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+ERROR
+[eslint] 
+src/App.tsx
+  Line 116:8:  Parsing error: Expected corresponding JSX closing tag for 'BrowserRouter'
+
+ERROR in src/App.tsx:116:9
+TS17002: Expected corresponding JSX closing tag for 'BrowserRouter'.
+    114 |         </div>
+    115 |         <AIChatWidget />
+  > 116 |       </div>
+        |         ^^^
+    117 |     </BrowserRouter>
+    118 |   );
+    119 | };
+ERROR in src/App.tsx:117:5
+TS1005: ')' expected.
+    115 |         <AIChatWidget />
+    116 |       </div>
+  > 117 |     </BrowserRouter>
+        |     ^^
+    118 |   );
+    119 | };
+    120 |
+ERROR in src/App.tsx:118:3
+TS1109: Expression expected.
+    116 |       </div>
+    117 |     </BrowserRouter>
+  > 118 |   );
+        |   ^
+    119 | };
+    120 |
+    121 | export default App;
+ERROR in src/App.tsx:119:1
+TS1128: Declaration or statement expected.
+    117 |     </BrowserRouter>
+    118 |   );
+  > 119 | };
+        | ^
+    120 |
+    121 | export default App;
+ERROR in src/components/NotificationProvider.tsx:1:8
+TS2300: Duplicate identifier 'React'.
+  > 1 | import React from 'react';
+      |        ^^^^^
+    2 | import { Toaster, toast } from 'react-hot-toast';
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+ERROR in src/components/NotificationProvider.tsx:2:10
+TS2300: Duplicate identifier 'Toaster'.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |          ^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/components/NotificationProvider.tsx:42:14
+TS2451: Cannot redeclare block-scoped variable 'NotificationProvider'.
+    40 | };
+    41 |
+  > 42 | export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+       |              ^^^^^^^^^^^^^^^^^^^^
+    43 |   return (
+    44 |     <>
+    45 |       {children}
+ERROR in src/components/NotificationProvider.tsx:74:8
+TS2300: Duplicate identifier 'React'.
+    72 |   };
+    73 | }; 
+  > 74 | import React from 'react';
+       |        ^^^^^
+    75 | import { Toaster } from 'react-hot-toast';
+    76 |
+    77 | interface NotificationProviderProps {
+ERROR in src/components/NotificationProvider.tsx:75:10
+TS2300: Duplicate identifier 'Toaster'.
+    73 | }; 
+    74 | import React from 'react';
+  > 75 | import { Toaster } from 'react-hot-toast';
+       |          ^^^^^^^
+    76 |
+    77 | interface NotificationProviderProps {
+    78 |   children: React.ReactNode;
+ERROR in src/components/NotificationProvider.tsx:81:14
+TS2451: Cannot redeclare block-scoped variable 'NotificationProvider'.
+    79 | }
+    80 |
+  > 81 | export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
+       |              ^^^^^^^^^^^^^^^^^^^^
+    82 |   return (
+    83 |     <>
+    84 |       {children}
+ERROR in src/services/cloudflare_ai_service.ts:14:14
+TS2300: Duplicate identifier 'CloudflareAIService'.
+    12 | }
+    13 |
+  > 14 | export class CloudflareAIService {
+       |              ^^^^^^^^^^^^^^^^^^^
+    15 |   private static readonly API_BASE = process.env.REACT_APP_CLOUDFLARE_API_BASE || '';
+    16 |   private static readonly API_TOKEN = process.env.REACT_APP_CLOUDFLARE_API_TOKEN || '';
+    17 |
+ERROR in src/services/cloudflare_ai_service.ts:23:7
+TS2739: Type '{ success: true; images: string[]; analysis: { description: string; keywords: string[]; mood: string; style: string; colorPalette: string[]; }; }' is missing the following properties from type 'AIImageResponse': imageUrls, themeAnalysis
+    21 |
+    22 |       // Fallback to mock response for now
+  > 23 |       return {
+       |       ^^^^^^^^
+  > 24 |         success: true,
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 25 |         images: [
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 26 |           'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop',
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 27 |           'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 28 |         ],
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 29 |         analysis: {
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 30 |           description: `Beautiful ${prompt} setting`,
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 31 |           keywords: ['elegant', 'romantic', 'luxurious'],
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 32 |           mood: 'romantic',
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 33 |           style: 'contemporary',
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 34 |           colorPalette: ['#F4628E', '#FFCEB2', '#FFFFFF']
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 35 |         }
+       | ^^^^^^^^^^^^^^^^^^^^^^
+  > 36 |       };
+       | ^^^^^^^^^
+    37 |     } catch (error) {
+    38 |       console.error('❌ Cloudflare AI Error:', error);
+    39 |       return {
+ERROR in src/services/cloudflare_ai_service.ts:39:7
+TS2739: Type '{ success: false; error: string; }' is missing the following properties from type 'AIImageResponse': imageUrls, themeAnalysis
+    37 |     } catch (error) {
+    38 |       console.error('❌ Cloudflare AI Error:', error);
+  > 39 |       return {
+       |       ^^^^^^^^
+  > 40 |         success: false,
+       | ^^^^^^^^^^^^^^^^^^^^^^^
+  > 41 |         error: 'Failed to generate image'
+       | ^^^^^^^^^^^^^^^^^^^^^^^
+  > 42 |       };
+       | ^^^^^^^^^
+    43 |     }
+    44 |   }
+    45 | }
+ERROR in src/services/cloudflare_ai_service.ts:68:14
+TS2300: Duplicate identifier 'CloudflareAIService'.
+    66 | }
+    67 |
+  > 68 | export class CloudflareAIService {
+       |              ^^^^^^^^^^^^^^^^^^^
+    69 |   private static instance: CloudflareAIService;
+    70 |   private apiKey: string;
+    71 |   private accountId: string;
+ERROR in src/services/image_storage_service.ts:2:24
+TS2307: Cannot find module '@replit/object-storage' or its corresponding type declarations.
+    1 |
+  > 2 | import { Client } from '@replit/object-storage';
+      |                        ^^^^^^^^^^^^^^^^^^^^^^^^
+    3 |
+    4 | interface ImageUploadResult {
+    5 |   success: boolean;
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/replit_storage_service.ts:2:24
+TS2307: Cannot find module '@replit/object-storage' or its corresponding type declarations.
+    1 |
+  > 2 | import { Client } from '@replit/object-storage';
+      |                        ^^^^^^^^^^^^^^^^^^^^^^^^
+    3 |
+    4 | class ReplitStorageService {
+    5 |   private client: Client;
+ERROR in src/services/venue_image_generator.ts:40:76
+TS2339: Property 'generateWeddingThemeImages' does not exist on type 'typeof CloudflareAIService'.
+    38 |       // Generate main venue image
+    39 |       const mainImagePrompt = this.generateMainVenuePrompt(venue);
+  > 40 |       const mainImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+       |                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    41 |
+    42 |       // Generate ceremony area image
+    43 |       const ceremonyImagePrompt = this.generateCeremonyAreaPrompt(venue);
+ERROR in src/services/venue_image_generator.ts:44:80
+TS2339: Property 'generateWeddingThemeImages' does not exist on type 'typeof CloudflareAIService'.
+    42 |       // Generate ceremony area image
+    43 |       const ceremonyImagePrompt = this.generateCeremonyAreaPrompt(venue);
+  > 44 |       const ceremonyImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+       |                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    45 |
+    46 |       // Generate reception area image
+    47 |       const receptionImagePrompt = this.generateReceptionAreaPrompt(venue);
+ERROR in src/services/venue_image_generator.ts:48:81
+TS2339: Property 'generateWeddingThemeImages' does not exist on type 'typeof CloudflareAIService'.
+    46 |       // Generate reception area image
+    47 |       const receptionImagePrompt = this.generateReceptionAreaPrompt(venue);
+  > 48 |       const receptionImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
+       |                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    49 |
+    50 |       // Parse responses
+    51 |       const mainImage = mainImageResponse.success && mainImageResponse.images && mainImageResponse.images.length > 0 
+ERROR in src/services/wedding_blueprint_service.ts:90:63
+TS2339: Property 'generateWeddingThemeImages' does not exist on type 'typeof CloudflareAIService'.
+    88 |
+    89 |       // Step 3: Generate ceremony image using Cloudflare AI
+  > 90 |       const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generateVenueImagePrompt(preferences));
+       |                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    91 |
+    92 |       // Step 4: Generate reception image using Cloudflare AI
+    93 |       const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generateThemeImagePrompt(preferences));
+ERROR in src/services/wedding_blueprint_service.ts:93:64
+TS2339: Property 'generateWeddingThemeImages' does not exist on type 'typeof CloudflareAIService'.
+    91 |
+    92 |       // Step 4: Generate reception image using Cloudflare AI
+  > 93 |       const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generateThemeImagePrompt(preferences));
+       |                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    94 |
+    95 |       // Step 5: Generate detail image using Cloudflare AI
+    96 |       const detailImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generatePhotographyImagePrompt(preferences));
+ERROR in src/services/wedding_blueprint_service.ts:96:61
+TS2339: Property 'generateWeddingThemeImages' does not exist on type 'typeof CloudflareAIService'.
+    94 |
+    95 |       // Step 5: Generate detail image using Cloudflare AI
+  > 96 |       const detailImageResponse = await CloudflareAIService.generateWeddingThemeImages(this.generatePhotographyImagePrompt(preferences));
+       |                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    97 |
+    98 |       // Step 5: Generate recommendations using Gemini API
+    99 |       const recommendationsPrompt = this.generateRecommendationsPrompt(preferences);
