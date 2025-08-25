@@ -2,172 +2,182 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Heart, Bell, Settings, Menu, X, Home, Palette, DollarSign, Search, MessageCircle } from 'lucide-react';
+
+// Import page components
 import Index from './pages/Index';
 import WeddingPreferences from './pages/WeddingPreferences';
 import BudgetManagement from './pages/BudgetManagement';
 import VendorDiscovery from './pages/VendorDiscovery';
 import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
-import { AIChatWidget } from './components/AIChatWidget';
-import { useAppStore } from './store/useAppStore';
-import './App.css';
 
-const LogoWithFallback: React.FC = () => {
-  const [imageError, setImageError] = useState(false);
-
-  const handleImageError = () => {
-    setImageError(true);
-  };
-
-  if (imageError) {
-    return (
-      <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-purple-600 rounded-lg flex items-center justify-center">
-        <Heart className="w-5 h-5 text-white" />
-      </div>
-    );
-  }
+// Simple AI Chat Widget Component
+const AIChatWidget: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <img
-      src="/shehnai-logo.png"
-      alt="Shehnai.AI Logo"
-      className="w-8 h-8 rounded-lg"
-      onError={handleImageError}
-    />
+    <div className="fixed bottom-4 right-4 z-50">
+      {isOpen && (
+        <div className="mb-4 w-80 h-96 bg-white rounded-lg shadow-xl border">
+          <div className="p-4 bg-pastel-peach rounded-t-lg">
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold text-deep-navy text-lg">AI Assistant</h3>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="text-deep-navy hover:text-salmon-pink text-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+          <div className="p-4 h-72 overflow-y-auto">
+            <div className="space-y-3">
+              <div className="bg-pastel-lavender p-3 rounded-lg">
+                <p className="text-deep-navy text-base">Hi! I'm your wedding planning assistant. How can I help you today?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-soft-peach hover:bg-salmon-pink text-white p-4 rounded-full shadow-lg transition-all duration-300 hover-lift"
+      >
+        <MessageCircle size={24} />
+      </button>
+    </div>
+  );
+};
+
+// Logo component with fallback
+const LogoWithFallback: React.FC<{ className?: string }> = ({ className = "" }) => {
+  return (
+    <div className={`flex items-center ${className}`}>
+      <div className="w-10 h-10 bg-gradient-to-br from-salmon-pink to-soft-peach rounded-xl flex items-center justify-center mr-3">
+        <Heart className="w-6 h-6 text-white" />
+      </div>
+      <span className="text-2xl font-bold text-deep-navy">Shehnai.AI</span>
+    </div>
   );
 };
 
 const App: React.FC = () => {
-  const { sidebarOpen, setSidebarOpen } = useAppStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home, current: true },
-    { name: 'Wedding Preferences', href: '/wedding-preferences', icon: Palette, current: false },
-    { name: 'Budget Management', href: '/budget-management', icon: DollarSign, current: false },
-    { name: 'Vendor Discovery', href: '/vendor-discovery', icon: Search, current: false },
-    { name: 'Vendor Communication', href: '/vendor-communication', icon: MessageCircle, current: false },
-    { name: 'AI Assistant', href: '/ai-chat', icon: MessageCircle, current: false },
+  const menuItems = [
+    { id: 'dashboard', name: 'Dashboard', icon: Home, path: '/', highlight: 'bg-pastel-peach' },
+    { id: 'preferences', name: 'Wedding Preferences', icon: Palette, path: '/wedding-preferences', highlight: 'bg-pastel-coral' },
+    { id: 'budget', name: 'Budget Management', icon: DollarSign, path: '/budget-management', highlight: 'bg-pastel-sage' },
+    { id: 'discovery', name: 'Vendor Discovery', icon: Search, path: '/vendor-discovery', highlight: 'bg-pastel-sky' },
+    { id: 'communication', name: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication', highlight: 'bg-pastel-mint' },
+    { id: 'ai-assistant', name: 'AI Assistant', icon: MessageCircle, path: '/ai-assistant', highlight: 'bg-pastel-lilac' }
   ];
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setSidebarOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [setSidebarOpen]);
+    const currentPath = window.location.pathname;
+    const currentItem = menuItems.find(item => item.path === currentPath);
+    if (currentItem) {
+      setActiveSection(currentItem.id);
+    }
+  }, []);
 
   return (
     <BrowserRouter>
-      <div className="flex h-screen bg-gray-50">
-        {/* Mobile sidebar */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-            <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white">
-              <div className="absolute top-0 right-0 -mr-12 pt-2">
-                <button
-                  type="button"
-                  className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <X className="h-6 w-6 text-white" />
-                </button>
-              </div>
-              <div className="flex flex-shrink-0 items-center px-4 py-4">
-                <LogoWithFallback />
-                <span className="ml-2 text-xl font-semibold text-gray-900">Shehnai.AI</span>
-              </div>
-              <nav className="mt-5 flex-1 space-y-1 px-2">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  >
-                    <item.icon className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-500" />
-                    {item.name}
-                  </a>
-                ))}
-              </nav>
-            </div>
-          </div>
+      <div className="min-h-screen bg-pastel-lavender-light">
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
         )}
 
-        {/* Desktop sidebar */}
-        <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-          <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 overflow-y-auto">
-            <div className="flex items-center flex-shrink-0 px-4">
-              <LogoWithFallback />
-              <span className="ml-2 text-xl font-semibold text-gray-900">Shehnai.AI</span>
-            </div>
-            <nav className="mt-6 flex-1 space-y-1 px-2">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                >
-                  <item.icon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                  {item.name}
-                </a>
-              ))}
-            </nav>
+        {/* Sidebar */}
+        <div className={`fixed left-0 top-0 h-full w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:static lg:transform-none`}>
+          
+          {/* Logo Section */}
+          <div className="p-6 border-b border-pastel-lavender">
+            <LogoWithFallback />
           </div>
+
+          {/* Navigation Menu */}
+          <nav className="p-4">
+            <ul className="space-y-3">
+              {menuItems.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={item.path}
+                    className={`flex items-center p-4 rounded-xl transition-all duration-200 text-lg font-medium hover-lift ${
+                      activeSection === item.id 
+                        ? `${item.highlight} text-deep-navy shadow-md` 
+                        : 'text-muted-green hover:bg-pastel-lavender hover:text-deep-navy'
+                    }`}
+                    onClick={() => {
+                      setActiveSection(item.id);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <item.icon className="w-6 h-6 mr-4" />
+                    <span>{item.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Close button for mobile */}
+          <button
+            className="absolute top-4 right-4 lg:hidden text-deep-navy"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <X size={24} />
+          </button>
         </div>
 
-        {/* Main content */}
-        <div className="lg:pl-64 flex flex-col flex-1">
-          {/* Top navigation */}
-          <div className="sticky top-0 z-40 lg:mx-auto lg:max-w-7xl lg:px-8">
-            <div className="flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none">
-              <button
-                type="button"
-                className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <Menu className="h-6 w-6" />
-              </button>
-
-              <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                <div className="relative flex flex-1"></div>
-                <div className="flex items-center gap-x-4 lg:gap-x-6">
-                  <button
-                    type="button"
-                    className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
-                  >
-                    <Bell className="h-6 w-6" />
-                  </button>
-
-                  <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" />
-
-                  <button
-                    type="button"
-                    className="-m-1.5 p-1.5 text-gray-400 hover:text-gray-500"
-                  >
-                    <Settings className="h-6 w-6" />
-                  </button>
-                </div>
+        {/* Main Content */}
+        <div className="lg:ml-72">
+          {/* Header */}
+          <header className="bg-white shadow-sm border-b border-pastel-lavender p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <button
+                  className="lg:hidden mr-4 text-deep-navy"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                >
+                  <Menu size={24} />
+                </button>
+                <LogoWithFallback className="lg:hidden" />
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <button className="p-3 text-muted-green hover:text-salmon-pink hover:bg-pastel-peach rounded-full transition-all duration-200">
+                  <Bell size={20} />
+                </button>
+                <button className="p-3 text-muted-green hover:text-salmon-pink hover:bg-pastel-peach rounded-full transition-all duration-200">
+                  <Settings size={20} />
+                </button>
               </div>
             </div>
-          </div>
+          </header>
 
-          {/* Page content */}
-          <main className="flex-1">
+          {/* Page Content */}
+          <main className="p-6">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/wedding-preferences" element={<WeddingPreferences />} />
               <Route path="/budget-management" element={<BudgetManagement />} />
               <Route path="/vendor-discovery" element={<VendorDiscovery />} />
               <Route path="/vendor-communication" element={<VendorCommunication />} />
-              <Route path="/ai-chat" element={<AIChat />} />
+              <Route path="/ai-assistant" element={<AIChat />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
         </div>
+
+        {/* AI Chat Widget */}
         <AIChatWidget />
       </div>
     </BrowserRouter>
