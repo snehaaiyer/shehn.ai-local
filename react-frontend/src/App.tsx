@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { 
-  Home, 
-  Heart, 
-  Palette, 
-  DollarSign, 
-  Search, 
+import {
+  Home,
+  Heart,
+  Palette,
+  DollarSign,
+  Search,
   MessageCircle,
   Bot,
   Building2,
@@ -33,7 +32,7 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
   const [logoError, setLogoError] = useState(false);
 
   return (
-    <div 
+    <div
       className="flex items-center justify-center rounded-xl"
       style={{
         width: size,
@@ -132,7 +131,7 @@ const App = () => {
               Shehnai.AI
             </span>
           </div>
-          <button 
+          <button
             onClick={() => setSidebarOpen(true)}
             className={`p-2 rounded-md transition-colors ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-gray-100 text-gray-900'}`}
           >
@@ -142,7 +141,7 @@ const App = () => {
 
         {/* Overlay for mobile */}
         {sidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
