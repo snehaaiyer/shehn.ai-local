@@ -72,6 +72,21 @@ react_public_path = Path("react-frontend/public")
 # Development mode - proxy to React dev server
 @app.get("/")
 async def serve_root():
+    try:
+        # Check if React dev server is running on port 3000
+        import httpx
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.get("http://localhost:3000", timeout=2.0)
+                # If React dev server is running, redirect to it
+                from fastapi.responses import RedirectResponse
+                return RedirectResponse(url="http://localhost:3000", status_code=302)
+            except:
+                pass
+    except:
+        pass
+    
+    # Fallback to status page if React dev server is not running
     return HTMLResponse("""
     <!DOCTYPE html>
     <html>
@@ -84,8 +99,20 @@ async def serve_root():
             .links { margin-top: 30px; }
             .link { display: inline-block; margin: 10px 20px 10px 0; padding: 10px 20px; background: #e91e63; color: white; text-decoration: none; border-radius: 5px; }
             .link:hover { background: #c2185b; }
-            .status { margin: 20px 0; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50; }
+            .status { margin: 20px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; }
+            .react-status { margin: 20px 0; padding: 15px; background: #f8d7da; border-left: 4px solid #dc3545; }
         </style>
+        <script>
+            // Auto-redirect to React app when it becomes available
+            setInterval(async () => {
+                try {
+                    const response = await fetch('http://localhost:3000', { mode: 'no-cors' });
+                    window.location.href = 'http://localhost:3000';
+                } catch (e) {
+                    // React app not ready yet
+                }
+            }, 3000);
+        </script>
     </head>
     <body>
         <div class="container">
@@ -95,20 +122,24 @@ async def serve_root():
                 All API endpoints are available at <code>/api/*</code>
             </div>
 
+            <div class="react-status">
+                <strong>⏳ React Frontend Starting...</strong><br>
+                The React app is starting on port 3000. You'll be redirected automatically when it's ready.
+                <br><br>
+                <strong>Or visit directly:</strong> <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>
+            </div>
+
             <h3>🚀 Quick Access</h3>
             <div class="links">
                 <a href="/health" class="link">Health Check</a>
                 <a href="/api/docs" class="link">API Documentation</a>
                 <a href="/api/database-stats" class="link">Database Stats</a>
+                <a href="http://localhost:3000" class="link" target="_blank">React Frontend</a>
             </div>
 
-            <h3>📱 React Frontend</h3>
-            <p>Your React app should be running on a separate port (3000). If it's not accessible:</p>
-            <ol>
-                <li>Check if the React dev server is running in the terminal</li>
-                <li>Make sure all dependencies are installed</li>
-                <li>Try restarting the workflow</li>
-            </ol>
+            <h3>📱 React Frontend Status</h3>
+            <p>The React wedding planner app is starting on port 3000. This page will redirect you automatically when it's ready.</p>
+            <p><strong>Manual Access:</strong> <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
         </div>
     </body>
     </html>
@@ -120,7 +151,20 @@ async def serve_spa_routes(path: str):
     if path.startswith("api/"):
         raise HTTPException(status_code=404, detail="API endpoint not found")
 
-    # For non-API routes, redirect to root
+    # For non-API routes, try to proxy to React dev server
+    try:
+        import httpx
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.get(f"http://localhost:3000/{path}", timeout=2.0)
+                from fastapi.responses import RedirectResponse
+                return RedirectResponse(url=f"http://localhost:3000/{path}", status_code=302)
+            except:
+                pass
+    except:
+        pass
+    
+    # Fallback to root
     return await serve_root()
 
 # Health check endpoint
