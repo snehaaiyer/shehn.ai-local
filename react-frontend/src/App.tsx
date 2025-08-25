@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Menu } from "lucide-react";
+import { Menu } from 'lucide-react';
 import { AnimatedSidebar } from './components/AnimatedSidebar';
 import { NotificationProvider } from './components/NotificationProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
