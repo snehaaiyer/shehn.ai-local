@@ -378,7 +378,7 @@ const VendorCommunication: React.FC = () => {
   const getBudgetCompatibilityColor = (compatibility: string) => {
     const colors = {
       perfect: 'bg-green-100 text-green-800',
-      good: 'bg-blue-100 text-blue-800',
+      good: 'bg-green-100 text-green-800',
       stretch: 'bg-yellow-100 text-yellow-800',
       over: 'bg-red-100 text-red-800'
     };
@@ -573,7 +573,7 @@ const VendorCommunication: React.FC = () => {
                         <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
                                 <span className="text-sm font-semibold text-white">
                                   {comm.vendorName.charAt(0)}
                                 </span>
@@ -585,7 +585,7 @@ const VendorCommunication: React.FC = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium capitalize">
+                            <span className="bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs font-medium capitalize">
                               {comm.vendorCategory}
                             </span>
                           </td>
@@ -623,11 +623,11 @@ const VendorCommunication: React.FC = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <button className="p-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition-colors">
-                                <Eye className="w-4 h-4 text-gray-600 hover:text-blue-600" />
+                              <button className="p-2 bg-gray-100 rounded-lg hover:bg-green-100 transition-colors">
+                                <Eye className="w-4 h-4 text-gray-600 hover:text-green-600" />
                               </button>
-                              <button className="p-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition-colors">
-                                <MessageCircle className="w-4 h-4 text-gray-600 hover:text-blue-600" />
+                              <button className="p-2 bg-gray-100 rounded-lg hover:bg-green-100 transition-colors">
+                                <MessageCircle className="w-4 h-4 text-gray-600 hover:text-green-600" />
                               </button>
                             </div>
                           </td>
@@ -785,7 +785,7 @@ const VendorCommunication: React.FC = () => {
                           <td className="py-4 px-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               comm.marketPosition === 'luxury' ? 'bg-purple-100 text-purple-800' :
-                              comm.marketPosition === 'premium' ? 'bg-blue-100 text-blue-800' :
+                              comm.marketPosition === 'premium' ? 'bg-green-100 text-green-800' :
                               comm.marketPosition === 'mid-range' ? 'bg-green-100 text-green-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
