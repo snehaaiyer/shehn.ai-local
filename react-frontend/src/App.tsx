@@ -111,7 +111,7 @@ const App: React.FC = () => {
             </ErrorBoundary>
           </main>
         </div>
-        
+
         <AIChatWidget />
       </div>
     </BrowserRouter>

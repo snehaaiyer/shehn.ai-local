@@ -11,23 +11,13 @@ interface StorageObject {
   key?: string;
 }
 
-interface Client {
-  uploadFromBytes(name: string, buffer: Buffer): Promise<void>;
-  list(): Promise<StorageObject[]>;
-}
-
-// Mock Client for development
-class MockClient implements Client {
-  async uploadFromFile(): Promise<void> {
-    console.log('Mock upload from file');
+// Mock Replit Storage Client for testing
+class Client {
+  async uploadFromBytes(fileName: string, buffer: Buffer): Promise<void> {
+    console.log(`Mock upload: ${fileName} (${buffer.length} bytes)`);
   }
 
-  async uploadFromBytes(name: string, buffer: Buffer): Promise<void> {
-    console.log('Mock upload from bytes:', name);
-  }
-
-  async list(): Promise<StorageObject[]> {
-    console.log('Mock list images');
+  async list(): Promise<any[]> {
     return [];
   }
 }
@@ -37,7 +27,7 @@ class ImageStorageService {
 
   constructor() {
     // Instantiate the mock client if Replit's object storage is not available
-    this.client = new MockClient();
+    this.client = new Client();
   }
 
   async uploadImageFromFile(file: File, imageName: string): Promise<ImageUploadResult> {
