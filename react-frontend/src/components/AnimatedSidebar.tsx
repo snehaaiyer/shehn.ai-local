@@ -102,11 +102,7 @@ const menuItemVariants = {
 
 export const AnimatedSidebar: React.FC = () => {
   const location = useLocation();
-  const { sidebarOpen, setSidebarOpen, theme, setTheme } = useAppStore();
-
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
+  const { sidebarOpen, setSidebarOpen, theme, toggleTheme } = useAppStore();
 
   return (
     <>
