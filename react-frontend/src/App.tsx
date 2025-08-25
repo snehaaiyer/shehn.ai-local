@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { 
   Home, 
   Heart, 
@@ -59,6 +59,7 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
 
 const AnimatedSidebar = () => {
   const { sidebarOpen, setSidebarOpen, theme } = useAppStore();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const menuItems = [
@@ -69,6 +70,15 @@ const AnimatedSidebar = () => {
     { id: 'vendor-communication', label: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication' },
     { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, path: '/chat' }
   ];
+
+  const handleMenuClick = (item: any) => {
+    setActiveTab(item.id);
+    navigate(item.path);
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  };
 
   return (
     <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -84,7 +94,7 @@ const AnimatedSidebar = () => {
           return (
             <div
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleMenuClick(item)}
               className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-colors ${
                 activeTab === item.id
                   ? 'text-white'
