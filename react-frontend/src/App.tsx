@@ -18,22 +18,22 @@ const AIChatWidget: React.FC = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen && (
-        <div className="mb-4 w-80 h-96 bg-white rounded-lg shadow-xl border">
-          <div className="p-4 bg-pastel-peach rounded-t-lg">
+        <div className="mb-4 w-96 h-[28rem] bg-white rounded-2xl shadow-2xl border-2 border-orange-200">
+          <div className="p-6 bg-gradient-to-r from-orange-200 to-pink-200 rounded-t-2xl">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-deep-navy text-lg">AI Assistant</h3>
+              <h3 className="font-bold text-gray-800 text-xl">AI Assistant</h3>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="text-deep-navy hover:text-salmon-pink text-lg"
+                className="text-gray-700 hover:text-red-500 text-xl transition-colors"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
           </div>
-          <div className="p-4 h-72 overflow-y-auto">
-            <div className="space-y-3">
-              <div className="bg-pastel-lavender p-3 rounded-lg">
-                <p className="text-deep-navy text-base">Hi! I'm your wedding planning assistant. How can I help you today?</p>
+          <div className="p-6 h-80 overflow-y-auto">
+            <div className="space-y-4">
+              <div className="bg-gradient-to-r from-orange-100 to-pink-100 p-4 rounded-xl border border-orange-200">
+                <p className="text-gray-800 text-lg">Hi! I'm your wedding planning assistant. How can I help you today?</p>
               </div>
             </div>
           </div>
@@ -41,9 +41,9 @@ const AIChatWidget: React.FC = () => {
       )}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-soft-peach hover:bg-salmon-pink text-white p-4 rounded-full shadow-lg transition-all duration-300 hover-lift"
+        className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white p-5 rounded-full shadow-xl transition-all duration-300 hover:scale-110 transform"
       >
-        <MessageCircle size={24} />
+        <MessageCircle size={28} />
       </button>
     </div>
   );
@@ -53,10 +53,10 @@ const AIChatWidget: React.FC = () => {
 const LogoWithFallback: React.FC<{ className?: string }> = ({ className = "" }) => {
   return (
     <div className={`flex items-center ${className}`}>
-      <div className="w-10 h-10 bg-gradient-to-br from-salmon-pink to-soft-peach rounded-xl flex items-center justify-center mr-3">
-        <Heart className="w-6 h-6 text-white" />
+      <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-pink-400 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+        <Heart className="w-8 h-8 text-white" />
       </div>
-      <span className="text-2xl font-bold text-deep-navy">Shehnai.AI</span>
+      <span className="text-3xl font-bold text-gray-800 tracking-wide">Shehnai.AI</span>
     </div>
   );
 };
@@ -94,34 +94,34 @@ const App: React.FC = () => {
         )}
 
         {/* Sidebar */}
-        <div className={`fixed left-0 top-0 h-full w-72 bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
+        <div className={`fixed left-0 top-0 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:static lg:transform-none`}>
           
           {/* Logo Section */}
-          <div className="p-6 border-b border-pastel-lavender">
+          <div className="p-8 border-b-2 border-orange-200 bg-gradient-to-r from-orange-50 to-pink-50">
             <LogoWithFallback />
           </div>
 
           {/* Navigation Menu */}
-          <nav className="p-4">
-            <ul className="space-y-3">
+          <nav className="p-6">
+            <ul className="space-y-4">
               {menuItems.map((item) => (
                 <li key={item.id}>
                   <a
                     href={item.path}
-                    className={`flex items-center p-4 rounded-xl transition-all duration-200 text-lg font-medium hover-lift ${
+                    className={`flex items-center p-5 rounded-2xl transition-all duration-300 text-xl font-semibold group hover:scale-105 transform ${
                       activeSection === item.id 
-                        ? `${item.highlight} text-deep-navy shadow-md` 
-                        : 'text-muted-green hover:bg-pastel-lavender hover:text-deep-navy'
+                        ? 'bg-gradient-to-r from-orange-200 to-pink-200 text-gray-800 shadow-lg border-2 border-orange-300' 
+                        : 'text-gray-600 hover:bg-gradient-to-r hover:from-orange-100 hover:to-pink-100 hover:text-gray-800 hover:shadow-md'
                     }`}
                     onClick={() => {
                       setActiveSection(item.id);
                       setIsMobileMenuOpen(false);
                     }}
                   >
-                    <item.icon className="w-6 h-6 mr-4" />
-                    <span>{item.name}</span>
+                    <item.icon className="w-7 h-7 mr-5" />
+                    <span className="tracking-wide">{item.name}</span>
                   </a>
                 </li>
               ))}
@@ -138,26 +138,26 @@ const App: React.FC = () => {
         </div>
 
         {/* Main Content */}
-        <div className="lg:ml-72">
+        <div className="lg:ml-80">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-pastel-lavender p-4">
+          <header className="bg-white shadow-md border-b-2 border-orange-200 p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <button
-                  className="lg:hidden mr-4 text-deep-navy"
+                  className="lg:hidden mr-6 text-gray-700 hover:text-orange-500 transition-colors"
                   onClick={() => setIsMobileMenuOpen(true)}
                 >
-                  <Menu size={24} />
+                  <Menu size={28} />
                 </button>
                 <LogoWithFallback className="lg:hidden" />
               </div>
               
               <div className="flex items-center space-x-4">
-                <button className="p-3 text-muted-green hover:text-salmon-pink hover:bg-pastel-peach rounded-full transition-all duration-200">
-                  <Bell size={20} />
+                <button className="p-4 text-gray-600 hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-400 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
+                  <Bell size={24} />
                 </button>
-                <button className="p-3 text-muted-green hover:text-salmon-pink hover:bg-pastel-peach rounded-full transition-all duration-200">
-                  <Settings size={20} />
+                <button className="p-4 text-gray-600 hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-400 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
+                  <Settings size={24} />
                 </button>
               </div>
             </div>
