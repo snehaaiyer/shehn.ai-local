@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { 
@@ -24,7 +22,9 @@ import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
 
 // Component imports
-import { AIChatWidget } from './components/AIChatWidget';
+import AIChatWidget from './components/AIChatWidget';
+import { AnimatedSidebar } from './components/AnimatedSidebar';
+import { useAppStore } from './store/useAppStore';
 
 // CSS
 import './App.css';
@@ -57,69 +57,13 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
   );
 };
 
-const AnimatedSidebar = ({ isOpen, onClose, menuItems, activeTab, setActiveTab }: {
-  isOpen: boolean;
-  onClose: () => void;
-  menuItems: any[];
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}) => {
-  return (
-    <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex items-center justify-center mt-8 mb-4">
-        <LogoWithFallback size={50} />
-        <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
-          Shehnai.AI
-        </span>
-      </div>
-      <nav className="px-4 space-y-2">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-colors ${
-                activeTab === item.id
-                  ? 'text-white'
-                  : 'hover:bg-gray-100 text-gray-700'
-              }`}
-              style={activeTab === item.id ? {
-                backgroundColor: '#D29B9B', // Same peach color as action boxes
-                background: 'linear-gradient(135deg, #D29B9B, #C49464)'
-              } : {}}
-            >
-              <Icon size={20} />
-              <span className="font-medium">{item.label}</span>
-            </div>
-          );
-        })}
-      </nav>
-      <button onClick={onClose} className="absolute top-3 right-3 lg:hidden">
-        <X size={24} />
-      </button>
-    </div>
-  );
-};
-
 const App = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [theme, setTheme] = useState('light');
-
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/' },
-    { id: 'preferences', label: 'Wedding Preferences', icon: Heart, path: '/preferences' },
-    { id: 'budget', label: 'Budget Management', icon: DollarSign, path: '/budget' },
-    { id: 'vendor-discovery', label: 'Vendor Discovery', icon: Search, path: '/vendor-discovery' },
-    { id: 'vendor-communication', label: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication' },
-    { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, path: '/ai-assistant' }
-  ];
+  const { sidebarOpen, setSidebarOpen, theme } = useAppStore();
 
   return (
     <BrowserRouter>
       <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
-        
+
         {/* Mobile Header */}
         <div className={`lg:hidden shadow-sm border-b px-4 py-3 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center space-x-3">
@@ -144,33 +88,26 @@ const App = () => {
           />
         )}
 
-        {/* Sidebar and Main Content */}
-        <div className="flex">
-          {/* Desktop Sidebar */}
-          <AnimatedSidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-            menuItems={menuItems} 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
-          />
-          
-          {/* Main Content Area */}
-          <div className={`flex-1 transition-all duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
-            {/* Page Content */}
-            <main className="flex-1 p-4 lg:p-8">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/preferences" element={<WeddingPreferences />} />
-                <Route path="/budget" element={<BudgetManagement />} />
-                <Route path="/vendor-discovery" element={<VendorDiscovery />} />
-                <Route path="/vendor-communication" element={<VendorCommunication />} />
-                <Route path="/ai-assistant" element={<AIChat />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-          </div>
+        {/* Sidebar */}
+        <AnimatedSidebar />
+
+        {/* Main Content */}
+        <div className="lg:pl-64">
+          <main className="min-h-screen">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/preferences" element={<WeddingPreferences />} />
+              <Route path="/budget" element={<BudgetManagement />} />
+              <Route path="/vendors" element={<VendorDiscovery />} />
+              <Route path="/vendor-discovery" element={<Navigate to="/vendors" replace />} />
+              <Route path="/vendor-communication" element={<VendorCommunication />} />
+              <Route path="/chat" element={<AIChat />} />
+              <Route path="/ai-assistant" element={<Navigate to="/chat" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
         </div>
+
         <AIChatWidget />
       </div>
     </BrowserRouter>
