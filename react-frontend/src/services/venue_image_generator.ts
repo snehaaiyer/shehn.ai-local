@@ -36,45 +36,15 @@ export class VenueImageGenerator {
 
       // Generate main venue image
       const mainImagePrompt = this.generateMainVenuePrompt(venue);
-      const mainImageResponse = await CloudflareAIService.generateWeddingThemeImages({
-        theme: venue.venueType,
-        style: 'Elegant',
-        colors: this.getColorScheme(venue.venueType),
-        season: 'Wedding Season',
-        venueType: venue.venueType,
-        customDescription: mainImagePrompt,
-        guestCount: venue.capacity,
-        location: venue.location,
-        imageCount: 1
-      });
+      const mainImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Generate ceremony area image
       const ceremonyImagePrompt = this.generateCeremonyAreaPrompt(venue);
-      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages({
-        theme: venue.venueType,
-        style: 'Traditional',
-        colors: this.getColorScheme(venue.venueType),
-        season: 'Wedding Season',
-        venueType: 'Ceremony Area',
-        customDescription: ceremonyImagePrompt,
-        guestCount: venue.capacity,
-        location: venue.location,
-        imageCount: 1
-      });
+      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Generate reception area image
       const receptionImagePrompt = this.generateReceptionAreaPrompt(venue);
-      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages({
-        theme: venue.venueType,
-        style: 'Modern',
-        colors: this.getColorScheme(venue.venueType),
-        season: 'Wedding Season',
-        venueType: 'Reception Area',
-        customDescription: receptionImagePrompt,
-        guestCount: venue.capacity,
-        location: venue.location,
-        imageCount: 1
-      });
+      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Parse responses
       const mainImage = mainImageResponse.success && mainImageResponse.images && mainImageResponse.images.length > 0 

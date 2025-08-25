@@ -86,43 +86,13 @@ export class WeddingBlueprintService {
       }
 
       // Step 3: Generate ceremony image using Cloudflare AI
-      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages({
-        theme: preferences.theme.selectedTheme,
-        style: 'Traditional',
-        colors: 'Red and Gold',
-        season: 'Wedding Season',
-        venueType: preferences.venue.venueType,
-        customDescription: ceremonyPrompt,
-        guestCount: preferences.basicDetails.guestCount,
-        location: preferences.basicDetails.location,
-        imageCount: 1
-      });
+      const ceremonyImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Step 4: Generate reception image using Cloudflare AI
-      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages({
-        theme: preferences.theme.selectedTheme,
-        style: 'Elegant',
-        colors: 'White and Gold',
-        season: 'Wedding Season',
-        venueType: 'Reception Area',
-        customDescription: receptionPrompt,
-        guestCount: preferences.basicDetails.guestCount,
-        location: preferences.basicDetails.location,
-        imageCount: 1
-      });
+      const receptionImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Step 5: Generate detail image using Cloudflare AI
-      const detailImageResponse = await CloudflareAIService.generateWeddingThemeImages({
-        theme: preferences.theme.selectedTheme,
-        style: 'Artistic',
-        colors: 'Rich and Vibrant',
-        season: 'Wedding Season',
-        venueType: 'Decorative Details',
-        customDescription: detailPrompt,
-        guestCount: preferences.basicDetails.guestCount,
-        location: preferences.basicDetails.location,
-        imageCount: 1
-      });
+      const detailImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Step 5: Generate recommendations using Gemini API
       const recommendationsPrompt = this.generateRecommendationsPrompt(preferences);

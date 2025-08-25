@@ -112,7 +112,7 @@ export class NocoDBService {
         }),
 
         // Priority Rankings
-        "Priorities": JSON.stringify(preferences.basicDetails?.priorities || []),
+        "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
 
         // Additional Information
         "Cultural Notes": JSON.stringify({
