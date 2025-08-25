@@ -35,7 +35,7 @@ interface UIState {
 interface AppStore extends UIState {
   weddingData: WeddingData;
   userPreferences: Record<string, any>;
-  
+
   // Actions
   setSidebarOpen: (open: boolean) => void;
   setTheme: (theme: 'light' | 'dark') => void;
@@ -85,7 +85,7 @@ export const useAppStore = create<AppStore>()(
         set((state) => ({
           notifications: [...state.notifications, newNotification]
         }));
-        
+
         // Auto-remove notification after duration
         if (notification.duration !== 0) {
           setTimeout(() => {
@@ -112,4 +112,4 @@ export const useAppStore = create<AppStore>()(
       })
     }
   )
-); 
+);
