@@ -386,21 +386,21 @@ const VendorCommunication: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="bg-white shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-rose-600" />
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900">Vendor Communications</h1>
-                <p className="text-sm text-gray-600">Comprehensive vendor relationship management</p>
+                <p className="text-sm text-gray-500">Comprehensive vendor relationship management</p>
               </div>
             </div>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2">
+            <button className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors flex items-center space-x-2">
               <Plus className="w-4 h-4" />
               <span>Add Vendor</span>
             </button>
@@ -412,22 +412,22 @@ const VendorCommunication: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Analytics Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Vendors</p>
+                  <p className="text-sm font-medium text-gray-500">Total Vendors</p>
                   <p className="text-2xl font-bold text-gray-900">{communications.length}</p>
                 </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-blue-500" />
+                <div className="bg-rose-50 p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-rose-500" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Negotiations</p>
+                  <p className="text-sm font-medium text-gray-500">Active Negotiations</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {communications.filter(c => c.status === 'negotiating').length}
                   </p>
@@ -438,10 +438,10 @@ const VendorCommunication: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Savings</p>
+                  <p className="text-sm font-medium text-gray-500">Total Savings</p>
                   <p className="text-2xl font-bold text-gray-900">
                     ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
                   </p>
@@ -452,10 +452,10 @@ const VendorCommunication: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
+                  <p className="text-sm font-medium text-gray-500">Avg Response Time</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {(communications
                       .filter(c => c.responseTime)
@@ -464,16 +464,16 @@ const VendorCommunication: React.FC = () => {
                     ).toFixed(1)}h
                   </p>
                 </div>
-                <div className="bg-orange-50 p-3 rounded-lg">
-                  <Timer className="w-6 h-6 text-orange-500" />
+                <div className="bg-amber-50 p-3 rounded-lg">
+                  <Timer className="w-6 h-6 text-amber-500" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* View Toggle */}
-          <div className="bg-white rounded-lg shadow-sm mb-8 border border-gray-200">
-            <div className="border-b border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm mb-8 border border-gray-100">
+            <div className="border-b border-gray-100">
               <div className="flex">
                 {tabs.map((view) => (
                   <button
@@ -481,7 +481,7 @@ const VendorCommunication: React.FC = () => {
                     onClick={() => setActiveTab(view.id)}
                     className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors capitalize ${
                       activeTab === view.id
-                        ? 'border-blue-500 text-blue-600 bg-blue-50'
+                        ? 'border-rose-400 text-rose-600 bg-rose-50'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
@@ -496,7 +496,7 @@ const VendorCommunication: React.FC = () => {
             </div>
 
             {/* Filters */}
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-gray-100">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -505,14 +505,14 @@ const VendorCommunication: React.FC = () => {
                     placeholder="Search vendors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                 >
                   <option value="all">All Statuses</option>
                   <option value="contacted">Contacted</option>
@@ -525,7 +525,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
@@ -537,7 +537,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
@@ -545,7 +545,7 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
