@@ -19,7 +19,26 @@ interface WeddingData {
     count: number;
     icon: React.ReactNode;
   }>;
+  // Assuming BasicDetails interface should also be part of WeddingData
+  basicDetails: BasicDetails;
 }
+
+// Assuming Priority type is defined elsewhere or needs to be defined
+type Priority = string; // Placeholder
+
+interface BasicDetails {
+  guestCount: number;
+  weddingDate: string;
+  location: string;
+  budgetRange: string;
+  yourName: string;
+  partnerName: string;
+  contactNumber: string;
+  priorities: Priority[];
+  datesFlexible: boolean;
+  eventDuration: string;
+}
+
 
 interface UIState {
   sidebarOpen: boolean;
@@ -72,7 +91,19 @@ export const useAppStore = create<AppStore>()(
           { category: 'Decoration', count: 10, icon: '🌸' },
           { category: 'Entertainment', count: 6, icon: '🎵' },
           { category: 'Beauty', count: 9, icon: '💄' }
-        ]
+        ],
+        basicDetails: {
+          guestCount: 100,
+          weddingDate: '',
+          location: '',
+          budgetRange: '',
+          yourName: '',
+          partnerName: '',
+          contactNumber: '',
+          priorities: [],
+          datesFlexible: false,
+          eventDuration: '1 day'
+        },
       },
       userPreferences: {},
 

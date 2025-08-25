@@ -10,7 +10,7 @@ run = ["sh", "-c", "python simple_unified_server.py"]
 build = ["sh", "-c", "cd react-frontend && npm install --legacy-peer-deps && npm run build"]
 
 [workflows]
-runButton = "Working Wedding App"
+runButton = "Clean Wedding App Start"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -475,6 +475,45 @@ args = "python simple_unified_server.py"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Clean Wedding App Start"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && rm -rf node_modules package-lock.json && npm cache clean --force && npm install --force && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Auto-Run Wedding App"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Clean Wedding App Start"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && rm -rf node_modules package-lock.json && npm cache clean --force && npm install --force && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
 [[ports]]
 localPort = 3000
