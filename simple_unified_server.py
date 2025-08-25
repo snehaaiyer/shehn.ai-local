@@ -72,21 +72,6 @@ react_public_path = Path("react-frontend/public")
 # Development mode - proxy to React dev server
 @app.get("/")
 async def serve_root():
-    try:
-        # Check if React dev server is running on port 3000
-        import httpx
-        async with httpx.AsyncClient() as client:
-            try:
-                response = await client.get("http://localhost:3000", timeout=2.0)
-                # If React dev server is running, redirect to it
-                from fastapi.responses import RedirectResponse
-                return RedirectResponse(url="http://localhost:3000", status_code=302)
-            except:
-                pass
-    except:
-        pass
-    
-    # Fallback to status page if React dev server is not running
     return HTMLResponse("""
     <!DOCTYPE html>
     <html>
@@ -99,34 +84,15 @@ async def serve_root():
             .links { margin-top: 30px; }
             .link { display: inline-block; margin: 10px 20px 10px 0; padding: 10px 20px; background: #e91e63; color: white; text-decoration: none; border-radius: 5px; }
             .link:hover { background: #c2185b; }
-            .status { margin: 20px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; }
-            .react-status { margin: 20px 0; padding: 15px; background: #f8d7da; border-left: 4px solid #dc3545; }
+            .status { margin: 20px 0; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50; }
         </style>
-        <script>
-            // Auto-redirect to React app when it becomes available
-            setInterval(async () => {
-                try {
-                    const response = await fetch('http://localhost:3000', { mode: 'no-cors' });
-                    window.location.href = 'http://localhost:3000';
-                } catch (e) {
-                    // React app not ready yet
-                }
-            }, 3000);
-        </script>
     </head>
     <body>
         <div class="container">
             <h1>🌸 BID AI Wedding Assistant</h1>
             <div class="status">
-                <strong>✅ Backend API Running</strong> - Port 5000<br>
+                <strong>✅ Backend API Running</strong> - Port 8000<br>
                 All API endpoints are available at <code>/api/*</code>
-            </div>
-
-            <div class="react-status">
-                <strong>⏳ React Frontend Starting...</strong><br>
-                The React app is starting on port 3000. You'll be redirected automatically when it's ready.
-                <br><br>
-                <strong>Or visit directly:</strong> <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>
             </div>
 
             <h3>🚀 Quick Access</h3>
@@ -134,12 +100,15 @@ async def serve_root():
                 <a href="/health" class="link">Health Check</a>
                 <a href="/api/docs" class="link">API Documentation</a>
                 <a href="/api/database-stats" class="link">Database Stats</a>
-                <a href="http://localhost:3000" class="link" target="_blank">React Frontend</a>
             </div>
 
-            <h3>📱 React Frontend Status</h3>
-            <p>The React wedding planner app is starting on port 3000. This page will redirect you automatically when it's ready.</p>
-            <p><strong>Manual Access:</strong> <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+            <h3>📱 React Frontend</h3>
+            <p>Your React app should be running on a separate port (3000). If it's not accessible:</p>
+            <ol>
+                <li>Check if the React dev server is running in the terminal</li>
+                <li>Make sure all dependencies are installed</li>
+                <li>Try restarting the workflow</li>
+            </ol>
         </div>
     </body>
     </html>
@@ -151,20 +120,19 @@ async def serve_spa_routes(path: str):
     if path.startswith("api/"):
         raise HTTPException(status_code=404, detail="API endpoint not found")
 
-    # For non-API routes, try to proxy to React dev server
+    # For non-API routes, redirect to root if React dev server is not running
+    # Check if React dev server is running on port 3000
     try:
-        import httpx
         async with httpx.AsyncClient() as client:
-            try:
-                response = await client.get(f"http://localhost:3000/{path}", timeout=2.0)
-                from fastapi.responses import RedirectResponse
-                return RedirectResponse(url=f"http://localhost:3000/{path}", status_code=302)
-            except:
-                pass
-    except:
+            response = await client.get("http://localhost:3000", timeout=2.0)
+            # If React dev server is running, redirect to it
+            from fastapi.responses import RedirectResponse
+            return RedirectResponse(url="http://localhost:3000", status_code=302)
+    except httpx.RequestError:
+        # React dev server is not running, serve our root HTML
         pass
-    
-    # Fallback to root
+
+    # Fallback to root if no other route matches and React dev server is not up
     return await serve_root()
 
 # Health check endpoint
@@ -182,9 +150,9 @@ async def health_check():
             "api_endpoints": "✅ Active"
         },
         "endpoints": {
-            "frontend": "http://localhost:5000",
-            "vendor_discovery": "http://localhost:5000/vendor-discovery",
-            "api_docs": "http://localhost:5000/api/docs"
+            "frontend": "http://localhost:8000",
+            "vendor_discovery": "http://localhost:8000/vendor-discovery",
+            "api_docs": "http://localhost:8000/api/docs"
         }
     })
 
@@ -1723,12 +1691,12 @@ async def get_all_wedding_data():
 def main():
     logger.info("🌸 Shehnai.AI Wedding Assistant - Simplified Unified Server")
     logger.info("=" * 60)
-    logger.info("🚀 Starting simplified unified server on http://0.0.0.0:5000")
-    logger.info("📱 Frontend: http://0.0.0.0:5000")
-    logger.info("🎉 Vendor Discovery: http://0.0.0.0:5000/vendor-discovery")
-    logger.info("🤖 API: http://0.0.0.0:5000/api/")
-    logger.info("📊 Health: http://0.0.0.0:5000/health")
-    logger.info("📋 API Docs: http://0.0.0.0:5000/api/docs")
+    logger.info("🚀 Starting simplified unified server on http://0.0.0.0:8000")
+    logger.info("📱 Frontend: http://0.0.0.0:8000")
+    logger.info("🎉 Vendor Discovery: http://0.0.0.0:8000/vendor-discovery")
+    logger.info("🤖 API: http://0.0.0.0:8000/api/")
+    logger.info("📊 Health: http://0.0.0.0:8000/health")
+    logger.info("📋 API Docs: http://0.0.0.0:8000/api/docs")
     logger.info("=" * 60)
     logger.info("💡 All services running on single port!")
     logger.info("   - Frontend (HTML/CSS/JS)")
@@ -1739,14 +1707,15 @@ def main():
     logger.info("   - Ollama AI Service")
     logger.info("=" * 60)
 
-    uvicorn.run("simple_unified_server:app", host="0.0.0.0", port=5000, reload=False, log_level="info")
+    uvicorn.run("simple_unified_server:app", host="0.0.0.0", port=8000, reload=False, log_level="info")
 
 if __name__ == "__main__":
     import uvicorn
+    import httpx # Added import for httpx
     uvicorn.run(
         "simple_unified_server:app",
         host="0.0.0.0",
-        port=5000,
+        port=8000,
         reload=False,
         log_level="info"
     )
