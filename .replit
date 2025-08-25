@@ -246,6 +246,19 @@ mode = "parallel"
 task = "shell.exec"
 args = "python start_wedding_app.py"
 
+[[workflows.workflow]]
+name = "Full App with React Dev"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python start_wedding_app.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
