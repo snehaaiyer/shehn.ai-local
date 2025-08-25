@@ -151,7 +151,7 @@ const VendorCommunication: React.FC = () => {
       } else {
         // Initialize with enhanced sample data
         const sampleData = generateEnhancedSampleCommunications();
-        setCommunications(data);
+        setCommunications(sampleData); // Corrected: Use sampleData here
         localStorage.setItem('vendorCommunications', JSON.stringify(sampleData));
       }
 
@@ -511,32 +511,36 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                 >
                   <option value="all">All Statuses</option>
+                  <option value="interested">Interested</option>
                   <option value="contacted">Contacted</option>
                   <option value="responded">Responded</option>
                   <option value="quoted">Quoted</option>
                   <option value="negotiating">Negotiating</option>
                   <option value="booked">Booked</option>
+                  <option value="declined">Declined</option>
                 </select>
 
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
                   <option value="photography">Photography</option>
                   <option value="catering">Catering</option>
                   <option value="decoration">Decoration</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="logistics">Logistics</option>
                 </select>
 
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
@@ -544,7 +548,7 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-rose-50 text-rose-700 rounded-lg hover:bg-rose-100 transition-colors">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
