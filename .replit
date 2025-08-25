@@ -6,7 +6,7 @@ channel = "stable-25_05"
 packages = ["bash", "geckodriver", "libxcrypt"]
 
 [deployment]
-run = ["sh", "-c", "cd react-frontend && npx serve -s build -l 5000 -H 0.0.0.0"]
+run = ["sh", "-c", "cd react-frontend && npm start"]
 build = ["sh", "-c", "cd react-frontend && npm install && npm run build"]
 
 [workflows]

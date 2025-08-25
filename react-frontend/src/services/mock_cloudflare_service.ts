@@ -22,9 +22,15 @@ interface MockImageGenerationResponse {
   };
 }
 
+/**
+ * Mock AI Service for Development and Testing
+ * Provides realistic wedding theme image generation using Unsplash images
+ * and theme analysis without requiring external AI services
+ */
 export class MockCloudflareAIService {
-  // Mock service for local development
+  // Configuration
   private static readonly MOCK_DELAY = 2000; // 2 seconds to simulate API call
+  private static readonly MAX_IMAGES = 4;
 
   /**
    * Generate a detailed prompt for wedding theme image generation
@@ -126,7 +132,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
    */
   private static generateMockAnalysis(request: MockImageGenerationRequest): any {
     const { theme, style, colors, season, venueType } = request;
-    
+
     // Generate realistic analysis based on input
     const descriptions = {
       'Elegant': 'A sophisticated and refined wedding setup featuring luxurious details and timeless elegance.',
@@ -179,14 +185,14 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
    */
   static async generateWeddingThemeImages(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
     try {
-      console.log('Starting Mock Cloudflare AI image generation for:', request);
-      
+      console.log('Starting Mock AI image generation for:', request);
+
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, this.MOCK_DELAY));
-      
+
       // Generate mock analysis
       const themeAnalysis = this.generateMockAnalysis(request);
-      
+
       // Generate mock images (using placeholder images)
       const mockImages = [
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop',
@@ -194,9 +200,9 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
         'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1024&h=1024&fit=crop',
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1024&h=1024&fit=crop&sat=-50'
       ];
-      
-      console.log('Mock Cloudflare AI response generated');
-      
+
+      console.log('Mock AI response generated');
+
       return {
         images: mockImages,
         success: true,
@@ -208,7 +214,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
           colors: themeAnalysis.colors
         }
       };
-      
+
     } catch (error) {
       console.error('Error in mock image generation:', error);
       return {
@@ -224,16 +230,16 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
    */
   static async generateThemeAnalysis(request: MockImageGenerationRequest): Promise<MockImageGenerationResponse> {
     try {
-      console.log('Starting Mock Cloudflare AI theme analysis for:', request);
-      
+      console.log('Starting Mock AI theme analysis for:', request);
+
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, this.MOCK_DELAY));
-      
+
       // Generate mock analysis
       const themeAnalysis = this.generateMockAnalysis(request);
-      
-      console.log('Mock Cloudflare AI analysis response generated');
-      
+
+      console.log('Mock AI analysis response generated');
+
       return {
         images: [],
         success: true,
@@ -245,7 +251,7 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
           colors: themeAnalysis.colors
         }
       };
-      
+
     } catch (error) {
       console.error('Error in mock theme analysis:', error);
       return {
@@ -262,4 +268,4 @@ ${customDescription ? customDescription : 'Traditional wedding elegance'}
   static async validateConnection(): Promise<boolean> {
     return true;
   }
-} 
+}
