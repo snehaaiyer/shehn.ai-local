@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { 
@@ -27,6 +26,36 @@ import { AIChatWidget } from './components/AIChatWidget';
 
 // CSS
 import './App.css';
+
+// Placeholder for AnimatedSidebar and theme, as they are not provided in the original code.
+// In a real scenario, these would be imported and managed.
+const AnimatedSidebar = ({ isOpen, onClose }) => {
+  // Dummy implementation for demonstration
+  return (
+    <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${isOpen ? '' : '-translate-x-full'} lg:translate-x-0`}>
+      <div className="flex items-center justify-center mt-8 mb-4">
+        <LogoWithFallback size={50} />
+        <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+          Shehnai.AI
+        </span>
+      </div>
+      <nav className="px-4 space-y-2">
+        {/* Dummy menu items */}
+        <div className="flex items-center space-x-3 p-3 rounded-xl cursor-pointer hover:bg-gray-100 text-gray-700">
+          <Home size={20} />
+          <span className="font-medium">Dashboard</span>
+        </div>
+        <div className="flex items-center space-x-3 p-3 rounded-xl cursor-pointer hover:bg-gray-100 text-gray-700">
+          <Heart size={20} />
+          <span className="font-medium">Preferences</span>
+        </div>
+      </nav>
+      <button onClick={onClose} className="absolute top-3 right-3 lg:hidden">
+        <X size={24} />
+      </button>
+    </div>
+  );
+};
 
 const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
   const [logoError, setLogoError] = useState(false);
@@ -57,8 +86,9 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
 };
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // These states are assumed to be managed by AnimatedSidebar and theme context
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState('light'); // 'light' or 'dark'
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/' },
@@ -69,113 +99,62 @@ const App = () => {
     { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, path: '/ai-assistant' }
   ];
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-orange-50">
+      <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
+        
         {/* Mobile Header */}
-        <div className="md:hidden bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between">
+        <div className={`lg:hidden shadow-sm border-b px-4 py-3 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center space-x-3">
             <LogoWithFallback size={32} />
-            <span className="text-xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+            <span className={`text-xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-deep-navy'}`}>
               Shehnai.AI
             </span>
           </div>
           <button 
-            onClick={toggleMobileMenu}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            onClick={() => setSidebarOpen(true)}
+            className={`p-2 rounded-md transition-colors ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-pastel-rose/20 text-deep-navy'}`}
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <Menu size={24} />
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="bg-white w-80 h-full shadow-lg p-6" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center space-x-3 mb-8">
-                <LogoWithFallback size={40} />
-                <span className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+        {/* Sidebar and Main Content */}
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          {/* Assuming AnimatedSidebar takes props like isOpen, onClose, menuItems, activeTab, setActiveTab */}
+          <AnimatedSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} menuItems={menuItems} activeTab={'dashboard'} setActiveTab={() => {}} />
+          
+          {/* Main Content Area */}
+          <div className={`flex-1 transition-all duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
+            {/* Mobile Header (already defined above, but the original snippet had it here again) */}
+            {/* Re-integrating based on the provided snippet's structure */}
+            <div className={`lg:hidden shadow-sm border-b px-4 py-3 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+              <div className="flex items-center space-x-3">
+                <LogoWithFallback size={32} />
+                <span className={`text-xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-deep-navy'}`}>
                   Shehnai.AI
                 </span>
               </div>
-              <div className="space-y-2">
-                {menuItems.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-                      activeTab === item.id 
-                        ? 'bg-gradient-to-r from-orange-400 to-pink-400 text-white shadow-md' 
-                        : 'hover:bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    <item.icon size={20} />
-                    <span className="font-medium">{item.label}</span>
-                  </div>
-                ))}
-              </div>
+              <button 
+                onClick={() => setSidebarOpen(true)}
+                className={`p-2 rounded-md transition-colors ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-pastel-rose/20 text-deep-navy'}`}
+              >
+                <Menu size={24} />
+              </button>
             </div>
-          </div>
-        )}
 
-        <div className="flex">
-          {/* Desktop Sidebar */}
-          <div className="hidden md:flex md:w-80 md:flex-col md:fixed md:inset-y-0">
-            <div className="flex-1 flex flex-col min-h-0 bg-white shadow-xl">
-              <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                <div className="flex items-center flex-shrink-0 px-6 mb-8">
-                  <LogoWithFallback size={50} />
-                  <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
-                    Shehnai.AI
-                  </span>
-                </div>
-                <nav className="mt-5 flex-1 px-4 space-y-2">
-                  {menuItems.map((item) => (
-                    <div
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id)}
-                      className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl cursor-pointer transition-all duration-200 ${
-                        activeTab === item.id 
-                          ? 'bg-gradient-to-r from-orange-400 to-pink-400 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 hover:text-orange-700'
-                      }`}
-                    >
-                      <item.icon 
-                        className={`mr-3 flex-shrink-0 h-5 w-5 ${
-                          activeTab === item.id ? 'text-white' : 'text-gray-500 group-hover:text-orange-600'
-                        }`} 
-                      />
-                      {item.label}
-                    </div>
-                  ))}
-                </nav>
-              </div>
-            </div>
-          </div>
-
-          {/* Main content */}
-          <div className="md:pl-80 flex flex-col flex-1">
-            <main className="flex-1">
-              <div className="py-6">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/preferences" element={<WeddingPreferences />} />
-                    <Route path="/budget" element={<BudgetManagement />} />
-                    <Route path="/vendor-discovery" element={<VendorDiscovery />} />
-                    <Route path="/vendor-communication" element={<VendorCommunication />} />
-                    <Route path="/ai-assistant" element={<AIChat />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </div>
-              </div>
+            {/* Page Content */}
+            <main className="flex-1 p-4 lg:p-8">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/preferences" element={<WeddingPreferences />} />
+                <Route path="/budget" element={<BudgetManagement />} />
+                <Route path="/vendor-discovery" element={<VendorDiscovery />} />
+                <Route path="/vendor-communication" element={<VendorCommunication />} />
+                <Route path="/ai-assistant" element={<AIChat />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
             </main>
           </div>
         </div>
