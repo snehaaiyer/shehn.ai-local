@@ -112,7 +112,7 @@ const VendorCommunication: React.FC = () => {
 
   // UI States
   const [loading, setLoading] = useState(false);
-  const [activeView, setActiveView] = useState<'overview' | 'communication' | 'budget' | 'availability'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'communication' | 'budget' | 'availability'>('overview');
 
   // Dummy data for stats - replace with actual calculations later
   const stats = {
@@ -122,14 +122,13 @@ const VendorCommunication: React.FC = () => {
     avgResponseTime: (communications.filter(c => c.responseTime).reduce((sum, c) => sum + (c.responseTime || 0), 0) / (communications.filter(c => c.responseTime).length || 1)).toFixed(1) + 'h'
   };
 
-  // Dummy data for tabs - replace with actual logic later
+  // Tab definitions
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'communication', label: 'Communication', icon: MessageCircle },
     { id: 'budget', label: 'Budget', icon: DollarSign },
     { id: 'availability', label: 'Availability', icon: Activity },
   ];
-  const [activeTab, setActiveTab] = useState<string>('overview');
 
 
   useEffect(() => {
@@ -554,7 +553,7 @@ const VendorCommunication: React.FC = () => {
 
             {/* Table Views */}
             <div className="p-6">
-              {activeView === 'overview' && (
+              {activeTab === 'overview' && (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -638,7 +637,7 @@ const VendorCommunication: React.FC = () => {
                 </div>
               )}
 
-              {activeView === 'communication' && (
+              {activeTab === 'communication' && (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -734,7 +733,7 @@ const VendorCommunication: React.FC = () => {
                 </div>
               )}
 
-              {activeView === 'budget' && (
+              {activeTab === 'budget' && (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -817,7 +816,7 @@ const VendorCommunication: React.FC = () => {
                 </div>
               )}
 
-              {activeView === 'availability' && (
+              {activeTab === 'availability' && (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
