@@ -120,7 +120,7 @@ export class VendorDiscoveryService {
   /**
    * Get comprehensive wedding data from stored preferences
    */
-  private static getWeddingDataFromPreferences(): any {
+  static getWeddingDataFromPreferences(): any {
     try {
       const savedPreferences = localStorage.getItem('weddingPreferences');
       if (!savedPreferences) {
@@ -152,7 +152,7 @@ export class VendorDiscoveryService {
   /**
    * Extract indoor/outdoor preference from venue type
    */
-  private static extractIndoorOutdoorPreference(venueType: string): string {
+  static extractIndoorOutdoorPreference(venueType: string): string {
     if (!venueType) return '';
     
     const outdoorTypes = ['garden', 'beach', 'farmhouse', 'mountain', 'rooftop'];
@@ -169,7 +169,7 @@ export class VendorDiscoveryService {
   /**
    * Infer decor style from wedding theme
    */
-  private static inferDecorFromTheme(theme: string): string {
+  static inferDecorFromTheme(theme: string): string {
     const decorMapping: Record<string, string> = {
       'royal': 'luxury-opulent',
       'traditional': 'traditional',
@@ -186,7 +186,7 @@ export class VendorDiscoveryService {
   /**
    * Infer color theme from wedding theme
    */
-  private static inferColorFromTheme(theme: string): string {
+  static inferColorFromTheme(theme: string): string {
     const colorMapping: Record<string, string> = {
       'royal': 'burgundy-gold',
       'traditional': 'red-gold',
@@ -203,7 +203,7 @@ export class VendorDiscoveryService {
   /**
    * Infer floral style from wedding theme
    */
-  private static inferFloralFromTheme(theme: string): string {
+  static inferFloralFromTheme(theme: string): string {
     const floralMapping: Record<string, string> = {
       'royal': 'opulent',
       'traditional': 'marigold-roses',
@@ -220,7 +220,7 @@ export class VendorDiscoveryService {
   /**
    * Extract cultural requirements from preferences
    */
-  private static extractCulturalRequirements(preferences: any): string[] {
+  static extractCulturalRequirements(preferences: any): string[] {
     const requirements: string[] = [];
     
     const theme = preferences.theme?.selectedTheme?.toLowerCase();
@@ -242,7 +242,7 @@ export class VendorDiscoveryService {
   /**
    * Extract seasonal preferences from wedding date
    */
-  private static extractSeasonalPreferences(weddingDate: string): string {
+  static extractSeasonalPreferences(weddingDate: string): string {
     if (!weddingDate) return '';
     
     try {
@@ -306,7 +306,7 @@ export class VendorDiscoveryService {
   /**
    * Get detailed preferences for RAG processing
    */
-  private static getDetailedPreferencesFromStorage(): any {
+  static getDetailedPreferencesFromStorage(): any {
     try {
       const savedPreferences = localStorage.getItem('weddingPreferences');
       if (!savedPreferences) {
@@ -370,7 +370,7 @@ export class VendorDiscoveryService {
   /**
    * Calculate how complete the preferences are (0-100%)
    */
-  private static calculatePreferencesCompletionLevel(preferences: any): number {
+  static calculatePreferencesCompletionLevel(preferences: any): number {
     const requiredFields = [
       'basicDetails.yourName',
       'basicDetails.partnerName', 
@@ -404,7 +404,7 @@ export class VendorDiscoveryService {
   /**
    * Search vendors using RAG-enhanced semantic search backend API
    */
-  private static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
+  static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
     const backendUrl = window.location.hostname === 'localhost' ? 
       'http://localhost:5003' : 
       `https://${window.location.hostname}`;
@@ -500,7 +500,7 @@ export class VendorDiscoveryService {
   /**
    * Apply business logic filters based on wedding preferences
    */
-  private static applyBusinessLogicFilters(vendors: Vendor[], params: VendorSearchParams, weddingData: any): Vendor[] {
+  static applyBusinessLogicFilters(vendors: Vendor[], params: VendorSearchParams, weddingData: any): Vendor[] {
     console.log('🔧 Applying comprehensive business logic filters...');
     console.log('📋 Wedding data being used for filtering:', {
       theme: weddingData.weddingTheme,
@@ -586,7 +586,7 @@ export class VendorDiscoveryService {
   /**
    * Filter vendors by budget compatibility
    */
-  private static filterByBudgetCompatibility(vendors: Vendor[], budgetRange: string): Vendor[] {
+  static filterByBudgetCompatibility(vendors: Vendor[], budgetRange: string): Vendor[] {
     const budgetCategories = {
       'Budget Friendly - Under 5 Lakhs': ['budget', 'Budget (< ₹50K)', 'Mid-Range (₹50K - ₹2L)'],
       'Mid Range - 5-15 Lakhs': ['mid', 'Mid-Range (₹50K - ₹2L)', 'Premium (> ₹2L)'],
@@ -608,7 +608,7 @@ export class VendorDiscoveryService {
   /**
    * Filter vendors by location proximity
    */
-  private static filterByLocationProximity(vendors: Vendor[], userLocation: string): Vendor[] {
+  static filterByLocationProximity(vendors: Vendor[], userLocation: string): Vendor[] {
     const userCity = userLocation.toLowerCase();
     
     return vendors.filter(vendor => {
@@ -635,7 +635,7 @@ export class VendorDiscoveryService {
   /**
    * Apply sorting based on user priorities
    */
-  private static applySortingBasedOnPriorities(vendors: Vendor[], weddingData: any): Vendor[] {
+  static applySortingBasedOnPriorities(vendors: Vendor[], weddingData: any): Vendor[] {
     const priorities = weddingData.priorities || ['venue', 'photography', 'catering'];
     
     return vendors.sort((a, b) => {
@@ -660,7 +660,7 @@ export class VendorDiscoveryService {
   /**
    * Generate AI images for venue vendors
    */
-  private static async generateVenueImages(venueVendors: Vendor[]): Promise<{ [vendorName: string]: any }> {
+  static async generateVenueImages(venueVendors: Vendor[]): Promise<{ [vendorName: string]: any }> {
     const generatedImages: { [vendorName: string]: any } = {};
 
     for (const vendor of venueVendors) {
@@ -708,7 +708,7 @@ export class VendorDiscoveryService {
   /**
    * Filter vendors by theme compatibility (enhanced)
    */
-  private static filterByThemeCompatibility(vendors: Vendor[], weddingTheme: string): Vendor[] {
+  static filterByThemeCompatibility(vendors: Vendor[], weddingTheme: string): Vendor[] {
     const themeMapping = {
       'royal': ['royal', 'palace', 'luxury', 'premium', 'heritage', 'opulent', 'grand', 'regal'],
       'traditional': ['traditional', 'heritage', 'classic', 'cultural', 'ethnic', 'authentic', 'ceremonial'],
@@ -738,7 +738,7 @@ export class VendorDiscoveryService {
   /**
    * Filter venues by type compatibility
    */
-  private static filterByVenueTypeCompatibility(vendors: Vendor[], venueType: string, indoorOutdoor: string): Vendor[] {
+  static filterByVenueTypeCompatibility(vendors: Vendor[], venueType: string, indoorOutdoor: string): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'venues') return true;
       
@@ -766,7 +766,7 @@ export class VendorDiscoveryService {
   /**
    * Filter catering by cuisine compatibility
    */
-  private static filterByCuisineCompatibility(vendors: Vendor[], cuisineStyle: string, dietaryRestrictions: string[]): Vendor[] {
+  static filterByCuisineCompatibility(vendors: Vendor[], cuisineStyle: string, dietaryRestrictions: string[]): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'catering') return true;
       
@@ -790,7 +790,7 @@ export class VendorDiscoveryService {
   /**
    * Filter photography by style compatibility
    */
-  private static filterByPhotographyStyleCompatibility(vendors: Vendor[], photographyStyle: string, videographyRequired: boolean): Vendor[] {
+  static filterByPhotographyStyleCompatibility(vendors: Vendor[], photographyStyle: string, videographyRequired: boolean): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'photography') return true;
       
@@ -814,7 +814,7 @@ export class VendorDiscoveryService {
   /**
    * Filter by decor compatibility
    */
-  private static filterByDecorCompatibility(vendors: Vendor[], decorStyle: string, colorTheme: string): Vendor[] {
+  static filterByDecorCompatibility(vendors: Vendor[], decorStyle: string, colorTheme: string): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'decoration' && vendor.category !== 'venues') return true;
       
@@ -837,7 +837,7 @@ export class VendorDiscoveryService {
   /**
    * Filter by cultural requirements
    */
-  private static filterByCulturalRequirements(vendors: Vendor[], culturalRequirements: string[]): Vendor[] {
+  static filterByCulturalRequirements(vendors: Vendor[], culturalRequirements: string[]): Vendor[] {
     return vendors.filter(vendor => {
       const vendorText = `${vendor.name} ${vendor.description} ${(vendor.specialties || []).join(' ')}`.toLowerCase();
       
@@ -874,7 +874,7 @@ export class VendorDiscoveryService {
   /**
    * Apply filters to vendors
    */
-  private static applyFilters(vendors: Vendor[], params: VendorSearchParams): Vendor[] {
+  static applyFilters(vendors: Vendor[], params: VendorSearchParams): Vendor[] {
     let filtered = [...vendors];
 
     // Search term filter
@@ -932,7 +932,7 @@ export class VendorDiscoveryService {
   /**
    * Generate mock vendors based on category
    */
-  private static generateMockVendors(category: string, location: string): Vendor[] {
+  static generateMockVendors(category: string, location: string): Vendor[] {
     switch (category) {
       case 'venues':
         return this.generateVenueVendors(location);
@@ -950,7 +950,7 @@ export class VendorDiscoveryService {
   /**
    * Generate venue vendors
    */
-  private static generateVenueVendors(location: string): Vendor[] {
+  static generateVenueVendors(location: string): Vendor[] {
     return [
       {
         id: 'venue-1',
@@ -1158,7 +1158,7 @@ export class VendorDiscoveryService {
   /**
    * Generate photography vendors
    */
-  private static generatePhotographyVendors(location: string): Vendor[] {
+  static generatePhotographyVendors(location: string): Vendor[] {
     return [
       {
         id: 'photo-1',
@@ -1221,7 +1221,7 @@ export class VendorDiscoveryService {
   /**
    * Generate catering vendors
    */
-  private static generateCateringVendors(location: string): Vendor[] {
+  static generateCateringVendors(location: string): Vendor[] {
     return [
       {
         id: 'catering-1',
@@ -1283,7 +1283,7 @@ export class VendorDiscoveryService {
   /**
    * Generate wedding planners
    */
-  private static generateWeddingPlanners(location: string): Vendor[] {
+  static generateWeddingPlanners(location: string): Vendor[] {
     return [
       {
         id: 'planner-1',
@@ -1338,7 +1338,7 @@ export class VendorDiscoveryService {
   /**
    * Get default wedding data
    */
-  private static getDefaultWeddingData(): any {
+  static getDefaultWeddingData(): any {
     return {
       yourName: 'User',
       partnerName: 'Partner',
@@ -1359,7 +1359,7 @@ export class VendorDiscoveryService {
   /**
    * Check if price range is compatible with budget
    */
-  private static isPriceRangeCompatible(vendorPriceRange: string, userBudget: string): boolean {
+  static isPriceRangeCompatible(vendorPriceRange: string, userBudget: string): boolean {
     // Extract numeric values and compare
     const budgetValues = {
       'Budget Friendly - Under 5 Lakhs': { min: 0, max: 500000 },
@@ -1382,7 +1382,7 @@ export class VendorDiscoveryService {
   /**
    * Filter vendors by capacity
    */
-  private static filterByCapacity(vendors: Vendor[], guestCount: number): Vendor[] {
+  static filterByCapacity(vendors: Vendor[], guestCount: number): Vendor[] {
     return vendors.filter(vendor => {
       if (vendor.category !== 'venues') return true; // Only apply to venues
       
@@ -1396,7 +1396,7 @@ export class VendorDiscoveryService {
   /**
    * Filter vendors by style compatibility
    */
-  private static filterByStyleCompatibility(vendors: Vendor[], weddingStyle: string): Vendor[] {
+  static filterByStyleCompatibility(vendors: Vendor[], weddingStyle: string): Vendor[] {
     const styleMapping = {
       'traditional': ['traditional', 'heritage', 'classic', 'cultural'],
       'modern': ['modern', 'contemporary', 'minimalist', 'urban'],
@@ -1426,7 +1426,7 @@ export class VendorDiscoveryService {
   /**
    * Apply UI-based filters
    */
-  private static applyUIFilters(vendors: Vendor[], params: VendorSearchParams): Vendor[] {
+  static applyUIFilters(vendors: Vendor[], params: VendorSearchParams): Vendor[] {
     let filtered = [...vendors];
 
     // Search term filter
@@ -1479,7 +1479,7 @@ export class VendorDiscoveryService {
   /**
    * Generate enhanced mock vendors that respect wedding preferences
    */
-  private static generateEnhancedMockVendors(params: VendorSearchParams, weddingData: any): Vendor[] {
+  static generateEnhancedMockVendors(params: VendorSearchParams, weddingData: any): Vendor[] {
     const location = weddingData.city || params.location || 'Mumbai';
     let vendors: Vendor[] = [];
     
@@ -1511,7 +1511,7 @@ export class VendorDiscoveryService {
   /**
    * Generate realistic capacity for venues
    */
-  private static generateRealisticCapacity(vendor: Vendor, guestCount: number): number {
+  static generateRealisticCapacity(vendor: Vendor, guestCount: number): number {
     if (vendor.category !== 'venues') return 0;
     
     const baseCapacity = guestCount || 200;
@@ -1523,7 +1523,7 @@ export class VendorDiscoveryService {
   /**
    * Generate style specialties
    */
-  private static generateStyleSpecialties(vendor: Vendor, weddingStyle: string): string[] {
+  static generateStyleSpecialties(vendor: Vendor, weddingStyle: string): string[] {
     const baseSpecialties = vendor.specialties || [];
     
     const styleSpecialties = {
@@ -1541,7 +1541,7 @@ export class VendorDiscoveryService {
   /**
    * Generate awards based on vendor quality
    */
-  private static generateAwards(vendor: Vendor): string[] {
+  static generateAwards(vendor: Vendor): string[] {
     if (vendor.rating < 4.0) return [];
     
     const awards = [
@@ -1559,7 +1559,7 @@ export class VendorDiscoveryService {
   /**
    * Enhance vendor description based on wedding data
    */
-  private static enhanceDescription(vendor: Vendor, weddingData: any): string {
+  static enhanceDescription(vendor: Vendor, weddingData: any): string {
     let description = vendor.description;
     
     // Add guest count relevance
@@ -1583,7 +1583,7 @@ export class VendorDiscoveryService {
   /**
    * Generate other vendors
    */
-  private static generateOtherVendors(category: string, location: string): Vendor[] {
+  static generateOtherVendors(category: string, location: string): Vendor[] {
     const categoryImages = {
       decoration: [
         'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop',
