@@ -82,7 +82,7 @@ const AnimatedSidebar = () => {
 
   return (
     <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex items-center justify-center mt-8 mb-4">
+      <div className="flex items-center justify-center mt-4 mb-4">
         <LogoWithFallback size={50} />
         <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
           Shehnai.AI
@@ -124,9 +124,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
-
         {/* Mobile Header */}
-        <div className={`lg:hidden shadow-sm border-b px-4 py-3 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className={`lg:hidden shadow-sm border-b px-4 py-2 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center space-x-3">
             <LogoWithFallback size={32} />
             <span className={`text-xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -154,7 +153,7 @@ const App = () => {
 
         {/* Main Content */}
         <div className="lg:pl-64">
-          <main className="min-h-screen p-6">
+          <main className="min-h-screen p-2">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/preferences" element={<WeddingPreferences />} />
