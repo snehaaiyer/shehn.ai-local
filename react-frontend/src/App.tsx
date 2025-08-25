@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { 
@@ -23,7 +24,6 @@ import AIChat from './pages/AIChat';
 
 // Component imports
 import AIChatWidget from './components/AIChatWidget';
-import { AnimatedSidebar } from './components/AnimatedSidebar';
 import { useAppStore } from './store/useAppStore';
 
 // CSS
@@ -53,6 +53,57 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
           className="rounded-xl"
         />
       )}
+    </div>
+  );
+};
+
+const AnimatedSidebar = () => {
+  const { sidebarOpen, setSidebarOpen, theme } = useAppStore();
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/' },
+    { id: 'preferences', label: 'Wedding Preferences', icon: Heart, path: '/preferences' },
+    { id: 'budget', label: 'Budget Management', icon: DollarSign, path: '/budget' },
+    { id: 'vendor-discovery', label: 'Vendor Discovery', icon: Search, path: '/vendors' },
+    { id: 'vendor-communication', label: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication' },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, path: '/chat' }
+  ];
+
+  return (
+    <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className="flex items-center justify-center mt-8 mb-4">
+        <LogoWithFallback size={50} />
+        <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+          Shehnai.AI
+        </span>
+      </div>
+      <nav className="px-4 space-y-2">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-colors ${
+                activeTab === item.id
+                  ? 'text-white'
+                  : 'hover:bg-gray-100 text-gray-700'
+              }`}
+              style={activeTab === item.id ? {
+                backgroundColor: '#D29B9B',
+                background: 'linear-gradient(135deg, #D29B9B, #C49464)'
+              } : {}}
+            >
+              <Icon size={20} />
+              <span className="font-medium">{item.label}</span>
+            </div>
+          );
+        })}
+      </nav>
+      <button onClick={() => setSidebarOpen(false)} className="absolute top-3 right-3 lg:hidden">
+        <X size={24} />
+      </button>
     </div>
   );
 };
