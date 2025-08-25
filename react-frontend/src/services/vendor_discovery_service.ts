@@ -1643,10 +1643,10 @@ export class VendorDiscoveryService {
   /**
    * Get vendor recommendations
    */
-  static async getVendorRecommendations(preferences: any): Promise<VendorSearchResult[]> {
+  static async getVendorRecommendations(preferences: any): Promise<Vendor[]> {
     try {
       // Generate recommendations based on preferences
-      const recommendations: VendorSearchResult[] = [];
+      const recommendations: Vendor[] = [];
       
       if (preferences.venue) {
         const venueVendors = this.generateVenueVendors(preferences.location || 'Mumbai');
