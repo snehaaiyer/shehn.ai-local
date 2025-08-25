@@ -23,9 +23,14 @@ import {
   MapPin,
   Star,
   Heart,
-  Eye
+  Eye,
+  Activity,
+  Target,
+  Zap,
+  Timer,
+  Percent,
+  BarChart3
 } from 'lucide-react';
-import { VendorCommunicationService } from '../services/vendor_communication_service';
 
 interface VendorCommunication {
   id: string;
@@ -73,6 +78,11 @@ interface VendorCommunication {
   notes: string;
   tags: string[];
   
+  // Availability & Budget Insights
+  availabilityStatus: 'high' | 'medium' | 'low' | 'unknown';
+  budgetCompatibility: 'perfect' | 'good' | 'stretch' | 'over';
+  marketPosition: 'budget' | 'mid-range' | 'premium' | 'luxury';
+  
   // Metadata
   createdAt: string;
   updatedAt: string;
@@ -89,14 +99,6 @@ interface CommunicationMessage {
   attachments?: string[];
 }
 
-interface QuotationAnalysis {
-  averagePrice: number;
-  priceRange: { min: number; max: number };
-  bestValue: string;
-  recommendations: string[];
-  marketInsights: string[];
-}
-
 const VendorCommunication: React.FC = () => {
   const [communications, setCommunications] = useState<VendorCommunication[]>([]);
   const [filteredCommunications, setFilteredCommunications] = useState<VendorCommunication[]>([]);
@@ -110,11 +112,7 @@ const VendorCommunication: React.FC = () => {
   
   // UI States
   const [loading, setLoading] = useState(false);
-  const [showNewCommunication, setShowNewCommunication] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'messages' | 'quotations' | 'analytics'>('overview');
-  
-  // Analytics
-  const [quotationAnalysis, setQuotationAnalysis] = useState<QuotationAnalysis | null>(null);
+  const [activeView, setActiveView] = useState<'overview' | 'communication' | 'budget' | 'availability'>('overview');
 
   useEffect(() => {
     loadCommunications();
@@ -134,8 +132,8 @@ const VendorCommunication: React.FC = () => {
         const data = JSON.parse(savedCommunications);
         setCommunications(data);
       } else {
-        // Initialize with sample data
-        const sampleData = generateSampleCommunications();
+        // Initialize with enhanced sample data
+        const sampleData = generateEnhancedSampleCommunications();
         setCommunications(sampleData);
         localStorage.setItem('vendorCommunications', JSON.stringify(sampleData));
       }
@@ -150,22 +148,18 @@ const VendorCommunication: React.FC = () => {
   const applyFilters = () => {
     let filtered = [...communications];
 
-    // Status filter
     if (statusFilter !== 'all') {
       filtered = filtered.filter(comm => comm.status === statusFilter);
     }
 
-    // Category filter
     if (categoryFilter !== 'all') {
       filtered = filtered.filter(comm => comm.vendorCategory === categoryFilter);
     }
 
-    // Priority filter
     if (priorityFilter !== 'all') {
       filtered = filtered.filter(comm => comm.priority === priorityFilter);
     }
 
-    // Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(comm => 
@@ -179,7 +173,7 @@ const VendorCommunication: React.FC = () => {
     setFilteredCommunications(filtered);
   };
 
-  const generateSampleCommunications = (): VendorCommunication[] => {
+  const generateEnhancedSampleCommunications = (): VendorCommunication[] => {
     return [
       {
         id: 'comm-1',
@@ -192,6 +186,9 @@ const VendorCommunication: React.FC = () => {
         vendorWebsite: 'www.royalgardenpalace.com',
         status: 'quoted',
         priority: 'high',
+        availabilityStatus: 'medium',
+        budgetCompatibility: 'good',
+        marketPosition: 'premium',
         messages: [
           {
             id: 'msg-1',
@@ -248,6 +245,9 @@ const VendorCommunication: React.FC = () => {
         vendorEmail: 'booking@elitephotography.com',
         status: 'negotiating',
         priority: 'high',
+        availabilityStatus: 'high',
+        budgetCompatibility: 'perfect',
+        marketPosition: 'mid-range',
         messages: [
           {
             id: 'msg-3',
@@ -281,6 +281,54 @@ const VendorCommunication: React.FC = () => {
         tags: ['premium', 'experienced', 'negotiable'],
         createdAt: '2024-01-16T09:00:00Z',
         updatedAt: '2024-01-17T15:00:00Z'
+      },
+      {
+        id: 'comm-3',
+        vendorId: 'vendor-3',
+        vendorName: 'Spice Garden Catering',
+        vendorCategory: 'catering',
+        vendorLocation: 'Delhi, India',
+        vendorPhone: '+91 99887 76543',
+        vendorEmail: 'orders@spicegarden.in',
+        status: 'contacted',
+        priority: 'medium',
+        availabilityStatus: 'high',
+        budgetCompatibility: 'stretch',
+        marketPosition: 'budget',
+        messages: [
+          {
+            id: 'msg-4',
+            type: 'email',
+            direction: 'sent',
+            subject: 'Catering Service Inquiry',
+            content: 'Looking for catering services for 200 guests...',
+            timestamp: '2024-01-17T12:00:00Z',
+            status: 'sent'
+          }
+        ],
+        quotation: {
+          amount: 80000,
+          currency: 'INR',
+          description: 'Traditional Indian catering for 200 guests',
+          validUntil: '2024-02-01',
+          inclusions: ['3-course meal', 'Service staff', 'Crockery'],
+          exclusions: ['Beverages', 'Desserts', 'Decoration'],
+          paymentTerms: '50% advance, 50% on service day',
+          advances: [
+            { percentage: 50, amount: 40000 },
+            { percentage: 50, amount: 40000 }
+          ]
+        },
+        contactDate: '2024-01-17T12:00:00Z',
+        responseDate: undefined,
+        quotationDate: undefined,
+        responseTime: undefined,
+        negotiationCount: 0,
+        priceReductions: 0,
+        notes: 'Waiting for response. Budget-friendly option.',
+        tags: ['budget-friendly', 'traditional', 'pending'],
+        createdAt: '2024-01-17T12:00:00Z',
+        updatedAt: '2024-01-17T12:00:00Z'
       }
     ];
   };
@@ -298,60 +346,25 @@ const VendorCommunication: React.FC = () => {
     return icons[status as keyof typeof icons] || <Clock className="w-4 h-4 text-gray-500" />;
   };
 
-  const getStatusColor = (status: string) => {
+  const getAvailabilityColor = (status: string) => {
     const colors = {
-      interested: 'bg-pink-100 text-pink-800',
-      contacted: 'bg-blue-100 text-blue-800',
-      responded: 'bg-green-100 text-green-800',
-      quoted: 'bg-orange-100 text-orange-800',
-      negotiating: 'bg-purple-100 text-purple-800',
-      booked: 'bg-green-100 text-green-800',
-      declined: 'bg-red-100 text-red-800'
+      high: 'bg-green-100 text-green-800',
+      medium: 'bg-yellow-100 text-yellow-800',
+      low: 'bg-red-100 text-red-800',
+      unknown: 'bg-gray-100 text-gray-800'
     };
     return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getBudgetCompatibilityColor = (compatibility: string) => {
     const colors = {
-      high: 'bg-red-100 text-red-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      low: 'bg-green-100 text-green-800'
+      perfect: 'bg-green-100 text-green-800',
+      good: 'bg-blue-100 text-blue-800',
+      stretch: 'bg-yellow-100 text-yellow-800',
+      over: 'bg-red-100 text-red-800'
     };
-    return colors[priority as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[compatibility as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
-
-  const generateQuotationAnalysis = () => {
-    const quotations = communications
-      .filter(comm => comm.quotation)
-      .map(comm => comm.quotation!);
-
-    if (quotations.length === 0) return null;
-
-    const amounts = quotations.map(q => q.amount);
-    const averagePrice = amounts.reduce((sum, amount) => sum + amount, 0) / amounts.length;
-    const minPrice = Math.min(...amounts);
-    const maxPrice = Math.max(...amounts);
-
-    return {
-      averagePrice,
-      priceRange: { min: minPrice, max: maxPrice },
-      bestValue: communications.find(comm => comm.quotation?.amount === minPrice)?.vendorName || '',
-      recommendations: [
-        'Consider bundling services for better rates',
-        'Book early for seasonal discounts',
-        'Compare inclusions carefully'
-      ],
-      marketInsights: [
-        `Average market rate: ₹${averagePrice.toLocaleString()}`,
-        `Price range: ₹${minPrice.toLocaleString()} - ₹${maxPrice.toLocaleString()}`,
-        'Peak season rates apply for December weddings'
-      ]
-    };
-  };
-
-  useEffect(() => {
-    setQuotationAnalysis(generateQuotationAnalysis());
-  }, [communications]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -364,14 +377,14 @@ const VendorCommunication: React.FC = () => {
                 <MessageCircle className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Vendor Communication</h1>
-                <p className="text-sm text-gray-600">Manage all vendor communications in one place</p>
+                <h1 className="text-xl font-bold text-gray-800">Vendor Communications</h1>
+                <p className="text-sm text-gray-600">Comprehensive vendor relationship management</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => setShowNewCommunication(true)}
+                onClick={() => {/* Add new vendor */}}
                 className="bg-gradient-to-r from-green-600 to-blue-700 text-white px-4 py-2 rounded-lg font-medium hover:from-green-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
@@ -384,7 +397,7 @@ const VendorCommunication: React.FC = () => {
 
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-7xl mx-auto">
-          {/* Statistics Cards */}
+          {/* Analytics Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-2xl p-6 shadow-lg">
               <div className="flex items-center justify-between">
@@ -401,498 +414,476 @@ const VendorCommunication: React.FC = () => {
             <div className="bg-white rounded-2xl p-6 shadow-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Quotations Received</p>
+                  <p className="text-sm font-medium text-gray-600">Active Negotiations</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {communications.filter(c => c.quotation).length}
-                  </p>
-                </div>
-                <div className="bg-green-100 p-3 rounded-lg">
-                  <FileText className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Quote Value</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    ₹{communications
-                      .filter(c => c.quotation)
-                      .reduce((sum, c) => sum + (c.quotation?.amount || 0), 0)
-                      .toLocaleString()}
-                  </p>
-                </div>
-                <div className="bg-yellow-100 p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-yellow-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Vendors Booked</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {communications.filter(c => c.status === 'booked').length}
+                    {communications.filter(c => c.status === 'negotiating').length}
                   </p>
                 </div>
                 <div className="bg-purple-100 p-3 rounded-lg">
-                  <CheckCircle className="w-6 h-6 text-purple-600" />
+                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Savings</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {(communications
+                      .filter(c => c.responseTime)
+                      .reduce((sum, c) => sum + (c.responseTime || 0), 0) / 
+                      communications.filter(c => c.responseTime).length || 0
+                    ).toFixed(1)}h
+                  </p>
+                </div>
+                <div className="bg-orange-100 p-3 rounded-lg">
+                  <Timer className="w-6 h-6 text-orange-600" />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Filters */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search vendors..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
-                />
-              </div>
-
-              {/* Status Filter */}
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
-              >
-                <option value="all">All Statuses</option>
-                <option value="interested">Interested</option>
-                <option value="contacted">Contacted</option>
-                <option value="responded">Responded</option>
-                <option value="quoted">Quoted</option>
-                <option value="negotiating">Negotiating</option>
-                <option value="booked">Booked</option>
-                <option value="declined">Declined</option>
-              </select>
-
-              {/* Category Filter */}
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
-              >
-                <option value="all">All Categories</option>
-                <option value="venues">Venues</option>
-                <option value="photography">Photography</option>
-                <option value="catering">Catering</option>
-                <option value="decoration">Decoration</option>
-                <option value="beauty">Beauty</option>
-                <option value="entertainment">Entertainment</option>
-              </select>
-
-              {/* Priority Filter */}
-              <select
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
-              >
-                <option value="all">All Priorities</option>
-                <option value="high">High Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="low">Low Priority</option>
-              </select>
-
-              {/* Export */}
-              <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                <Download className="w-4 h-4" />
-                Export
-              </button>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Vendor List */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-lg">
-                <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    Vendor Communications ({filteredCommunications.length})
-                  </h2>
-                </div>
-                
-                <div className="divide-y divide-gray-100">
-                  {filteredCommunications.map((communication) => (
-                    <div
-                      key={communication.id}
-                      className={`p-6 cursor-pointer hover:bg-gray-50 transition-colors ${
-                        selectedCommunication?.id === communication.id ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                      }`}
-                      onClick={() => setSelectedCommunication(communication)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-gray-900">{communication.vendorName}</h3>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(communication.status)}`}>
-                              {communication.status}
-                            </span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(communication.priority)}`}>
-                              {communication.priority}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {communication.vendorCategory}
-                            </span>
-                            <span>{communication.vendorLocation}</span>
-                          </div>
-                          
-                          {communication.quotation && (
-                            <div className="flex items-center gap-4 text-sm mb-2">
-                              <span className="font-medium text-green-600">
-                                ₹{communication.quotation.amount.toLocaleString()}
-                              </span>
-                              <span className="text-gray-500">
-                                Valid until {new Date(communication.quotation.validUntil).toLocaleDateString()}
-                              </span>
-                            </div>
-                          )}
-                          
-                          {communication.notes && (
-                            <p className="text-sm text-gray-600 line-clamp-2">{communication.notes}</p>
-                          )}
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            {communication.tags.map((tag) => (
-                              <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col items-end gap-2">
-                          {getStatusIcon(communication.status)}
-                          <div className="flex gap-1">
-                            {communication.vendorPhone && (
-                              <div className="p-1 bg-green-100 rounded">
-                                <Phone className="w-3 h-3 text-green-600" />
-                              </div>
-                            )}
-                            {communication.vendorEmail && (
-                              <div className="p-1 bg-blue-100 rounded">
-                                <Mail className="w-3 h-3 text-blue-600" />
-                              </div>
-                            )}
-                          </div>
-                          <span className="text-xs text-gray-500">
-                            {new Date(communication.updatedAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {/* View Toggle */}
+          <div className="bg-white rounded-2xl shadow-lg mb-8">
+            <div className="border-b border-gray-100">
+              <div className="flex">
+                {['overview', 'communication', 'budget', 'availability'].map((view) => (
+                  <button
+                    key={view}
+                    onClick={() => setActiveView(view as any)}
+                    className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors capitalize ${
+                      activeView === view
+                        ? 'border-blue-500 text-blue-600 bg-blue-50'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {view === 'overview' && <BarChart3 className="w-4 h-4 mr-2 inline" />}
+                    {view === 'communication' && <MessageCircle className="w-4 h-4 mr-2 inline" />}
+                    {view === 'budget' && <DollarSign className="w-4 h-4 mr-2 inline" />}
+                    {view === 'availability' && <Activity className="w-4 h-4 mr-2 inline" />}
+                    {view}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Vendor Details */}
-            <div className="lg:col-span-1">
-              {selectedCommunication ? (
-                <div className="bg-white rounded-2xl shadow-lg">
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold text-gray-800">
-                        {selectedCommunication.vendorName}
-                      </h2>
-                      <div className="flex gap-2">
-                        <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200">
-                          <Edit className="w-4 h-4 text-gray-600" />
-                        </button>
-                        <button className="p-2 bg-red-100 rounded-lg hover:bg-red-200">
-                          <Trash2 className="w-4 h-4 text-red-600" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+            {/* Filters */}
+            <div className="p-6 border-b border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search vendors..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                  />
+                </div>
 
-                  {/* Tab Navigation */}
-                  <div className="border-b border-gray-100">
-                    <div className="flex">
-                      {['overview', 'messages', 'quotations', 'analytics'].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab as any)}
-                          className={`flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors ${
-                            activeTab === tab
-                              ? 'border-blue-500 text-blue-600'
-                              : 'border-transparent text-gray-500 hover:text-gray-700'
-                          }`}
-                        >
-                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="responded">Responded</option>
+                  <option value="quoted">Quoted</option>
+                  <option value="negotiating">Negotiating</option>
+                  <option value="booked">Booked</option>
+                </select>
 
-                  <div className="p-6">
-                    {activeTab === 'overview' && (
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="font-medium text-gray-900 mb-2">Contact Information</h3>
-                          <div className="space-y-2 text-sm text-gray-600">
-                            {selectedCommunication.vendorPhone && (
-                              <div className="flex items-center gap-2">
-                                <Phone className="w-4 h-4" />
-                                {selectedCommunication.vendorPhone}
-                              </div>
-                            )}
-                            {selectedCommunication.vendorEmail && (
-                              <div className="flex items-center gap-2">
-                                <Mail className="w-4 h-4" />
-                                {selectedCommunication.vendorEmail}
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              {selectedCommunication.vendorLocation}
-                            </div>
-                          </div>
-                        </div>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="venues">Venues</option>
+                  <option value="photography">Photography</option>
+                  <option value="catering">Catering</option>
+                  <option value="decoration">Decoration</option>
+                </select>
 
-                        <div>
-                          <h3 className="font-medium text-gray-900 mb-2">Status & Priority</h3>
-                          <div className="flex gap-2">
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedCommunication.status)}`}>
-                              {selectedCommunication.status}
-                            </span>
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(selectedCommunication.priority)}`}>
-                              {selectedCommunication.priority} priority
-                            </span>
-                          </div>
-                        </div>
+                <select
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                >
+                  <option value="all">All Priorities</option>
+                  <option value="high">High Priority</option>
+                  <option value="medium">Medium Priority</option>
+                  <option value="low">Low Priority</option>
+                </select>
 
-                        {selectedCommunication.quotation && (
-                          <div>
-                            <h3 className="font-medium text-gray-900 mb-2">Latest Quotation</h3>
-                            <div className="bg-green-50 rounded-lg p-4">
-                              <div className="text-2xl font-bold text-green-800 mb-1">
-                                ₹{selectedCommunication.quotation.amount.toLocaleString()}
-                              </div>
-                              <div className="text-sm text-green-600 mb-2">
-                                {selectedCommunication.quotation.description}
-                              </div>
-                              <div className="text-xs text-green-500">
-                                Valid until {new Date(selectedCommunication.quotation.validUntil).toLocaleDateString()}
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                  <Download className="w-4 h-4" />
+                  Export
+                </button>
+              </div>
+            </div>
 
-                        {selectedCommunication.notes && (
-                          <div>
-                            <h3 className="font-medium text-gray-900 mb-2">Notes</h3>
-                            <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
-                              {selectedCommunication.notes}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {activeTab === 'messages' && (
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <h3 className="font-medium text-gray-900">Communication History</h3>
-                          <button className="text-blue-600 text-sm font-medium">
-                            Send Message
-                          </button>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          {selectedCommunication.messages.map((message) => (
-                            <div
-                              key={message.id}
-                              className={`p-3 rounded-lg ${
-                                message.direction === 'sent'
-                                  ? 'bg-blue-50 ml-8'
-                                  : 'bg-gray-50 mr-8'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center gap-2">
-                                  {message.type === 'email' ? (
-                                    <Mail className="w-4 h-4 text-blue-500" />
-                                  ) : (
-                                    <MessageCircle className="w-4 h-4 text-green-500" />
-                                  )}
-                                  <span className="text-sm font-medium">
-                                    {message.direction === 'sent' ? 'You' : selectedCommunication.vendorName}
-                                  </span>
-                                </div>
-                                <span className="text-xs text-gray-500">
-                                  {new Date(message.timestamp).toLocaleString()}
+            {/* Table Views */}
+            <div className="p-6">
+              {activeView === 'overview' && (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Category</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Priority</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Quote</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Updated</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCommunications.map((comm) => (
+                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-sm font-semibold text-gray-700">
+                                  {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
-                              
-                              {message.subject && (
-                                <div className="text-sm font-medium text-gray-900 mb-1">
-                                  {message.subject}
+                              <div>
+                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
+                                <div className="text-sm text-gray-500">{comm.vendorLocation}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium capitalize">
+                              {comm.vendorCategory}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              {getStatusIcon(comm.status)}
+                              <span className="text-sm font-medium capitalize">{comm.status}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              comm.priority === 'high' ? 'bg-red-100 text-red-800' :
+                              comm.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {comm.priority}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4">
+                            {comm.quotation ? (
+                              <div className="text-sm">
+                                <div className="font-medium text-gray-900">
+                                  ₹{comm.quotation.amount.toLocaleString()}
+                                </div>
+                                <div className="text-gray-500">
+                                  Valid till {new Date(comm.quotation.validUntil).toLocaleDateString()}
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-sm">No quote</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4 text-sm text-gray-500">
+                            {new Date(comm.updatedAt).toLocaleDateString()}
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <button className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
+                                <Eye className="w-4 h-4 text-blue-600" />
+                              </button>
+                              <button className="p-2 bg-green-100 rounded-lg hover:bg-green-200 transition-colors">
+                                <MessageCircle className="w-4 h-4 text-green-600" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {activeView === 'communication' && (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Last Contact</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Response Time</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Messages</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Channels</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Next Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCommunications.map((comm) => (
+                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-semibold text-gray-700">
+                                  {comm.vendorName.charAt(0)}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
+                                <div className="text-xs text-gray-500">{comm.vendorCategory}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="text-sm">
+                              {comm.responseDate ? (
+                                <div>
+                                  <div className="font-medium text-gray-900">
+                                    {new Date(comm.responseDate).toLocaleDateString()}
+                                  </div>
+                                  <div className="text-gray-500">
+                                    {Math.ceil((Date.now() - new Date(comm.responseDate).getTime()) / (1000 * 60 * 60 * 24))} days ago
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-orange-500 font-medium">Awaiting response</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            {comm.responseTime ? (
+                              <div className="flex items-center gap-2">
+                                <Timer className="w-4 h-4 text-blue-500" />
+                                <span className="text-sm font-medium">{comm.responseTime}h</span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-sm">-</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <MessageCircle className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm font-medium">{comm.messages.length}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-1">
+                              {comm.vendorEmail && (
+                                <div className="p-1 bg-blue-100 rounded">
+                                  <Mail className="w-3 h-3 text-blue-600" />
                                 </div>
                               )}
-                              
-                              <div className="text-sm text-gray-700">
-                                {message.content}
-                              </div>
-                              
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className={`text-xs px-2 py-1 rounded ${
-                                  message.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                  message.status === 'read' ? 'bg-blue-100 text-blue-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {message.status}
+                              {comm.vendorPhone && (
+                                <div className="p-1 bg-green-100 rounded">
+                                  <Phone className="w-3 h-3 text-green-600" />
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="text-sm">
+                              {comm.followUpDate ? (
+                                <div>
+                                  <div className="font-medium text-purple-700">Follow up</div>
+                                  <div className="text-gray-500">
+                                    {new Date(comm.followUpDate).toLocaleDateString()}
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">No scheduled action</span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {activeView === 'budget' && (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Quote Amount</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Compatibility</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Market Position</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Savings Achieved</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Negotiations</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCommunications.map((comm) => (
+                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-semibold text-gray-700">
+                                  {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {activeTab === 'quotations' && selectedCommunication.quotation && (
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="font-medium text-gray-900 mb-3">Quotation Details</h3>
-                          
-                          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
-                            <div className="text-2xl font-bold text-gray-900 mb-1">
-                              ₹{selectedCommunication.quotation.amount.toLocaleString()}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              {selectedCommunication.quotation.description}
-                            </div>
-                          </div>
-
-                          <div className="space-y-3">
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 mb-2">Inclusions</h4>
-                              <ul className="text-sm text-gray-600 space-y-1">
-                                {selectedCommunication.quotation.inclusions.map((item, index) => (
-                                  <li key={index} className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-green-500" />
-                                    {item}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 mb-2">Exclusions</h4>
-                              <ul className="text-sm text-gray-600 space-y-1">
-                                {selectedCommunication.quotation.exclusions.map((item, index) => (
-                                  <li key={index} className="flex items-center gap-2">
-                                    <AlertCircle className="w-4 h-4 text-red-500" />
-                                    {item}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 mb-2">Payment Terms</h4>
-                              <p className="text-sm text-gray-600 mb-2">
-                                {selectedCommunication.quotation.paymentTerms}
-                              </p>
-                              
-                              <div className="space-y-2">
-                                {selectedCommunication.quotation.advances.map((advance, index) => (
-                                  <div key={index} className="flex justify-between items-center bg-gray-50 rounded p-2">
-                                    <span className="text-sm text-gray-600">
-                                      {advance.percentage}% Payment
-                                    </span>
-                                    <span className="text-sm font-medium text-gray-900">
-                                      ₹{advance.amount.toLocaleString()}
-                                    </span>
-                                  </div>
-                                ))}
+                              <div>
+                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
+                                <div className="text-xs text-gray-500">{comm.vendorCategory}</div>
                               </div>
                             </div>
-
-                            <div className="flex gap-2 pt-4">
-                              <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                                Accept Quote
-                              </button>
-                              <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                                Negotiate
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeTab === 'analytics' && (
-                      <div className="space-y-4">
-                        <h3 className="font-medium text-gray-900">Communication Analytics</h3>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-blue-50 rounded-lg p-3">
-                            <div className="text-2xl font-bold text-blue-800">
-                              {selectedCommunication.responseTime || 0}h
-                            </div>
-                            <div className="text-sm text-blue-600">Response Time</div>
-                          </div>
-                          
-                          <div className="bg-purple-50 rounded-lg p-3">
-                            <div className="text-2xl font-bold text-purple-800">
-                              {selectedCommunication.negotiationCount}
-                            </div>
-                            <div className="text-sm text-purple-600">Negotiations</div>
-                          </div>
-                          
-                          <div className="bg-green-50 rounded-lg p-3">
-                            <div className="text-2xl font-bold text-green-800">
-                              ₹{selectedCommunication.priceReductions.toLocaleString()}
-                            </div>
-                            <div className="text-sm text-green-600">Savings</div>
-                          </div>
-                          
-                          <div className="bg-orange-50 rounded-lg p-3">
-                            <div className="text-2xl font-bold text-orange-800">
-                              {selectedCommunication.messages.length}
-                            </div>
-                            <div className="text-sm text-orange-600">Messages</div>
-                          </div>
-                        </div>
-
-                        {quotationAnalysis && (
-                          <div className="border-t pt-4">
-                            <h4 className="font-medium text-gray-900 mb-3">Market Analysis</h4>
-                            <div className="space-y-2 text-sm text-gray-600">
-                              {quotationAnalysis.marketInsights.map((insight, index) => (
-                                <div key={index} className="flex items-center gap-2">
-                                  <TrendingUp className="w-4 h-4 text-blue-500" />
-                                  {insight}
+                          </td>
+                          <td className="py-4 px-4">
+                            {comm.quotation ? (
+                              <div>
+                                <div className="text-lg font-bold text-gray-900">
+                                  ₹{comm.quotation.amount.toLocaleString()}
                                 </div>
-                              ))}
+                                <div className="text-xs text-gray-500">
+                                  Valid till {new Date(comm.quotation.validUntil).toLocaleDateString()}
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">No quote yet</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getBudgetCompatibilityColor(comm.budgetCompatibility)}`}>
+                              {comm.budgetCompatibility}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              comm.marketPosition === 'luxury' ? 'bg-purple-100 text-purple-800' :
+                              comm.marketPosition === 'premium' ? 'bg-blue-100 text-blue-800' :
+                              comm.marketPosition === 'mid-range' ? 'bg-green-100 text-green-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {comm.marketPosition}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4">
+                            {comm.priceReductions > 0 ? (
+                              <div className="flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4 text-green-500" />
+                                <span className="font-medium text-green-700">
+                                  ₹{comm.priceReductions.toLocaleString()}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">No savings yet</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <Target className="w-4 h-4 text-purple-500" />
+                              <span className="text-sm font-medium">{comm.negotiationCount} rounds</span>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ) : (
-                <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-                  <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select a Vendor</h3>
-                  <p className="text-gray-600">
-                    Choose a vendor from the list to view detailed communication history and manage your conversation.
-                  </p>
+              )}
+
+              {activeView === 'availability' && (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Availability Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Contact Date</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Service Date</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Booking Window</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Risk Level</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCommunications.map((comm) => (
+                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-semibold text-gray-700">
+                                  {comm.vendorName.charAt(0)}
+                                </span>
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
+                                <div className="text-xs text-gray-500">{comm.vendorCategory}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-2">
+                              <Activity className="w-4 h-4" />
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getAvailabilityColor(comm.availabilityStatus)}`}>
+                                {comm.availabilityStatus} availability
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4 text-sm text-gray-600">
+                            {new Date(comm.contactDate).toLocaleDateString()}
+                          </td>
+                          <td className="py-4 px-4 text-sm">
+                            {comm.serviceDate ? (
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {new Date(comm.serviceDate).toLocaleDateString()}
+                                </div>
+                                <div className="text-gray-500">
+                                  {Math.ceil((new Date(comm.serviceDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days away
+                                </div>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">Not scheduled</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            {comm.serviceDate && comm.contactDate ? (
+                              <div className="text-sm">
+                                <div className="font-medium text-gray-900">
+                                  {Math.ceil((new Date(comm.serviceDate).getTime() - new Date(comm.contactDate).getTime()) / (1000 * 60 * 60 * 24))} days
+                                </div>
+                                <div className="text-gray-500">booking window</div>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              comm.availabilityStatus === 'low' ? 'bg-red-100 text-red-800' :
+                              comm.availabilityStatus === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {comm.availabilityStatus === 'low' ? 'High Risk' :
+                               comm.availabilityStatus === 'medium' ? 'Medium Risk' : 'Low Risk'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
