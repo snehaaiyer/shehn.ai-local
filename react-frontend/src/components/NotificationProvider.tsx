@@ -3,55 +3,66 @@ import { Toaster, toast } from 'react-hot-toast';
 
 // Custom toast styles for pink/purple theme
 const toastStyles = {
-  style: {
-    background: 'linear-gradient(135deg, #ff2d55 0%, #8b5cf6 100%)',
-    color: 'white',
-    borderRadius: '12px',
-    padding: '16px',
-    fontSize: '14px',
-    fontWeight: '500',
-    boxShadow: '0 10px 25px rgba(255, 45, 85, 0.2)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-  },
   success: {
     style: {
-      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      boxShadow: '0 10px 25px rgba(16, 185, 129, 0.2)',
+      border: '1px solid #10B981',
+      padding: '16px',
+      color: '#065F46',
+      background: '#ECFDF5',
+    },
+    iconTheme: {
+      primary: '#10B981',
+      secondary: '#FFFFFF',
     },
   },
   error: {
     style: {
-      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-      boxShadow: '0 10px 25px rgba(239, 68, 68, 0.2)',
+      border: '1px solid #EF4444',
+      padding: '16px',
+      color: '#7F1D1D',
+      background: '#FEF2F2',
+    },
+    iconTheme: {
+      primary: '#EF4444',
+      secondary: '#FFFFFF',
     },
   },
-  warning: {
+  loading: {
     style: {
-      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-      boxShadow: '0 10px 25px rgba(245, 158, 11, 0.2)',
+      border: '1px solid #F59E0B',
+      padding: '16px',
+      color: '#92400E',
+      background: '#FFFBEB',
     },
-  },
-  info: {
-    style: {
-      background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-      boxShadow: '0 10px 25px rgba(139, 92, 246, 0.2)',
+    iconTheme: {
+      primary: '#F59E0B',
+      secondary: '#FFFFFF',
     },
   },
 };
 
-export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface NotificationProviderProps {
+  children: React.ReactNode;
+}
+
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   return (
     <>
       {children}
       <Toaster
         position="top-right"
         toastOptions={{
-          duration: 5000,
-          ...toastStyles,
-        }}
-        containerStyle={{
-          top: 20,
-          right: 20,
+          duration: 4000,
+          style: {
+            background: '#FFFFFF',
+            color: '#1F2937',
+            borderRadius: '8px',
+            border: '1px solid #E5E7EB',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+          },
+          success: toastStyles.success,
+          error: toastStyles.error,
+          loading: toastStyles.loading,
         }}
       />
     </>
@@ -70,28 +81,7 @@ export const useNotifications = () => {
     info: (message: string, duration?: number) =>
       toast(message, { duration, ...toastStyles.info }),
   };
-}; 
-import React from 'react';
-import { Toaster } from 'react-hot-toast';
-
-interface NotificationProviderProps {
-  children: React.ReactNode;
-}
-
-export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
-  return (
-    <>
-      {children}
-      <Toaster 
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#363636',
-            color: '#fff',
-          },
-        }}
-      />
-    </>
-  );
 };
+
+// Export toast for use in components
+export { toast };
