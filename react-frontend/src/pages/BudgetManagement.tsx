@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3 } from "lucide-react";
 import { SectionCard } from '../components/SectionCard';
@@ -27,48 +28,48 @@ const BudgetManagement: React.FC = () => {
       name: 'Venue',
       allocated: 15000,
       spent: 12000,
-      color: '#2F4F4F',
-      icon: <Eye className="h-4 w-4" style={{ color: '#FFFFFF' }} />
+      color: '#ec4899',
+      icon: <Eye className="h-4 w-4 text-white" />
     },
     {
       id: '2',
       name: 'Catering',
       allocated: 12000,
       spent: 8000,
-      color: '#D29B9B',
-      icon: <Eye className="h-4 w-4" style={{ color: '#FFFFFF' }} />
+      color: '#d946ef',
+      icon: <Eye className="h-4 w-4 text-white" />
     },
     {
       id: '3',
       name: 'Photography',
       allocated: 8000,
       spent: 6000,
-      color: '#2F4F4F',
-      icon: <Eye className="h-4 w-4" style={{ color: '#FFFFFF' }} />
+      color: '#ec4899',
+      icon: <Eye className="h-4 w-4 text-white" />
     },
     {
       id: '4',
       name: 'Decoration',
       allocated: 6000,
       spent: 4500,
-      color: '#D29B9B',
-      icon: <Eye className="h-4 w-4" style={{ color: '#FFFFFF' }} />
+      color: '#d946ef',
+      icon: <Eye className="h-4 w-4 text-white" />
     },
     {
       id: '5',
       name: 'Entertainment',
       allocated: 4000,
       spent: 3000,
-      color: '#2F4F4F',
-      icon: <Eye className="h-4 w-4" style={{ color: '#FFFFFF' }} />
+      color: '#ec4899',
+      icon: <Eye className="h-4 w-4 text-white" />
     },
     {
       id: '6',
       name: 'Attire',
       allocated: 5000,
       spent: 3500,
-      color: '#D29B9B',
-      icon: <Eye className="h-4 w-4" style={{ color: '#FFFFFF' }} />
+      color: '#d946ef',
+      icon: <Eye className="h-4 w-4 text-white" />
     }
   ]);
 
@@ -132,173 +133,179 @@ const BudgetManagement: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-6 py-8">
-        <div className="max-w-7xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
-                  <BarChart3 className="h-6 w-6" style={{ color: '#FFFFFF' }} />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Budget Management</h1>
-                  <p className="text-gray-600">Track and manage your wedding expenses</p>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-orange-50">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-r from-pink-600 to-purple-700 p-2 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-white" />
               </div>
-              <button 
-                onClick={() => setShowAddTransaction(true)}
-                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
-                style={{ backgroundColor: '#2F4F4F', color: '#FFFFFF' }}
-              >
-                <Plus className="h-4 w-4" />
-                Add Transaction
-              </button>
+              <div>
+                <h1 className="text-xl font-bold text-gray-800">Budget Management</h1>
+                <p className="text-sm text-gray-600">Track and manage your wedding expenses</p>
+              </div>
             </div>
+            <button 
+              onClick={() => setShowAddTransaction(true)}
+              className="bg-gradient-to-r from-pink-600 to-purple-700 text-white px-6 py-2 rounded-lg hover:from-pink-700 hover:to-purple-800 transition-all duration-300 flex items-center space-x-2 shadow-lg"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Transaction</span>
+            </button>
           </div>
+        </div>
+      </div>
 
+      <div className="container mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto">
           {/* Budget Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Total Budget Card */}
-            <div className="bg-white rounded-2xl shadow-lg border p-6" style={{ borderColor: '#FFB6C1' }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-xl" style={{ backgroundColor: '#2F4F4F' }}>
-                    <DollarSign className="h-6 w-6" style={{ color: '#FFFFFF' }} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Total Budget</h3>
-                    <p className="text-sm text-gray-600">Your wedding budget</p>
-                  </div>
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Budget</p>
+                  <p className="text-2xl font-bold text-gray-800">₹{totalBudget.toLocaleString()}</p>
+                </div>
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-pink-600" />
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-2" style={{ color: '#2F4F4F' }}>
-                ₹{totalBudget.toLocaleString()}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
                 <Eye className="h-4 w-4" />
                 <span>Set for your wedding date</span>
               </div>
             </div>
 
             {/* Spent Amount Card */}
-            <div className="bg-white rounded-2xl shadow-lg border p-6" style={{ borderColor: '#FFB6C1' }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-xl" style={{ backgroundColor: '#2F4F4F' }}>
-                    <TrendingDown className="h-6 w-6" style={{ color: '#FFFFFF' }} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Total Spent</h3>
-                    <p className="text-sm text-gray-600">Amount spent so far</p>
-                  </div>
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Spent</p>
+                  <p className="text-2xl font-bold text-gray-800">₹{totalSpent.toLocaleString()}</p>
+                </div>
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
+                  <TrendingDown className="w-6 h-6 text-pink-600" />
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-2" style={{ color: '#2F4F4F' }}>
-                ₹{totalSpent.toLocaleString()}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#2F4F4F' }}></div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
+                <div className="w-2 h-2 rounded-full bg-pink-600"></div>
                 <span>{budgetUtilization.toFixed(1)}% of budget used</span>
               </div>
             </div>
 
             {/* Remaining Budget Card */}
-            <div className="bg-white rounded-2xl shadow-lg border p-6" style={{ borderColor: '#FFB6C1' }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-xl" style={{ backgroundColor: '#2F4F4F' }}>
-                    <TrendingUp className="h-6 w-6" style={{ color: '#FFFFFF' }} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Remaining</h3>
-                    <p className="text-sm text-gray-600">Available budget</p>
-                  </div>
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Remaining</p>
+                  <p className="text-2xl font-bold text-gray-800">₹{remainingBudget.toLocaleString()}</p>
+                </div>
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-pink-600" />
                 </div>
               </div>
-              <div className="text-3xl font-bold mb-2" style={{ color: '#2F4F4F' }}>
-                ₹{remainingBudget.toLocaleString()}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#2F4F4F' }}></div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
+                <div className="w-2 h-2 rounded-full bg-pink-600"></div>
                 <span>{(100 - budgetUtilization).toFixed(1)}% remaining</span>
               </div>
             </div>
           </div>
 
-          {/* Budget Progress */}
-          <SectionCard 
-            title="Budget Categories" 
-            icon={<BarChart3 className="h-5 w-5" />}
-          >
-            <div className="space-y-4">
-              {categories.map((category) => (
-                <div key={category.id} className="bg-white rounded-xl p-4 border border-gray-200">
-                  <div className="flex items-center justify-between mb-3">
+          {/* Budget Categories */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 mb-8">
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-pink-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800">Budget Categories</h2>
+                  <p className="text-sm text-gray-600">Track spending across different categories</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {categories.map((category) => (
+                  <div key={category.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: category.color }}>
+                          {category.icon}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{category.name}</h4>
+                          <p className="text-sm text-gray-600">
+                            ₹{category.spent.toLocaleString()} / ₹{category.allocated.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-gray-900">
+                          {getCategoryProgress(category).toFixed(1)}%
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full transition-all duration-300"
+                        style={{ 
+                          width: `${Math.min(getCategoryProgress(category), 100)}%`,
+                          backgroundColor: category.color
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Transactions */}
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-pink-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800">Recent Transactions</h2>
+                  <p className="text-sm text-gray-600">Your latest expenses and payments</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-3">
+                {transactions.slice(0, 5).map((transaction) => (
+                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:bg-pink-50/30 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: category.color }}>
-                        {category.icon}
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#ec4899' : '#d946ef' }}>
+                        {transaction.type === 'expense' ? (
+                          <TrendingDown className="h-5 w-5 text-white" />
+                        ) : (
+                          <TrendingUp className="h-5 w-5 text-white" />
+                        )}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">{category.name}</h4>
-                        <p className="text-sm text-gray-600">
-                          ₹{category.spent.toLocaleString()} / ₹{category.allocated.toLocaleString()}
-                        </p>
+                        <h4 className="font-medium text-gray-900">{transaction.description}</h4>
+                        <p className="text-sm text-gray-600">{transaction.category} • {transaction.date}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-gray-900">
-                        {getCategoryProgress(category).toFixed(1)}%
+                      <div className={`font-bold ${
+                        transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'
+                      }`}>
+                        {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
                       </div>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${Math.min(getCategoryProgress(category), 100)}%`,
-                        backgroundColor: category.color
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </SectionCard>
-
-          {/* Recent Transactions */}
-          <SectionCard 
-            title="Recent Transactions" 
-            icon={<DollarSign className="h-5 w-5" />}
-          >
-            <div className="space-y-3">
-              {transactions.slice(0, 5).map((transaction) => (
-                <div key={transaction.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200">
-                  <div className="flex items-center gap-3">
-                                            <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#2F4F4F' : '#D29B9B' }}>
-                      {transaction.type === 'expense' ? (
-                        <TrendingDown className="h-5 w-5 text-white" />
-                      ) : (
-                        <TrendingUp className="h-5 w-5 text-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900">{transaction.description}</h4>
-                      <p className="text-sm text-gray-600">{transaction.category} • {transaction.date}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`font-bold ${
-                      transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'
-                    }`}>
-                      {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
+          </div>
 
           {/* Add Transaction Modal */}
           {showAddTransaction && (
@@ -312,7 +319,7 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.category}
                       onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
                     >
                       <option value="">Select category</option>
                       {categories.map(cat => (
@@ -327,7 +334,7 @@ const BudgetManagement: React.FC = () => {
                       type="text"
                       value={newTransaction.description}
                       onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
                       placeholder="Enter transaction description"
                     />
                   </div>
@@ -338,7 +345,7 @@ const BudgetManagement: React.FC = () => {
                       type="number"
                       value={newTransaction.amount}
                       onChange={(e) => setNewTransaction({...newTransaction, amount: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
                       placeholder="Enter amount"
                     />
                   </div>
@@ -348,7 +355,7 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.type}
                       onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value as 'expense' | 'income'})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-white/80 backdrop-blur-sm"
                     >
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
@@ -365,8 +372,7 @@ const BudgetManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={addTransaction}
-                    className="flex-1 px-4 py-3 rounded-xl font-medium hover:opacity-90 transition-all duration-300"
-                    style={{ backgroundColor: '#2F4F4F', color: '#FFFFFF' }}
+                    className="flex-1 px-4 py-3 rounded-xl font-medium hover:opacity-90 transition-all duration-300 bg-gradient-to-r from-pink-600 to-purple-700 text-white"
                   >
                     Add Transaction
                   </button>
@@ -380,4 +386,4 @@ const BudgetManagement: React.FC = () => {
   );
 };
 
-export default BudgetManagement; 
+export default BudgetManagement;
