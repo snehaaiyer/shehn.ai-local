@@ -117,5 +117,4 @@ export const AIChatWidget: React.FC = () => {
   );
 };
 
-export { AIChatWidget };
 export default AIChatWidget;
