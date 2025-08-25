@@ -386,21 +386,21 @@ const VendorCommunication: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-pastel-peach-light">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-soft-peach shadow-sm border-b border-muted-green">
+      <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-muted-green rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-deep-navy">Vendor Communications</h1>
-                <p className="text-sm text-muted-green">Comprehensive vendor relationship management</p>
+                <h1 className="text-xl font-semibold text-gray-900">Vendor Communications</h1>
+                <p className="text-sm text-gray-600">Comprehensive vendor relationship management</p>
               </div>
             </div>
-            <button className="bg-muted-green text-white px-4 py-2 rounded-lg hover:bg-deep-navy transition-colors flex items-center space-x-2">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2">
               <Plus className="w-4 h-4" />
               <span>Add Vendor</span>
             </button>
@@ -412,51 +412,51 @@ const VendorCommunication: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Analytics Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Vendors</p>
-                  <p className="text-2xl font-bold text-deep-navy">{communications.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">{communications.length}</p>
                 </div>
-                <div className="bg-soft-beige p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-salmon-pink" />
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-blue-500" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active Negotiations</p>
-                  <p className="text-2xl font-bold text-deep-navy">
+                  <p className="text-2xl font-bold text-gray-900">
                     {communications.filter(c => c.status === 'negotiating').length}
                   </p>
                 </div>
-                <div className="bg-soft-beige p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-salmon-pink" />
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-purple-500" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Savings</p>
-                  <p className="text-2xl font-bold text-deep-navy">
+                  <p className="text-2xl font-bold text-gray-900">
                     ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-soft-beige p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-salmon-pink" />
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-green-500" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
-                  <p className="text-2xl font-bold text-deep-navy">
+                  <p className="text-2xl font-bold text-gray-900">
                     {(communications
                       .filter(c => c.responseTime)
                       .reduce((sum, c) => sum + (c.responseTime || 0), 0) / 
@@ -464,16 +464,16 @@ const VendorCommunication: React.FC = () => {
                     ).toFixed(1)}h
                   </p>
                 </div>
-                <div className="bg-soft-beige p-3 rounded-lg">
-                  <Timer className="w-6 h-6 text-salmon-pink" />
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <Timer className="w-6 h-6 text-orange-500" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* View Toggle */}
-          <div className="bg-soft-peach rounded-xl shadow-lg mb-8 border border-muted-green">
-            <div className="border-b border-muted-green">
+          <div className="bg-white rounded-lg shadow-sm mb-8 border border-gray-200">
+            <div className="border-b border-gray-200">
               <div className="flex">
                 {tabs.map((view) => (
                   <button
@@ -481,7 +481,7 @@ const VendorCommunication: React.FC = () => {
                     onClick={() => setActiveTab(view.id)}
                     className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors capitalize ${
                       activeTab === view.id
-                        ? 'border-muted-green text-muted-green bg-pastel-peach'
+                        ? 'border-blue-500 text-blue-600 bg-blue-50'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
@@ -496,23 +496,23 @@ const VendorCommunication: React.FC = () => {
             </div>
 
             {/* Filters */}
-            <div className="p-6 border-b border-muted-green">
+            <div className="p-6 border-b border-gray-200">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-green w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="Search vendors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
                 >
                   <option value="all">All Statuses</option>
                   <option value="contacted">Contacted</option>
@@ -525,7 +525,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
@@ -537,7 +537,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white text-gray-900"
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
@@ -545,7 +545,7 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-pastel-peach text-muted-green rounded-lg hover:bg-muted-green hover:text-white transition-colors">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
@@ -558,34 +558,34 @@ const VendorCommunication: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-muted-green">
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Vendor</th>
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Category</th>
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Status</th>
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Priority</th>
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Quote</th>
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Updated</th>
-                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Actions</th>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Category</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Priority</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Quote</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Updated</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-soft-beige">
+                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-pastel-peach to-muted-green rounded-lg flex items-center justify-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
                                 <span className="text-sm font-semibold text-white">
                                   {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
                               <div>
-                                <div className="font-medium text-deep-navy">{comm.vendorName}</div>
-                                <div className="text-sm text-muted-green">{comm.vendorLocation}</div>
+                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
+                                <div className="text-sm text-gray-600">{comm.vendorLocation}</div>
                               </div>
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-pastel-peach text-muted-green px-2 py-1 rounded-full text-xs font-medium capitalize">
+                            <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium capitalize">
                               {comm.vendorCategory}
                             </span>
                           </td>
@@ -607,10 +607,10 @@ const VendorCommunication: React.FC = () => {
                           <td className="py-4 px-4">
                             {comm.quotation ? (
                               <div className="text-sm">
-                                <div className="font-medium text-deep-navy">
+                                <div className="font-medium text-gray-900">
                                   ₹{comm.quotation.amount.toLocaleString()}
                                 </div>
-                                <div className="text-muted-green">
+                                <div className="text-gray-600">
                                   Valid till {new Date(comm.quotation.validUntil).toLocaleDateString()}
                                 </div>
                               </div>
@@ -618,16 +618,16 @@ const VendorCommunication: React.FC = () => {
                               <span className="text-gray-400 text-sm">No quote</span>
                             )}
                           </td>
-                          <td className="py-4 px-4 text-sm text-muted-green">
+                          <td className="py-4 px-4 text-sm text-gray-600">
                             {new Date(comm.updatedAt).toLocaleDateString()}
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <button className="p-2 bg-pastel-peach rounded-lg hover:bg-muted-green transition-colors">
-                                <Eye className="w-4 h-4 text-muted-green" />
+                              <button className="p-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition-colors">
+                                <Eye className="w-4 h-4 text-gray-600 hover:text-blue-600" />
                               </button>
-                              <button className="p-2 bg-pastel-peach rounded-lg hover:bg-muted-green transition-colors">
-                                <MessageCircle className="w-4 h-4 text-muted-green" />
+                              <button className="p-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition-colors">
+                                <MessageCircle className="w-4 h-4 text-gray-600 hover:text-blue-600" />
                               </button>
                             </div>
                           </td>
