@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { 
@@ -84,8 +85,8 @@ const AnimatedSidebar = ({ isOpen, onClose, menuItems, activeTab, setActiveTab }
                   : 'hover:bg-gray-100 text-gray-700'
               }`}
               style={activeTab === item.id ? {
-                backgroundColor: '#D4A574', // Peach color matching action boxes
-                background: 'linear-gradient(135deg, #D4A574, #C49464)'
+                backgroundColor: '#D29B9B', // Same peach color as action boxes
+                background: 'linear-gradient(135deg, #D29B9B, #C49464)'
               } : {}}
             >
               <Icon size={20} />
