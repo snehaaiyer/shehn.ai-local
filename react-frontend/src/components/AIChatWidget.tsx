@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, Send, X } from 'lucide-react';
 
@@ -37,7 +36,7 @@ export const AIChatWidget: React.FC = () => {
       });
 
       const data = await response.json();
-      
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: data.response || 'Sorry, I couldn\'t process your request.',
@@ -117,3 +116,6 @@ export const AIChatWidget: React.FC = () => {
     </div>
   );
 };
+
+export { AIChatWidget };
+export default AIChatWidget;
