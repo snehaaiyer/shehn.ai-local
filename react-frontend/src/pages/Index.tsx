@@ -123,8 +123,8 @@ const Index: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-      <div className="container mx-auto px-6 pt-2 pb-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <div className="container mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto space-y-8"></div>
           {/* Header with Image Banner */}
           <div className="relative rounded-2xl overflow-hidden shadow-lg">
             <img
