@@ -3,43 +3,67 @@ import { Toaster, toast } from 'react-hot-toast';
 
 // Custom toast styles for pink/purple theme
 const toastStyles = {
-  success: {
-    style: {
-      border: '1px solid #10B981',
-      padding: '16px',
-      color: '#065F46',
-      background: '#ECFDF5',
+    success: {
+      style: {
+        border: '1px solid #10B981',
+        padding: '16px',
+        color: '#065F46',
+        background: '#D1FAE5'
+      },
+      iconTheme: {
+        primary: '#10B981',
+        secondary: '#FFFFFF'
+      }
     },
-    iconTheme: {
-      primary: '#10B981',
-      secondary: '#FFFFFF',
+    error: {
+      style: {
+        border: '1px solid #EF4444',
+        padding: '16px',
+        color: '#7F1D1D',
+        background: '#FEE2E2'
+      },
+      iconTheme: {
+        primary: '#EF4444',
+        secondary: '#FFFFFF'
+      }
     },
-  },
-  error: {
-    style: {
-      border: '1px solid #EF4444',
-      padding: '16px',
-      color: '#7F1D1D',
-      background: '#FEF2F2',
+    warning: {
+      style: {
+        border: '1px solid #F59E0B',
+        padding: '16px',
+        color: '#92400E',
+        background: '#FEF3C7'
+      },
+      iconTheme: {
+        primary: '#F59E0B',
+        secondary: '#FFFFFF'
+      }
     },
-    iconTheme: {
-      primary: '#EF4444',
-      secondary: '#FFFFFF',
+    info: {
+      style: {
+        border: '1px solid #3B82F6',
+        padding: '16px',
+        color: '#1E40AF',
+        background: '#DBEAFE'
+      },
+      iconTheme: {
+        primary: '#3B82F6',
+        secondary: '#FFFFFF'
+      }
     },
-  },
-  loading: {
-    style: {
-      border: '1px solid #F59E0B',
-      padding: '16px',
-      color: '#92400E',
-      background: '#FFFBEB',
-    },
-    iconTheme: {
-      primary: '#F59E0B',
-      secondary: '#FFFFFF',
-    },
-  },
-};
+    loading: {
+      style: {
+        border: '1px solid #3B82F6',
+        padding: '16px',
+        color: '#1E40AF',
+        background: '#DBEAFE'
+      },
+      iconTheme: {
+        primary: '#3B82F6',
+        secondary: '#FFFFFF'
+      }
+    }
+  };
 
 interface NotificationProviderProps {
   children: React.ReactNode;

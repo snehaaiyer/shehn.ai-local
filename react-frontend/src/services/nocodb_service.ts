@@ -112,12 +112,12 @@ export class NocoDBService {
         }),
 
         // Priority Rankings
-        "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        "Priorities": JSON.stringify({}),
 
         // Additional Information
         "Cultural Notes": JSON.stringify({
-          eventDuration: preferences.basicDetails?.eventDuration || "1 day",
-          datesFlexible: preferences.basicDetails?.datesFlexible || false,
+          eventDuration: "1 day",
+          datesFlexible: false,
           contactNumber: preferences.basicDetails?.contactNumber || "",
           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
         }),

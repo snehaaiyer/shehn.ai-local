@@ -1,4 +1,3 @@
-
 import { AIImageResponse } from '../types/ai';
 
 interface CloudflareImageRequest {
@@ -30,11 +29,10 @@ export class CloudflareAIService {
           'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'
         ],
         themeAnalysis: {
-          description: `Beautiful ${prompt} setting`,
           keywords: ['elegant', 'romantic', 'luxurious'],
           mood: 'romantic',
           style: 'contemporary',
-          colorPalette: ['#F4628E', '#FFCEB2', '#FFFFFF']
+          colorScheme: ['#FFB6C1', '#FFFFFF', '#F0E68C']
         }
       };
     } catch (error) {
@@ -44,11 +42,10 @@ export class CloudflareAIService {
         error: 'Failed to generate image',
         imageUrls: [],
         themeAnalysis: {
-          description: '',
           keywords: [],
           mood: '',
           style: '',
-          colorPalette: []
+          colorScheme: []
         }
       };
     }

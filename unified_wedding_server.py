@@ -50,8 +50,9 @@ vendor_db = get_vendor_database()
 
 # Static file serving for React frontend
 react_build_path = Path("react-frontend/build")
-if react_build_path.exists():
-    app.mount("/static", StaticFiles(directory=str(react_build_path / "static")), name="static")
+static_path = react_build_path / "static"
+if react_build_path.exists() and static_path.exists():
+    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 
 @app.get("/")
 async def serve_root():

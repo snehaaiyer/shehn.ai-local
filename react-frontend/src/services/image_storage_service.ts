@@ -1,5 +1,5 @@
 
-import { Client } from '@replit/object-storage';
+// Note: Replit object storage not available, using mock implementation
 
 interface ImageUploadResult {
   success: boolean;

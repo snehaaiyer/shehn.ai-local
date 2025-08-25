@@ -1,8 +1,13 @@
 
-import { Client } from '@replit/object-storage';
+// Mock implementation - Replit object storage not available
+interface MockClient {
+  uploadFile: (key: string, file: File) => Promise<{ url: string }>;
+  deleteFile: (key: string) => Promise<void>;
+  getFileUrl: (key: string) => Promise<string>;
+}
 
 class ReplitStorageService {
-  private client: Client;
+  private client: MockClient;
 
   constructor() {
     this.client = new Client();
