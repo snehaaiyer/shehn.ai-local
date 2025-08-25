@@ -1,18 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import {
-  Home,
-  Heart,
-  Palette,
-  DollarSign,
-  Search,
-  MessageCircle,
-  Bot,
-  Building2,
-  Menu,
-  X
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 
 // Page imports
 import Index from './pages/Index';
@@ -23,6 +12,7 @@ import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
 
 // Component imports
+import { AnimatedSidebar } from './components/AnimatedSidebar';
 import AIChatWidget from './components/AIChatWidget';
 import { useAppStore } from './store/useAppStore';
 
@@ -42,7 +32,7 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
       }}
     >
       {logoError ? (
-        <Heart className="text-white" size={size * 0.6} />
+        <div className="text-white font-bold text-lg">S</div>
       ) : (
         <img
           src="/shehnai-logo.png"
@@ -53,67 +43,6 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
           className="rounded-xl"
         />
       )}
-    </div>
-  );
-};
-
-const AnimatedSidebar = () => {
-  const { sidebarOpen, setSidebarOpen, theme } = useAppStore();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('dashboard');
-
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/' },
-    { id: 'preferences', label: 'Wedding Preferences', icon: Heart, path: '/preferences' },
-    { id: 'budget', label: 'Budget Management', icon: DollarSign, path: '/budget' },
-    { id: 'vendor-discovery', label: 'Vendor Discovery', icon: Search, path: '/vendors' },
-    { id: 'vendor-communication', label: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication' },
-    { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, path: '/chat' }
-  ];
-
-  const handleMenuClick = (item: any) => {
-    setActiveTab(item.id);
-    navigate(item.path);
-    // Close sidebar on mobile after navigation
-    if (window.innerWidth < 1024) {
-      setSidebarOpen(false);
-    }
-  };
-
-  return (
-    <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex items-center justify-center pt-8 pb-4">
-        <LogoWithFallback size={50} />
-        <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
-          Shehnai.AI
-        </span>
-      </div>
-      <nav className="px-4 space-y-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.id}
-              onClick={() => handleMenuClick(item)}
-              className={`flex items-center space-x-3 p-2 rounded-xl cursor-pointer transition-colors ${
-                activeTab === item.id
-                  ? 'text-white'
-                  : 'hover:bg-gray-100 text-gray-700'
-              }`}
-              style={activeTab === item.id ? {
-                backgroundColor: '#D29B9B',
-                background: 'linear-gradient(135deg, #D29B9B, #C49464)'
-              } : {}}
-            >
-              <Icon size={20} />
-              <span className="font-medium">{item.label}</span>
-            </div>
-          );
-        })}
-      </nav>
-      <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 lg:hidden">
-        <X size={24} />
-      </button>
     </div>
   );
 };
@@ -153,21 +82,20 @@ const App = () => {
 
         {/* Main Content */}
         <div className="lg:pl-64">
-          <main className="min-h-screen p-6">
+          <main className="min-h-screen">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/preferences" element={<WeddingPreferences />} />
               <Route path="/budget" element={<BudgetManagement />} />
               <Route path="/vendors" element={<VendorDiscovery />} />
-              <Route path="/vendor-discovery" element={<Navigate to="/vendors" replace />} />
               <Route path="/vendor-communication" element={<VendorCommunication />} />
               <Route path="/chat" element={<AIChat />} />
-              <Route path="/ai-assistant" element={<Navigate to="/chat" replace />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
         </div>
 
+        {/* AI Chat Widget */}
         <AIChatWidget />
       </div>
     </BrowserRouter>
