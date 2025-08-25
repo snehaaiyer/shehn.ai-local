@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
@@ -19,16 +18,15 @@ import { useAppStore } from './store/useAppStore';
 // CSS
 import './App.css';
 
-const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
+const LogoWithFallback: React.FC<{ size?: number }> = ({ size = 40 }) => {
   const [logoError, setLogoError] = useState(false);
 
   return (
     <div
-      className="flex items-center justify-center rounded-xl"
+      className="flex items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-orange-500"
       style={{
         width: size,
         height: size,
-        background: logoError ? 'linear-gradient(135deg, #ff6b6b, #ee5a24)' : 'transparent'
       }}
     >
       {logoError ? (
@@ -37,8 +35,8 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
         <img
           src="/shehnai-logo.png"
           alt="Shehnai.AI"
-          width={size}
-          height={size}
+          width={size * 0.8}
+          height={size * 0.8}
           onError={() => setLogoError(true)}
           className="rounded-xl"
         />
@@ -47,37 +45,21 @@ const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
   );
 };
 
-const App = () => {
-  const { sidebarOpen, setSidebarOpen, theme } = useAppStore();
+function App() {
+  const { sidebarOpen, setSidebarOpen } = useAppStore();
 
   return (
     <BrowserRouter>
-      <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 to-orange-50'}`}>
-        {/* Mobile Header */}
-        <div className={`lg:hidden shadow-sm border-b px-4 py-3 flex items-center justify-between transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <div className="flex items-center space-x-3">
-            <LogoWithFallback size={32} />
-            <span className={`text-xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              Shehnai.AI
-            </span>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className={`p-2 rounded-md transition-colors ${theme === 'dark' ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-gray-100 text-gray-900'}`}
-          >
-            <Menu size={24} />
-          </button>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg"
+        >
+          <Menu size={24} />
+        </button>
 
-        {/* Overlay for mobile */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Sidebar */}
+        {/* Animated Sidebar */}
         <AnimatedSidebar />
 
         {/* Main Content */}
@@ -100,6 +82,6 @@ const App = () => {
       </div>
     </BrowserRouter>
   );
-};
+}
 
 export default App;
