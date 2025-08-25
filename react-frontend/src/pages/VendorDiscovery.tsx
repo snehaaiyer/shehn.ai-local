@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Search, Filter, MapPin, Star, DollarSign,
@@ -122,7 +121,7 @@ const VendorDiscovery: React.FC = () => {
     setIsLoading(true);
     setHasError(false);
     setErrorMessage('');
-    
+
     try {
       const searchParams = {
         category: appliedFilters.category || selectedCategory,
