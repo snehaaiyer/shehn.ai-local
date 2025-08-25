@@ -87,7 +87,7 @@ const AnimatedSidebar = ({ isOpen, onClose, menuItems, activeTab, setActiveTab }
                 backgroundColor: '#D4A574', // Peach color matching action boxes
                 background: 'linear-gradient(135deg, #D4A574, #C49464)'
               } : {}}
-            ></div>
+            >
               <Icon size={20} />
               <span className="font-medium">{item.label}</span>
             </div>
