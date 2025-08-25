@@ -124,10 +124,10 @@ const VendorCommunication: React.FC = () => {
 
   // Tab definitions
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'communication', label: 'Communication', icon: MessageCircle },
-    { id: 'budget', label: 'Budget', icon: DollarSign },
-    { id: 'availability', label: 'Availability', icon: Activity },
+    { id: 'overview' as const, label: 'Overview', icon: BarChart3 },
+    { id: 'communication' as const, label: 'Communication', icon: MessageCircle },
+    { id: 'budget' as const, label: 'Budget', icon: DollarSign },
+    { id: 'availability' as const, label: 'Availability', icon: Activity },
   ];
 
 
