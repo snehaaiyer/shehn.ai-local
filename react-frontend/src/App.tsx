@@ -1,8 +1,20 @@
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Heart, Bell, Settings, Menu, X, Home, Palette, DollarSign, Search, MessageCircle } from 'lucide-react';
+import { 
+  Home, 
+  Heart, 
+  Palette, 
+  DollarSign, 
+  Search, 
+  MessageCircle,
+  Bot,
+  Building2,
+  Menu,
+  X
+} from 'lucide-react';
 
-// Import page components
+// Page imports
 import Index from './pages/Index';
 import WeddingPreferences from './pages/WeddingPreferences';
 import BudgetManagement from './pages/BudgetManagement';
@@ -10,173 +22,163 @@ import VendorDiscovery from './pages/VendorDiscovery';
 import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
 
-// Simple AI Chat Widget Component
-const AIChatWidget: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+// Component imports
+import AIChatWidget from './components/AIChatWidget';
+
+// CSS
+import './App.css';
+
+const LogoWithFallback = ({ size = 40 }: { size?: number }) => {
+  const [logoError, setLogoError] = useState(false);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {isOpen && (
-        <div className="mb-4 w-96 h-[28rem] bg-white rounded-2xl shadow-2xl border-2 border-orange-200">
-          <div className="p-6 bg-gradient-to-r from-orange-200 to-pink-200 rounded-t-2xl">
-            <div className="flex justify-between items-center">
-              <h3 className="font-bold text-gray-800 text-xl">AI Assistant</h3>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="text-gray-700 hover:text-red-500 text-xl transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-          </div>
-          <div className="p-6 h-80 overflow-y-auto">
-            <div className="space-y-4">
-              <div className="bg-gradient-to-r from-orange-100 to-pink-100 p-4 rounded-xl border border-orange-200">
-                <p className="text-gray-800 text-lg">Hi! I'm your wedding planning assistant. How can I help you today?</p>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div 
+      className="flex items-center justify-center rounded-xl"
+      style={{
+        width: size,
+        height: size,
+        background: logoError ? 'linear-gradient(135deg, #ff6b6b, #ee5a24)' : 'transparent'
+      }}
+    >
+      {logoError ? (
+        <Heart className="text-white" size={size * 0.6} />
+      ) : (
+        <img
+          src="/shehnai-logo.png"
+          alt="Shehnai.AI"
+          width={size}
+          height={size}
+          onError={() => setLogoError(true)}
+          className="rounded-xl"
+        />
       )}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-white p-5 rounded-full shadow-xl transition-all duration-300 hover:scale-110 transform"
-      >
-        <MessageCircle size={28} />
-      </button>
     </div>
   );
 };
 
-// Logo component with fallback
-const LogoWithFallback: React.FC<{ className?: string }> = ({ className = "" }) => {
-  return (
-    <div className={`flex items-center ${className}`}>
-      <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-pink-400 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
-        <Heart className="w-8 h-8 text-white" />
-      </div>
-      <span className="text-3xl font-bold text-gray-800 tracking-wide">Shehnai.AI</span>
-    </div>
-  );
-};
-
-const App: React.FC = () => {
+const App = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('dashboard');
 
   const menuItems = [
-    { id: 'dashboard', name: 'Dashboard', icon: Home, path: '/', highlight: 'bg-pastel-peach' },
-    { id: 'preferences', name: 'Wedding Preferences', icon: Palette, path: '/wedding-preferences', highlight: 'bg-pastel-coral' },
-    { id: 'budget', name: 'Budget Management', icon: DollarSign, path: '/budget-management', highlight: 'bg-pastel-sage' },
-    { id: 'discovery', name: 'Vendor Discovery', icon: Search, path: '/vendor-discovery', highlight: 'bg-pastel-sky' },
-    { id: 'communication', name: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication', highlight: 'bg-pastel-mint' },
-    { id: 'ai-assistant', name: 'AI Assistant', icon: MessageCircle, path: '/ai-assistant', highlight: 'bg-pastel-lilac' }
+    { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/' },
+    { id: 'preferences', label: 'Wedding Preferences', icon: Heart, path: '/preferences' },
+    { id: 'budget', label: 'Budget Management', icon: DollarSign, path: '/budget' },
+    { id: 'vendor-discovery', label: 'Vendor Discovery', icon: Search, path: '/vendor-discovery' },
+    { id: 'vendor-communication', label: 'Vendor Communication', icon: MessageCircle, path: '/vendor-communication' },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, path: '/ai-assistant' }
   ];
 
-  useEffect(() => {
-    const currentPath = window.location.pathname;
-    const currentItem = menuItems.find(item => item.path === currentPath);
-    if (currentItem) {
-      setActiveSection(currentItem.id);
-    }
-  }, []);
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-pastel-lavender-light">
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-        )}
-
-        {/* Sidebar */}
-        <div className={`fixed left-0 top-0 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 lg:translate-x-0 ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:static lg:transform-none`}>
-
-          {/* Logo Section */}
-          <div className="p-8 border-b-2 border-orange-200 bg-gradient-to-r from-orange-50 to-pink-50">
-            <LogoWithFallback />
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-orange-50">
+        {/* Mobile Header */}
+        <div className="md:hidden bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <LogoWithFallback size={32} />
+            <span className="text-xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+              Shehnai.AI
+            </span>
           </div>
-
-          {/* Navigation Menu */}
-          <nav className="p-6">
-            <ul className="space-y-4">
-              {menuItems.map((item) => (
-                <li key={item.id}>
-                  <a
-                    href={item.path}
-                    className={`flex items-center p-5 rounded-2xl transition-all duration-300 text-xl font-semibold group hover:scale-105 transform ${
-                      activeSection === item.id 
-                        ? 'bg-gradient-to-r from-orange-200 to-pink-200 text-gray-800 shadow-lg border-2 border-orange-300' 
-                        : 'text-gray-600 hover:bg-gradient-to-r hover:from-orange-100 hover:to-pink-100 hover:text-gray-800 hover:shadow-md'
-                    }`}
-                    onClick={() => {
-                      setActiveSection(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <item.icon className="w-7 h-7 mr-5" />
-                    <span className="tracking-wide">{item.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Close button for mobile */}
-          <button
-            className="absolute top-4 right-4 lg:hidden text-deep-navy"
-            onClick={() => setIsMobileMenuOpen(false)}
+          <button 
+            onClick={toggleMobileMenu}
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
           >
-            <X size={24} />
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Main Content */}
-        <div className="lg:ml-80">
-          {/* Header */}
-          <header className="bg-white shadow-md border-b-2 border-orange-200 p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <button
-                  className="lg:hidden mr-6 text-gray-700 hover:text-orange-500 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(true)}
-                >
-                  <Menu size={28} />
-                </button>
-                <LogoWithFallback className="lg:hidden" />
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="bg-white w-80 h-full shadow-lg p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center space-x-3 mb-8">
+                <LogoWithFallback size={40} />
+                <span className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+                  Shehnai.AI
+                </span>
               </div>
-
-              <div className="flex items-center space-x-4">
-                <button className="p-4 text-gray-600 hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-400 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
-                  <Bell size={24} />
-                </button>
-                <button className="p-4 text-gray-600 hover:text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-pink-400 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
-                  <Settings size={24} />
-                </button>
+              <div className="space-y-2">
+                {menuItems.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                      activeTab === item.id 
+                        ? 'bg-gradient-to-r from-orange-400 to-pink-400 text-white shadow-md' 
+                        : 'hover:bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    <item.icon size={20} />
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          </header>
+          </div>
+        )}
 
-          {/* Page Content */}
-          <main className="p-6">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/wedding-preferences" element={<WeddingPreferences />} />
-              <Route path="/budget-management" element={<BudgetManagement />} />
-              <Route path="/vendor-discovery" element={<VendorDiscovery />} />
-              <Route path="/vendor-communication" element={<VendorCommunication />} />
-              <Route path="/ai-assistant" element={<AIChat />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <div className="hidden md:flex md:w-80 md:flex-col md:fixed md:inset-y-0">
+            <div className="flex-1 flex flex-col min-h-0 bg-white shadow-xl">
+              <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                <div className="flex items-center flex-shrink-0 px-6 mb-8">
+                  <LogoWithFallback size={50} />
+                  <span className="ml-4 text-2xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+                    Shehnai.AI
+                  </span>
+                </div>
+                <nav className="mt-5 flex-1 px-4 space-y-2">
+                  {menuItems.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl cursor-pointer transition-all duration-200 ${
+                        activeTab === item.id 
+                          ? 'bg-gradient-to-r from-orange-400 to-pink-400 text-white shadow-lg transform scale-105' 
+                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 hover:text-orange-700'
+                      }`}
+                    >
+                      <item.icon 
+                        className={`mr-3 flex-shrink-0 h-5 w-5 ${
+                          activeTab === item.id ? 'text-white' : 'text-gray-500 group-hover:text-orange-600'
+                        }`} 
+                      />
+                      {item.label}
+                    </div>
+                  ))}
+                </nav>
+              </div>
+            </div>
+          </div>
+
+          {/* Main content */}
+          <div className="md:pl-80 flex flex-col flex-1">
+            <main className="flex-1">
+              <div className="py-6">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/preferences" element={<WeddingPreferences />} />
+                    <Route path="/budget" element={<BudgetManagement />} />
+                    <Route path="/vendor-discovery" element={<VendorDiscovery />} />
+                    <Route path="/vendor-communication" element={<VendorCommunication />} />
+                    <Route path="/ai-assistant" element={<AIChat />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </div>
+              </div>
+            </main>
+          </div>
         </div>
-
-        {/* AI Chat Widget */}
         <AIChatWidget />
       </div>
     </BrowserRouter>
