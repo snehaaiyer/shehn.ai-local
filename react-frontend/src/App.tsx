@@ -1,3 +1,4 @@
+
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -36,9 +37,9 @@ const VendorDiscovery = React.lazy(() => import('./pages/VendorDiscovery'));
 const BudgetManagement = React.lazy(() => import('./pages/BudgetManagement'));
 const WeddingPreferences = React.lazy(() => import('./pages/WeddingPreferences'));
 const AIChat = React.lazy(() => import('./pages/AIChat'));
-const ManageVendors = React.lazy(() => import('./components/ManageVendors')); // Changed from GoogleIntegration
-const CommunicationHub = React.lazy(() => import('./components/CommunicationHub')); // Added CommunicationHub import
-const VendorCommunication = React.lazy(() => import('./pages/VendorCommunication')); // Added VendorCommunication import
+const ManageVendors = React.lazy(() => import('./components/ManageVendors'));
+const CommunicationHub = React.lazy(() => import('./components/CommunicationHub'));
+const VendorCommunication = React.lazy(() => import('./pages/VendorCommunication'));
 
 const App: React.FC = () => {
   const { setSidebarOpen, theme } = useAppStore();
@@ -100,11 +101,7 @@ const App: React.FC = () => {
                   <Route path="/preferences" element={<WeddingPreferences />} />
                   <Route path="/chat" element={<AIChat />} />
                   <Route path="/manage-vendors" element={<ManageVendors />} />
-                  <Route path="/vendor-communication" element={
-                    <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div></div>}>
-                      <VendorCommunication />
-                    </Suspense>
-                  } />
+                  <Route path="/vendor-communication" element={<VendorCommunication />} />
                   <Route path="/communication-hub" element={<CommunicationHub />} />
                 </Routes>
               </Suspense>
