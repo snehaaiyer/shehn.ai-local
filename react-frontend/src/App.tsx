@@ -23,7 +23,7 @@ import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
 
 // Component imports
-import AIChatWidget from './components/AIChatWidget';
+import { AIChatWidget } from './components/AIChatWidget';
 
 // CSS
 import './App.css';
