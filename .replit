@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Start React Wedding App"
+runButton = "Start Shehnai.AI App"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -232,6 +232,19 @@ mode = "parallel"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python vendor_communication_api.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Start Shehnai.AI App"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python service_orchestrator.py"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

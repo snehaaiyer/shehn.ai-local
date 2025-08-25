@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 # FastAPI App Setup
 app = FastAPI(
-    title="Vendor Communication API",
+    title="Shehnai.AI Communication API",
     description="Comprehensive vendor communication management system",
     version="1.0.0"
 )
@@ -843,7 +843,7 @@ from fastapi.middleware.cors import CORSMiddleware
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Vendor Communication API")
+app = FastAPI(title="Shehnai.AI Communication API")
 
 app.add_middleware(
     CORSMiddleware,

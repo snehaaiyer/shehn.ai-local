@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 RAG-Enhanced Vendor Search API
@@ -22,7 +21,11 @@ from vendor_database import get_vendor_database
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="RAG-Enhanced Vendor Search API")
+app = FastAPI(
+    title="Shehnai.AI Vendor Discovery API",
+    description="Advanced vendor discovery with RAG-based search and AI recommendations",
+    version="2.0.0"
+)
 
 # Configure CORS
 app.add_middleware(
@@ -49,14 +52,14 @@ async def store_wedding_preferences(request: Request):
     try:
         data = await request.json()
         logger.info(f"Storing wedding preferences for RAG: {data}")
-        
+
         # Store in database
         result = vendor_db.store_couple_data({
             **data.get('couple_data', {}),
             **data.get('preferences', {}),
             'created_at': datetime.now().isoformat()
         })
-        
+
         if result.get('success'):
             # Update vector database with preferences
             try:
@@ -75,7 +78,7 @@ async def store_wedding_preferences(request: Request):
                 logger.info("✅ Wedding preferences added to vector database")
             except Exception as e:
                 logger.error(f"Error adding to vector database: {e}")
-            
+
             return JSONResponse({
                 'success': True,
                 'message': 'Wedding preferences stored successfully',
@@ -86,7 +89,7 @@ async def store_wedding_preferences(request: Request):
                 'success': False,
                 'error': result.get('error', 'Failed to store preferences')
             }, status_code=500)
-            
+
     except Exception as e:
         logger.error(f"Error storing wedding preferences: {e}")
         return JSONResponse({
@@ -100,7 +103,7 @@ async def enhanced_vendor_search(request: Request):
     try:
         data = await request.json()
         logger.info(f"🔍 RAG-Enhanced vendor search request: {data}")
-        
+
         # Extract search parameters
         category = data.get('category', '')
         location = data.get('location', 'Mumbai')
@@ -108,10 +111,10 @@ async def enhanced_vendor_search(request: Request):
         guest_count = int(data.get('guestCount', 200))
         wedding_style = data.get('weddingStyle', 'Traditional')
         search_context = data.get('searchContext', {})
-        
+
         # Parse budget range
         budget_range = parse_budget_range(budget_range_str)
-        
+
         # Map category to enum
         category_enum = VendorCategory.VENUES
         if category:
@@ -123,7 +126,7 @@ async def enhanced_vendor_search(request: Request):
                 'makeup': VendorCategory.MAKEUP
             }
             category_enum = category_mapping.get(category.lower(), VendorCategory.VENUES)
-        
+
         # Create search criteria
         criteria = SearchCriteria(
             category=category_enum,
@@ -134,15 +137,15 @@ async def enhanced_vendor_search(request: Request):
             preferred_style=data.get('photographyStyle', ''),
             special_requirements=data.get('specialRequirements', '').split(',') if data.get('specialRequirements') else []
         )
-        
+
         # Perform enhanced vendor search
         logger.info(f"🔍 Searching vendors with criteria: {criteria}")
         vendors = vendor_search.search_vendors(criteria, max_results=20)
-        
+
         # RAG Enhancement
         rag_enhanced_vendors = []
         rag_context = {}
-        
+
         if search_context.get('useRAG', False) and search_context.get('ragQuery'):
             try:
                 # Search similar vendors in vector database
@@ -153,7 +156,7 @@ async def enhanced_vendor_search(request: Request):
                     location=location,
                     top_k=10
                 )
-                
+
                 # Enhance vendor data with RAG insights
                 for vendor in vendors:
                     enhanced_vendor = rag_extractor.extract_enhanced_vendor_info_with_vectors(
@@ -173,19 +176,19 @@ async def enhanced_vendor_search(request: Request):
                         }
                     )
                     rag_enhanced_vendors.append(enhanced_vendor)
-                
+
                 rag_context = {
                     'query': rag_query,
                     'similar_vendors_found': len(similar_vendors),
                     'enhancement_applied': True
                 }
-                
+
                 logger.info(f"✅ RAG enhancement applied to {len(rag_enhanced_vendors)} vendors")
-                
+
             except Exception as e:
                 logger.error(f"RAG enhancement failed: {e}")
                 rag_context = {'enhancement_applied': False, 'error': str(e)}
-        
+
         # Convert vendors to serializable format
         vendor_list = []
         for vendor in vendors:
@@ -206,9 +209,9 @@ async def enhanced_vendor_search(request: Request):
                 'search_score': vendor.search_score
             }
             vendor_list.append(vendor_dict)
-        
+
         logger.info(f"✅ RAG-Enhanced search completed: {len(vendor_list)} vendors found")
-        
+
         return JSONResponse({
             'success': True,
             'vendors': vendor_list,
@@ -223,7 +226,7 @@ async def enhanced_vendor_search(request: Request):
             },
             'totalCount': len(vendor_list)
         })
-        
+
     except Exception as e:
         logger.error(f"❌ Error in RAG-enhanced vendor search: {e}")
         return JSONResponse({
@@ -243,10 +246,10 @@ def parse_budget_range(budget_str: str) -> tuple:
                 min_val = int(range_parts[0].strip()) * 100000  # Convert lakhs to rupees
                 max_val = int(range_parts[1].strip()) * 100000
                 return (min_val, max_val)
-        
+
         # Default budget range
         return (500000, 2000000)  # ₹5-20 Lakhs
-        
+
     except Exception:
         return (500000, 2000000)  # Default fallback
 

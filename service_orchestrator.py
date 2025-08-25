@@ -99,7 +99,7 @@ class ServiceOrchestrator:
 
     def start_all_services(self):
         """Start all services"""
-        logger.info("🚀 Starting all wedding planning services...")
+        logger.info("🚀 Starting Shehnai.AI wedding planning services...")
 
         for service_name in self.services:
             if not self.start_service(service_name):
@@ -145,8 +145,8 @@ if __name__ == "__main__":
     try:
         if orchestrator.start_all_services():
             print("\n" + "="*50)
-            print("🎉 Wedding Planning Services Running!")
-            print("="*50)
+            print("🎉 Shehnai.AI Wedding Planning Services Running!")
+            print("=" * 54)
 
             status = orchestrator.get_service_status()
             for service, info in status.items():

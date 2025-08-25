@@ -34,20 +34,24 @@ from gmail_integration_service import GmailIntegrationService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define paths
-CURRENT_DIR = Path(__file__).parent
-STATIC_DIR = CURRENT_DIR / "local_website"
+# Configure static file serving for React frontend
+STATIC_DIR = Path(__file__).parent / "react-frontend" / "build"
+REACT_PUBLIC_DIR = Path(__file__).parent / "react-frontend" / "public"
 
-# Ensure static directory exists
+# Use public directory if build doesn't exist (development mode)
+if not STATIC_DIR.exists() and REACT_PUBLIC_DIR.exists():
+    STATIC_DIR = REACT_PUBLIC_DIR
+    logging.warning("Build directory not found, serving from public directory")
+
 if not STATIC_DIR.exists():
-    logger.error(f"Static directory not found: {STATIC_DIR}")
-    exit(1)
+    STATIC_DIR.mkdir(parents=True, exist_ok=True)
+    logging.warning(f"Static directory created: {STATIC_DIR}")
 
 # FastAPI App Setup
 app = FastAPI(
-    title="BID AI Wedding Assistant - Unified Server",
-    description="Complete wedding planning platform with vendor discovery",
-    version="1.0.0",
+    title="Shehnai.AI Wedding Assistant",
+    description="AI-powered wedding planning assistant with vendor discovery and communications",
+    version="2.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
 )
@@ -741,8 +745,8 @@ vendor_validator = VendorDataValidator()
 async def health_check():
     return JSONResponse({
         "status": "healthy",
-        "service": "BID AI Wedding Assistant - Unified Server",
-        "version": "1.0.0",
+        "service": "Shehnai.AI Wedding Assistant - Unified Server",
+        "version": "2.0.0",
         "timestamp": datetime.now().isoformat(),
         "features": {
             "frontend": "✅ Active",
@@ -751,9 +755,9 @@ async def health_check():
             "api_endpoints": "✅ Active"
         },
         "endpoints": {
-            "frontend": "http://localhost:8000",
-            "vendor_discovery": "http://localhost:8000/vendor-discovery",
-            "api_docs": "http://localhost:8000/api/docs"
+            "frontend": "http://localhost:5000",
+            "vendor_discovery": "http://localhost:5000/vendor-discovery",
+            "api_docs": "http://localhost:5000/api/docs"
         }
     })
 
@@ -1806,8 +1810,8 @@ async def budget_analysis(request: Request):
             'catering': 25, 
             'photography': 15,
             'decoration': 12,
+            'miscellaneous': 5,
             'makeup': 8,
-            'miscellaneous': 5
         }
 
         # Calculate day multipliers for different categories
@@ -1830,10 +1834,10 @@ async def budget_analysis(request: Request):
 
         # Calculate adjusted allocations
         allocations = {}
-        total_multiplied_percentage = sum(base_allocations[cat] * day_multipliers[cat] for cat in base_allocations)
+        total_multiplied_percentage = sum(base_allocations[cat] * day_multipliers.get(cat, 1.0) for cat in base_allocations)
 
         for category, base_percentage in base_allocations.items():
-            multiplier = day_multipliers[category]
+            multiplier = day_multipliers.get(category, 1.0)
             adjusted_percentage = (base_percentage * multiplier) / total_multiplied_percentage * 100
             adjusted_amount = base_amount * adjusted_percentage / 100
 
@@ -1850,7 +1854,7 @@ async def budget_analysis(request: Request):
             'budget_range': budget_range,
             'wedding_days': wedding_days,
             'allocations': allocations,
-            'total_estimated': f'₹{sum(day_multipliers[cat] * base_amount * base_allocations[cat] / 100 for cat in base_allocations):.1f} L',
+            'total_estimated': f'₹{sum(day_multipliers.get(cat, 1.0) * base_amount * base_allocations[cat] / 100 for cat in base_allocations):.1f} L',
             'notes': f'Budget calculated for {wedding_days}-day wedding celebration',
             'timestamp': datetime.now().isoformat()
         })
@@ -2198,7 +2202,7 @@ async def serve_spa_routes(path: str):
     raise HTTPException(status_code=404, detail="File not found")
 
 def main():
-    logger.info("🌸 BID AI Wedding Assistant - Simplified Unified Server")
+    logger.info("🌸 Shehnai.AI Wedding Assistant - Simplified Unified Server")
     logger.info("=" * 60)
     logger.info("🚀 Starting simplified unified server on http://0.0.0.0:5000")
     logger.info("📱 Frontend: http://0.0.0.0:5000")
@@ -2217,7 +2221,7 @@ def main():
     logger.info("=" * 60)
 
     uvicorn.run(
-        "simple_unified_server:app",
+        "main:app",  # Changed from "simple_unified_server:app" to "main:app" assuming the file is named main.py
         host="0.0.0.0",
         port=5000,
         reload=False,
