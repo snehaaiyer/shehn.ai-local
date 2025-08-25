@@ -8,7 +8,7 @@ import BudgetManagement from './pages/BudgetManagement';
 import VendorDiscovery from './pages/VendorDiscovery';
 import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
-import AIChatWidget from './components/AIChatWidget';
+import { AIChatWidget } from './components/AIChatWidget';
 import { useAppStore } from './store/useAppStore';
 import './App.css';
 
