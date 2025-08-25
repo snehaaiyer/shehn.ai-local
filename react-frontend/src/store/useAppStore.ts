@@ -2,28 +2,53 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-interface WeddingData {
-  venue?: string;
-  theme?: string;
-  budget?: number;
-  guestCount?: number;
-  date?: string;
-  location?: string;
-}
-
-interface AppStore {
+interface AppState {
   // UI State
   sidebarOpen: boolean;
   theme: 'light' | 'dark';
+  
+  // Wedding Planning State
+  weddingPreferences: {
+    weddingType: string;
+    city: string;
+    guestCount: string;
+    weddingStyle: string;
+    weddingDate: string;
+    budget: string;
+    events: string[];
+    priorities: string[];
+    specialRequirements: string;
+  };
+  
+  // Chat State
+  chatHistory: Array<{
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp: number;
+  }>;
+  
+  // Vendor State
+  selectedVendors: any[];
+  vendorSearchResults: any[];
+}
 
-  // Wedding Data
-  weddingData: WeddingData;
-
-  // Actions
+interface AppStore extends AppState {
+  // UI Actions
   setSidebarOpen: (open: boolean) => void;
-  setTheme: (theme: 'light' | 'dark') => void;
-  updateWeddingData: (data: Partial<WeddingData>) => void;
-  resetWeddingData: () => void;
+  toggleTheme: () => void;
+  
+  // Wedding Preferences Actions
+  updateWeddingPreferences: (preferences: Partial<AppState['weddingPreferences']>) => void;
+  
+  // Chat Actions
+  addChatMessage: (message: { role: 'user' | 'assistant'; content: string }) => void;
+  clearChatHistory: () => void;
+  
+  // Vendor Actions
+  addSelectedVendor: (vendor: any) => void;
+  removeSelectedVendor: (vendorId: string) => void;
+  setVendorSearchResults: (results: any[]) => void;
+  clearSelectedVendors: () => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -32,22 +57,62 @@ export const useAppStore = create<AppStore>()(
       // Initial state
       sidebarOpen: false,
       theme: 'light',
-      weddingData: {},
-
-      // Actions
-      setSidebarOpen: (open) => set({ sidebarOpen: open }),
-      setTheme: (theme) => set({ theme }),
-      updateWeddingData: (data) => set((state) => ({
-        weddingData: { ...state.weddingData, ...data }
-      })),
-      resetWeddingData: () => set({ weddingData: {} }),
+      
+      weddingPreferences: {
+        weddingType: '',
+        city: '',
+        guestCount: '',
+        weddingStyle: '',
+        weddingDate: '',
+        budget: '',
+        events: [],
+        priorities: [],
+        specialRequirements: ''
+      },
+      
+      chatHistory: [],
+      selectedVendors: [],
+      vendorSearchResults: [],
+      
+      // UI Actions
+      setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
+      toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
+      
+      // Wedding Preferences Actions
+      updateWeddingPreferences: (preferences) => 
+        set((state) => ({
+          weddingPreferences: { ...state.weddingPreferences, ...preferences }
+        })),
+      
+      // Chat Actions
+      addChatMessage: (message) => 
+        set((state) => ({
+          chatHistory: [...state.chatHistory, { ...message, timestamp: Date.now() }]
+        })),
+      
+      clearChatHistory: () => set({ chatHistory: [] }),
+      
+      // Vendor Actions
+      addSelectedVendor: (vendor) =>
+        set((state) => ({
+          selectedVendors: [...state.selectedVendors, vendor]
+        })),
+      
+      removeSelectedVendor: (vendorId) =>
+        set((state) => ({
+          selectedVendors: state.selectedVendors.filter(v => v.id !== vendorId)
+        })),
+      
+      setVendorSearchResults: (results) => set({ vendorSearchResults: results }),
+      clearSelectedVendors: () => set({ selectedVendors: [] }),
     }),
     {
-      name: 'wedding-app-storage',
+      name: 'shehnai-wedding-store',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         theme: state.theme,
-        weddingData: state.weddingData,
+        weddingPreferences: state.weddingPreferences,
+        selectedVendors: state.selectedVendors,
       }),
     }
   )
