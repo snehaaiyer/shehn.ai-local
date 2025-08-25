@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Vendor Communication API
@@ -36,9 +35,14 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://0.0.0.0:5000",
+        "http://localhost:5000", 
+        "https://*.replit.dev",
+        "https://*.repl.co"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -117,7 +121,7 @@ communications_store: Dict[str, VendorCommunication] = {}
 
 class CommunicationAgent:
     """AI-powered communication agent for vendor interactions"""
-    
+
     def __init__(self):
         self.category_templates = {
             'venues': {
@@ -136,7 +140,7 @@ class CommunicationAgent:
                 'negotiation': self._catering_negotiation_template
             }
         }
-    
+
     def generate_message(self, category: str, message_type: str, vendor_info: VendorInfo, wedding_info: WeddingInfo, **kwargs) -> str:
         """Generate appropriate message based on category and type"""
         template_func = self.category_templates.get(category, {}).get(message_type)
@@ -144,7 +148,7 @@ class CommunicationAgent:
             return template_func(vendor_info, wedding_info, **kwargs)
         else:
             return self._generic_template(vendor_info, wedding_info, message_type, **kwargs)
-    
+
     def _venue_inquiry_template(self, vendor: VendorInfo, wedding: WeddingInfo, **kwargs) -> str:
         return f"""Dear {vendor.name} Team,
 
@@ -197,7 +201,7 @@ Best regards,
     def _venue_negotiation_template(self, vendor: VendorInfo, wedding: WeddingInfo, current_quote: float, desired_quote: float, **kwargs) -> str:
         savings_requested = current_quote - desired_quote
         percentage_reduction = (savings_requested / current_quote) * 100
-        
+
         return f"""Dear {vendor.name} Team,
 
 Thank you for your detailed quotation of ₹{current_quote:,.0f} for our wedding venue on {wedding.wedding_date}.
@@ -288,7 +292,7 @@ Best regards,
 
     def _catering_inquiry_template(self, vendor: VendorInfo, wedding: WeddingInfo, **kwargs) -> str:
         cuisine_preference = kwargs.get('cuisine_preference', 'Indian and Continental')
-        
+
         return f"""Dear {vendor.name} Team,
 
 Greetings! We are planning our wedding celebration and would like to inquire about your catering services.
@@ -345,7 +349,7 @@ Thank you!
     def _catering_negotiation_template(self, vendor: VendorInfo, wedding: WeddingInfo, current_quote: float, desired_quote: float, **kwargs) -> str:
         per_plate_current = current_quote / wedding.guest_count
         per_plate_desired = desired_quote / wedding.guest_count
-        
+
         return f"""Dear {vendor.name} Team,
 
 Thank you for your catering proposal of ₹{current_quote:,.0f} (₹{per_plate_current:,.0f} per plate) for {wedding.guest_count} guests.
@@ -390,9 +394,9 @@ Best regards,
             'beauty': '💄',
             'entertainment': '🎵'
         }
-        
+
         icon = category_icons.get(vendor.category, '🎉')
-        
+
         return f"""{icon} Wedding {vendor.category.title()} Inquiry 💍
 
 Hi {vendor.name}!
@@ -415,13 +419,13 @@ comm_agent = CommunicationAgent()
 
 class EmailService:
     """Email service for sending vendor communications"""
-    
+
     def __init__(self):
         self.smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
         self.smtp_port = int(os.getenv('SMTP_PORT', '587'))
         self.email_user = os.getenv('EMAIL_USER', '')
         self.email_password = os.getenv('EMAIL_PASSWORD', '')
-    
+
     async def send_email(self, to_email: str, subject: str, content: str, from_name: str = "Wedding Planning Assistant") -> Dict[str, Any]:
         """Send email to vendor"""
         try:
@@ -433,27 +437,27 @@ class EmailService:
                     'message_id': f'demo_{datetime.now().timestamp()}',
                     'timestamp': datetime.now().isoformat()
                 }
-            
+
             msg = MimeMultipart()
             msg['From'] = f"{from_name} <{self.email_user}>"
             msg['To'] = to_email
             msg['Subject'] = subject
-            
+
             msg.attach(MIMEText(content, 'plain'))
-            
+
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()
             server.login(self.email_user, self.email_password)
             text = msg.as_string()
             server.sendmail(self.email_user, to_email, text)
             server.quit()
-            
+
             return {
                 'success': True,
                 'message_id': f'email_{datetime.now().timestamp()}',
                 'timestamp': datetime.now().isoformat()
             }
-            
+
         except Exception as e:
             logger.error(f"Email send error: {e}")
             return {
@@ -464,11 +468,11 @@ class EmailService:
 
 class WhatsAppService:
     """WhatsApp service for sending vendor communications"""
-    
+
     def __init__(self):
         self.api_url = os.getenv('WHATSAPP_API_URL', '')
         self.api_token = os.getenv('WHATSAPP_API_TOKEN', '')
-    
+
     async def send_whatsapp(self, phone: str, message: str) -> Dict[str, Any]:
         """Send WhatsApp message to vendor"""
         try:
@@ -480,24 +484,24 @@ class WhatsAppService:
                     'message_id': f'whatsapp_demo_{datetime.now().timestamp()}',
                     'timestamp': datetime.now().isoformat()
                 }
-            
+
             # Format phone number
             clean_phone = re.sub(r'\D', '', phone)
             if not clean_phone.startswith('91'):
                 clean_phone = '91' + clean_phone
-            
+
             headers = {
                 'Authorization': f'Bearer {self.api_token}',
                 'Content-Type': 'application/json'
             }
-            
+
             payload = {
                 'phone': clean_phone,
                 'message': message
             }
-            
+
             response = requests.post(self.api_url, json=payload, headers=headers)
-            
+
             if response.status_code == 200:
                 return {
                     'success': True,
@@ -510,7 +514,7 @@ class WhatsAppService:
                     'error': f'WhatsApp API error: {response.status_code}',
                     'timestamp': datetime.now().isoformat()
                 }
-                
+
         except Exception as e:
             logger.error(f"WhatsApp send error: {e}")
             return {
@@ -550,14 +554,14 @@ async def get_communications(couple_id: Optional[str] = None):
             filtered_comms = [comm for comm in communications_store.values()]
         else:
             filtered_comms = list(communications_store.values())
-        
+
         return JSONResponse({
             'success': True,
             'communications': [asdict(comm) for comm in filtered_comms],
             'total_count': len(filtered_comms),
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error getting communications: {e}")
         return JSONResponse({
@@ -571,9 +575,9 @@ async def create_communication(request: Request):
     """Create new vendor communication"""
     try:
         data = await request.json()
-        
+
         communication_id = f"comm_{int(datetime.now().timestamp())}"
-        
+
         communication = VendorCommunication(
             id=communication_id,
             vendor_info=VendorInfo(**data['vendor_info']),
@@ -587,15 +591,15 @@ async def create_communication(request: Request):
             created_at=datetime.now().isoformat(),
             updated_at=datetime.now().isoformat()
         )
-        
+
         communications_store[communication_id] = communication
-        
+
         return JSONResponse({
             'success': True,
             'communication': asdict(communication),
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error creating communication: {e}")
         return JSONResponse({
@@ -610,9 +614,9 @@ async def send_message(communication_id: str, message_request: MessageRequest, b
     try:
         if communication_id not in communications_store:
             raise HTTPException(status_code=404, detail="Communication not found")
-        
+
         communication = communications_store[communication_id]
-        
+
         # Create message record
         message_id = f"msg_{int(datetime.now().timestamp())}"
         message = CommunicationMessage(
@@ -624,7 +628,7 @@ async def send_message(communication_id: str, message_request: MessageRequest, b
             timestamp=datetime.now().isoformat(),
             status='sent'
         )
-        
+
         # Send based on message type
         if message_request.message_type == 'email' and communication.vendor_info.email:
             background_tasks.add_task(
@@ -640,19 +644,19 @@ async def send_message(communication_id: str, message_request: MessageRequest, b
                 communication.vendor_info.phone,
                 message_request.content
             )
-        
+
         # Add message to communication
         communication.messages.append(message)
         communication.status = 'contacted'
         communication.updated_at = datetime.now().isoformat()
-        
+
         return JSONResponse({
             'success': True,
             'message': asdict(message),
             'communication_status': communication.status,
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error sending message: {e}")
         return JSONResponse({
@@ -667,27 +671,27 @@ async def add_quotation(communication_id: str, quotation_request: QuotationReque
     try:
         if communication_id not in communications_store:
             raise HTTPException(status_code=404, detail="Communication not found")
-        
+
         communication = communications_store[communication_id]
         communication.quotation = quotation_request.quotation
         communication.quotation_date = datetime.now().isoformat()
         communication.status = 'quoted'
         communication.updated_at = datetime.now().isoformat()
-        
+
         # Calculate response time if this is first response
         if communication.response_date is None:
             communication.response_date = datetime.now().isoformat()
             contact_time = datetime.fromisoformat(communication.contact_date.replace('Z', '+00:00'))
             response_time = datetime.now(contact_time.tzinfo) - contact_time
             communication.response_time_hours = response_time.total_seconds() / 3600
-        
+
         return JSONResponse({
             'success': True,
             'quotation': asdict(quotation_request.quotation),
             'communication_status': communication.status,
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error adding quotation: {e}")
         return JSONResponse({
@@ -701,11 +705,11 @@ async def generate_ai_message(request: Request):
     """Generate AI-powered message for vendor communication"""
     try:
         data = await request.json()
-        
+
         vendor_info = VendorInfo(**data['vendor_info'])
         wedding_info = WeddingInfo(**data['wedding_info'])
         message_type = data.get('message_type', 'inquiry')
-        
+
         # Generate appropriate message
         if message_type == 'whatsapp':
             message = comm_agent.generate_whatsapp_message(vendor_info, wedding_info)
@@ -717,7 +721,7 @@ async def generate_ai_message(request: Request):
                 wedding_info,
                 **data.get('additional_params', {})
             )
-        
+
         return JSONResponse({
             'success': True,
             'message': message,
@@ -725,7 +729,7 @@ async def generate_ai_message(request: Request):
             'vendor_category': vendor_info.category,
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error generating message: {e}")
         return JSONResponse({
@@ -743,7 +747,7 @@ async def get_quotation_analytics(couple_id: Optional[str] = None):
             comm for comm in communications_store.values()
             if comm.quotation is not None
         ]
-        
+
         if not comms_with_quotes:
             return JSONResponse({
                 'success': True,
@@ -756,14 +760,14 @@ async def get_quotation_analytics(couple_id: Optional[str] = None):
                 },
                 'timestamp': datetime.now().isoformat()
             })
-        
+
         # Calculate analytics
         amounts = [comm.quotation.amount for comm in comms_with_quotes]
         total_quotations = len(amounts)
         average_amount = sum(amounts) / len(amounts)
         min_amount = min(amounts)
         max_amount = max(amounts)
-        
+
         # Category breakdown
         category_breakdown = {}
         for comm in comms_with_quotes:
@@ -772,11 +776,11 @@ async def get_quotation_analytics(couple_id: Optional[str] = None):
                 category_breakdown[category] = {'count': 0, 'total_amount': 0, 'average': 0}
             category_breakdown[category]['count'] += 1
             category_breakdown[category]['total_amount'] += comm.quotation.amount
-        
+
         for category in category_breakdown:
             data = category_breakdown[category]
             data['average'] = data['total_amount'] / data['count']
-        
+
         # Generate insights
         insights = [
             f"Average quotation amount: ₹{average_amount:,.0f}",
@@ -784,7 +788,7 @@ async def get_quotation_analytics(couple_id: Optional[str] = None):
             f"Total quotations received: {total_quotations}",
             f"Categories quoted: {len(category_breakdown)}"
         ]
-        
+
         return JSONResponse({
             'success': True,
             'analytics': {
@@ -796,7 +800,7 @@ async def get_quotation_analytics(couple_id: Optional[str] = None):
             },
             'timestamp': datetime.now().isoformat()
         })
-        
+
     except Exception as e:
         logger.error(f"Error getting quotation analytics: {e}")
         return JSONResponse({
@@ -843,9 +847,14 @@ app = FastAPI(title="Vendor Communication API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://0.0.0.0:5000",
+        "http://localhost:5000", 
+        "https://*.replit.dev",
+        "https://*.repl.co"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 

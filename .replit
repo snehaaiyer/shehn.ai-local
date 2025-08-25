@@ -1,5 +1,5 @@
 modules = ["python-3.12", "web", "nodejs-20"]
-run = "node index.js"
+run = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
 
 [nix]
 channel = "stable-25_05"
@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Start All Wedding Services"
+runButton = "Start React Wedding App"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -188,7 +188,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none FAST_REFRESH=false npm start"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
 
 [[workflows.workflow]]
 name = "Full Wedding System with Backend"

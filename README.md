@@ -1,201 +1,65 @@
-# BidAI - Wedding Planning AI Assistant
 
-A comprehensive wedding planning application powered by AI that helps couples plan their perfect wedding with intelligent vendor discovery, budget management, and AI-powered assistance.
+# BID AI Wedding Assistant
 
-## 🎉 Features
+A comprehensive AI-powered wedding planning platform built with React frontend and Python backend services.
 
-- **AI-Powered Chat Assistant**: Intelligent wedding planning guidance
-- **Vendor Discovery**: Find and connect with wedding vendors
-- **Budget Management**: Track and manage wedding expenses
-- **Wedding Preferences**: Store and manage wedding details
-- **Google Integration**: Calendar and email integration
-- **Modern UI**: Beautiful, responsive design with dark/light themes
+## 🚀 Quick Start
 
-## 🚀 Tech Stack
-
-- **Frontend**: React 18 with TypeScript
-- **Styling**: Tailwind CSS
-- **AI Services**: 
-  - Cloudflare AI
-  - Google Gemini API
-  - Custom AI Assistant
-- **Backend**: Python Flask (local services)
-- **Database**: NocoDB (NoSQL)
-- **Deployment**: Cloudflare Workers
-
-## 📦 Installation
-
-### Prerequisites
-- Node.js 18+ 
-- Python 3.8+
-- Git
-
-### Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/snehaaiyer/bidai.git
-   cd bidai
-   ```
-
-2. **Install React Frontend Dependencies**
-   ```bash
-   cd react-frontend
-   npm install
-   ```
-
-3. **Install Python Dependencies**
-   ```bash
-   cd ..
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -r ai_requirements.txt
-   ```
-
-4. **Environment Setup**
-   Create `.env` files in the appropriate directories with your API keys:
-   ```bash
-   # react-frontend/.env
-   REACT_APP_GOOGLE_API_KEY=your_google_api_key
-   REACT_APP_GEMINI_API_KEY=your_gemini_api_key
-   REACT_APP_CLOUDFLARE_WORKER_URL=your_cloudflare_worker_url
-   ```
-
-## 🏃‍♂️ Running the Application
-
-### Development Mode
-```bash
-# Start React frontend
-cd react-frontend
-npm start
-
-# Start Python backend (in another terminal)
-cd local_website
-python api_service.py
-```
-
-The application will be available at `http://localhost:3000`
-
-### Production Build
+### Frontend (React)
 ```bash
 cd react-frontend
-npm run build
+npm install
+HOST=0.0.0.0 PORT=5000 BROWSER=none npm start
 ```
 
-## 🏗️ Project Structure
+### Backend Services
+```bash
+python service_orchestrator.py
+```
+
+## 📁 Project Structure
 
 ```
-cursor_bidai/
-├── react-frontend/          # React TypeScript frontend
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API services
-│   │   ├── store/          # State management
-│   │   └── types/          # TypeScript type definitions
-│   └── public/             # Static assets
-├── local_website/          # Python backend services
+├── react-frontend/          # React application (main frontend)
+├── services/               # Backend API services
 ├── config/                 # Configuration files
-├── models/                 # AI model files
+├── models/                 # Data models
 ├── nocodb_schemas/         # Database schemas
-└── tests/                  # Test files
+└── tests/                  # Test suites
 ```
 
-## 🤖 AI Features
+## 🎯 Features
 
-- **Intelligent Chat**: AI-powered wedding planning assistant
-- **Vendor Recommendations**: Smart vendor discovery based on preferences
-- **Budget Analysis**: AI-driven budget optimization
-- **Image Generation**: AI-generated wedding theme visualizations
-- **Natural Language Processing**: Understand and respond to wedding planning queries
+- **React Frontend**: Modern, responsive wedding planning interface
+- **AI-Powered Recommendations**: Intelligent vendor matching and suggestions  
+- **Budget Management**: Comprehensive budget tracking and allocation
+- **Vendor Discovery**: Advanced search and filtering capabilities
+- **Wedding Preferences**: Style and theme customization
+- **Real-time Communication**: Vendor contact and messaging system
 
-## 🔧 Configuration
+## 🔧 Development
 
-### API Keys Required
-- Google API Key (for calendar and email integration)
-- Gemini API Key (for AI chat functionality)
-- Cloudflare Worker URL (for AI image generation)
+The application runs on:
+- **Frontend**: React app on port 5000
+- **Backend APIs**: Various Python services on ports 8000, 5003, 5004
 
-### Environment Variables
-See the setup section for required environment variables.
+## 🌐 Access
+
+Once running, access the application at:
+- **Main App**: http://localhost:5000 (or your Repl URL)
+- **API Services**: Backend services run automatically
+
+## 📊 Architecture
+
+- **Frontend**: React with TypeScript, Tailwind CSS
+- **Backend**: Python FastAPI services
+- **Database**: NocoDB for data management
+- **AI Integration**: Multiple AI service providers
+- **Search**: Enhanced RAG-based vendor search
 
 ## 🧪 Testing
 
+Run the comprehensive test suite:
 ```bash
-# Run React tests
-cd react-frontend
-npm test
-
-# Run Python tests
-cd tests
-python test_runner.py
+python run_tests.py
 ```
-
-## 📱 Features Overview
-
-### Dashboard
-- Wedding overview and progress tracking
-- Quick access to all planning tools
-
-### Vendor Discovery
-- Search and filter wedding vendors
-- AI-powered recommendations
-- Vendor contact management
-
-### Budget Management
-- Expense tracking and categorization
-- Budget allocation tools
-- Financial planning assistance
-
-### Bid AI Chat
-- Natural language wedding planning assistance
-- Task automation (scheduling, emails, etc.)
-- Intelligent recommendations
-
-### Wedding Preferences
-- Store wedding details and preferences
-- Theme and style preferences
-- Guest list management
-
-## 🚀 Deployment
-
-### Frontend Deployment
-```bash
-cd react-frontend
-npm run build
-# Deploy build/ folder to your hosting service
-```
-
-### Backend Deployment
-The Python services can be deployed to:
-- Heroku
-- AWS Lambda
-- Google Cloud Functions
-- Cloudflare Workers
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- React and TypeScript communities
-- Tailwind CSS for styling
-- Cloudflare for AI services
-- Google for API integrations
-
-## 📞 Support
-
-For support and questions, please open an issue on GitHub or contact the development team.
-
----
-
-**Made with ❤️ for wedding planning**

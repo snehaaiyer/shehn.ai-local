@@ -27,9 +27,14 @@ app = FastAPI(title="RAG-Enhanced Vendor Search API")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://0.0.0.0:5000",
+        "http://localhost:5000",
+        "https://*.replit.dev",
+        "https://*.repl.co"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
