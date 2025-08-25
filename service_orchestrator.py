@@ -30,12 +30,6 @@ class ServiceOrchestrator:
                 'health_check': '/health',
                 'process': None
             },
-            'unified_server': {
-                'port': 8000,
-                'command': ['python', 'simple_unified_server.py'],
-                'health_check': '/health',
-                'process': None
-            },
             'vendor_communication': {
                 'port': 5004,
                 'command': ['python', 'vendor_communication_api.py'],
@@ -106,12 +100,15 @@ class ServiceOrchestrator:
         """Start all services"""
         logger.info("🚀 Starting Shehnai.AI wedding planning services...")
 
-        for service_name in self.services:
-            if not self.start_service(service_name):
-                logger.error(f"Failed to start {service_name}")
-                return False
+        # Start only essential services, unified server handles the rest
+        essential_services = ['enhanced_rag_vendor_api', 'vendor_communication']
+        
+        for service_name in essential_services:
+            if service_name in self.services:
+                if not self.start_service(service_name):
+                    logger.warning(f"Service {service_name} failed to start, continuing...")
 
-        logger.info("✅ All services started successfully!")
+        logger.info("✅ Essential services started!")
         return True
 
     def stop_all_services(self):

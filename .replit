@@ -244,11 +244,7 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python service_orchestrator.py"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
+args = "python start_wedding_app.py"
 
 [[ports]]
 localPort = 3000
