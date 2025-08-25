@@ -1441,7 +1441,7 @@ async def send_vendor_inquiry(request: Request):
         subject = f"Wedding {vendor_info.get('category', 'service')} Inquiry - {wedding_info.get('date', '')}"
         to_email = vendor_info.get('email')
         from_email = "your_wedding_assistant@gmail.com" # Replace with your sender email
-        
+
         if to_email:
             email_sent = gmail_service.send_email(to_email, subject, message, from_email)
             if email_sent:
@@ -1705,7 +1705,7 @@ async def search_custom_images(request: Request):
 
 # Serper AI Vendor Search Endpoints
 @app.get("/api/search-vendors")
-async def search_real_vendors(category: str = "venues", location: str = "Mumbai", num_results: int = 10):
+async def search_real_vendors(category: str = "venues", location: str = "bangalore", num_results: int = 10):
     """Search for real vendors using Serper AI"""
     try:
         logger.info(f"🔍 Searching {category} vendors in {location} using Serper AI...")

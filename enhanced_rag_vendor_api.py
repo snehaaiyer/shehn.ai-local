@@ -245,7 +245,12 @@ def parse_budget_range(budget_str: str) -> tuple:
     except Exception:
         return (500000, 2000000)  # Default fallback
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "service": "RAG-Enhanced Vendor Search API"}
+
 if __name__ == "__main__":
     import uvicorn
     logger.info("🚀 Starting RAG-Enhanced Vendor Search API...")
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=5003)

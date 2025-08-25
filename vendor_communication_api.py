@@ -825,3 +825,56 @@ if __name__ == "__main__":
         reload=True,
         log_level="info"
     )
+#!/usr/bin/env python3
+"""
+Vendor Communication API
+Handles email, WhatsApp, and other vendor communications
+"""
+
+import logging
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="Vendor Communication API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "service": "Vendor Communication API"}
+
+@app.post("/api/send-vendor-email")
+async def send_vendor_email(request: dict):
+    """Send email to vendor"""
+    logger.info("📧 Mock email sent to vendor")
+    return JSONResponse({
+        'success': True,
+        'message': 'Email sent successfully (mock)',
+        'provider': 'Mock Service'
+    })
+
+@app.post("/api/send-whatsapp")
+async def send_whatsapp(request: dict):
+    """Send WhatsApp message to vendor"""
+    logger.info("📱 Mock WhatsApp sent to vendor")
+    return JSONResponse({
+        'success': True,
+        'message': 'WhatsApp sent successfully (mock)',
+        'provider': 'Mock Service'
+    })
+
+if __name__ == "__main__":
+    import uvicorn
+    logger.info("🚀 Starting Vendor Communication API...")
+    uvicorn.run(app, host="0.0.0.0", port=5004)
