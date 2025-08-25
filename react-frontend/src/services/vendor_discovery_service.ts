@@ -152,7 +152,7 @@ export class VendorDiscoveryService {
   /**
    * Extract indoor/outdoor preference from venue type
    */
-  static extractIndoorOutdoorPreference(venueType: string): string {
+  private static extractIndoorOutdoorPreference(venueType: string): string {
     if (!venueType) return '';
     
     const outdoorTypes = ['garden', 'beach', 'farmhouse', 'mountain', 'rooftop'];
