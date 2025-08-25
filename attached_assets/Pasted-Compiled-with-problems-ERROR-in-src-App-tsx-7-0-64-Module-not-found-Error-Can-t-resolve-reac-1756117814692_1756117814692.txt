@@ -1,0 +1,1286 @@
+Compiled with problems:
+×
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/ansi-html-community/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/ansi-html-community/index.js'
+ERROR in ./node_modules/events/events.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/events/events.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/ansi-html-community/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/ansi-html-community/index.js'
+ERROR in ./node_modules/events/events.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/events/events.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/ansi-html-community/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/ansi-html-community/index.js'
+ERROR in ./node_modules/events/events.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/events/events.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/use-sync-external-store/shim/with-selector.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/use-sync-external-store/shim/with-selector.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/ansi-html-community/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/ansi-html-community/index.js'
+ERROR in ./node_modules/events/events.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/events/events.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/use-sync-external-store/shim/with-selector.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/use-sync-external-store/shim/with-selector.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/ansi-html-community/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/ansi-html-community/index.js'
+ERROR in ./node_modules/events/events.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/events/events.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR in ./node_modules/zustand/esm/index.mjs 1:0-46
+Module not found: Error: Can't resolve 'zustand/vanilla' in '/home/runner/workspace/react-frontend/node_modules/zustand/esm'
+ERROR in ./node_modules/zustand/esm/index.mjs 3:0-33
+Module not found: Error: Can't resolve 'react' in '/home/runner/workspace/react-frontend/node_modules/zustand/esm'
+ERROR in ./node_modules/zustand/esm/index.mjs 4:0-88
+Module not found: Error: Can't resolve 'use-sync-external-store/shim/with-selector.js' in '/home/runner/workspace/react-frontend/node_modules/zustand/esm'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./node_modules/zustand/esm/index.mjs
+Cannot read properties of null (reading 'getExportsType')
+ERROR in ./src/App.tsx 7:0-64
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src'
+ERROR in ./src/components/AnimatedSidebar.tsx 8:0-53
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/components/NotificationProvider.tsx 5:0-49
+Module not found: Error: Can't resolve 'react-hot-toast' in '/home/runner/workspace/react-frontend/src/components'
+ERROR in ./src/pages/Index.tsx 7:0-47
+Module not found: Error: Can't resolve 'react-router-dom' in '/home/runner/workspace/react-frontend/src/pages'
+ERROR in ./src/services/venue_image_generator.ts 3:0-62
+Module not found: Error: Can't resolve './cloudflare_ai_service' in '/home/runner/workspace/react-frontend/src/services'
+ERROR in ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js'
+ERROR in ./node_modules/ansi-html-community/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/ansi-html-community/index.js'
+ERROR in ./node_modules/events/events.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/events/events.js'
+ERROR in ./node_modules/react/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/index.js'
+ERROR in ./node_modules/react/jsx-dev-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-dev-runtime.js'
+ERROR in ./node_modules/react/jsx-runtime.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/react/jsx-runtime.js'
+ERROR in ./node_modules/html-entities/dist/esm/index.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/html-entities/dist/esm/index.js'
+ERROR in ./node_modules/motion-dom/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-dom/dist/es/index.mjs'
+ERROR in ./node_modules/motion-utils/dist/es/index.mjs
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/runner/workspace/react-frontend/node_modules/motion-utils/dist/es/index.mjs'
+ERROR in ./node_modules/zustand/esm/index.mjs 1:0-46
+Module not found: Error: Can't resolve 'zustand/vanilla' in '/home/runner/workspace/react-frontend/node_modules/zustand/esm'
+ERROR in ./node_modules/zustand/esm/index.mjs 3:0-33
+Module not found: Error: Can't resolve 'react' in '/home/runner/workspace/react-frontend/node_modules/zustand/esm'
+ERROR in ./node_modules/zustand/esm/index.mjs 4:0-88
+Module not found: Error: Can't resolve 'use-sync-external-store/shim/with-selector.js' in '/home/runner/workspace/react-frontend/node_modules/zustand/esm'
+ERROR
+Module not found: Error: Can't resolve '/home/runner/workspace/react-frontend/node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js' in '/home/runner/workspace/react-frontend'
+ERROR in ./node_modules/zustand/esm/index.mjs
+Cannot read properties of null (reading 'getExportsType')
+ERROR in src/App.tsx:2:46
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { Suspense } from 'react';
+  > 2 | import { BrowserRouter, Routes, Route } from 'react-router-dom';
+      |                                              ^^^^^^^^^^^^^^^^^^
+    3 | import { Menu } from "lucide-react";
+    4 | import { AnimatedSidebar } from './components/AnimatedSidebar';
+    5 | import { NotificationProvider } from './components/NotificationProvider';
+ERROR in src/components/AnimatedSidebar.tsx:3:35
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React from 'react';
+    2 | import { motion, AnimatePresence } from 'framer-motion';
+  > 3 | import { Link, useLocation } from 'react-router-dom';
+      |                                   ^^^^^^^^^^^^^^^^^^
+    4 | import {
+    5 |   Home, Search, DollarSign, Heart, MessageCircle,
+    6 |   X, Settings, User, LogOut, Sun, Moon, Calendar
+ERROR in src/components/AnimatedSidebar.tsx:114:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    Type 'undefined' is not assignable to type 'Element | null'.
+    112 |     <>
+    113 |       {/* Mobile Overlay */}
+  > 114 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    115 |         {sidebarOpen && (
+    116 |           <motion.div
+    117 |             className="fixed inset-0 z-40 lg:hidden"
+ERROR in src/components/AnimatedSidebar.tsx:130:8
+TS2786: 'AnimatePresence' cannot be used as a JSX component.
+  Its return type 'Element | undefined' is not a valid JSX element.
+    128 |
+    129 |       {/* Mobile Sidebar */}
+  > 130 |       <AnimatePresence>
+        |        ^^^^^^^^^^^^^^^
+    131 |         {sidebarOpen && (
+    132 |           <motion.div
+    133 |             className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+ERROR in src/components/NotificationProvider.tsx:2:32
+TS2307: Cannot find module 'react-hot-toast' or its corresponding type declarations.
+    1 | import React from 'react';
+  > 2 | import { Toaster, toast } from 'react-hot-toast';
+      |                                ^^^^^^^^^^^^^^^^^
+    3 |
+    4 | // Custom toast styles for pink/purple theme
+    5 | const toastStyles = {
+ERROR in src/lib/utils.ts:1:39
+TS2307: Cannot find module 'clsx' or its corresponding type declarations.
+  > 1 | import { type ClassValue, clsx } from "clsx";
+      |                                       ^^^^^^
+    2 |
+    3 | export function cn(...inputs: ClassValue[]) {
+    4 |   return clsx(inputs);
+ERROR in src/pages/Index.tsx:3:29
+TS2307: Cannot find module 'react-router-dom' or its corresponding type declarations.
+    1 | import React, { useState, useEffect } from 'react';
+    2 | import { motion } from 'framer-motion';
+  > 3 | import { useNavigate } from 'react-router-dom';
+      |                             ^^^^^^^^^^^^^^^^^^
+    4 | import { useAppStore } from '../store/useAppStore';
+    5 | import { 
+    6 |   Calendar, Users, DollarSign, 
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/venue_image_generator.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { AIImageResponse } from '../types/ai';
+    3 |
+    4 | interface VenueImageRequest {
+ERROR in src/services/wedding_blueprint_service.ts:1:37
+TS2307: Cannot find module './cloudflare_ai_service' or its corresponding type declarations.
+  > 1 | import { CloudflareAIService } from './cloudflare_ai_service';
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    2 | import { ThemePromptGenerator } from './theme_prompt_generator';
+    3 | import { AIImageResponse } from '../types/ai';
+    4 |
