@@ -1,4 +1,3 @@
-
 // Note: Replit object storage not available, using mock implementation
 
 interface ImageUploadResult {
@@ -7,20 +6,47 @@ interface ImageUploadResult {
   error?: string;
 }
 
+interface StorageObject {
+  name: string;
+  key?: string;
+}
+
+interface Client {
+  uploadFromBytes(name: string, buffer: Buffer): Promise<void>;
+  list(): Promise<StorageObject[]>;
+}
+
+// Mock Client for development
+class MockClient implements Client {
+  async uploadFromFile(): Promise<void> {
+    console.log('Mock upload from file');
+  }
+
+  async uploadFromBytes(name: string, buffer: Buffer): Promise<void> {
+    console.log('Mock upload from bytes:', name);
+  }
+
+  async list(): Promise<StorageObject[]> {
+    console.log('Mock list images');
+    return [];
+  }
+}
+
 class ImageStorageService {
   private client: Client;
 
   constructor() {
-    this.client = new Client();
+    // Instantiate the mock client if Replit's object storage is not available
+    this.client = new MockClient();
   }
 
   async uploadImageFromFile(file: File, imageName: string): Promise<ImageUploadResult> {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
+
       await this.client.uploadFromBytes(imageName, buffer);
-      
+
       return {
         success: true,
         url: `/api/storage/${imageName}`
@@ -40,12 +66,12 @@ class ImageStorageService {
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`);
       }
-      
+
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
+
       await this.client.uploadFromBytes(imageName, buffer);
-      
+
       return {
         success: true,
         url: `/api/storage/${imageName}`

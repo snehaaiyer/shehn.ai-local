@@ -1,23 +1,45 @@
-
 // Mock implementation - Replit object storage not available
-interface MockClient {
-  uploadFile: (key: string, file: File) => Promise<{ url: string }>;
-  deleteFile: (key: string) => Promise<void>;
-  getFileUrl: (key: string) => Promise<string>;
+interface StorageObject {
+  name: string;
+  key?: string;
+}
+
+interface Client {
+  uploadFromBytes(name: string, buffer: Buffer): Promise<void>;
+  list(): Promise<StorageObject[]>;
+}
+
+// Mock implementation since Replit's storage client isn't available in dev
+class MockClient implements Client {
+  async uploadFromFile(): Promise<void> {
+    console.log('Mock Replit storage - upload from file');
+  }
+
+  async uploadFromBytes(name: string, buffer: Buffer): Promise<void> {
+    console.log('Mock Replit storage - upload from bytes:', name);
+  }
+
+  async list(): Promise<StorageObject[]> {
+    console.log('Mock Replit storage - list images');
+    return [];
+  }
 }
 
 class ReplitStorageService {
   private client: MockClient;
 
   constructor() {
-    this.client = new Client();
+    // Assuming Client is a global or imported class that MockClient should implement.
+    // If Client is supposed to be instantiated, this line might need adjustment.
+    // For now, we use MockClient as per the provided structure.
+    this.client = new MockClient();
   }
 
   async uploadImage(imageName: string, imageFile: File): Promise<string> {
     try {
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
+
       await this.client.uploadFromBytes(imageName, buffer);
       return this.getImageUrl(imageName);
     } catch (error) {
@@ -31,7 +53,7 @@ class ReplitStorageService {
       const response = await fetch(imageUrl);
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      
+
       await this.client.uploadFromBytes(imageName, buffer);
       return this.getImageUrl(imageName);
     } catch (error) {
