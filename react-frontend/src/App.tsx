@@ -80,10 +80,14 @@ const AnimatedSidebar = ({ isOpen, onClose, menuItems, activeTab, setActiveTab }
               onClick={() => setActiveTab(item.id)}
               className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-colors ${
                 activeTab === item.id
-                  ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white'
+                  ? 'text-white'
                   : 'hover:bg-gray-100 text-gray-700'
               }`}
-            >
+              style={activeTab === item.id ? {
+                backgroundColor: '#D4A574', // Peach color matching action boxes
+                background: 'linear-gradient(135deg, #D4A574, #C49464)'
+              } : {}}
+            ></div>
               <Icon size={20} />
               <span className="font-medium">{item.label}</span>
             </div>
