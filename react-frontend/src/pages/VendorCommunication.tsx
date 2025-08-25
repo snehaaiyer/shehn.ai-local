@@ -512,7 +512,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-gray-900"
                 >
                   <option value="all">All Statuses</option>
                   <option value="contacted">Contacted</option>
@@ -525,7 +525,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-gray-900"
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
@@ -537,7 +537,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-400 focus:ring-2 focus:ring-rose-100 bg-white text-gray-900"
+                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white text-gray-900"
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
