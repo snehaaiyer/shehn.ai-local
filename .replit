@@ -10,7 +10,7 @@ run = ["sh", "-c", "cd react-frontend && npx serve -s build -l 5000 -H 0.0.0.0"]
 build = ["sh", "-c", "cd react-frontend && npm install && npm run build"]
 
 [workflows]
-runButton = "Start Shehnai.AI App"
+runButton = "Start React App"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -263,6 +263,15 @@ args = "python start_wedding_app.py"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Start React App"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm start"
 
 [[ports]]
 localPort = 3000

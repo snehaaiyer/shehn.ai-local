@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
+// Updated import for mock service
+import { MockCloudflareAIService } from '../services/mock_cloudflare_service';
 
-// Removed Cloudflare AI service
 
 interface Priority {
   id: string;
@@ -688,23 +689,6 @@ const WeddingPreferences: React.FC = () => {
   // Import NocoDB service at the top
   const { NocoDBService } = require('../services/nocodb_service');
 
-  // Mock service for AI image generation
-  const MockCloudflareAIService = {
-    generateWeddingThemeImages: async (params: any) => {
-      console.log('Mock AI service called with:', params);
-      // Simulate API response for testing
-      return {
-        success: true,
-        data: {
-          images: [
-            'https://via.placeholder.com/300x200?text=Generated+Image+1',
-            'https://via.placeholder.com/300x200?text=Generated+Image+2',
-          ],
-        },
-      };
-    },
-  };
-
   // Debounced save function to prevent excessive API calls
   const saveToNocoDB = React.useCallback(
     debounce(async (preferencesData: WeddingPreferencesData) => {
@@ -919,19 +903,6 @@ const WeddingPreferences: React.FC = () => {
                       placeholder="Number of guests"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
-                    <select
-                      value={preferences.basicDetails.budgetRange}
-                      onChange={(e) => updatePreference('basicDetails', 'budgetRange', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                    >
-                      <option value="">Select budget</option>
-                      {budgetRanges.map(budget => (
-                        <option key={budget.id} value={budget.name}>{budget.name} - {budget.description}</option>
-                      ))}
-                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
