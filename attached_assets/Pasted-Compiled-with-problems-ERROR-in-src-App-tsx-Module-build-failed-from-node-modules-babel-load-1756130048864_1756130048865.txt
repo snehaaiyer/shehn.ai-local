@@ -1,0 +1,184 @@
+Compiled with problems:
+×
+ERROR in ./src/App.tsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/runner/workspace/react-frontend/src/App.tsx: Expected corresponding JSX closing tag for <BrowserRouter>. (116:6)
+
+  114 |         </div>
+  115 |         <AIChatWidget />
+> 116 |       </div>
+      |       ^
+  117 |     </BrowserRouter>
+  118 |   );
+  119 | };
+    at constructor (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:367:19)
+    at TypeScriptParserMixin.raise (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6630:19)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4760:16)
+    at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4782:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4792:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9857:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10831:21)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9795:39
+    at TypeScriptParserMixin.tryParse (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:6938:20)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9795:18)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10800:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12432:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10800:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12499:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11679:28)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11331:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4797:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9857:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10831:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9806:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10784:23)
+    at /home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10780:39
+    at TypeScriptParserMixin.allowInAnd (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12427:16)
+    at TypeScriptParserMixin.parseExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:10780:17)
+    at TypeScriptParserMixin.parseReturnStatement (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13147:28)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12803:21)
+    at TypeScriptParserMixin.parseStatementContent (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:9532:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12772:17)
+    at TypeScriptParserMixin.parseStatementListItem (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12752:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13321:61)
+    at TypeScriptParserMixin.parseBlockBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13314:10)
+    at TypeScriptParserMixin.parseBlock (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:13302:10)
+    at TypeScriptParserMixin.parseFunctionBody (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12106:24)
+    at TypeScriptParserMixin.parseArrowExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:12081:10)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11691:12)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11331:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:4797:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/react-frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+ERROR
+[eslint] 
+src/App.tsx
+  Line 116:8:  Parsing error: Expected corresponding JSX closing tag for 'BrowserRouter'
+
+ERROR in src/App.tsx:116:9
+TS17002: Expected corresponding JSX closing tag for 'BrowserRouter'.
+    114 |         </div>
+    115 |         <AIChatWidget />
+  > 116 |       </div>
+        |         ^^^
+    117 |     </BrowserRouter>
+    118 |   );
+    119 | };
+ERROR in src/App.tsx:117:5
+TS1005: ')' expected.
+    115 |         <AIChatWidget />
+    116 |       </div>
+  > 117 |     </BrowserRouter>
+        |     ^^
+    118 |   );
+    119 | };
+    120 |
+ERROR in src/App.tsx:118:3
+TS1109: Expression expected.
+    116 |       </div>
+    117 |     </BrowserRouter>
+  > 118 |   );
+        |   ^
+    119 | };
+    120 |
+    121 | export default App;
+ERROR in src/App.tsx:119:1
+TS1128: Declaration or statement expected.
+    117 |     </BrowserRouter>
+    118 |   );
+  > 119 | };
+        | ^
+    120 |
+    121 | export default App;
+ERROR in src/components/NotificationProvider.tsx:80:49
+TS2339: Property 'warning' does not exist on type '{ success: { style: { border: string; padding: string; color: string; background: string; }; iconTheme: { primary: string; secondary: string; }; }; error: { style: { border: string; padding: string; color: string; background: string; }; iconTheme: { ...; }; }; loading: { ...; }; }'.
+    78 |       toast.error(message, { duration, ...toastStyles.error }),
+    79 |     warning: (message: string, duration?: number) =>
+  > 80 |       toast(message, { duration, ...toastStyles.warning }),
+       |                                                 ^^^^^^^
+    81 |     info: (message: string, duration?: number) =>
+    82 |       toast(message, { duration, ...toastStyles.info }),
+    83 |   };
+ERROR in src/components/NotificationProvider.tsx:82:49
+TS2339: Property 'info' does not exist on type '{ success: { style: { border: string; padding: string; color: string; background: string; }; iconTheme: { primary: string; secondary: string; }; }; error: { style: { border: string; padding: string; color: string; background: string; }; iconTheme: { ...; }; }; loading: { ...; }; }'.
+    80 |       toast(message, { duration, ...toastStyles.warning }),
+    81 |     info: (message: string, duration?: number) =>
+  > 82 |       toast(message, { duration, ...toastStyles.info }),
+       |                                                 ^^^^
+    83 |   };
+    84 | };
+    85 |
+ERROR in src/services/cloudflare_ai_service.ts:33:11
+TS2322: Type '{ description: string; keywords: string[]; mood: string; style: string; colorPalette: string[]; }' is not assignable to type '{ keywords: string[]; mood: string; style: string; colorScheme: string[]; }'.
+  Object literal may only specify known properties, and 'description' does not exist in type '{ keywords: string[]; mood: string; style: string; colorScheme: string[]; }'.
+    31 |         ],
+    32 |         themeAnalysis: {
+  > 33 |           description: `Beautiful ${prompt} setting`,
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    34 |           keywords: ['elegant', 'romantic', 'luxurious'],
+    35 |           mood: 'romantic',
+    36 |           style: 'contemporary',
+ERROR in src/services/cloudflare_ai_service.ts:47:11
+TS2322: Type '{ description: string; keywords: never[]; mood: string; style: string; colorPalette: never[]; }' is not assignable to type '{ keywords: string[]; mood: string; style: string; colorScheme: string[]; }'.
+  Object literal may only specify known properties, and 'description' does not exist in type '{ keywords: string[]; mood: string; style: string; colorScheme: string[]; }'.
+    45 |         imageUrls: [],
+    46 |         themeAnalysis: {
+  > 47 |           description: '',
+       |           ^^^^^^^^^^^^^^^
+    48 |           keywords: [],
+    49 |           mood: '',
+    50 |           style: '',
+ERROR in src/services/image_storage_service.ts:2:24
+TS2307: Cannot find module '@replit/object-storage' or its corresponding type declarations.
+    1 |
+  > 2 | import { Client } from '@replit/object-storage';
+      |                        ^^^^^^^^^^^^^^^^^^^^^^^^
+    3 |
+    4 | interface ImageUploadResult {
+    5 |   success: boolean;
+ERROR in src/services/nocodb_service.ts:115:64
+TS2339: Property 'priorities' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    113 |
+    114 |         // Priority Rankings
+  > 115 |         "Priorities": JSON.stringify(preferences.basicDetails?.priorities || {}),
+        |                                                                ^^^^^^^^^^
+    116 |
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+ERROR in src/services/nocodb_service.ts:119:52
+TS2339: Property 'eventDuration' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    117 |         // Additional Information
+    118 |         "Cultural Notes": JSON.stringify({
+  > 119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+        |                                                    ^^^^^^^^^^^^^
+    120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+ERROR in src/services/nocodb_service.ts:120:52
+TS2339: Property 'datesFlexible' does not exist on type '{ guestCount: number; weddingDate: string; location: string; budgetRange: string; yourName: string; partnerName: string; contactNumber: string; }'.
+    118 |         "Cultural Notes": JSON.stringify({
+    119 |           eventDuration: preferences.basicDetails?.eventDuration || "1 day",
+  > 120 |           datesFlexible: preferences.basicDetails?.datesFlexible || false,
+        |                                                    ^^^^^^^^^^^^^
+    121 |           contactNumber: preferences.basicDetails?.contactNumber || "",
+    122 |           weddingStyle: preferences.theme?.selectedTheme || "Traditional"
+    123 |         }),
+ERROR in src/services/replit_storage_service.ts:2:24
+TS2307: Cannot find module '@replit/object-storage' or its corresponding type declarations.
+    1 |
+  > 2 | import { Client } from '@replit/object-storage';
+      |                        ^^^^^^^^^^^^^^^^^^^^^^^^
+    3 |
+    4 | class ReplitStorageService {
+    5 |   private client: Client;
