@@ -10,7 +10,7 @@ run = ["sh", "-c", "cd react-frontend && npm start"]
 build = ["sh", "-c", "cd react-frontend && npm install && npm run build"]
 
 [workflows]
-runButton = "Wedding App - Fixed"
+runButton = "Start React Frontend Clean"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -393,6 +393,41 @@ args = "python simple_unified_server.py"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Fixed Wedding App"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Wedding App Final Fix"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && rm -rf node_modules && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Start React Frontend Clean"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && rm -rf node_modules package-lock.json && npm install && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
 
 [[ports]]
 localPort = 3000
