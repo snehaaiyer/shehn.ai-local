@@ -91,3 +91,22 @@ export interface VendorCategory {
   count: number;
   vendors: Vendor[];
 }
+
+export interface BasicWeddingDetails {
+  yourName: string;
+  partnerName: string;
+  weddingDate: string;
+  guestCount: number;
+  location: string;
+  budgetRange: string;
+  contactNumber: string;
+  priorities?: { [key: string]: number };
+  eventDuration?: string;
+  datesFlexible?: boolean;
+}
+
+export interface ThemeSelection {
+  selectedTheme?: string;
+  colorScheme?: string[];
+  style?: string;
+}

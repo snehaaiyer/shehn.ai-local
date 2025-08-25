@@ -65,18 +65,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount React build files
+# Check if build directory exists and mount static files
 react_build_path = "react-frontend/build"
-if os.path.exists(react_build_path):
-    app.mount("/static", StaticFiles(directory=f"{react_build_path}/static"), name="static")
+react_public_path = "react-frontend/public"
 
-    @app.get("/", response_class=HTMLResponse)
+# Use build if available, otherwise fall back to public for development
+if os.path.exists(react_build_path):
+    # Production build exists
+    if os.path.exists(f"{react_build_path}/static"):
+        app.mount("/static", StaticFiles(directory=f"{react_build_path}/static"), name="static")
+    
+    @app.get("/")
     async def serve_react_app():
         try:
             with open(f"{react_build_path}/index.html", "r") as f:
                 return HTMLResponse(content=f.read())
         except FileNotFoundError:
-            return HTMLResponse("<h1>React app not built. Run: cd react-frontend && npm run build</h1>")
+            return HTMLResponse("<h1>React app not built. Building now...</h1>")
 
     @app.get("/{path:path}")
     async def serve_react_routes(path: str):
@@ -86,41 +91,40 @@ if os.path.exists(react_build_path):
                 with open(f"{react_build_path}/index.html", "r") as f:
                     return HTMLResponse(content=f.read())
             except FileNotFoundError:
-                return HTMLResponse("<h1>React app not built. Run: cd react-frontend && npm run build</h1>")
+                return HTMLResponse("<h1>React app not built. Building now...</h1>")
         raise HTTPException(status_code=404, detail="Not found")
-else:
-    # Fallback if react-frontend/build does not exist
-    @app.get("/", response_class=FileResponse)
-    async def serve_index_fallback():
-        index_file = STATIC_DIR / "index.html"
-        if index_file.exists():
-            return FileResponse(index_file, media_type="text/html")
-        raise HTTPException(status_code=404, detail="Index file not found. React app not built.")
+        
+elif os.path.exists(react_public_path):
+    # Development mode - serve from public
+    @app.get("/")
+    async def serve_development_app():
+        try:
+            with open(f"{react_public_path}/index.html", "r") as f:
+                return HTMLResponse(content=f.read())
+        except FileNotFoundError:
+            return HTMLResponse("<h1>React development server starting... Please wait.</h1>")
 
     @app.get("/{path:path}")
-    async def serve_spa_routes_fallback(path: str):
-        # For SPA routes, serve index.html or specific files
-        spa_routes = ["dashboard", "wedding-form", "visual-preferences", "vendor-discovery"]
+    async def serve_development_routes(path: str):
+        if not path.startswith("api/"):
+            try:
+                with open(f"{react_public_path}/index.html", "r") as f:
+                    return HTMLResponse(content=f.read())
+            except FileNotFoundError:
+                return HTMLResponse("<h1>React development server starting... Please wait.</h1>")
+        raise HTTPException(status_code=404, detail="Not found")
+        
+else:
+    # Fallback
+    @app.get("/")
+    async def serve_fallback():
+        return HTMLResponse("<h1>React frontend not found. Please check react-frontend directory.</h1>")
 
-        # Remove hash and query params
-        clean_path = path.split('#')[0].split('?')[0]
-
-        if clean_path in spa_routes or not clean_path:
-            index_file = STATIC_DIR / "index.html"
-            if index_file.exists():
-                return FileResponse(index_file, media_type="text/html")
-
-        # Try to serve as static file
-        file_location = STATIC_DIR / path
-        if file_location.exists() and file_location.is_file():
-            return FileResponse(file_location)
-
-        # Fallback to index for unknown routes (SPA behavior)
-        index_file = STATIC_DIR / "index.html"
-        if index_file.exists():
-            return FileResponse(index_file, media_type="text/html")
-
-        raise HTTPException(status_code=404, detail="File not found")
+    @app.get("/{path:path}")
+    async def serve_fallback_routes(path: str):
+        if not path.startswith("api/"):
+            return HTMLResponse("<h1>React frontend not found. Please check react-frontend directory.</h1>")
+        raise HTTPException(status_code=404, detail="Not found")
 
 
 # Health check endpoint
