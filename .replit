@@ -10,7 +10,7 @@ run = ["sh", "-c", "cd react-frontend && npm start"]
 build = ["sh", "-c", "cd react-frontend && npm install && npm run build"]
 
 [workflows]
-runButton = "Wedding Planner Fixed"
+runButton = "Build and Run Wedding App"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -337,6 +337,23 @@ args = "python simple_unified_server.py"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd react-frontend && npm install && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Build and Run Wedding App"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
 
 [[ports]]
 localPort = 3000
