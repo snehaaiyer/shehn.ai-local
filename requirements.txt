@@ -21,3 +21,5 @@ textblob
 chromadb
 sentence-transformers
 numpy
+replit
+replit-object-storage
