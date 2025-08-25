@@ -9,7 +9,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 run = ["sh", "-c", "node index.js"]
 
 [workflows]
-runButton = "Start React Wedding App"
+runButton = "Start All Wedding Services"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -27,7 +27,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python start_all_services.py"
+args = "python service_orchestrator.py"
 
 [[workflows.workflow]]
 name = "Start React Frontend"

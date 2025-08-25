@@ -83,43 +83,37 @@ export class NocoDBService {
         "City": preferences.basicDetails.location,
         "Guest Count": preferences.basicDetails.guestCount,
         "Budget": preferences.basicDetails.budgetRange,
-        
+
         // Theme and Style Preferences
         "Event Theme": preferences.theme.selectedTheme,
         "Style Preference": preferences.photography.style,
         "Venue Location": preferences.venue.venueType,
         "Design Style": preferences.catering.cuisine,
         "Color Theme": JSON.stringify(preferences.theme.generatedImages),
-        
+
         // Detailed Photography Preferences
         "Photography Details": JSON.stringify({
           style: preferences.photography.style,
           coverage: preferences.photography.coverage,
-          multiDayCoverage: preferences.photography.multiDayCoverage,
-          videography: preferences.photography.videography,
-          culturalCoverage: preferences.photography.culturalCoverage,
-          deliverables: preferences.photography.deliverables,
-          technicalPreferences: preferences.photography.technicalPreferences,
-          budgetRange: preferences.photography.budgetRange,
           specialRequests: preferences.photography.specialRequests
         }),
-        
+
         // Venue and Catering Details
         "Venue Details": JSON.stringify({
           selectedVenue: preferences.venue.selectedVenue,
           venueType: preferences.venue.venueType,
           capacity: preferences.venue.capacity
         }),
-        
+
         "Catering Details": JSON.stringify({
           cuisine: preferences.catering.cuisine,
           mealType: preferences.catering.mealType,
           dietaryRestrictions: preferences.catering.dietaryRestrictions
         }),
-        
+
         // Priority Rankings
         "Priorities": JSON.stringify(preferences.basicDetails.priorities),
-        
+
         // Additional Information
         "Cultural Notes": JSON.stringify({
           eventDuration: preferences.basicDetails.eventDuration,
@@ -127,7 +121,7 @@ export class NocoDBService {
           contactNumber: preferences.basicDetails.contactNumber,
           weddingStyle: preferences.theme.selectedTheme
         }),
-        
+
         "Special Notes": `Comprehensive preferences for ${preferences.basicDetails.yourName} and ${preferences.basicDetails.partnerName}`,
         "Status": "Active",
         "Created At": new Date().toISOString()
@@ -268,4 +262,4 @@ export class NocoDBService {
       return false;
     }
   }
-} 
+}

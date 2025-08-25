@@ -658,7 +658,8 @@ const WeddingPreferences: React.FC = () => {
           }
           currentLevel = currentLevel[keys[i]];
         }
-        currentLevel[key.split('.').pop()!] = { ...currentLevel[key.split('.').pop()], [subKey]: value };
+        const finalKey = key.split('.').pop()!;
+        currentLevel[finalKey] = { ...currentLevel[finalKey], [subKey]: value };
       } else {
         updatedSection[key] = value;
       }
@@ -708,7 +709,7 @@ const WeddingPreferences: React.FC = () => {
   // Simple debounce function
   function debounce(func: Function, wait: number) {
     let timeout: NodeJS.Timeout;
-    return function executedFunction(...args: any[]) {
+    return function executedFunction(this: any, ...args: any[]) {
       const context = this;
       const later = () => {
         timeout = setTimeout(function() {

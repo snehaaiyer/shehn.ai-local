@@ -126,7 +126,7 @@ const ManageVendors: React.FC = () => {
           rating: 4.9,
           price: '₹80,000 - ₹1,50,000',
           status: 'pending',
-          lastContact: null,
+          lastContact: undefined,
           notes: 'Found through recommendations - need to contact'
         }
       ];
