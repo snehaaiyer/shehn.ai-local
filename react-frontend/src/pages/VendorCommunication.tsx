@@ -28,7 +28,8 @@ import {
   Zap,
   Timer,
   Percent,
-  BarChart3
+  BarChart3,
+  MessageSquare // Added MessageSquare import
 } from 'lucide-react';
 
 interface VendorCommunication {
@@ -112,6 +113,24 @@ const VendorCommunication: React.FC = () => {
   // UI States
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState<'overview' | 'communication' | 'budget' | 'availability'>('overview');
+
+  // Dummy data for stats - replace with actual calculations later
+  const stats = {
+    totalVendors: communications.length,
+    activeNegotiations: communications.filter(c => c.status === 'negotiating').length,
+    totalSavings: communications.reduce((sum, c) => sum + c.priceReductions, 0),
+    avgResponseTime: (communications.filter(c => c.responseTime).reduce((sum, c) => sum + (c.responseTime || 0), 0) / (communications.filter(c => c.responseTime).length || 1)).toFixed(1) + 'h'
+  };
+
+  // Dummy data for tabs - replace with actual logic later
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'communication', label: 'Communication', icon: MessageCircle },
+    { id: 'budget', label: 'Budget', icon: DollarSign },
+    { id: 'availability', label: 'Availability', icon: Activity },
+  ];
+  const [activeTab, setActiveTab] = useState<string>('overview');
+
 
   useEffect(() => {
     loadCommunications();
@@ -273,6 +292,7 @@ const VendorCommunication: React.FC = () => {
         contactDate: '2024-01-16T09:00:00Z',
         responseDate: '2024-01-16T11:30:00Z',
         quotationDate: '2024-01-16T16:00:00Z',
+        followUpDate: '2024-01-25T10:00:00Z',
         responseTime: 2.5,
         negotiationCount: 2,
         priceReductions: 25000,
@@ -366,30 +386,24 @@ const VendorCommunication: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="min-h-screen bg-pastel-peach-light">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+      <div className="bg-soft-peach shadow-sm border-b border-muted-green">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-r from-green-600 to-blue-700 p-2 rounded-lg">
-                <MessageCircle className="h-6 w-6 text-white" />
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-muted-green rounded-lg flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Vendor Communications</h1>
-                <p className="text-sm text-gray-600">Comprehensive vendor relationship management</p>
+                <h1 className="text-xl font-semibold text-deep-navy">Vendor Communications</h1>
+                <p className="text-sm text-muted-green">Comprehensive vendor relationship management</p>
               </div>
             </div>
-
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => {/* Add new vendor */}}
-                className="bg-gradient-to-r from-green-600 to-blue-700 text-white px-4 py-2 rounded-lg font-medium hover:from-green-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Add Vendor
-              </button>
-            </div>
+            <button className="bg-muted-green text-white px-4 py-2 rounded-lg hover:bg-deep-navy transition-colors flex items-center space-x-2">
+              <Plus className="w-4 h-4" />
+              <span>Add Vendor</span>
+            </button>
           </div>
         </div>
       </div>
@@ -398,51 +412,51 @@ const VendorCommunication: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Analytics Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Vendors</p>
-                  <p className="text-2xl font-bold text-gray-900">{communications.length}</p>
+                  <p className="text-sm font-medium text-muted-green">Total Vendors</p>
+                  <p className="text-2xl font-bold text-deep-navy">{communications.length}</p>
                 </div>
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-blue-600" />
+                <div className="bg-pastel-peach p-3 rounded-lg">
+                  <Users className="w-6 h-6 text-muted-green" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Negotiations</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-muted-green">Active Negotiations</p>
+                  <p className="text-2xl font-bold text-deep-navy">
                     {communications.filter(c => c.status === 'negotiating').length}
                   </p>
                 </div>
-                <div className="bg-purple-100 p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                <div className="bg-pastel-peach p-3 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-muted-green" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Savings</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-muted-green">Total Savings</p>
+                  <p className="text-2xl font-bold text-deep-navy">
                     ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-green-100 p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-green-600" />
+                <div className="bg-pastel-peach p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-muted-green" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <div className="bg-soft-peach rounded-xl p-6 shadow-lg border border-muted-green">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-muted-green">Avg Response Time</p>
+                  <p className="text-2xl font-bold text-deep-navy">
                     {(communications
                       .filter(c => c.responseTime)
                       .reduce((sum, c) => sum + (c.responseTime || 0), 0) / 
@@ -450,55 +464,55 @@ const VendorCommunication: React.FC = () => {
                     ).toFixed(1)}h
                   </p>
                 </div>
-                <div className="bg-orange-100 p-3 rounded-lg">
-                  <Timer className="w-6 h-6 text-orange-600" />
+                <div className="bg-pastel-peach p-3 rounded-lg">
+                  <Timer className="w-6 h-6 text-muted-green" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* View Toggle */}
-          <div className="bg-white rounded-2xl shadow-lg mb-8">
-            <div className="border-b border-gray-100">
+          <div className="bg-soft-peach rounded-xl shadow-lg mb-8 border border-muted-green">
+            <div className="border-b border-muted-green">
               <div className="flex">
-                {['overview', 'communication', 'budget', 'availability'].map((view) => (
+                {tabs.map((view) => (
                   <button
-                    key={view}
-                    onClick={() => setActiveView(view as any)}
+                    key={view.id}
+                    onClick={() => setActiveTab(view.id)}
                     className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors capitalize ${
-                      activeView === view
-                        ? 'border-blue-500 text-blue-600 bg-blue-50'
+                      activeTab === view.id
+                        ? 'border-muted-green text-muted-green bg-pastel-peach'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
-                    {view === 'overview' && <BarChart3 className="w-4 h-4 mr-2 inline" />}
-                    {view === 'communication' && <MessageCircle className="w-4 h-4 mr-2 inline" />}
-                    {view === 'budget' && <DollarSign className="w-4 h-4 mr-2 inline" />}
-                    {view === 'availability' && <Activity className="w-4 h-4 mr-2 inline" />}
-                    {view}
+                    {view.id === 'overview' && <BarChart3 className="w-4 h-4 mr-2 inline" />}
+                    {view.id === 'communication' && <MessageCircle className="w-4 h-4 mr-2 inline" />}
+                    {view.id === 'budget' && <DollarSign className="w-4 h-4 mr-2 inline" />}
+                    {view.id === 'availability' && <Activity className="w-4 h-4 mr-2 inline" />}
+                    {view.label}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Filters */}
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-6 border-b border-muted-green">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-green w-4 h-4" />
                   <input
                     type="text"
                     placeholder="Search vendors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                    className="w-full pl-10 pr-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                  className="px-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
                 >
                   <option value="all">All Statuses</option>
                   <option value="contacted">Contacted</option>
@@ -511,7 +525,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                  className="px-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
@@ -523,7 +537,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:border-green-300 focus:ring-2 focus:ring-green-300/20"
+                  className="px-4 py-2 border border-muted-green rounded-lg focus:border-muted-green focus:ring-2 focus:ring-muted-green/20 bg-white text-deep-navy"
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
@@ -531,7 +545,7 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-pastel-peach text-muted-green rounded-lg hover:bg-muted-green hover:text-white transition-colors">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
@@ -544,34 +558,34 @@ const VendorCommunication: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Category</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Priority</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Quote</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Updated</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                      <tr className="border-b border-muted-green">
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Category</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Priority</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Quote</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Updated</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center">
-                                <span className="text-sm font-semibold text-gray-700">
+                              <div className="w-10 h-10 bg-gradient-to-br from-pastel-peach to-muted-green rounded-lg flex items-center justify-center">
+                                <span className="text-sm font-semibold text-white">
                                   {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
-                                <div className="text-sm text-gray-500">{comm.vendorLocation}</div>
+                                <div className="font-medium text-deep-navy">{comm.vendorName}</div>
+                                <div className="text-sm text-muted-green">{comm.vendorLocation}</div>
                               </div>
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium capitalize">
+                            <span className="bg-pastel-peach text-muted-green px-2 py-1 rounded-full text-xs font-medium capitalize">
                               {comm.vendorCategory}
                             </span>
                           </td>
@@ -593,10 +607,10 @@ const VendorCommunication: React.FC = () => {
                           <td className="py-4 px-4">
                             {comm.quotation ? (
                               <div className="text-sm">
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-deep-navy">
                                   ₹{comm.quotation.amount.toLocaleString()}
                                 </div>
-                                <div className="text-gray-500">
+                                <div className="text-muted-green">
                                   Valid till {new Date(comm.quotation.validUntil).toLocaleDateString()}
                                 </div>
                               </div>
@@ -604,16 +618,16 @@ const VendorCommunication: React.FC = () => {
                               <span className="text-gray-400 text-sm">No quote</span>
                             )}
                           </td>
-                          <td className="py-4 px-4 text-sm text-gray-500">
+                          <td className="py-4 px-4 text-sm text-muted-green">
                             {new Date(comm.updatedAt).toLocaleDateString()}
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <button className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
-                                <Eye className="w-4 h-4 text-blue-600" />
+                              <button className="p-2 bg-pastel-peach rounded-lg hover:bg-muted-green transition-colors">
+                                <Eye className="w-4 h-4 text-muted-green" />
                               </button>
-                              <button className="p-2 bg-green-100 rounded-lg hover:bg-green-200 transition-colors">
-                                <MessageCircle className="w-4 h-4 text-green-600" />
+                              <button className="p-2 bg-pastel-peach rounded-lg hover:bg-muted-green transition-colors">
+                                <MessageCircle className="w-4 h-4 text-muted-green" />
                               </button>
                             </div>
                           </td>
@@ -628,28 +642,28 @@ const VendorCommunication: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Last Contact</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Response Time</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Messages</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Channels</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Next Action</th>
+                      <tr className="border-b border-muted-green">
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Last Contact</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Response Time</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Messages</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Channels</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Next Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-pink-100 rounded-lg flex items-center justify-center">
-                                <span className="text-xs font-semibold text-gray-700">
+                              <div className="w-8 h-8 bg-gradient-to-br from-pastel-peach to-pink-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-semibold text-deep-navy">
                                   {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
-                                <div className="text-xs text-gray-500">{comm.vendorCategory}</div>
+                                <div className="font-medium text-deep-navy">{comm.vendorName}</div>
+                                <div className="text-xs text-muted-green">{comm.vendorCategory}</div>
                               </div>
                             </div>
                           </td>
@@ -657,10 +671,10 @@ const VendorCommunication: React.FC = () => {
                             <div className="text-sm">
                               {comm.responseDate ? (
                                 <div>
-                                  <div className="font-medium text-gray-900">
+                                  <div className="font-medium text-deep-navy">
                                     {new Date(comm.responseDate).toLocaleDateString()}
                                   </div>
-                                  <div className="text-gray-500">
+                                  <div className="text-muted-green">
                                     {Math.ceil((Date.now() - new Date(comm.responseDate).getTime()) / (1000 * 60 * 60 * 24))} days ago
                                   </div>
                                 </div>
@@ -672,7 +686,7 @@ const VendorCommunication: React.FC = () => {
                           <td className="py-4 px-4">
                             {comm.responseTime ? (
                               <div className="flex items-center gap-2">
-                                <Timer className="w-4 h-4 text-blue-500" />
+                                <Timer className="w-4 h-4 text-muted-green" />
                                 <span className="text-sm font-medium">{comm.responseTime}h</span>
                               </div>
                             ) : (
@@ -688,13 +702,13 @@ const VendorCommunication: React.FC = () => {
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-1">
                               {comm.vendorEmail && (
-                                <div className="p-1 bg-blue-100 rounded">
-                                  <Mail className="w-3 h-3 text-blue-600" />
+                                <div className="p-1 bg-pastel-peach rounded">
+                                  <Mail className="w-3 h-3 text-muted-green" />
                                 </div>
                               )}
                               {comm.vendorPhone && (
-                                <div className="p-1 bg-green-100 rounded">
-                                  <Phone className="w-3 h-3 text-green-600" />
+                                <div className="p-1 bg-pastel-peach rounded">
+                                  <Phone className="w-3 h-3 text-muted-green" />
                                 </div>
                               )}
                             </div>
@@ -704,7 +718,7 @@ const VendorCommunication: React.FC = () => {
                               {comm.followUpDate ? (
                                 <div>
                                   <div className="font-medium text-purple-700">Follow up</div>
-                                  <div className="text-gray-500">
+                                  <div className="text-muted-green">
                                     {new Date(comm.followUpDate).toLocaleDateString()}
                                   </div>
                                 </div>
@@ -724,38 +738,38 @@ const VendorCommunication: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Quote Amount</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Compatibility</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Market Position</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Savings Achieved</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Negotiations</th>
+                      <tr className="border-b border-muted-green">
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Quote Amount</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Compatibility</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Market Position</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Savings Achieved</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Negotiations</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-pink-100 rounded-lg flex items-center justify-center">
-                                <span className="text-xs font-semibold text-gray-700">
+                              <div className="w-8 h-8 bg-gradient-to-br from-pastel-peach to-pink-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-semibold text-deep-navy">
                                   {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
-                                <div className="text-xs text-gray-500">{comm.vendorCategory}</div>
+                                <div className="font-medium text-deep-navy">{comm.vendorName}</div>
+                                <div className="text-xs text-muted-green">{comm.vendorCategory}</div>
                               </div>
                             </div>
                           </td>
                           <td className="py-4 px-4">
                             {comm.quotation ? (
                               <div>
-                                <div className="text-lg font-bold text-gray-900">
+                                <div className="text-lg font-bold text-deep-navy">
                                   ₹{comm.quotation.amount.toLocaleString()}
                                 </div>
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-muted-green">
                                   Valid till {new Date(comm.quotation.validUntil).toLocaleDateString()}
                                 </div>
                               </div>
@@ -807,28 +821,28 @@ const VendorCommunication: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Vendor</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Availability Status</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Contact Date</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Service Date</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Booking Window</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-700">Risk Level</th>
+                      <tr className="border-b border-muted-green">
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Vendor</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Availability Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Contact Date</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Service Date</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Booking Window</th>
+                        <th className="text-left py-3 px-4 font-semibold text-deep-navy">Risk Level</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr key={comm.id} className="border-b border-gray-200 hover:bg-pastel-peach-lighter">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-pink-100 rounded-lg flex items-center justify-center">
-                                <span className="text-xs font-semibold text-gray-700">
+                              <div className="w-8 h-8 bg-gradient-to-br from-pastel-peach to-pink-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-semibold text-deep-navy">
                                   {comm.vendorName.charAt(0)}
                                 </span>
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900">{comm.vendorName}</div>
-                                <div className="text-xs text-gray-500">{comm.vendorCategory}</div>
+                                <div className="font-medium text-deep-navy">{comm.vendorName}</div>
+                                <div className="text-xs text-muted-green">{comm.vendorCategory}</div>
                               </div>
                             </div>
                           </td>
@@ -840,16 +854,16 @@ const VendorCommunication: React.FC = () => {
                               </span>
                             </div>
                           </td>
-                          <td className="py-4 px-4 text-sm text-gray-600">
+                          <td className="py-4 px-4 text-sm text-muted-green">
                             {new Date(comm.contactDate).toLocaleDateString()}
                           </td>
                           <td className="py-4 px-4 text-sm">
                             {comm.serviceDate ? (
                               <div>
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-deep-navy">
                                   {new Date(comm.serviceDate).toLocaleDateString()}
                                 </div>
-                                <div className="text-gray-500">
+                                <div className="text-muted-green">
                                   {Math.ceil((new Date(comm.serviceDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days away
                                 </div>
                               </div>
@@ -860,10 +874,10 @@ const VendorCommunication: React.FC = () => {
                           <td className="py-4 px-4">
                             {comm.serviceDate && comm.contactDate ? (
                               <div className="text-sm">
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-deep-navy">
                                   {Math.ceil((new Date(comm.serviceDate).getTime() - new Date(comm.contactDate).getTime()) / (1000 * 60 * 60 * 24))} days
                                 </div>
-                                <div className="text-gray-500">booking window</div>
+                                <div className="text-muted-green">booking window</div>
                               </div>
                             ) : (
                               <span className="text-gray-400">-</span>
