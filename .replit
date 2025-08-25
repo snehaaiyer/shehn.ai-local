@@ -10,7 +10,7 @@ run = ["sh", "-c", "python simple_unified_server.py"]
 build = ["sh", "-c", "cd react-frontend && npm install --legacy-peer-deps && npm run build"]
 
 [workflows]
-runButton = "Production Wedding App"
+runButton = "FINAL WORKING APP"
 
 [[workflows.workflow]]
 name = "Run Wedding App with NocoDB"
@@ -449,6 +449,19 @@ args = "cd react-frontend && npm install --legacy-peer-deps"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd react-frontend && HOST=0.0.0.0 PORT=5000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "FINAL WORKING APP"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python simple_unified_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install --legacy-peer-deps && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
 [[ports]]
 localPort = 3000

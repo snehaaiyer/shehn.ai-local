@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { Menu } from 'lucide-react';
 import { AnimatedSidebar } from './components/AnimatedSidebar';
-import { NotificationProvider } from './components/NotificationProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useAppStore } from './store/useAppStore';
 import './App.css';
@@ -63,9 +63,9 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <NotificationProvider>
-      <BrowserRouter>
-        <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-soft-beige'}`}>
+    <BrowserRouter>
+      <Toaster position="top-right" />
+      <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-soft-beige'}`}>
           {/* Animated Sidebar */}
           <AnimatedSidebar />
 
@@ -112,9 +112,9 @@ const App: React.FC = () => {
             </main>
           </div>
         </div>
-      <AIChatWidget />
-      </BrowserRouter>
-    </NotificationProvider>
+        <AIChatWidget />
+      </div>
+    </BrowserRouter>
   );
 };
 
