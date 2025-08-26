@@ -42,7 +42,7 @@ const navigation: NavItem[] = [
   { name: 'Wedding Preferences', href: '/preferences', icon: <Heart className="h-5 w-5" /> },
   { name: 'Vendor Discovery', href: '/vendors', icon: <Search className="h-5 w-5" /> },
   { name: 'Budget Management', href: '/budget', icon: <DollarSign className="h-5 w-5" /> },
-  { name: 'Shehnai AI Chat', href: '/chat', icon: <MessageCircle className="h-5 w-5" /> },
+  { name: 'ShehnAI Chat', href: '/chat', icon: <MessageCircle className="h-5 w-5" /> },
   { name: 'Vendor Communication', href: '/vendor-communication', icon: <Calendar className="h-5 w-5" /> },
 ];
 

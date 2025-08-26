@@ -64,7 +64,7 @@ const AIChat: React.FC = () => {
           console.error('Error loading preferences:', error);
           setMessages([{
             id: '1',
-            content: "Welcome to Shehnai AI Chat! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
+            content: "Welcome to ShehnAI Chat! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
             sender: 'ai',
             timestamp: new Date()
           }]);
@@ -72,7 +72,7 @@ const AIChat: React.FC = () => {
       } else {
         setMessages([{
           id: '1',
-          content: "Welcome to Shehnai AI Chat! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
+          content: "Welcome to ShehnAI Chat! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
           sender: 'ai',
           timestamp: new Date()
         }]);
@@ -87,7 +87,7 @@ const AIChat: React.FC = () => {
     const location = preferences.basicDetails?.location;
     const budget = preferences.basicDetails?.budgetRange;
 
-    let welcome = "🎉 Welcome to Shehnai AI Chat! I'm your intelligent wedding planning assistant.\n\n";
+    let welcome = "🎉 Welcome to ShehnAI Chat! I'm your intelligent wedding planning assistant.\n\n";
 
     if (weddingDate && location && budget) {
       welcome += `I can see you're planning a ${budget} wedding in ${location} on ${weddingDate}.\n\n`;
@@ -200,16 +200,16 @@ const AIChat: React.FC = () => {
           <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#133337' }}>
                   <LogoWithFallback size="w-6 h-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Shehnai AI Chat</h1>
+                  <h1 className="text-2xl font-bold" style={{ color: '#133337' }}>ShehnAI Chat</h1>
                   <p className="text-gray-600">Your wedding planning companion</p>
                 </div>
               </div>
               {isDemoMode && (
-                <div className="px-4 py-2 rounded-xl text-sm font-medium" style={{ backgroundColor: '#D29B9B', color: '#FFFFFF' }}>
+                <div className="px-4 py-2 rounded-xl text-sm font-medium" style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}>
                   Demo Mode
                 </div>
               )}
@@ -220,11 +220,11 @@ const AIChat: React.FC = () => {
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-lg">
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-xl" style={{ backgroundColor: '#2F4F4F' }}>
+                <div className="p-3 rounded-xl" style={{ backgroundColor: '#133337' }}>
                   <Sparkles className="h-6 w-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: '#000080' }}>Chat with Shehnai AI Chat</h2>
+                  <h2 className="text-xl font-bold" style={{ color: '#df8e8e' }}>Chat with ShehnAI Chat</h2>
                   <p className="text-sm text-gray-600">
                     {isDemoMode
                       ? "Demo mode - Try asking about wedding planning tasks"
@@ -242,18 +242,18 @@ const AIChat: React.FC = () => {
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {message.sender === 'user' ? (
-                      <div className="px-4 py-3 rounded-2xl max-w-xs lg:max-w-md" style={{ backgroundColor: '#2F4F4F' }}>
+                      <div className="px-4 py-3 rounded-2xl max-w-xs lg:max-w-md" style={{ backgroundColor: '#133337' }}>
                         <p className="text-sm" style={{ color: '#FFFFFF' }}>{message.content}</p>
                       </div>
                     ) : (
                       <div className="flex items-start space-x-3">
-                        <div className="p-2 rounded-full" style={{ backgroundColor: '#20B2AA' }}>
+                        <div className="p-2 rounded-full" style={{ backgroundColor: '#df8e8e' }}>
                           <Sparkles className="h-4 w-4" style={{ color: '#FFFFFF' }} />
                         </div>
                         <div className="bg-white border border-gray-100 shadow-lg px-4 py-3 rounded-2xl max-w-xs lg:max-w-md">
                           <p className="text-sm text-gray-800">{message.content}</p>
                           {message.taskResult && (
-                            <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(34, 211, 238, 0.1)' }}>
+                            <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(234, 142, 142, 0.1)' }}>
                               <p className="text-xs text-gray-600 font-medium mb-1">Task Result:</p>
                               <pre className="text-xs text-gray-700 whitespace-pre-wrap">
                                 {typeof message.taskResult.data === 'object'
@@ -315,7 +315,7 @@ const AIChat: React.FC = () => {
                       borderColor: 'rgba(255, 255, 255, 0.3)'
                     }}
                   >
-                    <div className="text-sm font-medium" style={{ color: '#8B4513' }}>{prompt}</div>
+                    <div className="text-sm font-medium" style={{ color: '#133337' }}>{prompt}</div>
                   </button>
                 ))}
               </div>
@@ -325,18 +325,18 @@ const AIChat: React.FC = () => {
           {/* Quick Actions Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#EFAFAB' }}>
-              <h3 className="text-lg font-bold mb-4" style={{ color: '#8B4513' }}>Quick Actions</h3>
+              <h3 className="text-lg font-bold mb-4" style={{ color: '#133337' }}>Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#EFAFAB', color: '#8B4513' }}>
+                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#EFAFAB', color: '#133337' }}>
                   Schedule Meeting
                 </button>
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#F5EADB', color: '#8B4513' }}>
+                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#F5EADB', color: '#133337' }}>
                   Find Vendors
                 </button>
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#FF7F50', color: '#8B4513' }}>
+                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#FF7F50', color: '#133337' }}>
                   Budget Analysis
                 </button>
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#2F4F4F', color: '#FFFFFF' }}>
+                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#133337', color: '#FFFFFF' }}>
                   Timeline Help
                 </button>
               </div>
