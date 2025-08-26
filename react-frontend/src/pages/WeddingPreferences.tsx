@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
-// Updated import for mock service
-import { MockCloudflareAIService } from '../services/mock_cloudflare_service';
 
 
 interface Priority {
@@ -281,8 +279,7 @@ const WeddingPreferences: React.FC = () => {
     }
   ];
 
-  // Create a flat themes array for compatibility with existing code
-  const themes = themeCategories.flatMap(category => category.themes);
+  
 
   // Venue Categories for better organization
   const venueCategories = [
@@ -501,13 +498,86 @@ const WeddingPreferences: React.FC = () => {
     }
   ];
 
-  // Budget Ranges
-  const budgetRanges = [
-    { id: 'budget', name: 'Budget Friendly', description: 'Under 5 Lakhs' },
-    { id: 'mid', name: 'Mid Range', description: '5-15 Lakhs' },
-    { id: 'luxury', name: 'Luxury', description: '15-50 Lakhs' },
-    { id: 'ultra', name: 'Ultra Luxury', description: '50+ Lakhs' }
-  ];
+  
+
+  // Import NocoDB service at the top
+  const { NocoDBService } = require('../services/nocodb_service');
+
+  // Simple debounce function
+  function debounce(func: Function, wait: number) {
+    let timeout: NodeJS.Timeout;
+    return function executedFunction(this: any, ...args: any[]) {
+      const context = this;
+      const later = () => {
+        // Use a fresh timeout ID for each call
+        timeout = setTimeout(() => {
+          func.apply(context, args);
+        }, wait);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // Debounced save function to prevent excessive API calls
+  const saveToNocoDB = useCallback(
+    debounce(async (preferencesData: WeddingPreferencesData) => {
+      try {
+        console.log('🔄 Auto-saving preferences to NocoDB...');
+        const result = await NocoDBService.savePreferences(preferencesData);
+
+        if (result.success) {
+          console.log('✅ Preferences saved to NocoDB successfully');
+          // Optional: Show success toast
+        } else {
+          console.warn('⚠️ Failed to save to NocoDB:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ Error saving to NocoDB:', error);
+      }
+    }, 2000), // 2 second debounce
+    [] // Empty dependency array since we're using require
+  );
+
+  const updatePreference = useCallback((section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
+    setPreferences(prev => {
+      // Handle deeply nested updates carefully
+      let updatedSection = { ...prev[section] as any };
+
+      if (subKey) {
+        // Check if the key and subKey path exists, create if not
+        const keys = key.split('.');
+        let currentLevel = updatedSection;
+        for (let i = 0; i < keys.length - 1; i++) {
+          if (!currentLevel[keys[i]]) {
+            currentLevel[keys[i]] = {};
+          }
+          currentLevel = currentLevel[keys[i]];
+        }
+        const finalKey = key.split('.').pop()!;
+        currentLevel[finalKey] = { ...currentLevel[finalKey], [subKey]: value };
+      } else {
+        updatedSection[key] = value;
+      }
+
+      return {
+        ...prev,
+        [section]: updatedSection
+      };
+    });
+
+    // Auto-save to localStorage
+    const updatedPreferences = {
+      ...preferences,
+      [section]: subKey 
+        ? { ...preferences[section], [key]: { ...(preferences[section] as any)[key], [subKey]: value } }
+        : { ...preferences[section], [key]: value }
+    };
+    localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
+
+    // Auto-save to NocoDB (debounced)
+    saveToNocoDB(updatedPreferences);
+  }, [preferences, saveToNocoDB]);
 
   useEffect(() => {
     const loadDefaultPreferences = () => {
@@ -605,14 +675,12 @@ const WeddingPreferences: React.FC = () => {
     };
 
     loadDefaultPreferences();
-  }, [updatePreference]); // Dependency array includes updatePreference
+  }, [updatePreference]);
 
   // Drag and Drop State
-  const [draggedPriority, setDraggedPriority] = useState<Priority | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number>(-1);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, priority: Priority, index: number) => {
-    setDraggedPriority(priority);
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
     e.currentTarget.style.opacity = '0.5';
@@ -620,7 +688,6 @@ const WeddingPreferences: React.FC = () => {
 
   const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
     e.currentTarget.style.opacity = '1';
-    setDraggedPriority(null);
     setDraggedIndex(-1);
   };
 
@@ -646,84 +713,7 @@ const WeddingPreferences: React.FC = () => {
     updatePreference('basicDetails', 'priorities', newPriorities);
   };
 
-  const updatePreference = useCallback((section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
-    setPreferences(prev => {
-      // Handle deeply nested updates carefully
-      let updatedSection = { ...prev[section] as any };
-
-      if (subKey) {
-        // Check if the key and subKey path exists, create if not
-        const keys = key.split('.');
-        let currentLevel = updatedSection;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!currentLevel[keys[i]]) {
-            currentLevel[keys[i]] = {};
-          }
-          currentLevel = currentLevel[keys[i]];
-        }
-        const finalKey = key.split('.').pop()!;
-        currentLevel[finalKey] = { ...currentLevel[finalKey], [subKey]: value };
-      } else {
-        updatedSection[key] = value;
-      }
-
-      return {
-        ...prev,
-        [section]: updatedSection
-      };
-    });
-
-    // Auto-save to localStorage
-    const updatedPreferences = {
-      ...preferences,
-      [section]: subKey 
-        ? { ...preferences[section], [key]: { ...(preferences[section] as any)[key], [subKey]: value } }
-        : { ...preferences[section], [key]: value }
-    };
-    localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
-
-    // Auto-save to NocoDB (debounced)
-    saveToNocoDB(updatedPreferences);
-  }, [preferences, saveToNocoDB]); // Add dependencies
-
-  // Import NocoDB service at the top
-  const { NocoDBService } = require('../services/nocodb_service');
-
-  // Debounced save function to prevent excessive API calls
-  const saveToNocoDB = useCallback(
-    debounce(async (preferencesData: WeddingPreferencesData) => {
-      try {
-        console.log('🔄 Auto-saving preferences to NocoDB...');
-        const result = await NocoDBService.savePreferences(preferencesData);
-
-        if (result.success) {
-          console.log('✅ Preferences saved to NocoDB successfully');
-          // Optional: Show success toast
-        } else {
-          console.warn('⚠️ Failed to save to NocoDB:', result.error);
-        }
-      } catch (error) {
-        console.error('❌ Error saving to NocoDB:', error);
-      }
-    }, 2000), // 2 second debounce
-    [NocoDBService.savePreferences] // Dependency for useCallback
-  );
-
-  // Simple debounce function
-  function debounce(func: Function, wait: number) {
-    let timeout: NodeJS.Timeout;
-    return function executedFunction(this: any, ...args: any[]) {
-      const context = this;
-      const later = () => {
-        // Use a fresh timeout ID for each call
-        timeout = setTimeout(() => {
-          func.apply(context, args);
-        }, wait);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
+  
 
   const handleTabChange = (tabId: string) => {
     if (tabId === 'blueprint' && !(preferences.venue.venueType && preferences.theme.selectedTheme)) {

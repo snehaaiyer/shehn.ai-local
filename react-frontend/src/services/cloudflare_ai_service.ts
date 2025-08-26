@@ -1,4 +1,4 @@
-import { AIImageResponse, CloudflareImageResponse } from '../types/ai';
+import { AIImageResponse } from '../types/ai';
 
 interface CloudflareImageRequest {
   prompt: string;

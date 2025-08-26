@@ -10,20 +10,14 @@ import {
   AlertCircle,
   Send,
   Plus,
-  Filter,
   Search,
   Download,
   Eye,
   Activity,
   DollarSign,
   Users,
-  MapPin,
-  Star,
   Heart,
-  Target,
-  Zap,
   Timer,
-  Percent,
   BarChart3,
   MessageSquare
 } from 'lucide-react';
@@ -97,10 +91,8 @@ interface CommunicationMessage {
 }
 
 const VendorCommunication: React.FC = () => {
-  const { sidebarOpen, theme } = useAppStore();
   const [communications, setCommunications] = useState<VendorCommunication[]>([]);
   const [filteredCommunications, setFilteredCommunications] = useState<VendorCommunication[]>([]);
-  const [selectedCommunication, setSelectedCommunication] = useState<VendorCommunication | null>(null);
 
   // Filters & Search
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -109,7 +101,6 @@ const VendorCommunication: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // UI States
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'communication' | 'budget' | 'availability'>('overview');
 
   // Tab definitions
@@ -130,8 +121,6 @@ const VendorCommunication: React.FC = () => {
 
   const loadCommunications = async () => {
     try {
-      setLoading(true);
-
       // Load from localStorage for now (in real app, would be from API)
       const savedCommunications = localStorage.getItem('vendorCommunications');
       if (savedCommunications) {
@@ -146,8 +135,6 @@ const VendorCommunication: React.FC = () => {
 
     } catch (error) {
       console.error('Error loading communications:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

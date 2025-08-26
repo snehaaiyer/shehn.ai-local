@@ -29,3 +29,22 @@ export interface VenueImageGenerationParams {
   guestCount?: number;
   location?: string;
 }
+export interface AIImageResponse {
+  success: boolean;
+  images: string[];
+  error?: string;
+  themeAnalysis: {
+    keywords: string[];
+    mood: string;
+    style: string;
+    colorScheme: string[];
+  };
+}
+
+export interface CloudflareImageResponse {
+  result: {
+    image: string;
+  };
+  success: boolean;
+  errors?: Array<{ message: string }>;
+}
