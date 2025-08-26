@@ -28,7 +28,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Venue',
       allocated: 15000,
       spent: 12000,
-      color: '#E08B7B',
+      color: '#3B82F6',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -36,7 +36,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Catering',
       allocated: 12000,
       spent: 8000,
-      color: '#D97B5E',
+      color: '#10B981',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -44,7 +44,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Photography',
       allocated: 8000,
       spent: 6000,
-      color: '#C56A40',
+      color: '#F59E0B',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -52,7 +52,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Decoration',
       allocated: 6000,
       spent: 4500,
-      color: '#B15A22',
+      color: '#EF4444',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -60,7 +60,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Entertainment',
       allocated: 4000,
       spent: 3000,
-      color: '#9D4A04',
+      color: '#8B5CF6',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -68,7 +68,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Attire',
       allocated: 5000,
       spent: 3500,
-      color: '#E08B7B',
+      color: '#06B6D4',
       icon: <Eye className="h-4 w-4 text-white" />
     }
   ]);
@@ -139,7 +139,7 @@ const BudgetManagement: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <div className="bg-[#E08B7B] p-2 rounded-lg">
+              <div className="bg-blue-600 p-2 rounded-lg">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -149,7 +149,7 @@ const BudgetManagement: React.FC = () => {
             </div>
             <button 
               onClick={() => setShowAddTransaction(true)}
-              className="bg-[#E08B7B] text-white px-6 py-2 rounded-lg hover:bg-[#D97B5E] transition-colors flex items-center space-x-2"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>Add Transaction</span>
@@ -169,8 +169,8 @@ const BudgetManagement: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600">Total Budget</p>
                   <p className="text-2xl font-bold text-gray-900">₹{totalBudget.toLocaleString()}</p>
                 </div>
-                <div className="bg-[#F5E6E1] p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-[#E08B7B]" />
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
@@ -186,12 +186,12 @@ const BudgetManagement: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600">Total Spent</p>
                   <p className="text-2xl font-bold text-gray-900">₹{totalSpent.toLocaleString()}</p>
                 </div>
-                <div className="bg-[#F5E6E1] p-3 rounded-lg">
-                  <TrendingDown className="w-6 h-6 text-[#E08B7B]" />
+                <div className="bg-red-100 p-3 rounded-lg">
+                  <TrendingDown className="w-6 h-6 text-red-600" />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
-                <div className="w-2 h-2 rounded-full bg-[#E08B7B]"></div>
+                <div className="w-2 h-2 rounded-full bg-red-600"></div>
                 <span>{budgetUtilization.toFixed(1)}% of budget used</span>
               </div>
             </div>
@@ -203,12 +203,12 @@ const BudgetManagement: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600">Remaining</p>
                   <p className="text-2xl font-bold text-gray-900">₹{remainingBudget.toLocaleString()}</p>
                 </div>
-                <div className="bg-[#F5E6E1] p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-[#E08B7B]" />
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
-                <div className="w-2 h-2 rounded-full bg-[#E08B7B]"></div>
+                <div className="w-2 h-2 rounded-full bg-green-600"></div>
                 <span>{(100 - budgetUtilization).toFixed(1)}% remaining</span>
               </div>
             </div>
@@ -218,8 +218,8 @@ const BudgetManagement: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md mb-8">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="bg-[#F5E6E1] p-3 rounded-lg">
-                  <BarChart3 className="w-6 h-6 text-[#E08B7B]" />
+                <div className="bg-blue-100 p-3 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Budget Categories</h2>
@@ -268,8 +268,8 @@ const BudgetManagement: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="bg-[#F5E6E1] p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-[#E08B7B]" />
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
@@ -282,7 +282,7 @@ const BudgetManagement: React.FC = () => {
                 {transactions.slice(0, 5).map((transaction) => (
                   <div key={transaction.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#E08B7B' : '#10B981' }}>
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#EF4444' : '#10B981' }}>
                         {transaction.type === 'expense' ? (
                           <TrendingDown className="h-5 w-5 text-white" />
                         ) : (
@@ -296,7 +296,7 @@ const BudgetManagement: React.FC = () => {
                     </div>
                     <div className="text-right">
                       <div className={`font-bold ${
-                        transaction.type === 'expense' ? 'text-[#E08B7B]' : 'text-green-600'
+                        transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'
                       }`}>
                         {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
                       </div>
@@ -319,7 +319,7 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.category}
                       onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E08B7B] focus:border-[#E08B7B]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                     >
                       <option value="">Select category</option>
                       {categories.map(cat => (
@@ -334,7 +334,7 @@ const BudgetManagement: React.FC = () => {
                       type="text"
                       value={newTransaction.description}
                       onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E08B7B] focus:border-[#E08B7B]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                       placeholder="Enter transaction description"
                     />
                   </div>
@@ -345,7 +345,7 @@ const BudgetManagement: React.FC = () => {
                       type="number"
                       value={newTransaction.amount}
                       onChange={(e) => setNewTransaction({...newTransaction, amount: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E08B7B] focus:border-[#E08B7B]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                       placeholder="Enter amount"
                     />
                   </div>
@@ -355,7 +355,7 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.type}
                       onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value as 'expense' | 'income'})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E08B7B] focus:border-[#E08B7B]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
                     >
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
@@ -372,7 +372,7 @@ const BudgetManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={addTransaction}
-                    className="flex-1 px-4 py-3 bg-[#E08B7B] text-white rounded-lg font-medium hover:bg-[#D97B5E] transition-colors"
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                   >
                     Add Transaction
                   </button>
