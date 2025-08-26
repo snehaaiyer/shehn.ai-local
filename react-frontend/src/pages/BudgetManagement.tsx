@@ -133,28 +133,27 @@ const BudgetManagement: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div style={{ backgroundColor: '#df8e8e' }} className="p-2 rounded-lg">
-                <BarChart3 className="h-6 w-6 text-white" />
+          <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#133337' }}>
+                  <BarChart3 className="h-6 w-6" style={{ color: '#FFFFFF' }} />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold" style={{ color: '#133337' }}>Budget Management</h1>
+                  <p className="text-gray-600">Track and manage your wedding expenses</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Budget Management</h1>
-                <p className="text-sm text-gray-600">Track and manage your wedding expenses</p>
-              </div>
+              <button
+                onClick={() => setShowAddTransaction(true)}
+                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
+                style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add Transaction</span>
+              </button>
             </div>
-            <button
-              onClick={() => setShowAddTransaction(true)}
-              className="bg-df8e8e text-white px-6 py-2 rounded-lg hover:bg-df8e8e-700 transition-colors flex items-center space-x-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Transaction</span>
-            </button>
           </div>
-        </div>
-      </div>
 
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-7xl mx-auto">
