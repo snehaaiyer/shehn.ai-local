@@ -71,7 +71,7 @@ args = "cd react-frontend && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
 [[ports]]
 localPort = 3000
-externalPort = 80
+externalPort = 3000
 
 [[ports]]
 localPort = 5000
