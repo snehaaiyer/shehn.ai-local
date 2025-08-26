@@ -27,9 +27,9 @@ const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => 
   }
 
   return (
-    <img 
-      src="/shehnai-logo.png" 
-      alt="Shehnai.AI" 
+    <img
+      src="/shehnai-logo.png"
+      alt="Shehnai.AI"
       className={`${size} mr-2`}
       onError={() => setImageError(true)}
     />
@@ -64,7 +64,7 @@ const AIChat: React.FC = () => {
           console.error('Error loading preferences:', error);
           setMessages([{
             id: '1',
-            content: "Welcome to Bid AI! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
+            content: "Welcome to Shehnai AI Chat! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
             sender: 'ai',
             timestamp: new Date()
           }]);
@@ -72,7 +72,7 @@ const AIChat: React.FC = () => {
       } else {
         setMessages([{
           id: '1',
-          content: "Welcome to Bid AI! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
+          content: "Welcome to Shehnai AI Chat! I'm your wedding planning assistant. Please set up your wedding preferences first to get personalized help.",
           sender: 'ai',
           timestamp: new Date()
         }]);
@@ -87,7 +87,7 @@ const AIChat: React.FC = () => {
     const location = preferences.basicDetails?.location;
     const budget = preferences.basicDetails?.budgetRange;
 
-    let welcome = "🎉 Welcome to Bid AI! I'm your intelligent wedding planning assistant.\n\n";
+    let welcome = "🎉 Welcome to Shehnai AI Chat! I'm your intelligent wedding planning assistant.\n\n";
 
     if (weddingDate && location && budget) {
       welcome += `I can see you're planning a ${budget} wedding in ${location} on ${weddingDate}.\n\n`;
@@ -148,7 +148,7 @@ const AIChat: React.FC = () => {
     try {
       // Use the AI assistant service
       // Demo response for now
-    const result = { action: 'message', data: { response: 'This is a demo response. Add API keys for full functionality.' } };
+      const result = { action: 'message', data: { response: 'This is a demo response. Add API keys for full functionality.' } };
 
       setMessages(prev => {
         const filtered = prev.filter(msg => !msg.loading);
@@ -204,7 +204,7 @@ const AIChat: React.FC = () => {
                   <LogoWithFallback size="w-6 h-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Shehnai AI Assistant</h1>
+                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Shehnai AI Chat</h1>
                   <p className="text-gray-600">Your wedding planning companion</p>
                 </div>
               </div>
@@ -224,9 +224,9 @@ const AIChat: React.FC = () => {
                   <Sparkles className="h-6 w-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: '#000080' }}>Chat with Bid AI</h2>
+                  <h2 className="text-xl font-bold" style={{ color: '#000080' }}>Chat with Shehnai AI Chat</h2>
                   <p className="text-sm text-gray-600">
-                    {isDemoMode 
+                    {isDemoMode
                       ? "Demo mode - Try asking about wedding planning tasks"
                       : "Ask me anything about your wedding planning!"
                     }
@@ -256,7 +256,7 @@ const AIChat: React.FC = () => {
                             <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: 'rgba(34, 211, 238, 0.1)' }}>
                               <p className="text-xs text-gray-600 font-medium mb-1">Task Result:</p>
                               <pre className="text-xs text-gray-700 whitespace-pre-wrap">
-                                {typeof message.taskResult.data === 'object' 
+                                {typeof message.taskResult.data === 'object'
                                   ? JSON.stringify(message.taskResult.data, null, 2)
                                   : message.taskResult.data}
                               </pre>
@@ -292,7 +292,7 @@ const AIChat: React.FC = () => {
                 onClick={sendMessage}
                 disabled={!inputMessage.trim() || isLoading}
                 className="px-6 py-4 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:opacity-90"
-                style={{ backgroundColor: '#EFAFAB', color: '#8B4513' }}
+                style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}
               >
                   {isLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -310,7 +310,7 @@ const AIChat: React.FC = () => {
                     key={index}
                     onClick={() => setInputMessage(prompt)}
                     className="p-3 rounded-xl text-left transition-all duration-300 border hover:opacity-80"
-                    style={{ 
+                    style={{
                       backgroundColor: 'rgba(255, 255, 255, 0.5)',
                       borderColor: 'rgba(255, 255, 255, 0.3)'
                     }}
