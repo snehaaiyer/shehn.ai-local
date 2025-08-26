@@ -551,7 +551,7 @@ const VendorCommunication: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredCommunications.map((comm) => (
-                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-pink-50/30 transition-colors">
+                        <tr key={comm.id} className="border-b border-gray-100 hover:bg-gray-50/30 transition-colors">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
@@ -622,7 +622,7 @@ const VendorCommunication: React.FC = () => {
               {activeTab === 'communication' && (
                 <div className="space-y-4">
                   {filteredCommunications.map((comm) => (
-                    <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
+                    <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-gray-50/30 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
@@ -698,7 +698,7 @@ const VendorCommunication: React.FC = () => {
               {activeTab === 'budget' && (
                 <div className="space-y-4">
                   {filteredCommunications.map((comm) => (
-                    <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
+                    <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-gray-50/30 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
@@ -767,7 +767,7 @@ const VendorCommunication: React.FC = () => {
               {activeTab === 'availability' && (
                 <div className="space-y-4">
                   {filteredCommunications.map((comm) => (
-                    <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
+                    <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-gray-50/30 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
