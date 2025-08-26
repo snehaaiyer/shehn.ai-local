@@ -132,7 +132,9 @@ const BudgetManagement: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      <div className="container mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Header */}
           <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -154,11 +156,8 @@ const BudgetManagement: React.FC = () => {
               </button>
             </div>
           </div>
-
-      <div className="container mx-auto px-6 py-8">
-        <div className="max-w-7xl mx-auto">
           {/* Budget Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Budget Card */}
             <div className="bg-white rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between">
@@ -212,7 +211,7 @@ const BudgetManagement: React.FC = () => {
           </div>
 
           {/* Budget Categories */}
-          <div className="bg-white rounded-lg shadow-md mb-8">
+          <div className="bg-white rounded-lg shadow-md">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <div className="bg-blue-100 p-3 rounded-lg">
@@ -303,8 +302,10 @@ const BudgetManagement: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Add Transaction Modal */}
+      {/* Add Transaction Modal */}
           {showAddTransaction && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
@@ -381,8 +382,6 @@ const BudgetManagement: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
-      </div>
     </div>
   );
 };
