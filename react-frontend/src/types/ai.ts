@@ -1,10 +1,9 @@
-
 export interface AIImageResponse {
   success: boolean;
-  images?: string[];
+  images: string[];
   error?: string;
   generatedDescription?: string;
-  themeAnalysis?: {
+  themeAnalysis: {
     keywords: string[];
     mood: string;
     style: string;
@@ -29,17 +28,6 @@ export interface VenueImageGenerationParams {
   guestCount?: number;
   location?: string;
 }
-export interface AIImageResponse {
-  success: boolean;
-  images: string[];
-  error?: string;
-  themeAnalysis: {
-    keywords: string[];
-    mood: string;
-    style: string;
-    colorScheme: string[];
-  };
-}
 
 export interface CloudflareImageResponse {
   result: {
@@ -47,4 +35,17 @@ export interface CloudflareImageResponse {
   };
   success: boolean;
   errors?: Array<{ message: string }>;
+}
+
+export interface AITextResponse {
+  success: boolean;
+  text: string;
+  error?: string;
+}
+
+export interface ThemeAnalysis {
+  keywords: string[];
+  mood: string;
+  style: string;
+  colorScheme: string[];
 }
