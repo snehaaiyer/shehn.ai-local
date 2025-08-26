@@ -183,7 +183,7 @@ const AIChat: React.FC = () => {
 
   const quickPrompts = [
     "Schedule a meeting with photographer",
-    "Find venues in my area",
+    "Find vendors in my area",
     "Create wedding timeline",
     "Analyze my budget",
     "Send email to caterer",
@@ -218,13 +218,13 @@ const AIChat: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Chat Interface */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-lg">
+            <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-xl" style={{ backgroundColor: '#133337' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#133337' }}>
                   <Sparkles className="h-6 w-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: '#df8e8e' }}>Chat with ShehnAI Chat</h2>
+                  <h2 className="text-xl font-bold" style={{ color: '#133337' }}>Chat with ShehnAI Chat</h2>
                   <p className="text-sm text-gray-600">
                     {isDemoMode
                       ? "Demo mode - Try asking about wedding planning tasks"

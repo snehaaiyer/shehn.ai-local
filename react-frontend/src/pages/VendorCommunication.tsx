@@ -361,45 +361,45 @@ const VendorCommunication: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-100 to-blue-50">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="p-2 rounded-lg" style={{ backgroundColor: '#133337' }}>
-                <MessageSquare className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-800">Vendor Communications</h1>
-                <p className="text-sm text-gray-600">Comprehensive vendor relationship management</p>
-              </div>
-            </div>
-            <button className="bg-gradient-to-r from-salmon-500 to-teal-700 text-white px-6 py-2 rounded-lg hover:from-salmon-600 hover:to-teal-800 transition-all duration-300 flex items-center space-x-2 shadow-lg">
-              <Plus className="w-4 h-4" />
-              <span>Add Vendor</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-white">
       <div className="container mx-auto px-6 py-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#133337' }}>
+                  <MessageSquare className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold" style={{ color: '#133337' }}>Vendor Communications</h1>
+                  <p className="text-gray-600">Comprehensive vendor relationship management</p>
+                </div>
+              </div>
+              <button 
+                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
+                style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Vendor</span>
+              </button>
+            </div>
+          </div>
           {/* Analytics Dashboard */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Vendors</p>
                   <p className="text-2xl font-bold text-gray-800">{communications.length}</p>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                   <Users className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+            <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active Negotiations</p>
@@ -407,13 +407,13 @@ const VendorCommunication: React.FC = () => {
                     {communications.filter(c => c.status === 'negotiating').length}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+            <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Savings</p>
@@ -421,13 +421,13 @@ const VendorCommunication: React.FC = () => {
                     ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                   <DollarSign className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/20">
+            <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
@@ -439,7 +439,7 @@ const VendorCommunication: React.FC = () => {
                     ).toFixed(1)}h
                   </p>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                   <Timer className="w-6 h-6 text-white" />
                 </div>
               </div>
@@ -447,7 +447,7 @@ const VendorCommunication: React.FC = () => {
           </div>
 
           {/* Main Content Card */}
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20">
+          <div className="bg-white rounded-2xl border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
             {/* Tab Navigation */}
             <div className="border-b border-gray-100">
               <div className="flex">
@@ -469,7 +469,7 @@ const VendorCommunication: React.FC = () => {
             </div>
 
             {/* Filters */}
-            <div className="p-6 border-b border-gray-100 bg-gray-50/30">
+            <div className="p-6 border-b border-gray-100">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -478,16 +478,14 @@ const VendorCommunication: React.FC = () => {
                     placeholder="Search vendors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 bg-white/80 backdrop-blur-sm"
-                    style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.2)' } as React.CSSProperties}
+                    className="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2"
-                  style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)', borderColor: '#df8e8e' } as React.CSSProperties}
+                  className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
                 >
                   <option value="all">All Statuses</option>
                   <option value="interested">Interested</option>
@@ -502,8 +500,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2"
-                  style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)', borderColor: '#df8e8e' } as React.CSSProperties}
+                  className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
@@ -517,8 +514,7 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2"
-                  style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)', borderColor: '#df8e8e' } as React.CSSProperties}
+                  className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
@@ -526,7 +522,10 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-salmon-500 to-teal-600 text-white rounded-xl hover:from-salmon-600 hover:to-teal-700 transition-all duration-300 shadow-lg">
+                <button 
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90"
+                  style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}
+                >
                   <Download className="w-4 h-4" />
                   Export
                 </button>
