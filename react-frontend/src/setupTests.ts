@@ -21,11 +21,28 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
+  root: Element | null = null;
+  rootMargin: string = '0px';
+  thresholds: ReadonlyArray<number> = [0];
+
+  constructor(
+    private callback: IntersectionObserverCallback,
+    private options?: IntersectionObserverInit
+  ) {
+    this.root = options?.root || null;
+    this.rootMargin = options?.rootMargin || '0px';
+    this.thresholds = options?.threshold
+      ? (Array.isArray(options.threshold) ? options.threshold : [options.threshold])
+      : [0];
+  }
+
   observe() {}
   unobserve() {}
-};
+  disconnect() {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+} as any;
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
@@ -59,7 +76,7 @@ beforeAll(() => {
     }
     originalError.call(console, ...args);
   };
-  
+
   console.warn = (...args: any[]) => {
     if (
       typeof args[0] === 'string' &&
@@ -74,4 +91,4 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalError;
   console.warn = originalWarn;
-}); 
+});
