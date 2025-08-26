@@ -1,0 +1,56 @@
+Compiled with problems:
+×
+ERROR in src/types/ai.ts:4:3
+TS2687: All declarations of 'images' must have identical modifiers.
+    2 | export interface AIImageResponse {
+    3 |   success: boolean;
+  > 4 |   images?: string[];
+      |   ^^^^^^
+    5 |   error?: string;
+    6 |   generatedDescription?: string;
+    7 |   themeAnalysis?: {
+ERROR in src/types/ai.ts:7:3
+TS2687: All declarations of 'themeAnalysis' must have identical modifiers.
+     5 |   error?: string;
+     6 |   generatedDescription?: string;
+  >  7 |   themeAnalysis?: {
+       |   ^^^^^^^^^^^^^
+     8 |     keywords: string[];
+     9 |     mood: string;
+    10 |     style: string;
+ERROR in src/types/ai.ts:34:3
+TS2687: All declarations of 'images' must have identical modifiers.
+    32 | export interface AIImageResponse {
+    33 |   success: boolean;
+  > 34 |   images: string[];
+       |   ^^^^^^
+    35 |   error?: string;
+    36 |   themeAnalysis: {
+    37 |     keywords: string[];
+ERROR in src/types/ai.ts:34:3
+TS2717: Subsequent property declarations must have the same type.  Property 'images' must be of type 'string[] | undefined', but here has type 'string[]'.
+    32 | export interface AIImageResponse {
+    33 |   success: boolean;
+  > 34 |   images: string[];
+       |   ^^^^^^
+    35 |   error?: string;
+    36 |   themeAnalysis: {
+    37 |     keywords: string[];
+ERROR in src/types/ai.ts:36:3
+TS2687: All declarations of 'themeAnalysis' must have identical modifiers.
+    34 |   images: string[];
+    35 |   error?: string;
+  > 36 |   themeAnalysis: {
+       |   ^^^^^^^^^^^^^
+    37 |     keywords: string[];
+    38 |     mood: string;
+    39 |     style: string;
+ERROR in src/types/ai.ts:36:3
+TS2717: Subsequent property declarations must have the same type.  Property 'themeAnalysis' must be of type '{ keywords: string[]; mood: string; style: string; colorScheme: string[]; } | undefined', but here has type '{ keywords: string[]; mood: string; style: string; colorScheme: string[]; }'.
+    34 |   images: string[];
+    35 |   error?: string;
+  > 36 |   themeAnalysis: {
+       |   ^^^^^^^^^^^^^
+    37 |     keywords: string[];
+    38 |     mood: string;
+    39 |     style: string;
