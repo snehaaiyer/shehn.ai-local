@@ -361,13 +361,13 @@ const VendorCommunication: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-stone-100 to-blue-50">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-r from-pink-600 to-purple-700 p-2 rounded-lg">
+              <div className="p-2 rounded-lg" style={{ backgroundColor: '#133337' }}>
                 <MessageSquare className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -375,7 +375,7 @@ const VendorCommunication: React.FC = () => {
                 <p className="text-sm text-gray-600">Comprehensive vendor relationship management</p>
               </div>
             </div>
-            <button className="bg-gradient-to-r from-pink-600 to-purple-700 text-white px-6 py-2 rounded-lg hover:from-pink-700 hover:to-purple-800 transition-all duration-300 flex items-center space-x-2 shadow-lg">
+            <button className="bg-gradient-to-r from-salmon-500 to-teal-700 text-white px-6 py-2 rounded-lg hover:from-salmon-600 hover:to-teal-800 transition-all duration-300 flex items-center space-x-2 shadow-lg">
               <Plus className="w-4 h-4" />
               <span>Add Vendor</span>
             </button>
@@ -393,8 +393,8 @@ const VendorCommunication: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600">Total Vendors</p>
                   <p className="text-2xl font-bold text-gray-800">{communications.length}</p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <Users className="w-6 h-6 text-pink-600" />
+                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                  <Users className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
@@ -407,8 +407,8 @@ const VendorCommunication: React.FC = () => {
                     {communications.filter(c => c.status === 'negotiating').length}
                   </p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-pink-600" />
+                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
@@ -421,8 +421,8 @@ const VendorCommunication: React.FC = () => {
                     ₹{communications.reduce((sum, c) => sum + c.priceReductions, 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-pink-600" />
+                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                  <DollarSign className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
@@ -439,8 +439,8 @@ const VendorCommunication: React.FC = () => {
                     ).toFixed(1)}h
                   </p>
                 </div>
-                <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-3 rounded-lg">
-                  <Timer className="w-6 h-6 text-pink-600" />
+                <div className="p-3 rounded-lg" style={{ backgroundColor: '#df8e8e' }}>
+                  <Timer className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
@@ -457,7 +457,7 @@ const VendorCommunication: React.FC = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-all duration-300 flex items-center justify-center gap-2 ${
                       activeTab === tab.id
-                        ? 'border-pink-500 text-pink-600 bg-pink-50/50'
+                        ? 'border-salmon-500 text-salmon-600 bg-salmon-50/50'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
                     }`}
                   >
@@ -526,7 +526,7 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-lg">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-salmon-500 to-teal-600 text-white rounded-xl hover:from-salmon-600 hover:to-teal-700 transition-all duration-300 shadow-lg">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
@@ -566,7 +566,7 @@ const VendorCommunication: React.FC = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-medium capitalize">
+                            <span className="bg-salmon-100 text-salmon-800 px-3 py-1 rounded-full text-xs font-medium capitalize">
                               {comm.vendorCategory}
                             </span>
                           </td>
@@ -604,11 +604,11 @@ const VendorCommunication: React.FC = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <button className="p-2 bg-pink-100 rounded-lg hover:bg-pink-200 transition-colors">
-                                <Eye className="w-4 h-4 text-pink-600" />
+                              <button className="p-2 bg-salmon-100 rounded-lg hover:bg-salmon-200 transition-colors">
+                                <Eye className="w-4 h-4 text-salmon-600" />
                               </button>
-                              <button className="p-2 bg-pink-100 rounded-lg hover:bg-pink-200 transition-colors">
-                                <MessageCircle className="w-4 h-4 text-pink-600" />
+                              <button className="p-2 bg-salmon-100 rounded-lg hover:bg-salmon-200 transition-colors">
+                                <MessageCircle className="w-4 h-4 text-salmon-600" />
                               </button>
                             </div>
                           </td>
@@ -678,13 +678,13 @@ const VendorCommunication: React.FC = () => {
                           <span className="text-gray-500">Channels:</span>
                           <div className="flex items-center gap-1 mt-1">
                             {comm.vendorEmail && (
-                              <div className="p-1 bg-pink-100 rounded">
-                                <Mail className="w-3 h-3 text-pink-600" />
+                              <div className="p-1 bg-salmon-100 rounded">
+                                <Mail className="w-3 h-3 text-salmon-600" />
                               </div>
                             )}
                             {comm.vendorPhone && (
-                              <div className="p-1 bg-pink-100 rounded">
-                                <Phone className="w-3 h-3 text-pink-600" />
+                              <div className="p-1 bg-salmon-100 rounded">
+                                <Phone className="w-3 h-3 text-salmon-600" />
                               </div>
                             )}
                           </div>
@@ -736,7 +736,7 @@ const VendorCommunication: React.FC = () => {
                           <div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               comm.marketPosition === 'luxury' ? 'bg-purple-100 text-purple-800' :
-                              comm.marketPosition === 'premium' ? 'bg-pink-100 text-pink-800' :
+                              comm.marketPosition === 'premium' ? 'bg-salmon-100 text-salmon-800' :
                               comm.marketPosition === 'mid-range' ? 'bg-blue-100 text-blue-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
