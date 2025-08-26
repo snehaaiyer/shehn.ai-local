@@ -11,35 +11,35 @@
   /* Modern Dashboard-Inspired Pastel Color Palette */
   --soft-beige: #f0e4dd;
   --salmon-pink: #df8e8e;
-  --soft-peach: #f4c1ad;
+  --soft-peach: #df8e8e;
   --deep-navy: #152347;
-  --muted-green: #628b85;
+  --muted-green: #133337;
   --highlight-yellow: #f1d243;
   --sky-blue: #9cb7d2;
   --muted-red: #eb5757;
-  --light-coral: #ffd5b8;
+  --light-coral: #df8e8e;
   --light-blush: #e3d2d3;
-  
+
   /* Primary Colors for UI Elements */
   --primary-lavender: #df8e8e; /* Salmon Pink */
   --primary-rose: #eb5757; /* Muted Red */
-  --primary-mint: #628b85; /* Muted Green */
-  --primary-peach: #f4c1ad; /* Soft Peach */
+  --primary-mint: #133337; /* Muted Green */
+  --primary-peach: #df8e8e; /* Soft Peach */
   --primary-sky: #9cb7d2; /* Sky Blue */
   --primary-lilac: #e3d2d3; /* Light Blush */
-  --primary-coral: #ffd5b8; /* Light Coral */
+  --primary-coral: #df8e8e; /* Light Coral */
   --primary-sage: #f1d243; /* Highlight Yellow */
-  
+
   /* Pastel Background Colors */
   --pastel-lavender: #f0e4dd; /* Soft Beige */
   --pastel-rose: #df8e8e; /* Salmon Pink */
-  --pastel-mint: #628b85; /* Muted Green */
-  --pastel-peach: #f4c1ad; /* Soft Peach */
+  --pastel-mint: #133337; /* Muted Green */
+  --pastel-peach: #df8e8e; /* Soft Peach */
   --pastel-sky: #9cb7d2; /* Sky Blue */
   --pastel-lilac: #e3d2d3; /* Light Blush */
-  --pastel-coral: #ffd5b8; /* Light Coral */
+  --pastel-coral: #df8e8e; /* Light Coral */
   --pastel-sage: #f1d243; /* Highlight Yellow */
-  
+
   /* Light Background Variations */
   --pastel-lavender-light: #faf7f5;
   --pastel-rose-light: #fdf5f5;
@@ -49,15 +49,15 @@
   --pastel-lilac-light: #fdfcfc;
   --pastel-coral-light: #fffbf8;
   --pastel-sage-light: #fefef8;
-  
+
   /* Accent Colors */
   --accent-gold: #f1d243;
   --accent-silver: #9cb7d2;
   --accent-bronze: #df8e8e;
-  
+
   /* Text Colors */
   --text-primary: #152347; /* Deep Navy */
-  --text-secondary: #628b85; /* Muted Green */
+  --text-secondary: #133337; /* Muted Green */
   --text-muted: #9cb7d2; /* Sky Blue */
 }
 
@@ -261,4 +261,4 @@
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-} 
+}
