@@ -48,11 +48,11 @@ export class VenueImageGenerator {
       const receptionImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Parse responses
-      const mainImage = mainImageResponse.success && mainImageResponse.images && mainImageResponse.images.length > 0 
+      const mainImage = mainImageResponse.success && mainImageResponse.images && mainImageResponse.images.length > 0
         ? mainImageResponse.images[0] : '';
-      const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.images && ceremonyImageResponse.images.length > 0 
+      const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.images && ceremonyImageResponse.images.length > 0
         ? ceremonyImageResponse.images[0] : '';
-      const receptionImage = receptionImageResponse.success && receptionImageResponse.images && receptionImageResponse.images.length > 0 
+      const receptionImage = receptionImageResponse.success && receptionImageResponse.images && receptionImageResponse.images.length > 0
         ? receptionImageResponse.images[0] : '';
 
       return {
@@ -82,13 +82,13 @@ export class VenueImageGenerator {
    * Generate main venue image prompt
    */
   private static generateMainVenuePrompt(venue: VenueImageRequest): string {
-    return `A stunning ${venue.venueType} wedding venue called "${venue.venueName}" in ${venue.location}. 
-    Features: ${venue.amenities.join(', ')}. 
-    Capacity: ${venue.capacity} guests. 
-    Price Range: ${venue.priceRange}. 
+    return `A stunning ${venue.venueType} wedding venue called "${venue.venueName}" in ${venue.location}.
+    Features: ${venue.amenities.join(', ')}.
+    Capacity: ${venue.capacity} guests.
+    Price Range: ${venue.priceRange}.
     ${venue.description}
 
-    The image should showcase the venue's main features, elegant architecture, and wedding-ready atmosphere. 
+    The image should showcase the venue's main features, elegant architecture, and wedding-ready atmosphere.
     Professional photography quality, high resolution, magazine-worthy composition with beautiful lighting and sophisticated decor.`;
   }
 
@@ -98,13 +98,13 @@ export class VenueImageGenerator {
   private static generateCeremonyAreaPrompt(venue: VenueImageRequest): string {
     const ceremonyElements = this.getCeremonyElements(venue.venueType);
 
-    return `A beautiful ceremony area at ${venue.venueName} ${venue.venueType} in ${venue.location}. 
-    Features: ${ceremonyElements.join(', ')}. 
-    Capacity: ${venue.capacity} guests for ceremony. 
+    return `A beautiful ceremony area at ${venue.venueName} ${venue.venueType} in ${venue.location}.
+    Features: ${ceremonyElements.join(', ')}.
+    Capacity: ${venue.capacity} guests for ceremony.
     ${venue.description}
 
-    The image should show the sacred ceremony space with elegant decorations, proper seating arrangement, 
-    and romantic atmosphere. Professional photography quality, high resolution, capturing the spiritual 
+    The image should show the sacred ceremony space with elegant decorations, proper seating arrangement,
+    and romantic atmosphere. Professional photography quality, high resolution, capturing the spiritual
     and emotional essence of wedding ceremonies.`;
   }
 
@@ -114,13 +114,13 @@ export class VenueImageGenerator {
   private static generateReceptionAreaPrompt(venue: VenueImageRequest): string {
     const receptionElements = this.getReceptionElements(venue.venueType);
 
-    return `A luxurious reception area at ${venue.venueName} ${venue.venueType} in ${venue.location}. 
-    Features: ${receptionElements.join(', ')}. 
-    Capacity: ${venue.capacity} guests for reception. 
+    return `A luxurious reception area at ${venue.venueName} ${venue.venueType} in ${venue.location}.
+    Features: ${receptionElements.join(', ')}.
+    Capacity: ${venue.capacity} guests for reception.
     ${venue.description}
 
-    The image should showcase the dining and celebration space with elegant table settings, 
-    beautiful lighting, and sophisticated decor. Professional photography quality, high resolution, 
+    The image should showcase the dining and celebration space with elegant table settings,
+    beautiful lighting, and sophisticated decor. Professional photography quality, high resolution,
     capturing the celebration atmosphere and dining experience.`;
   }
 

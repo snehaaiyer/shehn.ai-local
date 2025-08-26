@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 // Updated import for mock service
@@ -514,46 +514,46 @@ const WeddingPreferences: React.FC = () => {
       try {
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
-          const preferences = JSON.parse(savedPreferences);
-          console.log('📋 Loading saved preferences:', preferences);
+          const parsedPreferences = JSON.parse(savedPreferences);
+          console.log('📋 Loading saved preferences:', parsedPreferences);
 
           // Set basic details
-          if (preferences.basicDetails) {
-            Object.keys(preferences.basicDetails).forEach(key => {
-              if (preferences.basicDetails[key] !== undefined) {
-                updatePreference('basicDetails', key, preferences.basicDetails[key]);
+          if (parsedPreferences.basicDetails) {
+            Object.keys(parsedPreferences.basicDetails).forEach(key => {
+              if (parsedPreferences.basicDetails[key] !== undefined) {
+                updatePreference('basicDetails', key, parsedPreferences.basicDetails[key]);
               }
             });
           }
 
           // Set other sections
-          if (preferences.theme) {
-            Object.keys(preferences.theme).forEach(key => {
-              if (preferences.theme[key] !== undefined) {
-                updatePreference('theme', key, preferences.theme[key]);
+          if (parsedPreferences.theme) {
+            Object.keys(parsedPreferences.theme).forEach(key => {
+              if (parsedPreferences.theme[key] !== undefined) {
+                updatePreference('theme', key, parsedPreferences.theme[key]);
               }
             });
           }
 
-          if (preferences.venue) {
-            Object.keys(preferences.venue).forEach(key => {
-              if (preferences.venue[key] !== undefined) {
-                updatePreference('venue', key, preferences.venue[key]);
+          if (parsedPreferences.venue) {
+            Object.keys(parsedPreferences.venue).forEach(key => {
+              if (parsedPreferences.venue[key] !== undefined) {
+                updatePreference('venue', key, parsedPreferences.venue[key]);
               }
             });
           }
 
-          if (preferences.catering) {
-            Object.keys(preferences.catering).forEach(key => {
-              if (preferences.catering[key] !== undefined) {
-                updatePreference('catering', key, preferences.catering[key]);
+          if (parsedPreferences.catering) {
+            Object.keys(parsedPreferences.catering).forEach(key => {
+              if (parsedPreferences.catering[key] !== undefined) {
+                updatePreference('catering', key, parsedPreferences.catering[key]);
               }
             });
           }
 
           // Load photography preferences with all nested objects
-          if (preferences.photography) {
-            const photoPrefs = preferences.photography;
+          if (parsedPreferences.photography) {
+            const photoPrefs = parsedPreferences.photography;
 
             // Basic photography fields
             ['style', 'coverage', 'specialRequests', 'budgetRange'].forEach(key => {
@@ -605,7 +605,7 @@ const WeddingPreferences: React.FC = () => {
     };
 
     loadDefaultPreferences();
-  }, []);
+  }, [updatePreference]); // Dependency array includes updatePreference
 
   // Drag and Drop State
   const [draggedPriority, setDraggedPriority] = useState<Priority | null>(null);
@@ -646,7 +646,7 @@ const WeddingPreferences: React.FC = () => {
     updatePreference('basicDetails', 'priorities', newPriorities);
   };
 
-  const updatePreference = (section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
+  const updatePreference = useCallback((section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
     setPreferences(prev => {
       // Handle deeply nested updates carefully
       let updatedSection = { ...prev[section] as any };
@@ -684,13 +684,13 @@ const WeddingPreferences: React.FC = () => {
 
     // Auto-save to NocoDB (debounced)
     saveToNocoDB(updatedPreferences);
-  };
+  }, [preferences, saveToNocoDB]); // Add dependencies
 
   // Import NocoDB service at the top
   const { NocoDBService } = require('../services/nocodb_service');
 
   // Debounced save function to prevent excessive API calls
-  const saveToNocoDB = React.useCallback(
+  const saveToNocoDB = useCallback(
     debounce(async (preferencesData: WeddingPreferencesData) => {
       try {
         console.log('🔄 Auto-saving preferences to NocoDB...');
@@ -706,7 +706,7 @@ const WeddingPreferences: React.FC = () => {
         console.error('❌ Error saving to NocoDB:', error);
       }
     }, 2000), // 2 second debounce
-    []
+    [NocoDBService.savePreferences] // Dependency for useCallback
   );
 
   // Simple debounce function
@@ -715,7 +715,8 @@ const WeddingPreferences: React.FC = () => {
     return function executedFunction(this: any, ...args: any[]) {
       const context = this;
       const later = () => {
-        timeout = setTimeout(function() {
+        // Use a fresh timeout ID for each call
+        timeout = setTimeout(() => {
           func.apply(context, args);
         }, wait);
       };

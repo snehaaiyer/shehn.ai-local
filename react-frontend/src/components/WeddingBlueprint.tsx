@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Heart, DollarSign, Camera, Utensils, Palette, Loader2, Sparkles, Clock, TrendingUp, FileText, Building2 } from 'lucide-react';
-import { SimpleMockService } from '../services/simple_mock_service';
+// Removed unused import: import { SimpleMockService } from '../services/simple_mock_service';
 
 // Venue Categories Data
 const venueCategories = [
@@ -303,7 +303,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
       // Use static images only - no AI generation
       const selectedVenue = venueCategories?.flatMap(cat => cat.venues)?.find(v => v.id === preferences.venue?.selectedVenueType);
       const selectedTheme = themes?.find(t => t.id === preferences.theme?.selectedTheme);
-      
+
       const venueImage = selectedVenue?.image || '/images/placeholder-venue.png';
       const themeImage = selectedTheme?.image || '/images/placeholder-theme.png';
       const photographyImage = '/images/placeholder-photo.png';

@@ -18,32 +18,7 @@ import { useAppStore } from './store/useAppStore';
 // CSS
 import './App.css';
 
-const LogoWithFallback: React.FC<{ size?: number }> = ({ size = 40 }) => {
-  const [logoError, setLogoError] = useState(false);
 
-  return (
-    <div
-      className="flex items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-orange-500"
-      style={{
-        width: size,
-        height: size,
-      }}
-    >
-      {logoError ? (
-        <div className="text-white font-bold text-lg">S</div>
-      ) : (
-        <img
-          src="/shehnai-logo.png"
-          alt="Shehnai.AI"
-          width={size * 0.8}
-          height={size * 0.8}
-          onError={() => setLogoError(true)}
-          className="rounded-xl"
-        />
-      )}
-    </div>
-  );
-};
 
 function App() {
   const { sidebarOpen, setSidebarOpen } = useAppStore();

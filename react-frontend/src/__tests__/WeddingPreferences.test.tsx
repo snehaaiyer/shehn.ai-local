@@ -7,8 +7,8 @@ import WeddingPreferences from '../pages/WeddingPreferences';
 jest.mock('../components/ThemeCard', () => {
   return function MockThemeCard({ title, isSelected, onClick }: any) {
     return (
-      <div 
-        data-testid="theme-card" 
+      <div
+        data-testid="theme-card"
         className={isSelected ? 'selected' : ''}
         onClick={onClick}
       >
@@ -43,7 +43,7 @@ const renderWithRouter = (component: React.ReactElement) => {
 describe('WeddingPreferences Screen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock successful API response
     (fetch as jest.Mock).mockResolvedValue({
       ok: true,
@@ -200,7 +200,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Royal Palace')).toBeInTheDocument();
         expect(screen.getByText('Beach Destination')).toBeInTheDocument();
@@ -212,7 +212,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Elegant and luxurious')).toBeInTheDocument();
         expect(screen.getByText('Relaxed and romantic')).toBeInTheDocument();
@@ -224,7 +224,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       await waitFor(() => {
         const beachTheme = screen.getByText('Beach Destination');
         fireEvent.click(beachTheme);
@@ -257,7 +257,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       const styleSelect = screen.getByLabelText('Style Preference');
       fireEvent.change(styleSelect, { target: { value: 'Modern' } });
       expect(styleSelect).toHaveValue('Modern');
@@ -267,7 +267,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       const colorInput = screen.getByLabelText('Color Scheme');
       fireEvent.change(colorInput, { target: { value: 'Blue & Silver' } });
       expect(colorInput).toHaveValue('Blue & Silver');
@@ -277,7 +277,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       const seasonSelect = screen.getByLabelText('Wedding Season');
       fireEvent.change(seasonSelect, { target: { value: 'Spring' } });
       expect(seasonSelect).toHaveValue('Spring');
@@ -287,7 +287,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const themeSection = screen.getByText('Theme & Style');
       fireEvent.click(themeSection);
-      
+
       const seasonSelect = screen.getByLabelText('Wedding Season');
       fireEvent.change(seasonSelect, { target: { value: 'Monsoon' } });
       expect(seasonSelect).toHaveValue('Monsoon');
@@ -334,7 +334,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const ceremonySection = screen.getByText('Ceremony & Reception');
       fireEvent.click(ceremonySection);
-      
+
       const ceremonySelect = screen.getByLabelText('Ceremony Type');
       fireEvent.change(ceremonySelect, { target: { value: 'Christian' } });
       expect(ceremonySelect).toHaveValue('Christian');
@@ -344,7 +344,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const ceremonySection = screen.getByText('Ceremony & Reception');
       fireEvent.click(ceremonySection);
-      
+
       const receptionSelect = screen.getByLabelText('Reception Type');
       fireEvent.change(receptionSelect, { target: { value: 'Modern' } });
       expect(receptionSelect).toHaveValue('Modern');
@@ -354,7 +354,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const ceremonySection = screen.getByText('Ceremony & Reception');
       fireEvent.click(ceremonySection);
-      
+
       const durationInput = screen.getByLabelText('Ceremony Duration (hours)');
       fireEvent.change(durationInput, { target: { value: '3' } });
       expect(durationInput).toHaveValue(3);
@@ -364,7 +364,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const ceremonySection = screen.getByText('Ceremony & Reception');
       fireEvent.click(ceremonySection);
-      
+
       const durationInput = screen.getByLabelText('Reception Duration (hours)');
       fireEvent.change(durationInput, { target: { value: '5' } });
       expect(durationInput).toHaveValue(5);
@@ -411,7 +411,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const cateringSection = screen.getByText('Catering & Menu');
       fireEvent.click(cateringSection);
-      
+
       const cuisineSelect = screen.getByLabelText('Cuisine Type');
       fireEvent.change(cuisineSelect, { target: { value: 'Italian' } });
       expect(cuisineSelect).toHaveValue('Italian');
@@ -421,7 +421,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const cateringSection = screen.getByText('Catering & Menu');
       fireEvent.click(cateringSection);
-      
+
       const restrictionsInput = screen.getByLabelText('Dietary Restrictions');
       fireEvent.change(restrictionsInput, { target: { value: 'Vegetarian, Gluten-free' } });
       expect(restrictionsInput).toHaveValue('Vegetarian, Gluten-free');
@@ -431,7 +431,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const cateringSection = screen.getByText('Catering & Menu');
       fireEvent.click(cateringSection);
-      
+
       const mealSelect = screen.getByLabelText('Meal Type');
       fireEvent.change(mealSelect, { target: { value: 'Buffet' } });
       expect(mealSelect).toHaveValue('Buffet');
@@ -441,7 +441,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const cateringSection = screen.getByText('Catering & Menu');
       fireEvent.click(cateringSection);
-      
+
       const beverageInput = screen.getByLabelText('Beverage Preferences');
       fireEvent.change(beverageInput, { target: { value: 'Wine, Beer, Soft drinks' } });
       expect(beverageInput).toHaveValue('Wine, Beer, Soft drinks');
@@ -488,7 +488,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const servicesSection = screen.getByText('Additional Services');
       fireEvent.click(servicesSection);
-      
+
       const photographyCheckbox = screen.getByLabelText('Photography & Videography');
       fireEvent.click(photographyCheckbox);
       expect(photographyCheckbox).toBeChecked();
@@ -498,7 +498,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const servicesSection = screen.getByText('Additional Services');
       fireEvent.click(servicesSection);
-      
+
       const musicCheckbox = screen.getByLabelText('Music & Entertainment');
       fireEvent.click(musicCheckbox);
       expect(musicCheckbox).toBeChecked();
@@ -508,7 +508,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const servicesSection = screen.getByText('Additional Services');
       fireEvent.click(servicesSection);
-      
+
       const decorationCheckbox = screen.getByLabelText('Decoration & Flowers');
       fireEvent.click(decorationCheckbox);
       expect(decorationCheckbox).toBeChecked();
@@ -518,7 +518,7 @@ describe('WeddingPreferences Screen', () => {
       renderWithRouter(<WeddingPreferences />);
       const servicesSection = screen.getByText('Additional Services');
       fireEvent.click(servicesSection);
-      
+
       const transportationCheckbox = screen.getByLabelText('Transportation');
       fireEvent.click(transportationCheckbox);
       expect(transportationCheckbox).toBeChecked();
@@ -528,36 +528,36 @@ describe('WeddingPreferences Screen', () => {
   describe('Form Validation', () => {
     it('should validate required fields', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const saveButton = screen.getByText('Save Preferences');
       fireEvent.click(saveButton);
-      
+
       // Should show validation errors for required fields
       expect(saveButton).toBeInTheDocument();
     });
 
     it('should validate guest count is positive', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const guestInput = screen.getByLabelText('Number of Guests');
       fireEvent.change(guestInput, { target: { value: '-10' } });
-      
+
       const saveButton = screen.getByText('Save Preferences');
       fireEvent.click(saveButton);
-      
+
       // Should show validation error
       expect(guestInput).toHaveValue(-10);
     });
 
     it('should validate wedding date is in the future', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const dateInput = screen.getByLabelText('Wedding Date');
       fireEvent.change(dateInput, { target: { value: '2020-01-01' } });
-      
+
       const saveButton = screen.getByText('Save Preferences');
       fireEvent.click(saveButton);
-      
+
       // Should show validation error
       expect(dateInput).toHaveValue('2020-01-01');
     });
@@ -566,7 +566,7 @@ describe('WeddingPreferences Screen', () => {
   describe('Data Persistence', () => {
     it('should load existing preferences', async () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       await waitFor(() => {
         expect(screen.getByDisplayValue('200')).toBeInTheDocument(); // Guest count
         expect(screen.getByDisplayValue('Traditional')).toBeInTheDocument(); // Style
@@ -579,12 +579,12 @@ describe('WeddingPreferences Screen', () => {
         ok: true,
         json: async () => ({ success: true })
       });
-      
+
       renderWithRouter(<WeddingPreferences />);
-      
+
       const saveButton = screen.getByText('Save Preferences');
       fireEvent.click(saveButton);
-      
+
       await waitFor(() => {
         // Should show success message or redirect
         expect(saveButton).toBeInTheDocument();
@@ -595,9 +595,9 @@ describe('WeddingPreferences Screen', () => {
   describe('Error Handling', () => {
     it('should handle API fetch errors gracefully', async () => {
       (fetch as jest.Mock).mockRejectedValue(new Error('API Error'));
-      
+
       renderWithRouter(<WeddingPreferences />);
-      
+
       await waitFor(() => {
         // Should not crash and should show some error state
         expect(screen.getByText('Wedding Preferences')).toBeInTheDocument();
@@ -610,12 +610,12 @@ describe('WeddingPreferences Screen', () => {
         status: 500,
         json: async () => ({ error: 'Save failed' })
       });
-      
+
       renderWithRouter(<WeddingPreferences />);
-      
+
       const saveButton = screen.getByText('Save Preferences');
       fireEvent.click(saveButton);
-      
+
       await waitFor(() => {
         // Should show error message
         expect(saveButton).toBeInTheDocument();
@@ -626,14 +626,14 @@ describe('WeddingPreferences Screen', () => {
   describe('Responsive Design', () => {
     it('should render on different screen sizes', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const container = screen.getByText('Wedding Preferences').closest('div');
       expect(container).toHaveClass('min-h-screen');
     });
 
     it('should have responsive layout', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       // Check for responsive classes
       const sidebar = screen.getByText('Basic Details').closest('div');
       expect(sidebar?.parentElement).toHaveClass('grid');
@@ -643,7 +643,7 @@ describe('WeddingPreferences Screen', () => {
   describe('Accessibility', () => {
     it('should have proper form labels', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       expect(screen.getByLabelText('Number of Guests')).toBeInTheDocument();
       expect(screen.getByLabelText('Wedding Date')).toBeInTheDocument();
       expect(screen.getByLabelText('Location')).toBeInTheDocument();
@@ -651,7 +651,7 @@ describe('WeddingPreferences Screen', () => {
 
     it('should have proper button roles', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const buttons = screen.getAllByRole('button');
       buttons.forEach(button => {
         expect(button).toBeInTheDocument();
@@ -660,20 +660,20 @@ describe('WeddingPreferences Screen', () => {
 
     it('should have semantic HTML structure', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const headings = screen.getAllByRole('heading');
       expect(headings.length).toBeGreaterThan(0);
     });
 
     it('should support keyboard navigation', () => {
       renderWithRouter(<WeddingPreferences />);
-      
+
       const guestInput = screen.getByLabelText('Number of Guests');
       const dateInput = screen.getByLabelText('Wedding Date');
-      
+
       guestInput.focus();
       expect(guestInput).toHaveFocus();
-      
+
       fireEvent.keyDown(guestInput, { key: 'Tab' });
       expect(dateInput).toHaveFocus();
     });
@@ -688,7 +688,7 @@ describe('WeddingPreferences Screen', () => {
         description: `Description for theme ${i}`,
         image: `/images/themes/theme-${i}.jpg`
       }));
-      
+
       (fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -696,12 +696,12 @@ describe('WeddingPreferences Screen', () => {
           themes: manyThemes
         })
       });
-      
+
       renderWithRouter(<WeddingPreferences />);
-      
+
       await waitFor(() => {
         expect(screen.getByText('Wedding Preferences')).toBeInTheDocument();
       });
     });
   });
-}); 
+});

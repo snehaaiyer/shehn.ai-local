@@ -1,7 +1,5 @@
-
 import React, { useState } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3 } from "lucide-react";
-import { SectionCard } from '../components/SectionCard';
 
 interface BudgetCategory {
   id: string;
@@ -312,7 +310,7 @@ const BudgetManagement: React.FC = () => {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Add Transaction</h3>
-                
+
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
