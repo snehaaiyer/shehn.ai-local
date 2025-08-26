@@ -329,13 +329,13 @@ const VendorCommunication: React.FC = () => {
 
   const getStatusIcon = (status: string) => {
     const icons = {
-      interested: <Heart className="w-4 h-4 text-rose-500" />,
-      contacted: <Send className="w-4 h-4 text-blue-500" />,
-      responded: <MessageCircle className="w-4 h-4 text-green-500" />,
-      quoted: <FileText className="w-4 h-4 text-orange-500" />,
-      negotiating: <TrendingUp className="w-4 h-4 text-purple-500" />,
-      booked: <CheckCircle className="w-4 h-4 text-green-600" />,
-      declined: <AlertCircle className="w-4 h-4 text-red-500" />
+      interested: <Heart className="w-4 h-4" style={{ color: '#df8e8e' }} />,
+      contacted: <Send className="w-4 h-4" style={{ color: '#133337' }} />,
+      responded: <MessageCircle className="w-4 h-4" style={{ color: '#133337' }} />,
+      quoted: <FileText className="w-4 h-4" style={{ color: '#df8e8e' }} />,
+      negotiating: <TrendingUp className="w-4 h-4" style={{ color: '#133337' }} />,
+      booked: <CheckCircle className="w-4 h-4" style={{ color: '#133337' }} />,
+      declined: <AlertCircle className="w-4 h-4" style={{ color: '#df8e8e' }} />
     };
     return icons[status as keyof typeof icons] || <Clock className="w-4 h-4 text-gray-500" />;
   };
@@ -566,7 +566,7 @@ const VendorCommunication: React.FC = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-salmon-100 text-salmon-800 px-3 py-1 rounded-full text-xs font-medium capitalize">
+                            <span className="px-3 py-1 rounded-full text-xs font-medium capitalize text-white" style={{ backgroundColor: '#df8e8e' }}>
                               {comm.vendorCategory}
                             </span>
                           </td>
@@ -577,11 +577,11 @@ const VendorCommunication: React.FC = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              comm.priority === 'high' ? 'bg-red-100 text-red-800' :
-                              comm.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                              comm.priority === 'high' ? '' :
+                              comm.priority === 'medium' ? '' :
+                              ''
+                            }`} style={{ backgroundColor: comm.priority === 'high' ? '#df8e8e' : '#133337' }}>
                               {comm.priority}
                             </span>
                           </td>
@@ -604,11 +604,11 @@ const VendorCommunication: React.FC = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <button className="p-2 bg-salmon-100 rounded-lg hover:bg-salmon-200 transition-colors">
-                                <Eye className="w-4 h-4 text-salmon-600" />
+                              <button className="p-2 rounded-lg transition-colors" style={{ backgroundColor: 'rgba(223, 142, 142, 0.1)' }}>
+                                <Eye className="w-4 h-4" style={{ color: '#df8e8e' }} />
                               </button>
-                              <button className="p-2 bg-salmon-100 rounded-lg hover:bg-salmon-200 transition-colors">
-                                <MessageCircle className="w-4 h-4 text-salmon-600" />
+                              <button className="p-2 rounded-lg transition-colors" style={{ backgroundColor: 'rgba(223, 142, 142, 0.1)' }}>
+                                <MessageCircle className="w-4 h-4" style={{ color: '#df8e8e' }} />
                               </button>
                             </div>
                           </td>
@@ -665,11 +665,7 @@ const VendorCommunication: React.FC = () => {
                         <div>
                           <span className="text-gray-500">Priority:</span>
                           <div>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              comm.priority === 'high' ? 'bg-red-100 text-red-800' :
-                              comm.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
+                            <span className="px-2 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: comm.priority === 'high' ? '#df8e8e' : '#133337' }}>
                               {comm.priority}
                             </span>
                           </div>
@@ -678,13 +674,13 @@ const VendorCommunication: React.FC = () => {
                           <span className="text-gray-500">Channels:</span>
                           <div className="flex items-center gap-1 mt-1">
                             {comm.vendorEmail && (
-                              <div className="p-1 bg-salmon-100 rounded">
-                                <Mail className="w-3 h-3 text-salmon-600" />
+                              <div className="p-1 rounded" style={{ backgroundColor: 'rgba(223, 142, 142, 0.1)' }}>
+                                <Mail className="w-3 h-3" style={{ color: '#df8e8e' }} />
                               </div>
                             )}
                             {comm.vendorPhone && (
-                              <div className="p-1 bg-salmon-100 rounded">
-                                <Phone className="w-3 h-3 text-salmon-600" />
+                              <div className="p-1 rounded" style={{ backgroundColor: 'rgba(223, 142, 142, 0.1)' }}>
+                                <Phone className="w-3 h-3" style={{ color: '#df8e8e' }} />
                               </div>
                             )}
                           </div>
@@ -734,12 +730,7 @@ const VendorCommunication: React.FC = () => {
                         <div>
                           <span className="text-gray-500">Market Position:</span>
                           <div>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              comm.marketPosition === 'luxury' ? 'bg-purple-100 text-purple-800' :
-                              comm.marketPosition === 'premium' ? 'bg-salmon-100 text-salmon-800' :
-                              comm.marketPosition === 'mid-range' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
+                            <span className="px-2 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: comm.marketPosition === 'luxury' || comm.marketPosition === 'premium' ? '#df8e8e' : '#133337' }}>
                               {comm.marketPosition}
                             </span>
                           </div>
