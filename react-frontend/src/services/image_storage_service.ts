@@ -11,10 +11,17 @@ interface StorageObject {
   key?: string;
 }
 
-// Mock Replit Storage Client for testing
-class Client {
-  async uploadFromBytes(fileName: string, buffer: Buffer): Promise<void> {
-    console.log(`Mock upload: ${fileName} (${buffer.length} bytes)`);
+// Mock Replit storage client for testing
+// In production, this would be replaced with actual Replit storage API
+
+interface Client {
+  uploadFromBytes(name: string, buffer: Buffer): Promise<void>;
+  list(): Promise<any[]>;
+}
+
+class MockClient implements Client {
+  async uploadFromBytes(name: string, buffer: Buffer): Promise<void> {
+    console.log(`Mock upload: ${name}, size: ${buffer.length} bytes`);
   }
 
   async list(): Promise<any[]> {
@@ -26,8 +33,7 @@ class ImageStorageService {
   private client: Client;
 
   constructor() {
-    // Instantiate the mock client if Replit's object storage is not available
-    this.client = new Client();
+    this.client = new MockClient();
   }
 
   async uploadImageFromFile(file: File, imageName: string): Promise<ImageUploadResult> {
