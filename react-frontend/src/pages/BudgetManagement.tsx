@@ -26,7 +26,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Venue',
       allocated: 15000,
       spent: 12000,
-      color: '#3B82F6',
+      color: '#df8e8e',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -34,7 +34,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Catering',
       allocated: 12000,
       spent: 8000,
-      color: '#10B981',
+      color: '#df8e8e',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -42,7 +42,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Photography',
       allocated: 8000,
       spent: 6000,
-      color: '#F59E0B',
+      color: '#df8e8e',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -50,7 +50,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Decoration',
       allocated: 6000,
       spent: 4500,
-      color: '#EF4444',
+      color: '#df8e8e',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -58,7 +58,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Entertainment',
       allocated: 4000,
       spent: 3000,
-      color: '#8B5CF6',
+      color: '#df8e8e',
       icon: <Eye className="h-4 w-4 text-white" />
     },
     {
@@ -66,7 +66,7 @@ const BudgetManagement: React.FC = () => {
       name: 'Attire',
       allocated: 5000,
       spent: 3500,
-      color: '#06B6D4',
+      color: '#df8e8e',
       icon: <Eye className="h-4 w-4 text-white" />
     }
   ]);
@@ -137,7 +137,7 @@ const BudgetManagement: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <div className="bg-blue-600 p-2 rounded-lg">
+              <div style={{ backgroundColor: '#df8e8e' }} className="p-2 rounded-lg">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -145,9 +145,9 @@ const BudgetManagement: React.FC = () => {
                 <p className="text-sm text-gray-600">Track and manage your wedding expenses</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={() => setShowAddTransaction(true)}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+              className="bg-df8e8e text-white px-6 py-2 rounded-lg hover:bg-df8e8e-700 transition-colors flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>Add Transaction</span>
@@ -248,9 +248,9 @@ const BudgetManagement: React.FC = () => {
                       </div>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className="h-2 rounded-full transition-all duration-300"
-                        style={{ 
+                        style={{
                           width: `${Math.min(getCategoryProgress(category), 100)}%`,
                           backgroundColor: category.color
                         }}
@@ -280,7 +280,7 @@ const BudgetManagement: React.FC = () => {
                 {transactions.slice(0, 5).map((transaction) => (
                   <div key={transaction.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#EF4444' : '#10B981' }}>
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: transaction.type === 'expense' ? '#df8e8e' : '#10B981' }}>
                         {transaction.type === 'expense' ? (
                           <TrendingDown className="h-5 w-5 text-white" />
                         ) : (
@@ -294,7 +294,7 @@ const BudgetManagement: React.FC = () => {
                     </div>
                     <div className="text-right">
                       <div className={`font-bold ${
-                        transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'
+                        transaction.type === 'expense' ? 'text-df8e8e' : 'text-green-600'
                       }`}>
                         {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
                       </div>
@@ -317,7 +317,8 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.category}
                       onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-gray-400"
+                      style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)' } as React.CSSProperties}
                     >
                       <option value="">Select category</option>
                       {categories.map(cat => (
@@ -332,7 +333,8 @@ const BudgetManagement: React.FC = () => {
                       type="text"
                       value={newTransaction.description}
                       onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-gray-400"
+                      style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)' } as React.CSSProperties}
                       placeholder="Enter transaction description"
                     />
                   </div>
@@ -343,7 +345,8 @@ const BudgetManagement: React.FC = () => {
                       type="number"
                       value={newTransaction.amount}
                       onChange={(e) => setNewTransaction({...newTransaction, amount: Number(e.target.value)})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-gray-400"
+                      style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)' } as React.CSSProperties}
                       placeholder="Enter amount"
                     />
                   </div>
@@ -353,7 +356,8 @@ const BudgetManagement: React.FC = () => {
                     <select
                       value={newTransaction.type}
                       onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value as 'expense' | 'income'})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:border-gray-400"
+                      style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.3)' } as React.CSSProperties}
                     >
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
@@ -370,7 +374,7 @@ const BudgetManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={addTransaction}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                    className="flex-1 px-4 py-3 bg-df8e8e text-white rounded-lg font-medium hover:bg-df8e8e-700 transition-colors"
                   >
                     Add Transaction
                   </button>

@@ -478,14 +478,16 @@ const VendorCommunication: React.FC = () => {
                     placeholder="Search vendors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:border-pink-300 focus:ring-2 focus:ring-pink-100 bg-white/80 backdrop-blur-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 bg-white/80 backdrop-blur-sm"
+                    style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.2)' } as React.CSSProperties}
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:border-pink-300 focus:ring-2 focus:ring-pink-100 bg-white/80 backdrop-blur-sm"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 bg-white/80 backdrop-blur-sm"
+                  style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.2)' } as React.CSSProperties}
                 >
                   <option value="all">All Statuses</option>
                   <option value="interested">Interested</option>
@@ -500,7 +502,8 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:border-pink-300 focus:ring-2 focus:ring-pink-100 bg-white/80 backdrop-blur-sm"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 bg-white/80 backdrop-blur-sm"
+                  style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.2)' } as React.CSSProperties}
                 >
                   <option value="all">All Categories</option>
                   <option value="venues">Venues</option>
@@ -514,7 +517,8 @@ const VendorCommunication: React.FC = () => {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl focus:border-pink-300 focus:ring-2 focus:ring-pink-100 bg-white/80 backdrop-blur-sm"
+                  className="px-4 py-2 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 bg-white/80 backdrop-blur-sm"
+                  style={{ '--tw-ring-color': 'rgba(223, 142, 142, 0.2)' } as React.CSSProperties}
                 >
                   <option value="all">All Priorities</option>
                   <option value="high">High Priority</option>
@@ -550,7 +554,7 @@ const VendorCommunication: React.FC = () => {
                         <tr key={comm.id} className="border-b border-gray-100 hover:bg-pink-50/30 transition-colors">
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
+                              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                                 <span className="text-sm font-semibold text-white">
                                   {comm.vendorName.charAt(0)}
                                 </span>
@@ -621,7 +625,7 @@ const VendorCommunication: React.FC = () => {
                     <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                             <span className="text-sm font-semibold text-white">
                               {comm.vendorName.charAt(0)}
                             </span>
@@ -697,7 +701,7 @@ const VendorCommunication: React.FC = () => {
                     <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                             <span className="text-sm font-semibold text-white">
                               {comm.vendorName.charAt(0)}
                             </span>
@@ -766,7 +770,7 @@ const VendorCommunication: React.FC = () => {
                     <div key={comm.id} className="bg-white rounded-xl p-4 border border-gray-200 hover:bg-pink-50/30 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#df8e8e' }}>
                             <span className="text-sm font-semibold text-white">
                               {comm.vendorName.charAt(0)}
                             </span>
