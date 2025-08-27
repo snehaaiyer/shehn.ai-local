@@ -1,6 +1,6 @@
 export interface AIImageResponse {
   success: boolean;
-  images: string[];
+  imageUrls: string[];
   error?: string;
   generatedDescription?: string;
   themeAnalysis: {
