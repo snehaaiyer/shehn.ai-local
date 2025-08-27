@@ -48,12 +48,12 @@ export class VenueImageGenerator {
       const receptionImageResponse: AIImageResponse = await CloudflareAIService.generateWeddingThemeImages();
 
       // Parse responses
-      const mainImage = mainImageResponse.success && mainImageResponse.images && mainImageResponse.images.length > 0
-        ? mainImageResponse.images[0] : '';
-      const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.images && ceremonyImageResponse.images.length > 0
-        ? ceremonyImageResponse.images[0] : '';
-      const receptionImage = receptionImageResponse.success && receptionImageResponse.images && receptionImageResponse.images.length > 0
-        ? receptionImageResponse.images[0] : '';
+      const mainImage = mainImageResponse.success && mainImageResponse.imageUrls && mainImageResponse.imageUrls.length > 0
+        ? mainImageResponse.imageUrls[0] : '';
+      const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.imageUrls && ceremonyImageResponse.imageUrls.length > 0
+        ? ceremonyImageResponse.imageUrls[0] : '';
+      const receptionImage = receptionImageResponse.success && receptionImageResponse.imageUrls && receptionImageResponse.imageUrls.length > 0
+        ? receptionImageResponse.imageUrls[0] : '';
 
       return {
         success: true,

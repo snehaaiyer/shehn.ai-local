@@ -56,7 +56,7 @@ interface VendorDiscoveryResponse {
   backendData?: any;
 }
 
-export export class VendorDiscoveryService {
+export class VendorDiscoveryService {
   /**
    * Search for vendors based on criteria
    */

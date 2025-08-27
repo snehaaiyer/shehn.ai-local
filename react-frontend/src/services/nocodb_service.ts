@@ -42,7 +42,7 @@ interface PreferencesData {
   };
 }
 
-export export class NocoDBService {
+export class NocoDBService {
   private static config: NocoDBConfig = {
     baseUrl: 'http://localhost:8080',
     apiToken: '-h-Q9hbkAgU2DsSqXsRligOG1Qzpgb4OAx_QGwHk',

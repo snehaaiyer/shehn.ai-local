@@ -53,7 +53,7 @@ interface WeddingBlueprintResponse {
   };
 }
 
-export export class WeddingBlueprintService {
+export class WeddingBlueprintService {
   /**
    * Generate comprehensive wedding blueprint using AI services
    */
@@ -109,9 +109,9 @@ export export class WeddingBlueprintService {
 
       // Parse responses
       const summary = summaryResponse.success && summaryResponse.text ? summaryResponse.text : 'Your dream wedding blueprint is being prepared...';
-      const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.images && ceremonyImageResponse.images.length > 0 ? ceremonyImageResponse.images[0] : '';
-      const receptionImage = receptionImageResponse.success && receptionImageResponse.images && receptionImageResponse.images.length > 0 ? receptionImageResponse.images[0] : '';
-      const detailImage = detailImageResponse.success && detailImageResponse.images && detailImageResponse.images.length > 0 ? detailImageResponse.images[0] : '';
+      const ceremonyImage = ceremonyImageResponse.success && ceremonyImageResponse.imageUrls && ceremonyImageResponse.imageUrls.length > 0 ? ceremonyImageResponse.imageUrls[0] : '';
+      const receptionImage = receptionImageResponse.success && receptionImageResponse.imageUrls && receptionImageResponse.imageUrls.length > 0 ? receptionImageResponse.imageUrls[0] : '';
+      const detailImage = detailImageResponse.success && detailImageResponse.imageUrls && detailImageResponse.imageUrls.length > 0 ? detailImageResponse.imageUrls[0] : '';
 
       const recommendations = this.parseRecommendations(recommendationsResponse.success && recommendationsResponse.text ? recommendationsResponse.text : '');
       const timeline = this.parseTimeline(timelineResponse.success && timelineResponse.text ? timelineResponse.text : '');
