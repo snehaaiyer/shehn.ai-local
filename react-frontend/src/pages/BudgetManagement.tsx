@@ -292,7 +292,7 @@ const BudgetManagement: React.FC = () => {
                     </div>
                     <div className="text-right">
                       <div className={`font-bold ${
-                        transaction.type === 'expense' ? 'text-df8e8e' : 'text-green-600'
+                        transaction.type === 'expense' ? 'text-red-600' : 'text-green-600'
                       }`}>
                         {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
                       </div>
@@ -374,7 +374,8 @@ const BudgetManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={addTransaction}
-                    className="flex-1 px-4 py-3 bg-df8e8e text-white rounded-lg font-medium hover:bg-df8e8e-700 transition-colors"
+                    className="flex-1 px-4 py-3 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
+                    style={{ backgroundColor: '#df8e8e' }}
                   >
                     Add Transaction
                   </button>

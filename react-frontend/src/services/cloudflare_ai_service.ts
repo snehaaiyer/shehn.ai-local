@@ -24,7 +24,7 @@ export class CloudflareAIService {
       // Fallback to mock response for now
       return {
         success: true,
-        images: [
+        imageUrls: [
           'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop',
           'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'
         ],
@@ -40,7 +40,7 @@ export class CloudflareAIService {
       return {
         success: false,
         error: 'Failed to generate image',
-        images: [],
+        imageUrls: [],
         themeAnalysis: {
           keywords: [],
           mood: '',

@@ -1,4 +1,3 @@
-
 export interface AIImageResponse {
   success: boolean;
   images: string[];
@@ -44,9 +43,9 @@ export interface AITextResponse {
   error?: string;
 }
 
-export interface ThemeAnalysis {
-  keywords: string[];
-  mood: string;
-  style: string;
-  colorScheme: string[];
+export interface AISearchResult {
+  title: string;
+  description: string;
+  url?: string;
+  imageUrls?: string[];
 }
