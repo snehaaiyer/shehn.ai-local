@@ -53,7 +53,7 @@ interface WeddingBlueprintResponse {
   };
 }
 
-export class WeddingBlueprintService {
+export export class WeddingBlueprintService {
   /**
    * Generate comprehensive wedding blueprint using AI services
    */

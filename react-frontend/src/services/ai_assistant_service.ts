@@ -84,7 +84,13 @@ interface VendorContact {
   message: string;
 }
 
-class AIAssistantService {
+export interface AIAssistantResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
+
+export class AIAssistantService {
   private userPreferences: WeddingPreferencesData | null = null;
 
   // Initialize with user preferences
@@ -303,7 +309,7 @@ class AIAssistantService {
       });
 
       const result = await response.json();
-      
+
       return result;
     } catch (error) {
       console.error('Error analyzing intent:', error);
@@ -639,7 +645,7 @@ class AIAssistantService {
       });
 
       const result = await response.json();
-      
+
       return {
         success: true,
         action: 'general_response',

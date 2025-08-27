@@ -28,6 +28,7 @@ export class CloudflareAIService {
           'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop',
           'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop'
         ],
+        generatedDescription: `Generated ${prompt} themed wedding venue images`,
         themeAnalysis: {
           keywords: ['elegant', 'romantic', 'luxurious'],
           mood: 'romantic',
@@ -41,6 +42,7 @@ export class CloudflareAIService {
         success: false,
         error: 'Failed to generate image',
         imageUrls: [],
+        generatedDescription: '',
         themeAnalysis: {
           keywords: [],
           mood: '',

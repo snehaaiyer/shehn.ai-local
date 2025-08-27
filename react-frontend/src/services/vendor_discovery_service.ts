@@ -37,7 +37,7 @@ interface Vendor {
   }>;
 }
 
-interface VendorSearchParams {
+export interface VendorSearchParams {
   category?: string;
   location?: string;
   priceRange?: string;
@@ -56,7 +56,7 @@ interface VendorDiscoveryResponse {
   backendData?: any;
 }
 
-export class VendorDiscoveryService {
+export export class VendorDiscoveryService {
   /**
    * Search for vendors based on criteria
    */
