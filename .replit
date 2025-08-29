@@ -10,7 +10,7 @@ run = ["sh", "-c", "python unified_wedding_server.py"]
 build = ["sh", "-c", "cd react-frontend && npm install --legacy-peer-deps && npm run build"]
 
 [workflows]
-runButton = "React App Port 3000 Clean"
+runButton = "Start on Port 3000"
 
 [[workflows.workflow]]
 name = "Start Wedding App"
@@ -69,6 +69,23 @@ args = "cd react-frontend && npm install --legacy-peer-deps"
 task = "shell.exec"
 args = "cd react-frontend && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
+[[workflows.workflow]]
+name = "Start on Port 3000"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && rm -rf node_modules/.cache"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && npm install --legacy-peer-deps"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
@@ -84,3 +101,6 @@ externalPort = 8000
 [[ports]]
 localPort = 8001
 externalPort = 8001
+
+[agent]
+expertMode = true
