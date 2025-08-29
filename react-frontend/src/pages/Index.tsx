@@ -71,28 +71,35 @@ const Index: React.FC = () => {
       description: "Set your theme, venue, and preferences",
       icon: <Palette className="w-6 h-6" />,
       style: { backgroundColor: '#2F4F4F' },
-      href: "/wedding-preferences"
+      href: "/preferences"
     },
     {
       title: "Budget Management",
       description: "Track your wedding budget",
       icon: <DollarSign className="w-6 h-6" />,
       style: { backgroundColor: '#2F4F4F' },
-      href: "/budget-management"
+      href: "/budget"
     },
     {
       title: "Vendor Discovery",
       description: "Find and connect with vendors",
       icon: <Search className="w-6 h-6" />,
       style: { backgroundColor: '#2F4F4F' },
-      href: "/vendor-discovery"
+      href: "/vendors"
+    },
+    {
+      title: "Vendor Communication", 
+      description: "Manage vendor relationships",
+      icon: <MessageCircle className="w-6 h-6" />,
+      style: { backgroundColor: '#2F4F4F' },
+      href: "/vendor-communication"
     },
     {
       title: "AI Chat Assistant",
       description: "Get personalized wedding advice",
       icon: <MessageCircle className="w-6 h-6" />,
       style: { backgroundColor: '#2F4F4F' },
-      href: "/ai-chat"
+      href: "/chat"
     }
   ];
 
@@ -252,7 +259,11 @@ const Index: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-4 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#D29B9B' }}>
+              <button 
+                onClick={() => navigate('/preferences')}
+                className="w-full mt-4 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90" 
+                style={{ backgroundColor: '#D29B9B' }}
+              >
                 View All Tasks
               </button>
             </div>

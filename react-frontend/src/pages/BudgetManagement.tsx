@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3 } from "lucide-react";
 
 interface BudgetCategory {
@@ -20,6 +21,7 @@ interface Transaction {
 }
 
 const BudgetManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [categories] = useState<BudgetCategory[]>([
     {
       id: '1',

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
@@ -85,6 +86,7 @@ interface WeddingPreferencesData {
 }
 
 const WeddingPreferences: React.FC = () => {
+  const navigate = useNavigate();
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
 

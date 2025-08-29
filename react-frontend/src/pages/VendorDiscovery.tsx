@@ -447,7 +447,10 @@ const VendorDiscovery: React.FC = () => {
             <div className="flex justify-center gap-4">
               {filtersChanged && (
                 <button
-                  onClick={applyFilters}
+                  onClick={() => {
+                    applyFilters();
+                    setFiltersChanged(false);
+                  }}
                   className="px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition-all duration-300 flex items-center gap-2"
                   style={{ backgroundColor: '#2F4F4F', color: '#FFFFFF' }}
                 >

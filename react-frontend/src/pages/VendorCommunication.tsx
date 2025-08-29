@@ -523,6 +523,31 @@ const VendorCommunication: React.FC = () => {
                 </select>
 
                 <button 
+                  onClick={() => {
+                    // Simple CSV export of filtered communications
+                    const csvData = filteredCommunications.map(comm => ({
+                      vendor: comm.vendorName,
+                      category: comm.vendorCategory,
+                      status: comm.status,
+                      priority: comm.priority,
+                      location: comm.vendorLocation,
+                      quote: comm.quotation?.amount || 'No quote',
+                      updated: new Date(comm.updatedAt).toLocaleDateString()
+                    }));
+                    
+                    const csv = [
+                      Object.keys(csvData[0] || {}).join(','),
+                      ...csvData.map(row => Object.values(row).join(','))
+                    ].join('\n');
+                    
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'vendor_communications.csv';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                  }}
                   className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90"
                   style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}
                 >
