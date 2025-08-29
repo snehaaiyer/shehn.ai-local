@@ -22,9 +22,9 @@ class OllamaAIService:
     AI Service using Ollama for real AI responses
     """
 
-    def __init__(self, model: str = "nous-hermes:latest", base_url: str = "http://localhost:11434"):
+    def __init__(self, model: str = "nous-hermes:latest", base_url: str = "http://0.0.0.0:11434"):
         self.model = model
-        self.base_url = "http://0.0.0.0:11434"
+        self.base_url = base_url
         self.api_url = f"{base_url}/api/generate"
         self.chat_url = f"{base_url}/api/chat"
 
