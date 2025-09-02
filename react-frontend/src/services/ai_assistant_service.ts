@@ -43,13 +43,13 @@ interface WeddingPreferencesData {
 
 // Google API Configuration
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || '';
+const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || 'REDACTED_GEMINI_KEY';
 
 // Replit API Configuration
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://0.0.0.0:5000';
 
-// Mock mode for testing without API keys
-const MOCK_MODE = !GOOGLE_API_KEY || !GEMINI_API_KEY;
+// Use Gemini API for production
+const MOCK_MODE = false; // Always use real APIs in production
 
 interface TaskContext {
   userPreferences: WeddingPreferencesData;
