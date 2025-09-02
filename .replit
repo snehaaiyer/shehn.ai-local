@@ -86,6 +86,23 @@ args = "cd react-frontend && npm install --legacy-peer-deps"
 task = "shell.exec"
 args = "cd react-frontend && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
+[[workflows.workflow]]
+name = "Start Ollama"
+author = 37053864
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export OLLAMA_HOST=0.0.0.0:11434"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export OLLAMA_ORIGINS=*"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "ollama serve"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000
