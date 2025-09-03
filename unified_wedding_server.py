@@ -44,8 +44,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize services
-vendor_db = get_vendor_database()
+# Initialize services with error handling
+try:
+    vendor_db = get_vendor_database()
+    logger.info("✅ Vendor database service initialized")
+except Exception as e:
+    logger.warning(f"⚠️ Vendor database initialization failed: {e}")
+    vendor_db = None
 
 # Static file serving for React frontend
 react_build_path = Path("react-frontend/build")
@@ -138,21 +143,24 @@ async def get_vendor_data(category: str, request: Request):
         location = preferences.get('city', 'Mumbai')
         use_serper = preferences.get('use_serper', 'true').lower() == 'true'
 
-        # Try NocoDB first
-        try:
-            db_vendors = vendor_db.search_vendors(category, location, search_params=preferences)
-            if db_vendors and len(db_vendors) >= 3:
-                logger.info(f"✅ Found {len(db_vendors)} vendors in NocoDB")
-                return JSONResponse({
-                    'success': True,
-                    'vendors': db_vendors,
-                    'category': category,
-                    'location': location,
-                    'source': 'nocodb',
-                    'total_found': len(db_vendors)
-                })
-        except Exception as e:
-            logger.error(f"NocoDB error: {e}")
+        # Try NocoDB first (only if vendor_db is available)
+        if vendor_db:
+            try:
+                db_vendors = vendor_db.search_vendors(category, location, search_params=preferences)
+                if db_vendors and len(db_vendors) >= 3:
+                    logger.info(f"✅ Found {len(db_vendors)} vendors in NocoDB")
+                    return JSONResponse({
+                        'success': True,
+                        'vendors': db_vendors,
+                        'category': category,
+                        'location': location,
+                        'source': 'nocodb',
+                        'total_found': len(db_vendors)
+                    })
+            except Exception as e:
+                logger.error(f"NocoDB error: {e}")
+        else:
+            logger.warning("⚠️ Vendor database not available, using fallback")
 
         # Fallback to Serper AI
         if use_serper:
@@ -427,13 +435,40 @@ def main():
     logger.info("📱 Frontend: Served from React build or fallback")
     logger.info("🤖 API Docs: http://0.0.0.0:8001/api/docs")
     logger.info("==================================================")
-    uvicorn.run(
-        "unified_wedding_server:app",
-        host="0.0.0.0",
-        port=8001,
-        reload=False,
-        log_level="info"
-    )
+    
+    try:
+        # Test database connections before starting
+        logger.info("🔧 Testing service connections...")
+        
+        # Initialize vendor database
+        global vendor_db
+        vendor_db = get_vendor_database()
+        logger.info("✅ Vendor database initialized")
+        
+        # Test NocoDB connection
+        try:
+            test_result = vendor_db.nocodb_client.test_connection() if hasattr(vendor_db, 'nocodb_client') else True
+            if test_result:
+                logger.info("✅ NocoDB connection verified")
+            else:
+                logger.warning("⚠️ NocoDB connection failed - using fallback mode")
+        except Exception as e:
+            logger.warning(f"⚠️ NocoDB test failed: {e} - using fallback mode")
+        
+        logger.info("🚀 Starting FastAPI server...")
+        uvicorn.run(
+            "unified_wedding_server:app",
+            host="0.0.0.0",
+            port=8001,
+            reload=False,
+            log_level="info",
+            access_log=True
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ Server startup failed: {e}")
+        logger.error("💡 Try checking dependencies: pip install fastapi uvicorn")
+        raise
 
 if __name__ == "__main__":
     main()

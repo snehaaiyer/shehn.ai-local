@@ -12,10 +12,10 @@ from datetime import datetime
 class HealthMonitor:
     def __init__(self):
         self.services = {
-            'React Frontend': 'http://localhost:5000',
-            'Enhanced RAG Vendor API': 'http://localhost:5003/health',
-            'Unified Wedding Server': 'http://localhost:8000/health',
-            'Vendor Communication': 'http://localhost:5004/health'
+            'React Frontend': 'http://0.0.0.0:3000',
+            'Enhanced RAG Vendor API': 'http://0.0.0.0:5003/health',
+            'Unified Wedding Server': 'http://0.0.0.0:8001/health',
+            'Vendor Communication': 'http://0.0.0.0:5004/health'
         }
     
     def check_service(self, name: str, url: str) -> dict:

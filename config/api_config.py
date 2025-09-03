@@ -12,9 +12,9 @@ API_SERVICES = {
         'port': 5003,
         'url': 'http://0.0.0.0:5003'
     },
-    'unified_server': {
-        'port': 8000,
-        'url': 'http://0.0.0.0:8000'
+    'unified_wedding_server': {
+        'port': 8001,
+        'url': 'http://0.0.0.0:8001'
     },
     'vendor_communication': {
         'port': 5004,
