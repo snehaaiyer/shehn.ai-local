@@ -57,29 +57,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize services with error handling
-vendor_db = None
+# Initialize Replit PostgreSQL database service
+db_service = None
 try:
-    from vendor_database import get_vendor_database
-    vendor_db = get_vendor_database()
-    logger.info("✅ Vendor database service initialized")
+    from replit_database_service import get_database_service
+    db_service = get_database_service()
     
     # Test database connection
-    try:
-        if hasattr(vendor_db, 'nocodb_client') and hasattr(vendor_db.nocodb_client, 'test_connection'):
-            test_result = vendor_db.nocodb_client.test_connection()
-            if test_result:
-                logger.info("✅ NocoDB connection verified")
-            else:
-                logger.warning("⚠️ NocoDB connection test failed - using fallback mode")
-        else:
-            logger.info("✅ Vendor database initialized in fallback mode")
-    except Exception as db_test_error:
-        logger.warning(f"⚠️ Database test failed: {db_test_error} - using fallback mode")
+    if db_service.test_connection():
+        logger.info("✅ Replit PostgreSQL database connected")
+    else:
+        logger.warning("⚠️ Database connection failed - using fallback mode")
         
 except Exception as e:
-    logger.warning(f"⚠️ Vendor database initialization failed: {e} - using mock data")
-    vendor_db = None
+    logger.warning(f"⚠️ Database initialization failed: {e} - using mock data")
+    db_service = None
 
 # Static file serving for React frontend
 react_build_path = Path("react-frontend/build")
@@ -178,24 +170,24 @@ async def get_vendor_data(category: str, request: Request):
         location = preferences.get('city', 'Mumbai')
         use_serper = preferences.get('use_serper', 'true').lower() == 'true'
 
-        # Try NocoDB first (only if vendor_db is available)
-        if vendor_db:
+        # Try PostgreSQL database first
+        if db_service:
             try:
-                db_vendors = vendor_db.search_vendors(category, location, search_params=preferences)
+                db_vendors = db_service.search_vendors(category, location, preferences)
                 if db_vendors and len(db_vendors) >= 3:
-                    logger.info(f"✅ Found {len(db_vendors)} vendors in NocoDB")
+                    logger.info(f"✅ Found {len(db_vendors)} vendors in PostgreSQL")
                     return JSONResponse({
                         'success': True,
                         'vendors': db_vendors,
                         'category': category,
                         'location': location,
-                        'source': 'nocodb',
+                        'source': 'postgresql',
                         'total_found': len(db_vendors)
                     })
             except Exception as e:
-                logger.error(f"NocoDB error: {e}")
+                logger.error(f"PostgreSQL error: {e}")
         else:
-            logger.warning("⚠️ Vendor database not available, using fallback")
+            logger.warning("⚠️ Database not available, using fallback")
 
         # Fallback to Serper AI
         if use_serper:
@@ -384,15 +376,15 @@ async def save_wedding_data(request: Request):
             'created_at': datetime.now().isoformat()
         }
 
-        # Try to save to database if available
-        if vendor_db:
+        # Try to save to PostgreSQL database
+        if db_service:
             try:
-                result = vendor_db.store_couple_data(couple_data)
-                if result.get('success'):
+                couple_id = db_service.create_couple(couple_data)
+                if couple_id:
                     return JSONResponse({
                         'success': True,
                         'message': 'Wedding data saved successfully',
-                        'record_id': result.get('id')
+                        'record_id': couple_id
                     })
             except Exception as db_error:
                 logger.error(f"Database save failed: {db_error}")
