@@ -23,6 +23,17 @@ from serper_images import get_theme_images, search_vendors, get_all_vendors
 from vendor_database import get_vendor_database
 from ollama_ai_service import ollama_service
 
+# Load Serper API key
+try:
+    from config.api_config import SERPER_API_KEY
+    if SERPER_API_KEY:
+        os.environ['SERPER_API_KEY'] = SERPER_API_KEY
+        logger.info("✅ Serper API key loaded from config")
+    else:
+        logger.warning("⚠️ Serper API key not found in config")
+except ImportError:
+    logger.warning("⚠️ Could not import Serper API key from config")
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
