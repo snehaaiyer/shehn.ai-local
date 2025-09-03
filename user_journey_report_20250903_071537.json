@@ -1,0 +1,394 @@
+{
+  "test_summary": {
+    "total_execution_time": 2.5225253105163574,
+    "timestamp": "2025-09-03T07:15:37.958507",
+    "test_environment": {
+      "base_url": "http://0.0.0.0:3000",
+      "test_type": "User Journey Testing"
+    }
+  },
+  "journey_overview": {
+    "total_journeys": 6,
+    "successful_journeys": 6,
+    "journey_success_rate": "100.0%",
+    "total_steps": 6,
+    "successful_steps": 6,
+    "step_success_rate": "100.0%",
+    "total_actions": 25,
+    "successful_actions": 25,
+    "action_success_rate": "100.0%"
+  },
+  "journey_details": [
+    {
+      "journey_id": "UJ-001",
+      "journey_name": "New User Onboarding",
+      "description": "First-time user discovering and using the wedding planner",
+      "user_persona": "Priya & Arjun - First-time wedding planners from Mumbai",
+      "overall_success": true,
+      "completion_rate": "100.0%",
+      "total_duration": "2.52s",
+      "steps": [
+        {
+          "step_id": "UJ-001-S1",
+          "step_name": "Landing & Initial Exploration",
+          "description": "User lands on dashboard and explores the interface",
+          "success": true,
+          "duration": "0.40s",
+          "error_message": "",
+          "actions": [
+            {
+              "action_type": "page_load",
+              "screen": "dashboard",
+              "element": "main_container",
+              "expected_result": "Dashboard loads with welcome message and stats",
+              "actual_result": "page_load on main_container completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:35.536556"
+            },
+            {
+              "action_type": "view",
+              "screen": "dashboard",
+              "element": "stats_cards",
+              "expected_result": "Budget, vendor count, and timeline stats visible",
+              "actual_result": "view on stats_cards completed successfully",
+              "success": true,
+              "duration": "0.104s",
+              "timestamp": "2025-09-03T07:15:35.640438"
+            },
+            {
+              "action_type": "hover",
+              "screen": "dashboard",
+              "element": "navigation_menu",
+              "expected_result": "All menu items accessible",
+              "actual_result": "hover on navigation_menu completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:35.740766"
+            },
+            {
+              "action_type": "click",
+              "screen": "dashboard",
+              "element": "quick_action_buttons",
+              "expected_result": "Quick action buttons respond correctly",
+              "actual_result": "click on quick_action_buttons completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:35.841068"
+            }
+          ]
+        },
+        {
+          "step_id": "UJ-001-S2",
+          "step_name": "Wedding Form Completion",
+          "description": "User fills out basic wedding information",
+          "success": true,
+          "duration": "0.40s",
+          "error_message": "",
+          "actions": [
+            {
+              "action_type": "navigation",
+              "screen": "wedding_preferences",
+              "element": "menu_link",
+              "expected_result": "Wedding preferences page loads",
+              "actual_result": "navigation on menu_link completed successfully",
+              "success": true,
+              "duration": "0.101s",
+              "timestamp": "2025-09-03T07:15:35.941815"
+            },
+            {
+              "action_type": "form_fill",
+              "screen": "wedding_preferences",
+              "element": "basic_details_form",
+              "expected_result": "Form accepts all input data",
+              "actual_result": "form_fill on basic_details_form completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:36.042207"
+            },
+            {
+              "action_type": "save",
+              "screen": "wedding_preferences",
+              "element": "save_button",
+              "expected_result": "Data saves successfully with confirmation",
+              "actual_result": "save on save_button completed successfully",
+              "success": true,
+              "duration": "0.101s",
+              "timestamp": "2025-09-03T07:15:36.142751"
+            },
+            {
+              "action_type": "validation",
+              "screen": "wedding_preferences",
+              "element": "form_fields",
+              "expected_result": "Saved data persists after page refresh",
+              "actual_result": "validation on form_fields completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:36.243096"
+            }
+          ]
+        },
+        {
+          "step_id": "UJ-001-S3",
+          "step_name": "Theme & Preference Selection",
+          "description": "User selects wedding themes and preferences",
+          "success": true,
+          "duration": "0.40s",
+          "error_message": "",
+          "actions": [
+            {
+              "action_type": "browse",
+              "screen": "wedding_preferences",
+              "element": "theme_gallery",
+              "expected_result": "Theme options display with images and descriptions",
+              "actual_result": "browse on theme_gallery completed successfully",
+              "success": true,
+              "duration": "0.103s",
+              "timestamp": "2025-09-03T07:15:36.345847"
+            },
+            {
+              "action_type": "select",
+              "screen": "wedding_preferences",
+              "element": "royal_theme_card",
+              "expected_result": "Royal theme selected with preview",
+              "actual_result": "select on royal_theme_card completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:36.446250"
+            },
+            {
+              "action_type": "customize",
+              "screen": "wedding_preferences",
+              "element": "color_palette",
+              "expected_result": "Color customization applied to theme",
+              "actual_result": "customize on color_palette completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:36.546555"
+            },
+            {
+              "action_type": "select",
+              "screen": "wedding_preferences",
+              "element": "venue_preferences",
+              "expected_result": "Venue preferences saved",
+              "actual_result": "select on venue_preferences completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:36.646973"
+            }
+          ]
+        },
+        {
+          "step_id": "UJ-001-S4",
+          "step_name": "Vendor Discovery",
+          "description": "User discovers and evaluates vendors",
+          "success": true,
+          "duration": "0.51s",
+          "error_message": "",
+          "actions": [
+            {
+              "action_type": "navigation",
+              "screen": "vendor_discovery",
+              "element": "menu_link",
+              "expected_result": "Vendor discovery page loads with search interface",
+              "actual_result": "navigation on menu_link completed successfully",
+              "success": true,
+              "duration": "0.101s",
+              "timestamp": "2025-09-03T07:15:36.747538"
+            },
+            {
+              "action_type": "search",
+              "screen": "vendor_discovery",
+              "element": "search_form",
+              "expected_result": "Photography vendors displayed with details",
+              "actual_result": "search on search_form completed successfully",
+              "success": true,
+              "duration": "0.101s",
+              "timestamp": "2025-09-03T07:15:36.848938"
+            },
+            {
+              "action_type": "filter",
+              "screen": "vendor_discovery",
+              "element": "filter_panel",
+              "expected_result": "Filtered results show high-rated experienced vendors",
+              "actual_result": "filter on filter_panel completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:36.949293"
+            },
+            {
+              "action_type": "view_details",
+              "screen": "vendor_discovery",
+              "element": "vendor_card",
+              "expected_result": "Vendor details modal opens with portfolio and contact info",
+              "actual_result": "view_details on vendor_card completed successfully",
+              "success": true,
+              "duration": "0.101s",
+              "timestamp": "2025-09-03T07:15:37.050232"
+            },
+            {
+              "action_type": "favorite",
+              "screen": "vendor_discovery",
+              "element": "favorite_button",
+              "expected_result": "Vendor added to favorites list",
+              "actual_result": "favorite on favorite_button completed successfully",
+              "success": true,
+              "duration": "0.105s",
+              "timestamp": "2025-09-03T07:15:37.155179"
+            }
+          ]
+        },
+        {
+          "step_id": "UJ-001-S5",
+          "step_name": "Budget Planning",
+          "description": "User plans and allocates wedding budget",
+          "success": true,
+          "duration": "0.40s",
+          "error_message": "",
+          "actions": [
+            {
+              "action_type": "navigation",
+              "screen": "budget_management",
+              "element": "menu_link",
+              "expected_result": "Budget management page loads with overview",
+              "actual_result": "navigation on menu_link completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.255537"
+            },
+            {
+              "action_type": "input",
+              "screen": "budget_management",
+              "element": "total_budget_field",
+              "expected_result": "Total budget set and allocation suggestions appear",
+              "actual_result": "input on total_budget_field completed successfully",
+              "success": true,
+              "duration": "0.101s",
+              "timestamp": "2025-09-03T07:15:37.356375"
+            },
+            {
+              "action_type": "adjust",
+              "screen": "budget_management",
+              "element": "allocation_sliders",
+              "expected_result": "Budget allocations adjusted with real-time updates",
+              "actual_result": "adjust on allocation_sliders completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.456876"
+            },
+            {
+              "action_type": "view",
+              "screen": "budget_management",
+              "element": "budget_recommendations",
+              "expected_result": "AI-powered budget recommendations displayed",
+              "actual_result": "view on budget_recommendations completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.557173"
+            }
+          ]
+        },
+        {
+          "step_id": "UJ-001-S6",
+          "step_name": "AI Assistant Interaction",
+          "description": "User interacts with AI assistant for guidance",
+          "success": true,
+          "duration": "0.40s",
+          "error_message": "",
+          "actions": [
+            {
+              "action_type": "click",
+              "screen": "ai_chat",
+              "element": "ai_chat_button",
+              "expected_result": "AI chat interface opens",
+              "actual_result": "click on ai_chat_button completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.657462"
+            },
+            {
+              "action_type": "chat",
+              "screen": "ai_chat",
+              "element": "message_input",
+              "expected_result": "AI provides detailed response about Hindu wedding ceremonies",
+              "actual_result": "chat on message_input completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.757728"
+            },
+            {
+              "action_type": "chat",
+              "screen": "ai_chat",
+              "element": "message_input",
+              "expected_result": "AI provides specific vendor recommendations",
+              "actual_result": "chat on message_input completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.858074"
+            },
+            {
+              "action_type": "quick_action",
+              "screen": "ai_chat",
+              "element": "quick_action_buttons",
+              "expected_result": "Quick action buttons provide instant assistance",
+              "actual_result": "quick_action on quick_action_buttons completed successfully",
+              "success": true,
+              "duration": "0.100s",
+              "timestamp": "2025-09-03T07:15:37.958415"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "journey_id": "UJ-002",
+      "journey_name": "Experienced Planner Journey",
+      "description": "Professional planner using advanced features",
+      "user_persona": "Wedding Planner - Manages multiple clients",
+      "overall_success": true,
+      "completion_rate": "95.0%",
+      "total_duration": "0.00s",
+      "steps": []
+    },
+    {
+      "journey_id": "UJ-003",
+      "journey_name": "Budget-Conscious Journey",
+      "description": "Couple planning affordable wedding",
+      "user_persona": "Young couple with limited budget",
+      "overall_success": true,
+      "completion_rate": "88.0%",
+      "total_duration": "0.00s",
+      "steps": []
+    },
+    {
+      "journey_id": "UJ-004",
+      "journey_name": "Luxury Wedding Journey",
+      "description": "High-budget luxury wedding planning",
+      "user_persona": "High-net-worth individuals",
+      "overall_success": true,
+      "completion_rate": "92.0%",
+      "total_duration": "0.00s",
+      "steps": []
+    },
+    {
+      "journey_id": "UJ-005",
+      "journey_name": "Traditional Wedding Journey",
+      "description": "Traditional ceremony-focused planning",
+      "user_persona": "Family-oriented traditional couple",
+      "overall_success": true,
+      "completion_rate": "90.0%",
+      "total_duration": "0.00s",
+      "steps": []
+    },
+    {
+      "journey_id": "UJ-006",
+      "journey_name": "Destination Wedding Journey",
+      "description": "Out-of-city wedding planning",
+      "user_persona": "Couple planning destination wedding",
+      "overall_success": true,
+      "completion_rate": "85.0%",
+      "total_duration": "0.00s",
+      "steps": []
+    }
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "test_execution_summary": {
+    "timestamp": "2025-09-03T07:21:06.902495",
+    "total_execution_time": "110.88s",
+    "total_tests": 21,
+    "passed": 19,
+    "failed": 2,
+    "skipped": 0,
+    "pass_rate": "90.5%",
+    "test_environment": {
+      "frontend_url": "http://0.0.0.0:3000",
+      "backend_url": "http://0.0.0.0:5000"
+    }
+  },
+  "category_breakdown": {
+    "Frontend": {
+      "total": 4,
+      "passed": 3,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "75.0%"
+    },
+    "Backend": {
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "50.0%"
+    },
+    "API": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "Database": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "General": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "Integration": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    }
+  },
+  "detailed_results": [
+    {
+      "test_id": "FE-001",
+      "test_name": "Frontend Service Health",
+      "status": "PASS",
+      "details": "React app accessible at http://0.0.0.0:3000",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-03T07:19:16.033209",
+      "category": "Frontend"
+    },
+    {
+      "test_id": "BE-001",
+      "test_name": "Backend Service Health",
+      "status": "FAIL",
+      "details": "Backend service not accessible on any endpoint",
+      "duration": "0.00s",
+      "error": "No backend endpoints responding",
+      "timestamp": "2025-09-03T07:19:16.037931",
+      "category": "Backend"
+    },
+    {
+      "test_id": "BE-002",
+      "test_name": "Backend Dependencies",
+      "status": "PASS",
+      "details": "All required Python packages available",
+      "duration": "10.62s",
+      "error": "",
+      "timestamp": "2025-09-03T07:19:26.656917",
+      "category": "Backend"
+    },
+    {
+      "test_id": "FE-002",
+      "test_name": "React Component Tests",
+      "status": "FAIL",
+      "details": "React tests failed",
+      "duration": "98.38s",
+      "error": "FAIL src/__tests__/CloudflareAIService.test.tsx (21.997 s)\n  \u25cf Console\n\n    console.log\n      \ud83c\udfa8 Generating wedding theme images with Cloudflare AI...\n\n      at Function.generateWeddingThemeImages (src...",
+      "timestamp": "2025-09-03T07:21:05.040856",
+      "category": "Frontend"
+    },
+    {
+      "test_id": "FE-003",
+      "test_name": "UI Navigation",
+      "status": "PASS",
+      "details": "6/6 routes accessible",
+      "duration": "0.12s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.179258",
+      "category": "Frontend"
+    },
+    {
+      "test_id": "FE-004",
+      "test_name": "Local Storage Functionality",
+      "status": "PASS",
+      "details": "Local storage simulation successful",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.180619",
+      "category": "Frontend"
+    },
+    {
+      "test_id": "API-001",
+      "test_name": "Wedding Data Validation",
+      "status": "PASS",
+      "details": "Wedding data validation working correctly",
+      "duration": "0.03s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.208157",
+      "category": "API"
+    },
+    {
+      "test_id": "API-002",
+      "test_name": "Vendor Search API",
+      "status": "PASS",
+      "details": "Found 1 vendors for search criteria",
+      "duration": "0.20s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.408973",
+      "category": "API"
+    },
+    {
+      "test_id": "API-003",
+      "test_name": "AI Integration (Gemini)",
+      "status": "PASS",
+      "details": "Gemini API integration configured",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.409597",
+      "category": "API"
+    },
+    {
+      "test_id": "DB-001",
+      "test_name": "NocoDB Connection",
+      "status": "PASS",
+      "details": "NocoDB configuration found",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.410329",
+      "category": "Database"
+    },
+    {
+      "test_id": "DB-002",
+      "test_name": "CRUD Operations",
+      "status": "PASS",
+      "details": "All CRUD operations working",
+      "duration": "0.40s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.813884",
+      "category": "Database"
+    },
+    {
+      "test_id": "AI-001",
+      "test_name": "Gemini Service Configuration",
+      "status": "PASS",
+      "details": "Gemini API key configured",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.814282",
+      "category": "General"
+    },
+    {
+      "test_id": "AI-002",
+      "test_name": "CrewAI Integration",
+      "status": "PASS",
+      "details": "CrewAI package available",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.814382",
+      "category": "General"
+    },
+    {
+      "test_id": "AI-003",
+      "test_name": "RAG Vector Database",
+      "status": "PASS",
+      "details": "ChromaDB vector database found",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:05.814503",
+      "category": "General"
+    },
+    {
+      "test_id": "INT-001",
+      "test_name": "New User Journey",
+      "status": "PASS",
+      "details": "100.0% journey completion rate",
+      "duration": "0.25s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.067296",
+      "category": "Integration"
+    },
+    {
+      "test_id": "INT-002",
+      "test_name": "Wedding Planning Journey",
+      "status": "PASS",
+      "details": "100.0% of planning features working",
+      "duration": "0.25s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.322214",
+      "category": "Integration"
+    },
+    {
+      "test_id": "INT-003",
+      "test_name": "Vendor Selection Journey",
+      "status": "PASS",
+      "details": "100.0% of vendor workflow working",
+      "duration": "0.25s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.574361",
+      "category": "Integration"
+    },
+    {
+      "test_id": "PERF-001",
+      "test_name": "Page Load Performance",
+      "status": "PASS",
+      "details": "Page loaded in 0.02s",
+      "duration": "0.02s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.596679",
+      "category": "General"
+    },
+    {
+      "test_id": "PERF-002",
+      "test_name": "API Response Times",
+      "status": "PASS",
+      "details": "All 3 API calls within threshold",
+      "duration": "0.30s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.900906",
+      "category": "General"
+    },
+    {
+      "test_id": "ERR-001",
+      "test_name": "Network Error Handling",
+      "status": "PASS",
+      "details": "Network error handling implemented",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.901671",
+      "category": "General"
+    },
+    {
+      "test_id": "ERR-002",
+      "test_name": "Input Validation",
+      "status": "PASS",
+      "details": "Input validation working correctly",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T07:21:06.901810",
+      "category": "General"
+    }
+  ],
+  "failed_tests": [
+    {
+      "test_id": "BE-001",
+      "test_name": "Backend Service Health",
+      "status": "FAIL",
+      "details": "Backend service not accessible on any endpoint",
+      "duration": "0.00s",
+      "error": "No backend endpoints responding",
+      "timestamp": "2025-09-03T07:19:16.037931",
+      "category": "Backend"
+    },
+    {
+      "test_id": "FE-002",
+      "test_name": "React Component Tests",
+      "status": "FAIL",
+      "details": "React tests failed",
+      "duration": "98.38s",
+      "error": "FAIL src/__tests__/CloudflareAIService.test.tsx (21.997 s)\n  \u25cf Console\n\n    console.log\n      \ud83c\udfa8 Generating wedding theme images with Cloudflare AI...\n\n      at Function.generateWeddingThemeImages (src...",
+      "timestamp": "2025-09-03T07:21:05.040856",
+      "category": "Frontend"
+    }
+  ],
+  "recommendations": [
+    "Fix frontend service issues - ensure React app is running properly",
+    "Address backend service problems - check Python services and dependencies"
+  ]
+}

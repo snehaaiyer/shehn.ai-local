@@ -1,0 +1,38 @@
+{
+  "test_execution_summary": {
+    "timestamp": "2025-09-03T07:15:31.958800",
+    "total_execution_time": "126.47s",
+    "test_suites_run": 6,
+    "successful_suites": 5,
+    "overall_success_rate": "83.3%"
+  },
+  "detailed_results": {
+    "frontend_tests": {
+      "success": false,
+      "output": "FAIL src/__tests__/CloudflareAIService.test.tsx (24.997 s)\n  \u25cf Console\n\n    console.log\n      \ud83c\udfa8 Generating wedding theme images with Cloudflare AI...\n\n      at Function.generateWeddingThemeImages (src/services/cloudflare_ai_service.ts:22:15)\n\n    console.error\n      Cloudflare AI request failed: Error: Network error\n          at Object.<anonymous> (/home/runner/workspace/react-frontend/src/__tests__/CloudflareAIService.test.tsx:56:39)\n          at Promise.then.completed (/home/runner/workspace/r"
+    },
+    "journey_tests": {
+      "success": true,
+      "output": "\n============================================================\n\ud83c\udfad BID AI USER JOURNEY TEST RESULTS\n============================================================\n\u2705 Journey Success Rate: 100.0%\n\ud83d\udcca Step Success Rate: 100.0%\n\u26a1 Action Success Rate: 100.0%\n\ud83d\udd50 Total Test Time: 2.52s\n\ud83d\udcc1 Reports: user_journey_report_20250903_071522.json & user_journey_summary_20250903_071522.md\n============================================================\n"
+    },
+    "screen_tests": {
+      "success": true,
+      "output": ""
+    },
+    "api_tests": {
+      "success": true,
+      "output": ""
+    },
+    "ai_tests": {
+      "success": true,
+      "output": ""
+    },
+    "performance_tests": {
+      "success": true,
+      "output": ""
+    }
+  },
+  "recommendations": [
+    "Fix React frontend test failures - check component rendering and logic"
+  ]
+}

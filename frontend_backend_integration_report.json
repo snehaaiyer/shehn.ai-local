@@ -1,0 +1,9 @@
+{
+  "frontend_accessible": true,
+  "backend_accessible": false,
+  "api_endpoints_working": false,
+  "data_flow_working": false,
+  "overall_status": "FAIL",
+  "timestamp": "2025-09-03T07:21:23.849536",
+  "pass_rate": "25.0%"
+}
