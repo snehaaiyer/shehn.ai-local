@@ -30,13 +30,16 @@ from ollama_ai_service import ollama_service
 # Load Serper API key
 try:
     from config.api_config import SERPER_API_KEY
-    if SERPER_API_KEY:
+    if SERPER_API_KEY and SERPER_API_KEY != "":
         os.environ['SERPER_API_KEY'] = SERPER_API_KEY
         logger.info("✅ Serper API key loaded from config")
+        logger.info(f"🔑 API key: {SERPER_API_KEY[:8]}...{SERPER_API_KEY[-4:]}")
     else:
-        logger.warning("⚠️ Serper API key not found in config")
-except ImportError:
-    logger.warning("⚠️ Could not import Serper API key from config")
+        logger.warning("⚠️ Serper API key not found or empty in config")
+except ImportError as e:
+    logger.warning(f"⚠️ Could not import Serper API key from config: {e}")
+except Exception as e:
+    logger.error(f"❌ Serper API key configuration error: {e}")
 logger = logging.getLogger(__name__)
 
 # FastAPI App Setup

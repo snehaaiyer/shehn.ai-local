@@ -39,4 +39,5 @@ NOCODB_API_TOKEN = os.getenv('NOCODB_API_TOKEN', '')
 # AI Service Configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
-SERPER_API_KEY = os.getenv('SERPER_API_KEY', '')
+# Serper API key for enhanced search
+SERPER_API_KEY = "12345your_actual_serper_api_key_here67890"
