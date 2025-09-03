@@ -18,6 +18,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import logging
 
+# Configure logging first
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Import all our services
 from serper_images import get_theme_images, search_vendors, get_all_vendors
 from vendor_database import get_vendor_database
@@ -33,9 +37,6 @@ try:
         logger.warning("⚠️ Serper API key not found in config")
 except ImportError:
     logger.warning("⚠️ Could not import Serper API key from config")
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # FastAPI App Setup
