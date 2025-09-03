@@ -306,7 +306,7 @@ export class VendorDiscoveryService {
    */
   static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
     const backendUrl = window.location.hostname === 'localhost' ?
-      'http://localhost:5003' :
+      'http://0.0.0.0:8001' :
       `https://${window.location.hostname}`;
 
     // Enhanced request body for RAG-enhanced semantic search
