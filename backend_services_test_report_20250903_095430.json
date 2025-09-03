@@ -1,0 +1,627 @@
+{
+  "test_execution_summary": {
+    "test_type": "Backend Services Testing",
+    "timestamp": "2025-09-03T09:54:30.238979",
+    "total_execution_time": "15.89s",
+    "total_tests": 27,
+    "passed": 21,
+    "failed": 6,
+    "skipped": 0,
+    "pass_rate": "77.8%",
+    "test_environment": {
+      "backend_url": "http://0.0.0.0:8001",
+      "test_focus": "Python Backend Services"
+    }
+  },
+  "category_breakdown": {
+    "Backend Service": {
+      "total": 3,
+      "passed": 1,
+      "failed": 2,
+      "skipped": 0,
+      "pass_rate": "33.3%"
+    },
+    "Backend API": {
+      "total": 4,
+      "passed": 1,
+      "failed": 3,
+      "skipped": 0,
+      "pass_rate": "25.0%"
+    },
+    "Database Service": {
+      "total": 3,
+      "passed": 2,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "66.7%"
+    },
+    "AI Service": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "Vendor Service": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "Communication Service": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "RAG Service": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "Backend General": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    }
+  },
+  "service_breakdown": {
+    "unified_wedding_server": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "0.0%"
+    },
+    "dependencies": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "health_endpoints": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "0.0%"
+    },
+    "wedding_data_api": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "0.0%"
+    },
+    "vendor_discovery_api": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "0.0%"
+    },
+    "ai_chat_api": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "theme_images_api": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "0.0%"
+    },
+    "nocodb": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "chromadb": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "data_storage": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": "0.0%"
+    },
+    "gemini_ai": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "crewai_agents": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "ollama": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "serper_search": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "vendor_database": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "vendor_matching": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "message_generation": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "email_integration": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "whatsapp_integration": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "rag_database": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "rag_search": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "image_storage": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "configuration": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "performance": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    },
+    "security": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": "100.0%"
+    }
+  },
+  "detailed_results": [
+    {
+      "test_id": "BE-SRV-001",
+      "test_name": "Unified Wedding Server Health",
+      "service": "unified_wedding_server",
+      "status": "FAIL",
+      "details": "Server not accessible",
+      "duration": "0.00s",
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2025-09-03T09:54:14.354432",
+      "category": "Backend Service"
+    },
+    {
+      "test_id": "BE-SRV-002",
+      "test_name": "Backend Dependencies Check",
+      "service": "dependencies",
+      "status": "PASS",
+      "details": "All 7 required packages available",
+      "duration": "6.20s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.553455",
+      "category": "Backend Service"
+    },
+    {
+      "test_id": "BE-SRV-003",
+      "test_name": "Health Endpoints Check",
+      "service": "health_endpoints",
+      "status": "FAIL",
+      "details": "Only 2/3 endpoints accessible",
+      "duration": "0.01s",
+      "error": "Some health endpoints not responding",
+      "timestamp": "2025-09-03T09:54:20.562702",
+      "category": "Backend Service"
+    },
+    {
+      "test_id": "BE-API-001",
+      "test_name": "Wedding Data Save API",
+      "service": "wedding_data_api",
+      "status": "FAIL",
+      "details": "HTTP 500",
+      "duration": "0.00s",
+      "error": "{\"success\":false,\"error\":\"Connection error - NocoDB may not be running: HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /api/v1/db/meta/projects/ (Caused by NewConnecti",
+      "timestamp": "2025-09-03T09:54:20.567823",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-API-002",
+      "test_name": "Vendor Discovery APIs",
+      "service": "vendor_discovery_api",
+      "status": "FAIL",
+      "details": "Only 0/4 categories working",
+      "duration": "0.01s",
+      "error": "Vendor discovery not returning results for all categories",
+      "timestamp": "2025-09-03T09:54:20.576060",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-API-003",
+      "test_name": "AI Chat APIs",
+      "service": "ai_chat_api",
+      "status": "PASS",
+      "details": "3/3 chat requests successful",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.586038",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-API-004",
+      "test_name": "Theme Images API",
+      "service": "theme_images_api",
+      "status": "FAIL",
+      "details": "HTTP 404",
+      "duration": "0.00s",
+      "error": "{\"detail\":\"API endpoint not found\"}",
+      "timestamp": "2025-09-03T09:54:20.588031",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-DB-001",
+      "test_name": "NocoDB Connection",
+      "service": "nocodb",
+      "status": "PASS",
+      "details": "NocoDB connection and query successful",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.597841",
+      "category": "Database Service"
+    },
+    {
+      "test_id": "BE-DB-002",
+      "test_name": "ChromaDB Vector Store",
+      "service": "chromadb",
+      "status": "PASS",
+      "details": "Vector database accessible with 3 collections",
+      "duration": "0.25s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.846631",
+      "category": "Database Service"
+    },
+    {
+      "test_id": "BE-DB-003",
+      "test_name": "Data Storage Operations",
+      "service": "data_storage",
+      "status": "FAIL",
+      "details": "CRUD operations not working",
+      "duration": "0.01s",
+      "error": "Store or retrieve operations failed",
+      "timestamp": "2025-09-03T09:54:20.855164",
+      "category": "Database Service"
+    },
+    {
+      "test_id": "BE-AI-001",
+      "test_name": "Gemini AI Service",
+      "service": "gemini_ai",
+      "status": "PASS",
+      "details": "Gemini API integration configured",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.855845",
+      "category": "AI Service"
+    },
+    {
+      "test_id": "BE-AI-002",
+      "test_name": "CrewAI Agents",
+      "service": "crewai_agents",
+      "status": "PASS",
+      "details": "CrewAI agents configured (3 files found)",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.856887",
+      "category": "AI Service"
+    },
+    {
+      "test_id": "BE-AI-003",
+      "test_name": "Ollama Service",
+      "service": "ollama",
+      "status": "PASS",
+      "details": "Ollama service responding correctly",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:20.858814",
+      "category": "AI Service"
+    },
+    {
+      "test_id": "BE-VEN-001",
+      "test_name": "Serper Search Service",
+      "service": "serper_search",
+      "status": "PASS",
+      "details": "Found 1 vendors via Serper",
+      "duration": "3.23s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:24.092368",
+      "category": "Vendor Service"
+    },
+    {
+      "test_id": "BE-VEN-002",
+      "test_name": "Vendor Database Service",
+      "service": "vendor_database",
+      "status": "PASS",
+      "details": "Database service working, found 0 vendors",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:24.095656",
+      "category": "Vendor Service"
+    },
+    {
+      "test_id": "BE-VEN-003",
+      "test_name": "Vendor Matching Algorithm",
+      "service": "vendor_matching",
+      "status": "PASS",
+      "details": "Enhanced matching algorithm available",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:24.097413",
+      "category": "Vendor Service"
+    },
+    {
+      "test_id": "BE-COM-001",
+      "test_name": "Message Generation Service",
+      "service": "message_generation",
+      "status": "PASS",
+      "details": "Message generation working correctly",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:24.101126",
+      "category": "Communication Service"
+    },
+    {
+      "test_id": "BE-COM-002",
+      "test_name": "Email Integration Service",
+      "service": "email_integration",
+      "status": "PASS",
+      "details": "Gmail integration service available",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:24.112376",
+      "category": "Communication Service"
+    },
+    {
+      "test_id": "BE-COM-003",
+      "test_name": "WhatsApp Integration Service",
+      "service": "whatsapp_integration",
+      "status": "PASS",
+      "details": "WhatsApp integration service available",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:24.112573",
+      "category": "Communication Service"
+    },
+    {
+      "test_id": "BE-RAG-001",
+      "test_name": "RAG Vector Database",
+      "service": "rag_database",
+      "status": "PASS",
+      "details": "RAG vector database initialized and accessible",
+      "duration": "5.57s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:29.683413",
+      "category": "RAG Service"
+    },
+    {
+      "test_id": "BE-RAG-002",
+      "test_name": "RAG Enhanced Vendor Search",
+      "service": "rag_search",
+      "status": "PASS",
+      "details": "RAG search services available (2 files)",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:29.683699",
+      "category": "RAG Service"
+    },
+    {
+      "test_id": "BE-STO-001",
+      "test_name": "Image Storage Service",
+      "service": "image_storage",
+      "status": "PASS",
+      "details": "Image storage services available (2 services)",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:29.684013",
+      "category": "Backend General"
+    },
+    {
+      "test_id": "BE-STO-002",
+      "test_name": "Configuration Files",
+      "service": "configuration",
+      "status": "PASS",
+      "details": "Configuration files available (3/3)",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:29.684236",
+      "category": "Backend General"
+    },
+    {
+      "test_id": "BE-PERF-001",
+      "test_name": "API Response Times",
+      "service": "performance",
+      "status": "PASS",
+      "details": "3/3 endpoints within threshold",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:29.692832",
+      "category": "Backend General"
+    },
+    {
+      "test_id": "BE-PERF-002",
+      "test_name": "Concurrent Request Handling",
+      "service": "performance",
+      "status": "PASS",
+      "details": "5/5 concurrent requests successful",
+      "duration": "0.52s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:30.213444",
+      "category": "Backend General"
+    },
+    {
+      "test_id": "BE-SEC-001",
+      "test_name": "Error Handling",
+      "service": "security",
+      "status": "PASS",
+      "details": "3/3 invalid requests handled properly",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:30.222155",
+      "category": "Backend General"
+    },
+    {
+      "test_id": "BE-SEC-002",
+      "test_name": "Input Validation",
+      "service": "security",
+      "status": "PASS",
+      "details": "4/4 invalid inputs rejected",
+      "duration": "0.02s",
+      "error": "",
+      "timestamp": "2025-09-03T09:54:30.238592",
+      "category": "Backend General"
+    }
+  ],
+  "failed_tests": [
+    {
+      "test_id": "BE-SRV-001",
+      "test_name": "Unified Wedding Server Health",
+      "service": "unified_wedding_server",
+      "status": "FAIL",
+      "details": "Server not accessible",
+      "duration": "0.00s",
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "timestamp": "2025-09-03T09:54:14.354432",
+      "category": "Backend Service"
+    },
+    {
+      "test_id": "BE-SRV-003",
+      "test_name": "Health Endpoints Check",
+      "service": "health_endpoints",
+      "status": "FAIL",
+      "details": "Only 2/3 endpoints accessible",
+      "duration": "0.01s",
+      "error": "Some health endpoints not responding",
+      "timestamp": "2025-09-03T09:54:20.562702",
+      "category": "Backend Service"
+    },
+    {
+      "test_id": "BE-API-001",
+      "test_name": "Wedding Data Save API",
+      "service": "wedding_data_api",
+      "status": "FAIL",
+      "details": "HTTP 500",
+      "duration": "0.00s",
+      "error": "{\"success\":false,\"error\":\"Connection error - NocoDB may not be running: HTTPConnectionPool(host='localhost', port=8080): Max retries exceeded with url: /api/v1/db/meta/projects/ (Caused by NewConnecti",
+      "timestamp": "2025-09-03T09:54:20.567823",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-API-002",
+      "test_name": "Vendor Discovery APIs",
+      "service": "vendor_discovery_api",
+      "status": "FAIL",
+      "details": "Only 0/4 categories working",
+      "duration": "0.01s",
+      "error": "Vendor discovery not returning results for all categories",
+      "timestamp": "2025-09-03T09:54:20.576060",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-API-004",
+      "test_name": "Theme Images API",
+      "service": "theme_images_api",
+      "status": "FAIL",
+      "details": "HTTP 404",
+      "duration": "0.00s",
+      "error": "{\"detail\":\"API endpoint not found\"}",
+      "timestamp": "2025-09-03T09:54:20.588031",
+      "category": "Backend API"
+    },
+    {
+      "test_id": "BE-DB-003",
+      "test_name": "Data Storage Operations",
+      "service": "data_storage",
+      "status": "FAIL",
+      "details": "CRUD operations not working",
+      "duration": "0.01s",
+      "error": "Store or retrieve operations failed",
+      "timestamp": "2025-09-03T09:54:20.855164",
+      "category": "Database Service"
+    }
+  ],
+  "services_status": {
+    "unified_server": "DOWN"
+  },
+  "recommendations": [
+    "Fix core backend service issues - ensure unified server is running properly",
+    "Address API endpoint problems - verify request/response handling",
+    "Resolve database connectivity issues - check NocoDB and ChromaDB configurations",
+    "CRITICAL: Start the unified wedding server - python unified_wedding_server.py"
+  ]
+}
