@@ -1,0 +1,97 @@
+{
+  "test_summary": {
+    "test_type": "Wedding Details to Vendor Discovery Flow",
+    "timestamp": "2025-09-03T10:09:25.811521",
+    "total_steps": 4,
+    "passed_steps": 2,
+    "pass_rate": "50.0%"
+  },
+  "flow_results": [
+    {
+      "step": "backend_health",
+      "status": "FAIL",
+      "error": "Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "step": "save_wedding_data",
+      "status": "FAIL",
+      "error": "HTTP 500"
+    },
+    {
+      "step": "vendor_discovery",
+      "status": "PASS",
+      "category_results": {
+        "venues": {
+          "status": "PASS",
+          "count": 1,
+          "source": "serper_ai",
+          "sample_vendor": "Premium \"Mumbai\" Banquet Hall Contact Phone -\"Banquet Halls In\" -\"Venues In\" -\"List Of\" -\"Directory\" -\"Services\" Services"
+        },
+        "photography": {
+          "status": "PASS",
+          "count": 1,
+          "source": "serper_ai",
+          "sample_vendor": "Premium \"Mumbai\" Photography Studio Contact Phone -\"Top\" -\"Best\" -\"Photographers In\" -\"List Of\" -\"Directory\" -\"Services\" Services"
+        },
+        "catering": {
+          "status": "PASS",
+          "count": 1,
+          "source": "serper_ai",
+          "sample_vendor": "Premium \"Mumbai\" Catering Services Contact Phone -\"Caterers In\" -\"Services In\" -\"List Of\" -\"Directory\" Services"
+        },
+        "decoration": {
+          "status": "PASS",
+          "count": 1,
+          "source": "serper_ai",
+          "sample_vendor": "Premium \"Mumbai\" Wedding Decoration Contact Phone -\"Decorators In\" -\"List Of\" -\"Directory\" -\"Services\" Services"
+        },
+        "beauty": {
+          "status": "PASS",
+          "count": 1,
+          "source": "serper_ai",
+          "sample_vendor": "Premium \"Mumbai\" Beauty Contact Phone -\"Services In\" -\"Top\" -\"Best\" -\"List Of\" -\"Directory\" Services"
+        },
+        "planners": {
+          "status": "PASS",
+          "count": 1,
+          "source": "serper_ai",
+          "sample_vendor": "Premium \"Mumbai\" Planners Contact Phone -\"Services In\" -\"Top\" -\"Best\" -\"List Of\" -\"Directory\" Services"
+        }
+      },
+      "summary": "6/6 categories working"
+    },
+    {
+      "step": "end_to_end_integration",
+      "status": "PASS",
+      "integration_results": [
+        {
+          "test": "ai_chat",
+          "status": "PASS",
+          "details": "AI chat integration working"
+        },
+        {
+          "test": "budget_analysis",
+          "status": "PASS",
+          "details": "6 budget categories"
+        },
+        {
+          "test": "image_generation",
+          "status": "FAIL",
+          "error": "HTTP 404"
+        },
+        {
+          "test": "message_generation",
+          "status": "PASS",
+          "details": "Generated 188 character message"
+        }
+      ],
+      "summary": "3/4 integration tests passed"
+    }
+  ],
+  "recommendations": [
+    "Start the unified backend server: python unified_wedding_server.py",
+    "Check wedding data API endpoint and database connectivity",
+    "Run health_monitor.py to check service status",
+    "Check backend logs for detailed error information"
+  ]
+}
