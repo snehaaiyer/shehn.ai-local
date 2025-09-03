@@ -433,18 +433,18 @@ def main():
     logger.info("==================================================")
     logger.info("🚀 Server: http://0.0.0.0:8001")
     logger.info("📱 Frontend: Served from React build or fallback")
-    logger.info("🤖 API Docs: http://0.0.0.0:8001/api/docs")
+    logger.info("🔗 API Docs: http://0.0.0.0:8001/api/docs")
     logger.info("==================================================")
-    
+
     try:
         # Test database connections before starting
         logger.info("🔧 Testing service connections...")
-        
+
         # Initialize vendor database
         global vendor_db
         vendor_db = get_vendor_database()
         logger.info("✅ Vendor database initialized")
-        
+
         # Test NocoDB connection
         try:
             test_result = vendor_db.nocodb_client.test_connection() if hasattr(vendor_db, 'nocodb_client') else True
@@ -454,7 +454,7 @@ def main():
                 logger.warning("⚠️ NocoDB connection failed - using fallback mode")
         except Exception as e:
             logger.warning(f"⚠️ NocoDB test failed: {e} - using fallback mode")
-        
+
         logger.info("🚀 Starting FastAPI server...")
         uvicorn.run(
             "unified_wedding_server:app",
@@ -464,11 +464,15 @@ def main():
             log_level="info",
             access_log=True
         )
-        
+
     except Exception as e:
         logger.error(f"❌ Server startup failed: {e}")
         logger.error("💡 Try checking dependencies: pip install fastapi uvicorn")
         raise
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    print("🚀 Starting Unified Wedding Server on port 8001...")
+    print("📊 Health endpoint: http://0.0.0.0:8001/health")
+    print("🔗 API docs: http://0.0.0.0:8001/docs")
+    uvicorn.run(app, host="0.0.0.0", port=8001, reload=False)

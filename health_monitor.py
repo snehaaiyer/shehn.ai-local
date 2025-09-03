@@ -21,17 +21,52 @@ class HealthMonitor:
     def check_service(self, name: str, url: str) -> dict:
         """Check individual service health"""
         try:
-            response = requests.get(url, timeout=5)
-            return {
-                'name': name,
-                'status': 'healthy' if response.status_code == 200 else 'unhealthy',
-                'response_time': response.elapsed.total_seconds(),
-                'status_code': response.status_code
-            }
-        except Exception as e:
+            print(f"🔍 Checking {name} at {url}...")
+            response = requests.get(url, timeout=10)
+            
+            if response.status_code == 200:
+                print(f"✅ {name}: Healthy (Response time: {response.elapsed.total_seconds():.3f}s)")
+                return {
+                    'name': name,
+                    'status': 'healthy',
+                    'response_time': response.elapsed.total_seconds(),
+                    'status_code': response.status_code,
+                    'response_data': response.json() if response.headers.get('content-type', '').startswith('application/json') else response.text[:100]
+                }
+            else:
+                print(f"⚠️ {name}: Unhealthy (Status: {response.status_code})")
+                return {
+                    'name': name,
+                    'status': 'unhealthy',
+                    'response_time': response.elapsed.total_seconds(),
+                    'status_code': response.status_code,
+                    'error': f"HTTP {response.status_code}: {response.text[:100]}"
+                }
+        except requests.exceptions.ConnectionError as e:
+            print(f"❌ {name}: Connection refused")
             return {
                 'name': name,
                 'status': 'down',
+                'error': f"Connection refused: {str(e)}",
+                'response_time': None,
+                'status_code': None,
+                'suggestion': f"Check if service is running on the expected port"
+            }
+        except requests.exceptions.Timeout as e:
+            print(f"❌ {name}: Timeout")
+            return {
+                'name': name,
+                'status': 'timeout',
+                'error': f"Request timeout: {str(e)}",
+                'response_time': None,
+                'status_code': None,
+                'suggestion': "Service may be overloaded or unresponsive"
+            }
+        except Exception as e:
+            print(f"❌ {name}: Error - {str(e)}")
+            return {
+                'name': name,
+                'status': 'error',
                 'error': str(e),
                 'response_time': None,
                 'status_code': None

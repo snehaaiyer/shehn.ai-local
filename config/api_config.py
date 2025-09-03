@@ -10,17 +10,29 @@ FRONTEND_PORT = 5000
 API_SERVICES = {
     'enhanced_rag_vendor_api': {
         'port': 5003,
-        'url': 'http://0.0.0.0:5003'
+        'url': 'http://0.0.0.0:5003',
+        'health_endpoint': '/health'
     },
     'unified_wedding_server': {
         'port': 8001,
-        'url': 'http://0.0.0.0:8001'
+        'url': 'http://0.0.0.0:8001',
+        'health_endpoint': '/health'
     },
     'vendor_communication': {
         'port': 5004,
-        'url': 'http://0.0.0.0:5004'
+        'url': 'http://0.0.0.0:5004',
+        'health_endpoint': '/health'
+    },
+    'main_frontend': {
+        'port': 5000,
+        'url': 'http://0.0.0.0:5000',
+        'health_endpoint': '/health'
     }
 }
+
+# Service Health Check Configuration
+HEALTH_CHECK_TIMEOUT = 10
+HEALTH_CHECK_RETRIES = 3
 
 # CORS Configuration
 CORS_ORIGINS = [

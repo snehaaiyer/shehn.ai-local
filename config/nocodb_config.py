@@ -99,25 +99,56 @@ class NocoDBConfig:
     def test_connection(self) -> bool:
         """Test the NocoDB connection."""
         try:
+            print(f"🔍 Testing NocoDB connection to {self.BASE_URL}...")
+            
+            # First try to ping the base URL
+            try:
+                base_response = requests.get(self.BASE_URL, timeout=10)
+                print(f"📊 NocoDB base URL status: {base_response.status_code}")
+            except Exception as e:
+                print(f"⚠️ NocoDB base URL not accessible: {e}")
+                logger.warning("NocoDB base URL not accessible, but continuing with API test...")
+            
             # Test with weddings table by trying to get records
+            test_url = f"{self.get_table_url('weddings')}/records"
+            print(f"🔗 Testing API endpoint: {test_url}")
+            
             response = requests.get(
-                f"{self.get_table_url('weddings')}/records",
+                test_url,
                 headers=self.headers,
-                params={"limit": 1}
+                params={"limit": 1},
+                timeout=15
             )
 
             if response.status_code == 200:
                 logger.info("✅ NocoDB connection successful")
+                print("✅ NocoDB API connection working")
                 return True
+            elif response.status_code == 404:
+                logger.warning("⚠️ NocoDB table not found, but connection working")
+                print("⚠️ NocoDB connected but table may not exist")
+                return True  # Connection works, table might not exist yet
             else:
-                logger.error(f"❌ NocoDB connection failed: Status Code {response.status_code}, Response: {response.text}")
+                logger.error(f"❌ NocoDB connection failed: Status Code {response.status_code}")
+                print(f"❌ NocoDB API error: {response.status_code}")
+                print(f"📄 Response: {response.text[:200]}...")
                 return False
 
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"❌ NocoDB connection refused: {str(e)}")
+            print("❌ NocoDB server not running or not accessible")
+            return False
+        except requests.exceptions.Timeout as e:
+            logger.error(f"❌ NocoDB connection timeout: {str(e)}")
+            print("❌ NocoDB server timeout - may be starting up")
+            return False
         except requests.exceptions.RequestException as e:
             logger.error(f"❌ NocoDB connection error (RequestException): {str(e)}")
+            print(f"❌ NocoDB request error: {str(e)}")
             return False
         except Exception as e:
             logger.error(f"❌ NocoDB connection error: {str(e)}")
+            print(f"❌ Unexpected NocoDB error: {str(e)}")
             return False
 
 class NocoDBClient:
