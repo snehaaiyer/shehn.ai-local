@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-09-03T11:15:58.413715",
+  "overall_status": "FAIL",
+  "test_results": {
+    "Unified Server Health": {
+      "status": "CRITICAL",
+      "details": "Server unreachable",
+      "error": "Expecting value: line 1 column 1 (char 0)"
+    },
+    "Frontend Serving": {
+      "status": "PASS",
+      "details": "Frontend served correctly from unified server"
+    },
+    "API Endpoints": {
+      "status": "FAIL",
+      "details": "0/3 API endpoints working",
+      "endpoint_results": {
+        "API Health": "FAIL (HTTP 404)",
+        "Theme Images": "FAIL (HTTP 404)",
+        "Vendor Discovery": "FAIL (HTTP 404)"
+      }
+    },
+    "Vendor Discovery Flow": {
+      "status": "PASS",
+      "details": "Found 1 vendors",
+      "source": "serper_ai"
+    },
+    "AI Services": {
+      "status": "PASS",
+      "details": "AI chat responding",
+      "source": "unknown"
+    },
+    "External Dependencies": {
+      "status": "FAIL",
+      "details": "0/2 external services available",
+      "service_results": {
+        "NocoDB": "UNAVAILABLE (Connection Failed)",
+        "Ollama": "UNAVAILABLE (Connection Failed)"
+      }
+    }
+  },
+  "critical_issues": [
+    "Unified server not responding"
+  ],
+  "recommendations": [
+    "CRITICAL: Start unified server - python unified_wedding_server.py",
+    "Fix API endpoint routing in unified server",
+    "Start NocoDB service or fix database configuration",
+    "Start Ollama service for AI functionality"
+  ],
+  "summary": {
+    "total_tests": 6,
+    "passed": 3,
+    "partial": 0,
+    "failed": 3,
+    "pass_rate": "50.0%"
+  }
+}

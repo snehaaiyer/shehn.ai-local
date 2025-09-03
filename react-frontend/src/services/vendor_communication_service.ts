@@ -29,7 +29,7 @@ interface CommunicationResponse {
 }
 
 export class VendorCommunicationService {
-  private static readonly API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
+  private static readonly API_BASE = process.env.REACT_APP_API_BASE || 'http://0.0.0.0:8001';
 
   /**
    * Send email to vendor
