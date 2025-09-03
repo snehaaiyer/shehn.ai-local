@@ -157,14 +157,18 @@ async def health_check():
 async def api_health():
     return await health_check()
 
-# Fix vendor data endpoint routing
+# Fix vendor data endpoint routing  
 @app.get("/api/vendor-data/{category}")
 async def get_vendor_data_get(category: str, request: Request):
     """Handle GET requests for vendor data"""
     return await get_vendor_data(category, request)
 
-# Vendor Discovery API
-@app.api_route("/api/vendor-data/{category}", methods=["GET", "POST"])
+@app.post("/api/vendor-data/{category}")
+async def get_vendor_data_post(category: str, request: Request):
+    """Handle POST requests for vendor data"""
+    return await get_vendor_data(category, request)
+
+# Vendor Discovery API (main handler)
 async def get_vendor_data(category: str, request: Request):
     """Get vendor data with preferences"""
     try:
