@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2 } from "lucide-react";
+import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2, Mail } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
 
@@ -863,18 +863,26 @@ const WeddingPreferences: React.FC = () => {
                   </div>
 
                   {/* Wedding Date */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Wedding Date
-                    </label>
-                    <input
-                      type="date"
-                      value={preferences.basicDetails.weddingDate}
-                      onChange={(e) => updatePreference('basicDetails', 'weddingDate', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                      disabled={preferences.basicDetails.datesFlexible}
-                    />
-                  </div>
+                  <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Wedding Date</label>
+                      <div className="relative">
+                        <input
+                          type="date"
+                          value={preferences.basicDetails.weddingDate}
+                          onChange={(e) => updatePreference('basicDetails', 'weddingDate', e.target.value)}
+                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        />
+                        <button
+                          onClick={() => window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wedding%20Day&dates=${preferences.basicDetails.weddingDate.replace(/-/g, '')}/`, '_blank')}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:text-blue-800 transition-colors"
+                          title="Add to Google Calendar"
+                        >
+                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
 
                   {/* Event Duration */}
                   <div className="space-y-2">
@@ -1472,7 +1480,7 @@ const WeddingPreferences: React.FC = () => {
                 {/* Multi-Day Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Multi-Day Coverage</h3>
-                  <p className="text-gray-600 mb-4">Select which events you'd like photographed:</p>
+                  <p className="text-gray-600 mb-4">Select which events you\'d like photographed:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
                       <input 

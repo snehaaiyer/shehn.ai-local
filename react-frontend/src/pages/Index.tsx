@@ -8,6 +8,7 @@ import {
   Building2, Camera, Utensils, Palette,
   Search, MessageCircle, Heart, ArrowRight
 } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 const Index: React.FC = () => {
   const { theme } = useAppStore();
@@ -192,30 +193,82 @@ const Index: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
-            <h2 className="text-2xl font-bold mb-6" style={{ color: '#D29B9B' }}>Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-              {quickActions.map((action, index) => (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate(action.href)}
-                  className="cursor-pointer h-full"
+            <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+              <h2 className="text-2xl font-bold mb-6" style={{ color: '#D29B9B' }}>Quick Actions</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <Link
+                  to="/preferences"
+                  className="p-4 rounded-xl text-center border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-md"
                 >
-                  <div className="rounded-xl p-6 text-white text-center hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between" style={action.style || { backgroundColor: '#2F4F4F' }}>
-                    <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      {action.icon}
-                    </div>
-                    <div className="flex-1 flex flex-col justify-center">
-                      <h3 className="font-semibold text-lg mb-2">{action.title}</h3>
-                      <p className="text-sm opacity-90">{action.description}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  <Heart className="w-8 h-8 mx-auto mb-2" style={{ color: '#D29B9B' }} />
+                  <h3 className="font-semibold text-gray-800">Set Preferences</h3>
+                  <p className="text-sm text-gray-600 mt-1">Define your dream wedding</p>
+                </Link>
+
+                <Link
+                  to="/vendor-discovery"
+                  className="p-4 rounded-xl text-center border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-md"
+                >
+                  <Search className="w-8 h-8 mx-auto mb-2" style={{ color: '#D29B9B' }} />
+                  <h3 className="font-semibold text-gray-800">Find Vendors</h3>
+                  <p className="text-sm text-gray-600 mt-1">Discover perfect matches</p>
+                </Link>
+
+                <Link
+                  to="/budget-management"
+                  className="p-4 rounded-xl text-center border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-md"
+                >
+                  <DollarSign className="w-8 h-8 mx-auto mb-2" style={{ color: '#D29B9B' }} />
+                  <h3 className="font-semibold text-gray-800">Manage Budget</h3>
+                  <p className="text-sm text-gray-600 mt-1">Track your expenses</p>
+                </Link>
+
+                <Link
+                  to="/ai-chat"
+                  className="p-4 rounded-xl text-center border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-md"
+                >
+                  <MessageCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#D29B9B' }} />
+                  <h3 className="font-semibold text-gray-800">AI Assistant</h3>
+                  <p className="text-sm text-gray-600 mt-1">Get expert advice</p>
+                </Link>
+              </div>
+
+              {/* Google Integration Quick Actions */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Google Tools</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <button
+                    onClick={() => window.open('https://calendar.google.com/calendar', '_blank')}
+                    className="flex flex-col items-center p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                  >
+                    <svg className="w-6 h-6 text-blue-600 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                    </svg>
+                    <span className="text-xs text-gray-700">Calendar</span>
+                  </button>
+
+                  <button
+                    onClick={() => window.open('https://maps.google.com', '_blank')}
+                    className="flex flex-col items-center p-3 rounded-lg border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-colors"
+                  >
+                    <svg className="w-6 h-6 text-green-600 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    <span className="text-xs text-gray-700">Maps</span>
+                  </button>
+
+                  <button
+                    onClick={() => window.open('https://mail.google.com', '_blank')}
+                    className="flex flex-col items-center p-3 rounded-lg border border-gray-200 hover:border-red-300 hover:bg-red-50 transition-colors"
+                  >
+                    <svg className="w-6 h-6 text-red-600 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h.001L12 10.916l10.364-7.095h.001c.904 0 1.636.732 1.636 1.636z"/>
+                    </svg>
+                    <span className="text-xs text-gray-700">Gmail</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
 
           {/* Progress Tracking */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
