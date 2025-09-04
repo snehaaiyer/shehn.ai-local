@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Search, Filter, MapPin, Star, DollarSign,
-  Building2, Camera, Utensils, Palette, Music, Sparkles,
-  Award, Grid, List, Heart
+  Search, Filter, MapPin, Star, DollarSign, Building2, Camera, Utensils, Palette, Music, Sparkles,
+  Award, Grid, List, Heart, Phone, Mail, Calendar, Users
 } from "lucide-react";
 import { VendorDiscoveryService } from '../services/vendor_discovery_service';
+import { VendorCommunicationService } from '../services/vendor_communication_service';
 
 interface Vendor {
   id: string;
@@ -41,7 +41,26 @@ interface Vendor {
     description: string;
     icon: string;
   }>;
+  contact?: { // Assuming contact object structure based on usage
+    phone?: string;
+    email?: string;
+  };
+  preferences_match_score?: number;
+  preference_insights?: string[];
+  compatibility_details?: {
+    priority_bonus: number;
+  };
 }
+
+// Placeholder for weddingPreferences state, assuming it's managed elsewhere or fetched
+const weddingPreferences = {
+  weddingDate: '2024-12-31',
+  guestCount: 150,
+  region: 'New York',
+  weddingType: 'Classic',
+  theme: { selectedTheme: 'Royal' },
+  // ... other preference details
+};
 
 const VendorDiscovery: React.FC = () => {
   // Core state
@@ -65,6 +84,8 @@ const VendorDiscovery: React.FC = () => {
   const [filtersChanged, setFiltersChanged] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [showVendorModal, setShowVendorModal] = useState(false);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [contactingVendor, setContactingVendor] = useState<string | null>(null);
 
   const categories = [
     { id: 'venues', name: 'Venues', icon: <Building2 className="h-5 w-5" /> },
@@ -88,9 +109,9 @@ const VendorDiscovery: React.FC = () => {
     window.open(`tel:${phone}`, '_self');
   };
 
-  const handleWhatsApp = (phone: string, vendorName: string) => {
-    const message = `Hi, I'm interested in your services for my wedding. Could you please provide more information about ${vendorName}?`;
-    const whatsappUrl = `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+  const handleWhatsAppContact = (vendor: Vendor) => {
+    const message = `Hi ${vendor.name}, I'm interested in your services for my wedding. Could you please provide more information?`;
+    const whatsappUrl = `https://wa.me/${vendor.phone?.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -99,11 +120,53 @@ const VendorDiscovery: React.FC = () => {
     window.open(url, '_blank');
   };
 
-  const handleEmail = (email: string, vendorName: string) => {
-    const subject = `Inquiry about ${vendorName} services`;
-    const body = `Hi,\n\nI'm interested in your wedding services and would like to know more about your packages and availability.\n\nThank you!`;
-    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoUrl, '_self');
+  const handleEmailContact = async (vendor: Vendor) => {
+    try {
+      setContactingVendor(vendor.id);
+      // Assuming weddingPreferences is available in scope or passed as argument
+      const result = await VendorCommunicationService.sendVendorEmail(vendor, weddingPreferences);
+
+      if (result.success) {
+        setNotification({
+          type: 'success',
+          message: `Email sent to ${vendor.name} successfully!`
+        });
+      } else {
+        throw new Error(result.error || 'Failed to send email');
+      }
+    } catch (error) {
+      console.error('Email error:', error);
+      setNotification({
+        type: 'error',
+        message: `Failed to send email to ${vendor.name}`
+      });
+    } finally {
+      setContactingVendor(null);
+    }
+  };
+
+  const handleGmailContact = (vendor: Vendor) => {
+    const params = new URLSearchParams({
+      action: 'email',
+      vendorName: vendor.name,
+      vendorEmail: vendor.contact?.email || '',
+      vendorCategory: vendor.category,
+      weddingDate: weddingPreferences?.weddingDate || '',
+      guestCount: weddingPreferences?.guestCount?.toString() || '',
+      location: weddingPreferences?.region || ''
+    });
+    window.open(`/vendor-communication?${params.toString()}`, '_blank');
+  };
+
+  const handleScheduleMeeting = (vendor: Vendor) => {
+    const params = new URLSearchParams({
+      action: 'calendar',
+      vendorName: vendor.name,
+      vendorEmail: vendor.contact?.email || '',
+      vendorCategory: vendor.category,
+      eventType: 'vendor-meeting'
+    });
+    window.open(`/vendor-communication?${params.toString()}`, '_blank');
   };
 
   const handleInstagram = (vendorName: string, instagramHandle?: string) => {
@@ -197,7 +260,7 @@ const VendorDiscovery: React.FC = () => {
             const budget = preferences.basicDetails.budgetRange;
             const budgetMapping: { [key: string]: string } = {
               '₹5-15 Lakhs': 'budget',
-              '₹15-30 Lakhs': 'standard', 
+              '₹15-30 Lakhs': 'standard',
               '₹30-50 Lakhs': 'premium',
               '₹50+ Lakhs': 'luxury',
               // Legacy support
@@ -419,8 +482,8 @@ const VendorDiscovery: React.FC = () => {
                     key={category.id}
                     onClick={() => handleFilterChange('category', category.id)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
-                      isActive 
-                        ? 'bg-deep-navy text-white shadow-lg' 
+                      isActive
+                        ? 'bg-deep-navy text-white shadow-lg'
                         : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
                     }`}
                   >
@@ -436,7 +499,7 @@ const VendorDiscovery: React.FC = () => {
           {(() => {
             const savedPreferences = localStorage.getItem('weddingPreferences');
             const preferences = savedPreferences ? JSON.parse(savedPreferences) : null;
-            
+
             if (preferences) {
               return (
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#E6E6FA' }}>
@@ -470,7 +533,7 @@ const VendorDiscovery: React.FC = () => {
                     )}
                   </div>
                   <div className="mt-3 text-xs text-gray-600">
-                    💡 Vendors are automatically filtered and ranked based on your wedding preferences. 
+                    💡 Vendors are automatically filtered and ranked based on your wedding preferences.
                     Higher match scores indicate better alignment with your choices.
                   </div>
                 </div>
@@ -718,7 +781,7 @@ const VendorDiscovery: React.FC = () => {
                         <div className="flex gap-2">
                           {vendor.phone && (
                             <button
-                              onClick={() => handlePhoneCall(vendor.phone!)}
+                              onClick={() => handleWhatsAppContact(vendor)}
                               className="flex-1 px-3 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
                             >
                               📞 Call
@@ -726,7 +789,7 @@ const VendorDiscovery: React.FC = () => {
                           )}
                           {vendor.phone && (
                             <button
-                              onClick={() => handleWhatsApp(vendor.phone!, vendor.name)}
+                              onClick={() => handleWhatsAppContact(vendor)}
                               className="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-1"
                             >
                               💬 WhatsApp
@@ -883,7 +946,7 @@ const VendorDiscovery: React.FC = () => {
 
                       {selectedVendor.email && (
                         <button
-                          onClick={() => handleEmail(selectedVendor.email!, selectedVendor.name)}
+                          onClick={() => handleEmailContact(selectedVendor)}
                           className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
                         >
                           📧 {selectedVendor.email}

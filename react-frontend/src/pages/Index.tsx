@@ -6,7 +6,7 @@ import {
   Calendar, Users, DollarSign, 
   CheckCircle, Clock, Star,
   Building2, Camera, Utensils, Palette,
-  Search, MessageCircle
+  Search, MessageCircle, Heart, ArrowRight
 } from "lucide-react";
 
 const Index: React.FC = () => {
@@ -24,7 +24,7 @@ const Index: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchWeddingData();
   }, []);
 
@@ -308,4 +308,4 @@ const Index: React.FC = () => {
   );
 };
 
-export default Index; 
+export default Index;

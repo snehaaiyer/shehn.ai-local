@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText } from "lucide-react";
+import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2 } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
 
@@ -94,6 +94,7 @@ const WeddingPreferences: React.FC = () => {
   const navigate = useNavigate();
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
+  const [isGenerating, setIsGenerating] = useState(false); // State for blueprint generation
 
 
   const [preferences, setPreferences] = useState<WeddingPreferencesData>({
@@ -290,8 +291,6 @@ const WeddingPreferences: React.FC = () => {
       ]
     }
   ];
-
-  
 
   // Venue Categories for better organization
   const venueCategories = [
@@ -510,7 +509,7 @@ const WeddingPreferences: React.FC = () => {
     }
   ];
 
-  
+
 
   // Import NocoDB service at the top
   const { NocoDBService } = require('../services/nocodb_service');
@@ -725,7 +724,20 @@ const WeddingPreferences: React.FC = () => {
     updatePreference('basicDetails', 'priorities', newPriorities);
   };
 
-  
+  // Dummy function for blueprint generation
+  const handleGenerateBlueprint = () => {
+    setIsGenerating(true);
+    // Simulate API call or processing
+    setTimeout(() => {
+      setShowBlueprint(true);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  const hasRequiredFields = () => {
+    return preferences.venue.venueType && preferences.theme.selectedTheme;
+  };
+
 
   const handleTabChange = (tabId: string) => {
     if (tabId === 'blueprint' && !(preferences.venue.venueType && preferences.theme.selectedTheme)) {
@@ -1244,7 +1256,7 @@ const WeddingPreferences: React.FC = () => {
                         <option value="international">International</option>
                       </select>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Service Style</label>
                       <select
@@ -1819,13 +1831,33 @@ const WeddingPreferences: React.FC = () => {
                       </div>
                     )}
 
-                    <button
-                      onClick={() => setShowBlueprint(true)}
-                      className="px-8 py-3 bg-deep-navy text-white rounded-xl font-semibold hover:opacity-90 transition-all duration-300 flex items-center gap-2 mx-auto"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Generate Wedding Blueprint
-                    </button>
+                    <div className="space-y-4">
+                      <button
+                        onClick={handleGenerateBlueprint}
+                        disabled={isGenerating || !hasRequiredFields()}
+                        className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 px-8 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Generating Blueprint...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-5 h-5" />
+                            Generate Wedding Blueprint
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => window.open('/vendor-communication', '_blank')}
+                        className="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
+                      >
+                        <Calendar className="w-5 h-5" />
+                        Schedule with Google Calendar
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
