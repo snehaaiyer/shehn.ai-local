@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { Heart, DollarSign, Camera, Utensils, Palette, Loader2, Sparkles, Clock, TrendingUp, FileText, Building2 } from 'lucide-react';
 // Removed unused import: import { SimpleMockService } from '../services/simple_mock_service';
+import { WeddingBlueprintService, type WeddingBlueprintRequest, type SavedBlueprint } from '../services/wedding_blueprint_service';
 
 // Venue Categories Data
 const venueCategories = [
@@ -290,62 +291,102 @@ interface BlueprintData {
   };
 }
 
-const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClose }) => {
+const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddingData, onClose }) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [blueprint, setBlueprint] = useState<BlueprintData | null>(null);
+  const [blueprintData, setBlueprintData] = useState<any>(null); // Changed to any to accommodate new structure
   const [error, setError] = useState<string | null>(null);
+  const [savedBlueprint, setSavedBlueprint] = useState<SavedBlueprint | null>(null);
+  const [sendingEmails, setSendingEmails] = useState(false);
 
-  const generateBlueprint = async () => {
+  const handleGenerateBlueprint = async () => {
+    if (!weddingData?.basicDetails?.yourName || !weddingData?.theme?.selectedTheme) {
+      setError('Please complete basic details and theme selection first');
+      return;
+    }
+
     setIsGenerating(true);
     setError(null);
 
     try {
-      // Use static images only - no AI generation
-      const selectedVenue = venueCategories?.flatMap(cat => cat.venues)?.find(v => v.id === preferences.venue?.selectedVenueType);
-      const selectedTheme = themes?.find(t => t.id === preferences.theme?.selectedTheme);
+      console.log('🤖 Generating AI-powered wedding blueprint...');
 
-      const venueImage = selectedVenue?.image || '/images/placeholder-venue.png';
-      const themeImage = selectedTheme?.image || '/images/placeholder-theme.png';
-      const photographyImage = '/images/placeholder-photo.png';
-
-      // Mock response for blueprint generation
-      const mockBlueprint = {
-        summary: `A beautiful wedding celebration at a ${preferences.venue?.venueType || 'stunning location'} with a ${preferences.theme?.selectedTheme || 'charming theme'}. The day will be captured in ${preferences.photography?.style || 'a classic style'} by our photographers.`,
-        venueImage: venueImage,
-        themeImage: themeImage,
-        photographyImage: photographyImage,
-        recommendations: {
-          venue: ['Consider a personalized welcome for guests.', 'Arrange for shuttle services if parking is limited.'],
-          catering: ['Offer a mix of traditional and contemporary dishes.', 'Provide vegetarian and vegan options.'],
-          photography: ['Ensure a shot list includes all key family members.', 'Discuss a timeline for golden hour photos.'],
-          decor: ['Incorporate elements that reflect the chosen theme.', 'Use mood lighting for evening ambiance.'],
+      // Create comprehensive blueprint request
+      const blueprintRequest: WeddingBlueprintRequest = {
+        basicDetails: {
+          guestCount: parseInt(weddingData.basicDetails.guestCount) || 200,
+          weddingDate: weddingData.basicDetails.weddingDate || new Date().toISOString(),
+          location: weddingData.basicDetails.location || 'Mumbai',
+          budgetRange: weddingData.basicDetails.budgetRange || '₹50-70 Lakhs',
+          yourName: weddingData.basicDetails.yourName || 'Bride',
+          partnerName: weddingData.basicDetails.partnerName || 'Groom'
         },
-        timeline: [
-          '10:00 AM: Bride\'s Makeup & Hair',
-          '12:00 PM: Groom & Groomsmen Preparation',
-          '02:00 PM: Ceremony Begins',
-          '03:00 PM: Cocktail Hour',
-          '04:30 PM: Reception Dinner',
-          '07:00 PM: First Dance',
-          '08:00 PM: Cake Cutting',
-          '10:00 PM: Grand Exit'
-        ],
-        budgetBreakdown: {
-          venue: 500000,
-          catering: 400000,
-          photography: 200000,
-          decor: 150000,
-          total: 1250000,
+        theme: {
+          selectedTheme: weddingData.theme.selectedTheme || 'Traditional'
+        },
+        venue: {
+          venueType: weddingData.venue?.venueType || 'Luxury Hotel',
+          capacity: parseInt(weddingData.basicDetails.guestCount) || 200
+        },
+        catering: {
+          cuisine: weddingData.catering?.cuisineType || 'Multi-Cuisine',
+          mealType: weddingData.catering?.serviceStyle || 'Buffet'
+        },
+        photography: {
+          style: weddingData.photography?.style || 'Traditional',
+          coverage: weddingData.photography?.services?.join(', ') || 'Photography & Videography'
         }
       };
 
-      setBlueprint(mockBlueprint);
+      // Generate comprehensive AI blueprint
+      const blueprintResponse = await WeddingBlueprintService.generateWeddingBlueprint(blueprintRequest);
 
-    } catch (err) {
-      setError('An unexpected error occurred while generating the blueprint');
-      console.error('Error generating blueprint:', err);
+      if (blueprintResponse.success && blueprintResponse.blueprint) {
+        setSavedBlueprint(blueprintResponse.blueprint);
+        setBlueprintData({
+          images: blueprintResponse.blueprint.images,
+          generatedDescription: blueprintResponse.blueprint.aiGeneratedContent.weddingSummary,
+          timestamp: blueprintResponse.blueprint.generatedAt,
+          aiContent: blueprintResponse.blueprint.aiGeneratedContent
+        });
+
+        console.log('✅ AI Blueprint generated and saved successfully!');
+
+        // Automatically send vendor emails after blueprint generation
+        await sendVendorEmails(blueprintResponse.blueprint);
+
+      } else {
+        throw new Error(blueprintResponse.error || 'Failed to generate AI wedding blueprint');
+      }
+    } catch (error) {
+      console.error('Blueprint generation error:', error);
+      setError(error instanceof Error ? error.message : 'Failed to generate AI blueprint');
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const sendVendorEmails = async (blueprint: SavedBlueprint) => {
+    setSendingEmails(true);
+    try {
+      console.log('📧 Sending category-specific vendor emails...');
+
+      const emailResult = await WeddingBlueprintService.sendVendorEmails(
+        blueprint,
+        'aiyersneha19@gmail.com' // Test email for all vendors
+      );
+
+      if (emailResult.success) {
+        console.log('✅ Vendor emails sent successfully:', emailResult.results);
+        alert(`Vendor emails sent successfully to all categories! Check aiyersneha19@gmail.com for ${emailResult.results.length} category-specific emails.`);
+      } else {
+        console.error('Failed to send vendor emails:', emailResult.error);
+        alert('Some vendor emails failed to send. Check console for details.');
+      }
+    } catch (error) {
+      console.error('Error sending vendor emails:', error);
+      alert('Failed to send vendor emails. Check console for details.');
+    } finally {
+      setSendingEmails(false);
     }
   };
 
@@ -387,7 +428,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
 
         {/* Content */}
         <div className="p-6">
-          {!blueprint && !isGenerating && (
+          {!blueprintData && !isGenerating && (
             <div className="text-center py-12">
               <div className="w-20 h-20 rounded-full bg-gradient-to-r from-pink-100 to-purple-100 flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="w-10 h-10 text-purple-600" />
@@ -397,15 +438,23 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
                 Create a comprehensive wedding blueprint with AI-generated images and personalized recommendations based on your preferences.
               </p>
               <button
-                onClick={generateBlueprint}
-                className="px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 flex items-center mx-auto"
-                style={{
-                  background: 'linear-gradient(90deg, #F5EADB 0%, #EFAFAB 100%)',
-                  color: '#8B4513'
-                }}
+                onClick={handleGenerateBlueprint}
+                disabled={isGenerating || sendingEmails}
+                className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Sparkles className="w-5 h-5 mr-2" />
-                Generate Blueprint
+                {isGenerating ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span>Generating AI Blueprint...</span>
+                  </div>
+                ) : sendingEmails ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span>Sending Vendor Emails...</span>
+                  </div>
+                ) : (
+                  '🤖 Generate AI Blueprint & Send Vendor Emails'
+                )}
               </button>
             </div>
           )}
@@ -433,7 +482,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Generation Failed</h2>
               <p className="text-gray-600 mb-8">{error}</p>
               <button
-                onClick={generateBlueprint}
+                onClick={handleGenerateBlueprint}
                 className="px-6 py-2 rounded-xl font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
               >
                 Try Again
@@ -441,311 +490,117 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences, onClos
             </div>
           )}
 
-          {blueprint && (
-            <div className="space-y-8">
-              {/* Executive Summary */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-gray-200 shadow-lg">
-                <div className="flex items-center mb-4">
-                  <FileText className="w-6 h-6 text-blue-600 mr-2" />
-                  <h2 className="text-xl font-bold text-gray-800">Executive Summary</h2>
+          {savedBlueprint && (
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-2">✅ Blueprint Saved Successfully!</h4>
+              <p className="text-green-700 text-sm">
+                ID: {savedBlueprint.id}<br/>
+                Generated: {new Date(savedBlueprint.generatedAt).toLocaleString()}<br/>
+                Content: AI-powered recommendations for venues, catering, photography & decoration
+              </p>
+            </div>
+          )}
+
+
+          {blueprintData && (
+            <div className="mt-8 space-y-6">
+              <h3 className="text-2xl font-bold text-gray-800">🤖 Your AI-Generated Wedding Blueprint</h3>
+
+              {blueprintData.generatedDescription && (
+                <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-800 mb-2">Wedding Vision Summary</h4>
+                  <p className="text-purple-700">{blueprintData.generatedDescription}</p>
                 </div>
+              )}
 
-                {/* Wedding Details Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="bg-white rounded-lg p-4">
-                    <h4 className="font-medium text-gray-800 mb-2">Wedding Details</h4>
-                    <div className="space-y-1 text-sm text-gray-600">
-                      <div><span className="font-medium">Location:</span> {preferences.basicDetails?.location || 'TBD'}</div>
-                      <div><span className="font-medium">Date:</span> {preferences.basicDetails?.weddingDate || 'TBD'}</div>
-                      <div><span className="font-medium">Guests:</span> {preferences.basicDetails?.guestCount || 0}</div>
-                      <div><span className="font-medium">Budget:</span> {preferences.basicDetails?.budgetRange || 'TBD'}</div>
-                    </div>
-                  </div>
-                  <div className="bg-white rounded-lg p-4">
-                    <h4 className="font-medium text-gray-800 mb-2">Selected Theme</h4>
-                    <div className="space-y-1 text-sm text-gray-600">
-                      <div><span className="font-medium">Theme:</span> {preferences.theme?.selectedTheme || 'TBD'}</div>
-                      <div><span className="font-medium">Venue Type:</span> {preferences.venue?.venueType || 'TBD'}</div>
-                      <div><span className="font-medium">Photography:</span> {preferences.photography?.style || 'TBD'}</div>
-                      <div><span className="font-medium">Cuisine:</span> {preferences.catering?.cuisine || 'TBD'}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI-Generated Vision */}
-                <div className="bg-white rounded-lg p-4">
-                  <h4 className="font-medium text-gray-800 mb-3">AI-Generated Vision</h4>
-                  <div className="prose prose-sm max-w-none">
-                    {blueprint.summary ? (
-                      <div className="text-gray-700 leading-relaxed text-sm space-y-3">
-                        {blueprint.summary.split('\n\n').map((paragraph, index) => (
-                          <p key={index} className="mb-3">
-                            {paragraph}
-                          </p>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-gray-600 italic">
-                        <p className="mb-2">✨ <strong>Your Dream Wedding Vision</strong></p>
-                        <p className="mb-2">
-                          Based on your selections, we envision a celebration that perfectly blends your chosen venue, theme, and photography style.
-                          This will be a day filled with love, joy, and unforgettable moments.
-                        </p>
-                        <p>
-                          The AI will generate a detailed vision once you click "Generate Blueprint" above.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Selected Images & Visual Elements */}
-              <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 border border-gray-200 shadow-lg">
-                <div className="flex items-center mb-6">
-                  <Palette className="w-6 h-6 text-purple-600 mr-2" />
-                  <h2 className="text-xl font-bold text-gray-800">Selected Visual Elements</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Selected Venue Image */}
-                  <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                    <div className="flex items-center mb-3">
-                      <Building2 className="w-5 h-5 text-blue-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800 text-sm">Selected Venue</h3>
-                    </div>
-                    {(() => {
-                      const selectedVenue = venueCategories?.flatMap(cat => cat.venues)?.find(v => v.id === preferences.venue?.venueType);
-                      return blueprint.venueImage ? (
-                        <img
-                          src={blueprint.venueImage}
-                          alt={selectedVenue?.name || 'Venue'}
-                          className="w-full h-32 object-cover rounded-lg mb-2"
-                        />
-                      ) : (
-                        <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center mb-2">
-                          <span className="text-gray-500 text-xs">No venue selected</span>
-                        </div>
-                      );
-                    })()}
-                    <p className="text-xs text-gray-600 text-center font-medium">
-                      {(() => {
-                        const selectedVenue = venueCategories?.flatMap(cat => cat.venues)?.find(v => v.id === preferences.venue?.venueType);
-                        return selectedVenue?.name || 'Venue not selected';
-                      })()}
-                    </p>
-                  </div>
-
-                  {/* Selected Theme Image */}
-                  <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                    <div className="flex items-center mb-3">
-                      <Heart className="w-5 h-5 text-red-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800 text-sm">Selected Theme</h3>
-                    </div>
-                    {(() => {
-                      const selectedTheme = themes?.find(t => t.id === preferences.theme?.selectedTheme);
-                      return blueprint.themeImage ? (
-                        <img
-                          src={blueprint.themeImage}
-                          alt={selectedTheme?.name || 'Theme'}
-                          className="w-full h-32 object-cover rounded-lg mb-2"
-                        />
-                      ) : (
-                        <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center mb-2">
-                          <span className="text-gray-500 text-xs">No theme selected</span>
-                        </div>
-                      );
-                    })()}
-                    <p className="text-xs text-gray-600 text-center font-medium">
-                      {(() => {
-                        const selectedTheme = themes?.find(t => t.id === preferences.theme?.selectedTheme);
-                        return selectedTheme?.name || 'Theme not selected';
-                      })()}
-                    </p>
-                  </div>
-
-                  {/* Photography Style */}
-                  <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                    <div className="flex items-center mb-3">
-                      <Camera className="w-5 h-5 text-green-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800 text-sm">Photography Style</h3>
-                    </div>
-                    <div className="w-full h-32 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg flex items-center justify-center mb-2">
-                      <div className="text-center">
-                        <Camera className="w-8 h-8 text-green-600 mx-auto mb-1" />
-                        <span className="text-xs text-gray-700 font-medium">
-                          {preferences.photography?.style || 'Style not selected'}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-600 text-center">
-                      {preferences.photography?.coverage || 'Coverage details'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Strategic Recommendations */}
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 border border-gray-200 shadow-lg">
-                <div className="flex items-center mb-6">
-                  <TrendingUp className="w-6 h-6 text-green-600 mr-2" />
-                  <h2 className="text-xl font-bold text-gray-800">Strategic Recommendations</h2>
-                </div>
-
+              {blueprintData.aiContent && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <Building2 className="w-5 h-5 text-blue-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800">Venue Strategy</h3>
-                    </div>
-                    <ul className="space-y-2">
-                      {blueprint.recommendations.venue.map((rec, index) => (
-                        <li key={index} className="flex items-start text-sm">
-                          <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                          <span className="text-gray-700">{rec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="bg-white rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <Utensils className="w-5 h-5 text-orange-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800">Catering Strategy</h3>
-                    </div>
-                    <ul className="space-y-2">
-                      {blueprint.recommendations.catering.map((rec, index) => (
-                        <li key={index} className="flex items-start text-sm">
-                          <div className="w-2 h-2 bg-orange-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                          <span className="text-gray-700">{rec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="bg-white rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <Camera className="w-5 h-5 text-green-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800">Photography Strategy</h3>
-                    </div>
-                    <ul className="space-y-2">
-                      {blueprint.recommendations.photography.map((rec, index) => (
-                        <li key={index} className="flex items-start text-sm">
-                          <div className="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                          <span className="text-gray-700">{rec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="bg-white rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <Palette className="w-5 h-5 text-purple-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800">Decor Strategy</h3>
-                    </div>
-                    <ul className="space-y-2">
-                      {blueprint.recommendations.decor.map((rec, index) => (
-                        <li key={index} className="flex items-start text-sm">
-                          <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                          <span className="text-gray-700">{rec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Operational Planning */}
-              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-gray-200 shadow-lg">
-                <div className="flex items-center mb-6">
-                  <Clock className="w-6 h-6 text-indigo-600 mr-2" />
-                  <h2 className="text-xl font-bold text-gray-800">Operational Planning</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Timeline */}
-                  <div className="bg-white rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <Clock className="w-5 h-5 text-indigo-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800">Wedding Day Timeline</h3>
-                    </div>
+                  {/* Venue Recommendations */}
+                  <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                    <h4 className="font-semibold text-blue-800 mb-3">🏛️ Venue Recommendations</h4>
                     <div className="space-y-2">
-                      {blueprint.timeline.map((item, index) => (
-                        <div key={index} className="flex items-start">
-                          <div className="w-2 h-2 bg-indigo-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                          <span className="text-gray-700 text-sm">{item}</span>
+                      {blueprintData.aiContent.recommendations.venue.map((item, index) => (
+                        <div key={index} className="bg-white p-3 rounded border border-blue-100">
+                          <h5 className="font-medium text-blue-900">{item.name}</h5>
+                          <p className="text-blue-700 text-sm">{item.description}</p>
+                          <p className="text-blue-600 text-xs font-medium">{item.price}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Budget Breakdown */}
-                  <div className="bg-white rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <DollarSign className="w-5 h-5 text-green-600 mr-2" />
-                      <h3 className="font-semibold text-gray-800">Budget Allocation</h3>
-                    </div>
+                  {/* Catering Recommendations */}
+                  <div className="bg-green-50 p-6 rounded-lg border border-green-200">
+                    <h4 className="font-semibold text-green-800 mb-3">🍽️ Catering Recommendations</h4>
                     <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700 text-sm">Venue & Setup</span>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-800 text-sm">{formatCurrency(blueprint.budgetBreakdown.venue)}</div>
-                          <div className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.venue, blueprint.budgetBreakdown.total)}%</div>
+                      {blueprintData.aiContent.recommendations.catering.map((item, index) => (
+                        <div key={index} className="bg-white p-3 rounded border border-green-100">
+                          <h5 className="font-medium text-green-900">{item.name}</h5>
+                          <p className="text-green-700 text-sm">{item.description}</p>
+                          <p className="text-green-600 text-xs font-medium">{item.price}</p>
                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700 text-sm">Catering & Service</span>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-800 text-sm">{formatCurrency(blueprint.budgetBreakdown.catering)}</div>
-                          <span className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.catering, blueprint.budgetBreakdown.total)}%</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Photography Recommendations */}
+                  <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
+                    <h4 className="font-semibold text-yellow-800 mb-3">📸 Photography Recommendations</h4>
+                    <div className="space-y-2">
+                      {blueprintData.aiContent.recommendations.photography.map((item, index) => (
+                        <div key={index} className="bg-white p-3 rounded border border-yellow-100">
+                          <h5 className="font-medium text-yellow-900">{item.name}</h5>
+                          <p className="text-yellow-700 text-sm">{item.description}</p>
+                          <p className="text-yellow-600 text-xs font-medium">{item.price}</p>
                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700 text-sm">Photography & Media</span>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-800 text-sm">{formatCurrency(blueprint.budgetBreakdown.photography)}</div>
-                          <div className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.photography, blueprint.budgetBreakdown.total)}%</div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Decoration Recommendations */}
+                  <div className="bg-pink-50 p-6 rounded-lg border border-pink-200">
+                    <h4 className="font-semibold text-pink-800 mb-3">🌸 Decoration Recommendations</h4>
+                    <div className="space-y-2">
+                      {blueprintData.aiContent.recommendations.decoration.map((item, index) => (
+                        <div key={index} className="bg-white p-3 rounded border border-pink-100">
+                          <h5 className="font-medium text-pink-900">{item.name}</h5>
+                          <p className="text-pink-700 text-sm">{item.description}</p>
+                          <p className="text-pink-600 text-xs font-medium">{item.price}</p>
                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700 text-sm">Decor & Styling</span>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-800 text-sm">{formatCurrency(blueprint.budgetBreakdown.decor)}</div>
-                          <div className="text-xs text-gray-500">{formatPercentage(blueprint.budgetBreakdown.decor, blueprint.budgetBreakdown.total)}%</div>
-                        </div>
-                      </div>
-                      <div className="border-t pt-2 mt-2">
-                        <div className="flex justify-between items-center">
-                          <span className="font-semibold text-gray-800 text-sm">Total Investment</span>
-                          <div className="font-bold text-base" style={{ color: '#2F4F4F' }}>
-                            {formatCurrency(blueprint.budgetBreakdown.total)}
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* Action Buttons */}
-              <div className="flex justify-center space-x-4 pt-6">
-                <button
-                  onClick={generateBlueprint}
-                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 flex items-center"
-                  style={{
-                    background: 'linear-gradient(90deg, #F5EADB 0%, #EFAFAB 100%)',
-                    color: '#8B4513'
-                  }}
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Regenerate Blueprint
-                </button>
-                <button
-                  onClick={onClose}
-                  className="px-6 py-3 rounded-xl font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-                >
-                  Close
-                </button>
+              {blueprintData.images && blueprintData.images.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-800">AI-Generated Wedding Images</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {blueprintData.images.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={image}
+                          alt={`AI Wedding Blueprint ${index + 1}`}
+                          className="w-full h-64 object-cover rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                          <button className="opacity-0 group-hover:opacity-100 bg-white text-gray-800 px-4 py-2 rounded-lg font-medium transition-opacity duration-300">
+                            View Full Size
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center text-sm text-gray-500 border-t pt-4">
+                <span>Generated on: {new Date(blueprintData.timestamp).toLocaleString()}</span>
+                <span className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span>AI-Powered & Saved</span>
+                </span>
               </div>
             </div>
           )}

@@ -1,393 +1,143 @@
 
-// Google Maps API Integration Service for Wedding Planning
-// Handles location search, venue mapping, and route planning
-
-import { GOOGLE_CONFIG } from '../config/google_config';
-
-interface Location {
-  lat: number;
-  lng: number;
-}
-
-interface Place {
-  place_id: string;
-  name: string;
-  formatted_address: string;
-  geometry: {
-    location: Location;
-  };
-  types: string[];
-  rating?: number;
-  photos?: Array<{
-    photo_reference: string;
-  }>;
-}
-
-interface VenueLocation {
-  id: string;
-  name: string;
-  address: string;
-  location: Location;
-  distance?: string;
-  duration?: string;
-  rating?: number;
-  photoUrl?: string;
-}
-
 export class GoogleMapsService {
-  private static readonly API_KEY = GOOGLE_CONFIG.MAPS.API_KEY;
-  private static map: google.maps.Map | null = null;
-  private static isLoaded = false;
-
-  /**
-   * Load Google Maps JavaScript API
-   */
-  static async loadMapsAPI(): Promise<boolean> {
-    try {
-      if (this.isLoaded) {
-        return true;
-      }
-
-      // Check if API key is configured
-      if (!this.API_KEY || this.API_KEY === '') {
-        console.warn('Google Maps API key not configured');
-        return false;
-      }
-
-      // Check if we're in a browser environment
-      if (typeof window === 'undefined') {
-        console.warn('Not in browser environment');
-        return false;
-      }
-
-      // Load Google Maps script if not already loaded
-      if (!window.google?.maps) {
-        await this.loadMapsScript();
-      }
-
-      this.isLoaded = true;
-      return true;
-    } catch (error) {
-      console.error('Failed to load Google Maps API:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Load Google Maps script dynamically
-   */
-  private static loadMapsScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.API_KEY}&libraries=${GOOGLE_CONFIG.MAPS.LIBRARIES.join(',')}`;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Failed to load Google Maps script'));
-        document.head.appendChild(script);
-      } catch (error) {
-        reject(new Error(`Failed to create Google Maps script: ${error}`));
-      }
-    });
-  }
-
-  /**
-   * Initialize map in a container
-   */
-  static async initializeMap(containerId: string, center?: Location): Promise<google.maps.Map | null> {
-    try {
-      const loaded = await this.loadMapsAPI();
-      if (!loaded) {
-        return null;
-      }
-
-      const container = document.getElementById(containerId);
-      if (!container) {
-        console.error(`Map container ${containerId} not found`);
-        return null;
-      }
-
-      const mapCenter = center || GOOGLE_CONFIG.MAPS.DEFAULT_CENTER;
-      
-      this.map = new google.maps.Map(container, {
-        center: mapCenter,
-        zoom: GOOGLE_CONFIG.MAPS.DEFAULT_ZOOM,
-        styles: [
-          {
-            featureType: 'poi.business',
-            elementType: 'labels',
-            stylers: [{ visibility: 'on' }]
-          }
-        ]
-      });
-
-      return this.map;
-    } catch (error) {
-      console.error('Failed to initialize map:', error);
-      return null;
-    }
-  }
+  private static readonly API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || 'REDACTED_GOOGLE_MAPS_KEY';
+  private static readonly PLACES_API_URL = 'https://maps.googleapis.com/maps/api/place';
 
   /**
    * Search for wedding venues near a location
    */
-  static async searchWeddingVenues(location: string, radius: number = 25000): Promise<VenueLocation[]> {
+  static async searchWeddingVenues(location: string, radius: number = 50000) {
     try {
-      const loaded = await this.loadMapsAPI();
-      if (!loaded) {
-        return [];
-      }
-
       // First, geocode the location
-      const geocodedLocation = await this.geocodeLocation(location);
-      if (!geocodedLocation) {
-        return [];
+      const geocodeResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${this.API_KEY}`
+      );
+      
+      if (!geocodeResponse.ok) {
+        throw new Error('Geocoding failed');
       }
-
+      
+      const geocodeData = await geocodeResponse.json();
+      
+      if (geocodeData.status !== 'OK' || !geocodeData.results.length) {
+        throw new Error('Location not found');
+      }
+      
+      const { lat, lng } = geocodeData.results[0].geometry.location;
+      
       // Search for wedding venues
-      const service = new google.maps.places.PlacesService(document.createElement('div'));
+      const placesResponse = await fetch(
+        `${this.PLACES_API_URL}/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=wedding_venue|banquet_hall|hotel&key=${this.API_KEY}`
+      );
       
-      return new Promise((resolve) => {
-        const request = {
-          location: geocodedLocation,
-          radius: radius,
-          type: 'establishment',
-          keyword: 'wedding venue banquet hall'
-        };
-
-        service.nearbySearch(request, (results, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-            const venues = results.map(place => ({
-              id: place.place_id || Math.random().toString(),
-              name: place.name || 'Unknown Venue',
-              address: place.vicinity || place.formatted_address || '',
-              location: {
-                lat: place.geometry?.location?.lat() || 0,
-                lng: place.geometry?.location?.lng() || 0
-              },
-              rating: place.rating,
-              photoUrl: place.photos?.[0] ? 
-                `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${this.API_KEY}` 
-                : undefined
-            }));
-            resolve(venues);
-          } else {
-            console.error('Places search failed:', status);
-            resolve([]);
-          }
-        });
-      });
-    } catch (error) {
-      console.error('Failed to search wedding venues:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Get detailed venue information
-   */
-  static async getVenueDetails(placeId: string): Promise<any> {
-    try {
-      const loaded = await this.loadMapsAPI();
-      if (!loaded) {
-        return null;
+      if (!placesResponse.ok) {
+        throw new Error('Places search failed');
       }
-
-      const service = new google.maps.places.PlacesService(document.createElement('div'));
       
-      return new Promise((resolve) => {
-        const request = {
-          placeId: placeId,
-          fields: ['name', 'formatted_address', 'formatted_phone_number', 'website', 'rating', 'reviews', 'photos', 'opening_hours']
-        };
-
-        service.getDetails(request, (place, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-            resolve({
-              name: place.name,
-              address: place.formatted_address,
-              phone: place.formatted_phone_number,
-              website: place.website,
-              rating: place.rating,
-              reviews: place.reviews,
-              photos: place.photos?.map(photo => 
-                `https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photoreference=${photo.photo_reference}&key=${this.API_KEY}`
-              ),
-              hours: place.opening_hours?.weekday_text
-            });
-          } else {
-            resolve(null);
-          }
-        });
-      });
+      const placesData = await placesResponse.json();
+      
+      return {
+        success: true,
+        venues: placesData.results.map((place: any) => ({
+          name: place.name,
+          address: place.vicinity,
+          rating: place.rating,
+          priceLevel: place.price_level,
+          photos: place.photos || [],
+          placeId: place.place_id,
+          location: place.geometry.location
+        }))
+      };
+      
     } catch (error) {
-      console.error('Failed to get venue details:', error);
-      return null;
+      console.error('Error searching wedding venues:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 
   /**
-   * Geocode a location string to coordinates
+   * Get detailed place information
    */
-  static async geocodeLocation(address: string): Promise<Location | null> {
+  static async getPlaceDetails(placeId: string) {
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${this.API_KEY}`
+        `${this.PLACES_API_URL}/details/json?place_id=${placeId}&fields=name,formatted_address,formatted_phone_number,website,opening_hours,photos,reviews&key=${this.API_KEY}`
       );
+      
+      if (!response.ok) {
+        throw new Error('Place details request failed');
+      }
       
       const data = await response.json();
       
-      if (data.status === 'OK' && data.results.length > 0) {
-        const location = data.results[0].geometry.location;
-        return {
-          lat: location.lat,
-          lng: location.lng
-        };
+      if (data.status !== 'OK') {
+        throw new Error('Place details not found');
       }
       
-      return null;
-    } catch (error) {
-      console.error('Geocoding failed:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Calculate distance between venues
-   */
-  static async calculateDistances(origin: Location, destinations: VenueLocation[]): Promise<VenueLocation[]> {
-    try {
-      if (destinations.length === 0) return destinations;
-
-      const service = new google.maps.DistanceMatrixService();
+      return {
+        success: true,
+        place: data.result
+      };
       
-      return new Promise((resolve) => {
-        service.getDistanceMatrix({
-          origins: [origin],
-          destinations: destinations.map(venue => venue.location),
-          travelMode: google.maps.TravelMode.DRIVING,
-          unitSystem: google.maps.UnitSystem.METRIC,
-          avoidHighways: false,
-          avoidTolls: false
-        }, (response, status) => {
-          if (status === google.maps.DistanceMatrixStatus.OK && response) {
-            const results = response.rows[0].elements;
-            
-            const venuesWithDistance = destinations.map((venue, index) => {
-              const element = results[index];
-              if (element.status === 'OK') {
-                return {
-                  ...venue,
-                  distance: element.distance?.text,
-                  duration: element.duration?.text
-                };
-              }
-              return venue;
-            });
-            
-            // Sort by distance
-            venuesWithDistance.sort((a, b) => {
-              const distanceA = a.distance ? parseInt(a.distance.replace(/[^\d]/g, '')) : Infinity;
-              const distanceB = b.distance ? parseInt(b.distance.replace(/[^\d]/g, '')) : Infinity;
-              return distanceA - distanceB;
-            });
-            
-            resolve(venuesWithDistance);
-          } else {
-            resolve(destinations);
-          }
-        });
-      });
     } catch (error) {
-      console.error('Failed to calculate distances:', error);
-      return destinations;
+      console.error('Error getting place details:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 
   /**
-   * Add markers to map for venues
+   * Generate Google Maps embed URL
    */
-  static addVenueMarkers(map: google.maps.Map, venues: VenueLocation[]): google.maps.Marker[] {
+  static generateMapEmbedUrl(location: string): string {
+    const encodedLocation = encodeURIComponent(location);
+    return `https://www.google.com/maps/embed/v1/place?key=${this.API_KEY}&q=${encodedLocation}&zoom=15`;
+  }
+
+  /**
+   * Calculate distance between two locations
+   */
+  static async calculateDistance(origin: string, destination: string) {
     try {
-      const markers: google.maps.Marker[] = [];
-
-      venues.forEach(venue => {
-        const marker = new google.maps.Marker({
-          position: venue.location,
-          map: map,
-          title: venue.name,
-          icon: {
-            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-            scaledSize: new google.maps.Size(32, 32)
-          }
-        });
-
-        const infoWindow = new google.maps.InfoWindow({
-          content: `
-            <div style="max-width: 200px;">
-              <h3 style="margin: 0 0 8px 0; font-size: 14px;">${venue.name}</h3>
-              <p style="margin: 0 0 4px 0; font-size: 12px;">${venue.address}</p>
-              ${venue.rating ? `<p style="margin: 0 0 4px 0; font-size: 12px;">Rating: ${venue.rating}⭐</p>` : ''}
-              ${venue.distance ? `<p style="margin: 0; font-size: 12px;">Distance: ${venue.distance}</p>` : ''}
-            </div>
-          `
-        });
-
-        marker.addListener('click', () => {
-          infoWindow.open(map, marker);
-        });
-
-        markers.push(marker);
-      });
-
-      return markers;
-    } catch (error) {
-      console.error('Failed to add venue markers:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Clear all markers from map
-   */
-  static clearMarkers(markers: google.maps.Marker[]): void {
-    markers.forEach(marker => {
-      marker.setMap(null);
-    });
-  }
-
-  /**
-   * Auto-complete places search
-   */
-  static async initializeAutocomplete(inputElement: HTMLInputElement, callback?: (place: any) => void): Promise<google.maps.places.Autocomplete | null> {
-    try {
-      const loaded = await this.loadMapsAPI();
-      if (!loaded) {
-        return null;
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${this.API_KEY}`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Distance calculation failed');
       }
-
-      const autocomplete = new google.maps.places.Autocomplete(inputElement, {
-        types: ['establishment', 'geocode'],
-        componentRestrictions: { country: 'IN' } // Restrict to India
-      });
-
-      if (callback) {
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-          callback(place);
-        });
+      
+      const data = await response.json();
+      
+      if (data.status !== 'OK' || !data.rows.length) {
+        throw new Error('Distance calculation failed');
       }
-
-      return autocomplete;
+      
+      const element = data.rows[0].elements[0];
+      
+      if (element.status !== 'OK') {
+        throw new Error('Route not found');
+      }
+      
+      return {
+        success: true,
+        distance: element.distance.text,
+        duration: element.duration.text,
+        distanceValue: element.distance.value,
+        durationValue: element.duration.value
+      };
+      
     } catch (error) {
-      console.error('Failed to initialize autocomplete:', error);
-      return null;
+      console.error('Error calculating distance:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
-  }
-}
-
-// Extend Window interface to include Google Maps
-declare global {
-  interface Window {
-    google: typeof google;
   }
 }

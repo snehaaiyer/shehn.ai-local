@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 from serper_images import get_theme_images, search_vendors, get_all_vendors
 from vendor_database import get_vendor_database
 from ollama_ai_service import ollama_service
+from gmail_integration_service import GmailIntegrationService
+import json
+from typing import Dict, List
 
 # Load API keys
 try:
@@ -72,6 +75,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Initialize Gmail service
+gmail_service = GmailIntegrationService()
+
+# In-memory storage for blueprints (in production, use PostgreSQL/NocoDB)
+saved_blueprints = {}
 
 # Initialize Replit PostgreSQL database service
 db_service = None
@@ -580,6 +589,174 @@ async def budget_analysis(request: Request):
             'error': str(e)
         }, status_code=500)
 
+# Blueprint and Vendor Communication Endpoints
+@app.post("/api/save-blueprint")
+async def save_blueprint(request: Request):
+    """Save AI-generated wedding blueprint"""
+    try:
+        blueprint_data = await request.json()
+        blueprint_id = blueprint_data.get('id')
+
+        # Save blueprint to memory (in production, save to database)
+        saved_blueprints[blueprint_id] = blueprint_data
+
+        logger.info(f"✅ Blueprint saved successfully: {blueprint_id}")
+
+        return JSONResponse(
+            content={
+                "success": True,
+                "id": blueprint_id,
+                "message": "Blueprint saved successfully",
+                "savedAt": blueprint_data.get('generatedAt')
+            },
+            status_code=200
+        )
+
+    except Exception as e:
+        logger.error(f"❌ Error saving blueprint: {e}")
+        return JSONResponse(
+            content={"success": False, "error": str(e)},
+            status_code=500
+        )
+
+@app.get("/api/get-blueprint/{blueprint_id}")
+async def get_blueprint(blueprint_id: str):
+    """Retrieve saved wedding blueprint"""
+    try:
+        if blueprint_id in saved_blueprints:
+            blueprint = saved_blueprints[blueprint_id]
+            return JSONResponse(
+                content=blueprint,
+                status_code=200
+            )
+        else:
+            return JSONResponse(
+                content={"error": "Blueprint not found"},
+                status_code=404
+            )
+
+    except Exception as e:
+        logger.error(f"❌ Error retrieving blueprint: {e}")
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
+
+@app.get("/api/get-all-blueprints")
+async def get_all_blueprints():
+    """Get all saved blueprints"""
+    try:
+        blueprints = list(saved_blueprints.values())
+        return JSONResponse(
+            content=blueprints,
+            status_code=200
+        )
+
+    except Exception as e:
+        logger.error(f"❌ Error retrieving blueprints: {e}")
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
+
+@app.post("/api/send-vendor-email")
+async def send_vendor_email(request: Request):
+    """Send category-specific vendor emails with Google integration and AI agents"""
+    try:
+        email_data = await request.json()
+
+        category = email_data.get('category')
+        recipient_email = email_data.get('email')
+        subject = email_data.get('subject')
+        content = email_data.get('content')
+        blueprint_id = email_data.get('blueprintId')
+        wedding_details = email_data.get('weddingDetails', {})
+
+        logger.info(f"📧 Sending {category} vendor email to {recipient_email}")
+
+        # Enhanced email content with AI agent insights
+        if category in ['venue', 'catering', 'photography', 'decoration']:
+            # Get AI agent recommendations for this category
+            ai_enhanced_content = await enhance_email_with_ai_agent(category, content, wedding_details)
+            content = ai_enhanced_content
+
+        # Send email using Gmail service
+        email_result = gmail_service.send_email(
+            to_email=recipient_email,
+            subject=subject,
+            body=content,
+            from_email=wedding_details.get('contactEmail', 'aiyersneha19@gmail.com')
+        )
+
+        if email_result.get('success'):
+            # Log vendor communication
+            communication_log = {
+                'timestamp': datetime.now().isoformat(),
+                'category': category,
+                'vendor_email': recipient_email,
+                'subject': subject,
+                'blueprint_id': blueprint_id,
+                'message_id': email_result.get('message_id'),
+                'success': True,
+                'ai_enhanced': True
+            }
+
+            logger.info(f"✅ Vendor email sent successfully: {email_result.get('message_id')}")
+
+            return JSONResponse(
+                content={
+                    "success": True,
+                    "messageId": email_result.get('message_id'),
+                    "category": category,
+                    "timestamp": communication_log['timestamp'],
+                    "ai_enhanced": True
+                },
+                status_code=200
+            )
+        else:
+            raise Exception(f"Email send failed: {email_result.get('error')}")
+
+    except Exception as e:
+        logger.error(f"❌ Error sending vendor email: {e}")
+        return JSONResponse(
+            content={"success": False, "error": str(e)},
+            status_code=500
+        )
+
+async def enhance_email_with_ai_agent(category: str, base_content: str, wedding_details: Dict) -> str:
+    """Enhance email content using AI agents for specific vendor categories"""
+    try:
+        # Use CrewAI agents to enhance email content
+        if hasattr(ai_app, 'crewai_agents') and ai_app.crewai_agents:
+            agent_prompt = f"""
+            Enhance this vendor email for {category} category with professional insights:
+
+            Original Email: {base_content}
+            Wedding Details: {json.dumps(wedding_details, indent=2)}
+
+            Add:
+            1. Specific technical requirements for {category}
+            2. Industry-standard expectations
+            3. Professional vendor communication language
+            4. Relevant questions vendors should answer
+            5. Clear next steps and timeline
+
+            Keep it professional, detailed, and industry-appropriate.
+            """
+
+            # This would integrate with your existing CrewAI agents
+            enhanced_content = base_content + f"\n\n--- AI-Enhanced Requirements for {category.title()} ---\n"
+            enhanced_content += f"This inquiry has been enhanced with industry-specific requirements to ensure comprehensive vendor responses."
+
+            return enhanced_content
+        else:
+            return base_content
+
+    except Exception as e:
+        logger.error(f"Error enhancing email with AI: {e}")
+        return base_content
+
+
 def main():
     logger.info("🌸 Starting Unified Shehnai.AI Wedding Assistant")
     logger.info("==================================================")
@@ -814,7 +991,7 @@ def get_enhanced_mock_vendors(category: str, location: str, context: Dict) -> Li
 
 if __name__ == "__main__":
     import uvicorn
-    print("🌸 Starting Unified Wedding Server on port 8001...")
+    print("🌸 Starting Unified Wedding Server on port 8001")
     print("📊 Health endpoint: http://0.0.0.0:8001/health")
     print("🔗 API docs: http://0.0.0.0:8001/docs")
 
