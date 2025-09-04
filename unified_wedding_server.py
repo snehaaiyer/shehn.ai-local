@@ -94,6 +94,7 @@ react_build_path = Path("react-frontend/build")
 static_path = react_build_path / "static"
 if react_build_path.exists() and static_path.exists():
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+    logger.info("✅ React build files mounted for production")
 
 @app.get("/")
 async def serve_root():
@@ -593,4 +594,11 @@ if __name__ == "__main__":
     print("🚀 Starting Unified Wedding Server on port 8001...")
     print("📊 Health endpoint: http://0.0.0.0:8001/health")
     print("🔗 API docs: http://0.0.0.0:8001/docs")
-    uvicorn.run(app, host="0.0.0.0", port=8001, reload=False)
+    
+    # Use port 5000 for deployment (maps to 80/443 in production)
+    port = int(os.getenv('PORT', 8001))
+    if os.getenv('REPLIT_DEPLOYMENT'):
+        port = 5000
+        print(f"🌐 Running in deployment mode on port {port}")
+    
+    uvicorn.run(app, host="0.0.0.0", port=port, reload=False)
