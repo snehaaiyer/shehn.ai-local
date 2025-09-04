@@ -1,8 +1,9 @@
 // Google API Configuration for Wedding Planning App
 
 export const GOOGLE_CONFIG = {
-  API_KEY: process.env.REACT_APP_GOOGLE_API_KEY || '',
-  CLIENT_ID: process.env.REACT_APP_GOOGLE_CLIENT_ID || '',
+  API_KEY: process.env.REACT_APP_GOOGLE_API_KEY || 'REDACTED_GOOGLE_MAPS_KEY',
+  CLIENT_ID: process.env.REACT_APP_GOOGLE_CLIENT_ID || 'REDACTED_GOOGLE_CLIENT_ID',
+  CLIENT_SECRET: process.env.REACT_APP_GOOGLE_CLIENT_SECRET || 'REDACTED_GOOGLE_CLIENT_SECRET',
   DISCOVERY_DOCS: [
     'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
     'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'

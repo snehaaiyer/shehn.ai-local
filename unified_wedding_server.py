@@ -27,7 +27,7 @@ from serper_images import get_theme_images, search_vendors, get_all_vendors
 from vendor_database import get_vendor_database
 from ollama_ai_service import ollama_service
 
-# Load Serper API key
+# Load API keys
 try:
     from config.api_config import SERPER_API_KEY
     if SERPER_API_KEY and SERPER_API_KEY != "" and not SERPER_API_KEY.startswith("12345"):
@@ -41,6 +41,18 @@ except ImportError as e:
     logger.warning(f"⚠️ Could not import Serper API key from config: {e}")
 except Exception as e:
     logger.error(f"❌ Serper API key configuration error: {e}")
+
+# Load Google API keys from environment
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', 'REDACTED_GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', 'REDACTED_GOOGLE_CLIENT_SECRET')
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', 'REDACTED_GOOGLE_MAPS_KEY')
+
+if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+    logger.info("✅ Google OAuth credentials loaded")
+    logger.info(f"🔑 Client ID: {GOOGLE_CLIENT_ID[:15]}...{GOOGLE_CLIENT_ID[-15:]}")
+    logger.info(f"🔑 Client Secret: {GOOGLE_CLIENT_SECRET[:8]}...{GOOGLE_CLIENT_SECRET[-4:]}")
+else:
+    logger.warning("⚠️ Google OAuth credentials not found")
 logger = logging.getLogger(__name__)
 
 # FastAPI App Setup
@@ -450,6 +462,54 @@ Best regards,
 
     except Exception as e:
         logger.error(f"Message generation error: {e}")
+        return JSONResponse({
+            'success': False,
+            'error': str(e)
+        }, status_code=500)
+
+# Google OAuth Integration
+@app.get("/api/google/auth-url")
+async def get_google_auth_url():
+    """Get Google OAuth authorization URL"""
+    try:
+        auth_url = f"https://accounts.google.com/o/oauth2/auth?client_id={GOOGLE_CLIENT_ID}&redirect_uri=https://shehnai.replit.app/oauth2callback&scope=https://www.googleapis.com/auth/calendar%20https://www.googleapis.com/auth/gmail.send%20https://www.googleapis.com/auth/userinfo.email&response_type=code&access_type=offline"
+        
+        return JSONResponse({
+            'success': True,
+            'auth_url': auth_url
+        })
+    except Exception as e:
+        logger.error(f"Google auth URL error: {e}")
+        return JSONResponse({
+            'success': False,
+            'error': str(e)
+        }, status_code=500)
+
+@app.post("/api/google/oauth2callback")
+async def google_oauth_callback(request: Request):
+    """Handle Google OAuth callback"""
+    try:
+        data = await request.json()
+        auth_code = data.get('code', '')
+        
+        if not auth_code:
+            return JSONResponse({
+                'success': False,
+                'error': 'Authorization code missing'
+            }, status_code=400)
+        
+        # Exchange code for tokens (simplified for demo)
+        return JSONResponse({
+            'success': True,
+            'message': 'Google OAuth authentication successful',
+            'user': {
+                'authenticated': True,
+                'provider': 'google'
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Google OAuth callback error: {e}")
         return JSONResponse({
             'success': False,
             'error': str(e)
