@@ -123,21 +123,65 @@ const VendorDiscovery: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const searchParams = {
+      // Get comprehensive wedding preferences for enhanced search
+      const savedPreferences = localStorage.getItem('weddingPreferences');
+      let comprehensivePreferences = {};
+      
+      if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        comprehensivePreferences = {
+          // Basic details
+          guestCount: preferences.basicDetails?.guestCount || 100,
+          weddingDate: preferences.basicDetails?.weddingDate || '',
+          yourName: preferences.basicDetails?.yourName || '',
+          partnerName: preferences.basicDetails?.partnerName || '',
+          priorities: preferences.basicDetails?.priorities?.map(p => p.id) || [],
+          eventDuration: preferences.basicDetails?.eventDuration || '1',
+          
+          // Theme and style preferences
+          weddingTheme: preferences.theme?.selectedTheme || '',
+          
+          // Venue preferences
+          venueType: preferences.venue?.venueType || '',
+          capacity: preferences.venue?.capacity || preferences.basicDetails?.guestCount || 100,
+          
+          // Catering preferences
+          cuisine: preferences.catering?.cuisine || '',
+          mealType: preferences.catering?.mealType || '',
+          dietaryRestrictions: preferences.catering?.dietaryRestrictions || [],
+          budgetPerPerson: preferences.catering?.budgetPerPerson || '',
+          
+          // Photography preferences
+          photographyStyle: preferences.photography?.style || '',
+          coverageType: preferences.photography?.coverage || '',
+          videographyRequired: preferences.photography?.videography?.required || false,
+          droneCoverage: preferences.photography?.videography?.droneCoverage || false,
+          culturalCoverage: preferences.photography?.culturalCoverage || {},
+          
+          // Budget allocation insights
+          budgetRange: preferences.basicDetails?.budgetRange || ''
+        };
+      }
+
+      const enhancedSearchParams = {
         category: appliedFilters.category || selectedCategory,
         location: appliedFilters.location || selectedLocation,
         priceRange: appliedFilters.budget || selectedBudget,
         rating: appliedFilters.rating || selectedRating,
-        searchTerm: searchQuery
+        searchTerm: searchQuery,
+        
+        // Add comprehensive preference-based matching
+        weddingPreferences: comprehensivePreferences,
+        usePreferenceMatching: true
       };
 
-      console.log('🔍 Searching vendors with params:', searchParams);
+      console.log('🔍 Enhanced vendor search with wedding preferences:', enhancedSearchParams);
 
-      const response = await VendorDiscoveryService.searchVendors(searchParams);
+      const response = await VendorDiscoveryService.searchVendors(enhancedSearchParams);
 
       if (response.success && response.vendors) {
         setFilteredVendors(response.vendors);
-        console.log(`✅ Found ${response.vendors.length} vendors`);
+        console.log(`✅ Found ${response.vendors.length} preference-matched vendors`);
       } else {
         console.error('❌ Error searching vendors:', response.error);
         setErrorMessage(response.error || 'Failed to search vendors');
@@ -153,37 +197,54 @@ const VendorDiscovery: React.FC = () => {
     }
   }, [appliedFilters, selectedCategory, selectedLocation, selectedBudget, selectedRating, searchQuery]);
 
-  // Load default preferences
+  // Load comprehensive preferences for vendor discovery
   useEffect(() => {
-    const loadDefaultPreferences = () => {
+    const loadComprehensivePreferences = () => {
       try {
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
           const preferences = JSON.parse(savedPreferences);
+          console.log('📋 Loading comprehensive wedding preferences for vendor discovery:', preferences);
 
+          // Basic location and budget
           if (preferences.basicDetails?.location) {
             const location = preferences.basicDetails.location.toLowerCase();
             setSelectedLocation(location);
             setAppliedFilters(prev => ({ ...prev, location }));
           }
 
-          // Always default to venues category for initial load
-          setSelectedCategory('venues');
-          setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
-
+          // Enhanced budget mapping based on detailed preferences
           if (preferences.basicDetails?.budgetRange) {
-            const budget = preferences.basicDetails.budgetRange.toLowerCase();
-            const budgetMapping: { [key: string]: string } = {
-              'budget-5-15l': 'budget',
-              'premium-15-30l': 'premium',
-              'luxury-30-50l': 'luxury',
-              'ultra-luxury-50l+': 'luxury'
-            };
-
-            const budgetFilter = budgetMapping[budget] || 'standard';
+            const budget = preferences.basicDetails.budgetRange;
+            let budgetFilter = 'standard';
+            
+            if (budget.includes('5-15') || budget.includes('Budget')) {
+              budgetFilter = 'budget';
+            } else if (budget.includes('15-30') || budget.includes('Premium')) {
+              budgetFilter = 'premium';
+            } else if (budget.includes('30-50') || budget.includes('50+') || budget.includes('Luxury')) {
+              budgetFilter = 'luxury';
+            }
+            
             setSelectedBudget(budgetFilter);
             setAppliedFilters(prev => ({ ...prev, budget: budgetFilter }));
           }
+
+          // Set category based on priorities
+          const priorities = preferences.basicDetails?.priorities || [];
+          let defaultCategory = 'venues';
+          
+          if (priorities.length > 0) {
+            const topPriority = priorities[0];
+            if (topPriority.id === 'photography') defaultCategory = 'photography';
+            else if (topPriority.id === 'catering') defaultCategory = 'catering';
+            else if (topPriority.id === 'decor') defaultCategory = 'decoration';
+            else if (topPriority.id === 'entertainment') defaultCategory = 'entertainment';
+            else if (topPriority.id === 'outfits') defaultCategory = 'beauty';
+          }
+          
+          setSelectedCategory(defaultCategory);
+          setAppliedFilters(prev => ({ ...prev, category: defaultCategory }));
 
           setSelectedRating('4.5');
           setAppliedFilters(prev => ({ ...prev, rating: '4.5' }));
@@ -193,14 +254,14 @@ const VendorDiscovery: React.FC = () => {
           setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
         }
       } catch (error) {
-        console.error('Error loading default preferences:', error);
+        console.error('Error loading comprehensive preferences:', error);
         // Default to venues on error
         setSelectedCategory('venues');
         setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
       }
     };
 
-    loadDefaultPreferences();
+    loadComprehensivePreferences();
   }, []);
 
   useEffect(() => {
@@ -370,9 +431,22 @@ const VendorDiscovery: React.FC = () => {
 
           {/* Search and Quick Filters */}
           <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
-            <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>
-              {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.name} Search` : 'Vendor Search'}
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>
+                {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.name} Search` : 'Vendor Search'}
+              </h2>
+              
+              {/* Preference-based indicator */}
+              <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full border border-green-200">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Preference-Based</span>
+                </div>
+                <div className="text-gray-500">
+                  Showing vendors matched to your wedding preferences
+                </div>
+              </div>
+            </div>
 
             {/* Search Bar */}
             <div className="relative">
