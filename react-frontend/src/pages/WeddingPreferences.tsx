@@ -36,7 +36,12 @@ interface WeddingPreferencesData {
   catering: {
     cuisine: string;
     mealType: string;
+    mealTiming?: string;
     dietaryRestrictions: string[];
+    mustHaveDishes?: string;
+    allergies?: string;
+    budgetPerPerson?: string;
+    additionalServices?: string[];
   };
   photography: {
     style: string;
@@ -126,7 +131,12 @@ const WeddingPreferences: React.FC = () => {
     catering: {
       cuisine: '',
       mealType: '',
-      dietaryRestrictions: []
+      mealTiming: '',
+      dietaryRestrictions: [],
+      mustHaveDishes: '',
+      allergies: '',
+      budgetPerPerson: '',
+      additionalServices: []
     },
     photography: {
       style: '',
@@ -808,6 +818,7 @@ const WeddingPreferences: React.FC = () => {
                   Wedding Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* Basic Information */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
                     <input
@@ -840,53 +851,54 @@ const WeddingPreferences: React.FC = () => {
                   </div>
 
                   {/* Wedding Date */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Wedding Date
-                </label>
-                <input
-                  type="date"
-                  value={preferences.basicDetails.weddingDate}
-                  onChange={(e) => updatePreference('basicDetails', 'weddingDate', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                  disabled={preferences.basicDetails.datesFlexible}
-                />
-              </div>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Wedding Date
+                    </label>
+                    <input
+                      type="date"
+                      value={preferences.basicDetails.weddingDate}
+                      onChange={(e) => updatePreference('basicDetails', 'weddingDate', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      disabled={preferences.basicDetails.datesFlexible}
+                    />
+                  </div>
 
-              {/* Dates Flexible Checkbox */}
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  id="datesFlexible"
-                  checked={preferences.basicDetails.datesFlexible}
-                  onChange={(e) => updatePreference('basicDetails', 'datesFlexible', e.target.checked)}
-                  className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
-                />
-                <label htmlFor="datesFlexible" className="text-sm font-medium text-gray-700">
-                  My dates are flexible
-                </label>
-              </div>
+                  {/* Event Duration */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Number of Days
+                    </label>
+                    <select
+                      value={preferences.basicDetails.eventDuration}
+                      onChange={(e) => updatePreference('basicDetails', 'eventDuration', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                    >
+                      <option value="">Select duration</option>
+                      <option value="1">1 Day</option>
+                      <option value="2">2 Days</option>
+                      <option value="3">3 Days</option>
+                      <option value="4">4 Days</option>
+                      <option value="5">5 Days</option>
+                      <option value="7">1 Week</option>
+                    </select>
+                  </div>
 
-              {/* Event Duration */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Number of Days of Event
-                </label>
-                <select
-                  value={preferences.basicDetails.eventDuration}
-                  onChange={(e) => updatePreference('basicDetails', 'eventDuration', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                >
-                  <option value="">Select duration</option>
-                  <option value="1">1 Day</option>
-                  <option value="2">2 Days</option>
-                  <option value="3">3 Days</option>
-                  <option value="4">4 Days</option>
-                  <option value="5">5 Days</option>
-                  <option value="7">1 Week</option>
-                </select>
-              </div>
+                  {/* Dates Flexible */}
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="datesFlexible"
+                      checked={preferences.basicDetails.datesFlexible}
+                      onChange={(e) => updatePreference('basicDetails', 'datesFlexible', e.target.checked)}
+                      className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="datesFlexible" className="text-sm font-medium text-gray-700">
+                      My dates are flexible
+                    </label>
+                  </div>
 
+                  {/* Guest Count */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Guest Count</label>
                     <input
@@ -897,15 +909,33 @@ const WeddingPreferences: React.FC = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
                   </div>
+
+                  {/* Location */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Wedding Location</label>
                     <input
                       type="text"
                       value={preferences.basicDetails.location}
                       onChange={(e) => updatePreference('basicDetails', 'location', e.target.value)}
-                      placeholder="City or venue"
+                      placeholder="City or venue location"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
+                  </div>
+
+                  {/* Budget Range */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
+                    <select
+                      value={preferences.basicDetails.budgetRange}
+                      onChange={(e) => updatePreference('basicDetails', 'budgetRange', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                    >
+                      <option value="">Select budget range</option>
+                      <option value="₹5-15 Lakhs">₹5-15 Lakhs (Budget)</option>
+                      <option value="₹15-30 Lakhs">₹15-30 Lakhs (Premium)</option>
+                      <option value="₹30-50 Lakhs">₹30-50 Lakhs (Luxury)</option>
+                      <option value="₹50+ Lakhs">₹50+ Lakhs (Ultra Luxury)</option>
+                    </select>
                   </div>
                 </div>
 
@@ -1181,40 +1211,180 @@ const WeddingPreferences: React.FC = () => {
 
             {/* Catering Tab */}
             {activeTab === 'catering' && (
-              <div>
+              <div className="space-y-8">
                 <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#2F4F4F' }}>
                   <Utensils className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
                   Catering Preferences
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Cuisine Type</label>
-                    <select
-                      value={preferences.catering.cuisine}
-                      onChange={(e) => updatePreference('catering', 'cuisine', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                    >
-                      <option value="">Select cuisine</option>
-                      <option value="indian">Indian</option>
-                      <option value="continental">Continental</option>
-                      <option value="chinese">Chinese</option>
-                      <option value="italian">Italian</option>
-                      <option value="mexican">Mexican</option>
-                      <option value="fusion">Fusion</option>
-                    </select>
+
+                {/* Basic Catering Preferences */}
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Cuisine & Service Style</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Primary Cuisine Type</label>
+                      <select
+                        value={preferences.catering.cuisine}
+                        onChange={(e) => updatePreference('catering', 'cuisine', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      >
+                        <option value="">Select cuisine</option>
+                        <option value="north-indian">North Indian</option>
+                        <option value="south-indian">South Indian</option>
+                        <option value="gujarati">Gujarati</option>
+                        <option value="punjabi">Punjabi</option>
+                        <option value="bengali">Bengali</option>
+                        <option value="marathi">Marathi</option>
+                        <option value="multi-cuisine">Multi-Cuisine Indian</option>
+                        <option value="continental">Continental</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="italian">Italian</option>
+                        <option value="mexican">Mexican</option>
+                        <option value="fusion">Indo-Fusion</option>
+                        <option value="international">International</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Service Style</label>
+                      <select
+                        value={preferences.catering.mealType}
+                        onChange={(e) => updatePreference('catering', 'mealType', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      >
+                        <option value="">Select service style</option>
+                        <option value="buffet">Buffet Style</option>
+                        <option value="plated">Plated Service</option>
+                        <option value="family-style">Family Style</option>
+                        <option value="cocktail">Cocktail Reception</option>
+                        <option value="mixed">Mixed Service</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Meal Times</label>
+                      <select
+                        value={preferences.catering.mealTiming || ''}
+                        onChange={(e) => updatePreference('catering', 'mealTiming', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      >
+                        <option value="">Select meal timing</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="evening-snacks">Evening Snacks</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="lunch-dinner">Lunch & Dinner</option>
+                        <option value="all-meals">All Meals</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Meal Type</label>
-                    <select
-                      value={preferences.catering.mealType}
-                      onChange={(e) => updatePreference('catering', 'mealType', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                    >
-                      <option value="">Select meal type</option>
-                      <option value="lunch">Lunch</option>
-                      <option value="dinner">Dinner</option>
-                      <option value="both">Both Lunch & Dinner</option>
-                    </select>
+                </div>
+
+                {/* Dietary Requirements */}
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Dietary Requirements</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      'Vegetarian Only',
+                      'Vegan Options',
+                      'Jain Food',
+                      'Gluten-Free',
+                      'Dairy-Free',
+                      'No Onion/Garlic',
+                      'Halal',
+                      'Kosher',
+                      'Diabetic-Friendly',
+                      'Low-Sodium',
+                      'Organic',
+                      'No Special Requirements'
+                    ].map((restriction) => (
+                      <label key={restriction} className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={preferences.catering.dietaryRestrictions?.includes(restriction) || false}
+                          onChange={(e) => {
+                            const current = preferences.catering.dietaryRestrictions || [];
+                            const updated = e.target.checked
+                              ? [...current, restriction]
+                              : current.filter(r => r !== restriction);
+                            updatePreference('catering', 'dietaryRestrictions', updated);
+                          }}
+                          className="rounded border-gray-300"
+                        />
+                        <span className="text-sm">{restriction}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Special Menu Items */}
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Special Menu Preferences</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Must-Have Dishes</label>
+                      <textarea
+                        value={preferences.catering.mustHaveDishes || ''}
+                        onChange={(e) => updatePreference('catering', 'mustHaveDishes', e.target.value)}
+                        placeholder="List any specific dishes or items that must be included..."
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Food Allergies or Restrictions</label>
+                      <textarea
+                        value={preferences.catering.allergies || ''}
+                        onChange={(e) => updatePreference('catering', 'allergies', e.target.value)}
+                        placeholder="List any food allergies or specific restrictions for guests..."
+                        rows={2}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Catering Budget */}
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Catering Budget</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Budget Per Person</label>
+                      <select
+                        value={preferences.catering.budgetPerPerson || ''}
+                        onChange={(e) => updatePreference('catering', 'budgetPerPerson', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      >
+                        <option value="">Select budget per person</option>
+                        <option value="₹500-800">₹500-800 (Basic)</option>
+                        <option value="₹800-1200">₹800-1200 (Standard)</option>
+                        <option value="₹1200-1800">₹1200-1800 (Premium)</option>
+                        <option value="₹1800-2500">₹1800-2500 (Luxury)</option>
+                        <option value="₹2500+">₹2500+ (Ultra Luxury)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Additional Services</label>
+                      <div className="space-y-2">
+                        {['Bar Service', 'Live Counters', 'Welcome Drinks', 'Late Night Snacks'].map((service) => (
+                          <label key={service} className="flex items-center space-x-2">
+                            <input 
+                              type="checkbox" 
+                              checked={preferences.catering.additionalServices?.includes(service) || false}
+                              onChange={(e) => {
+                                const current = preferences.catering.additionalServices || [];
+                                const updated = e.target.checked
+                                  ? [...current, service]
+                                  : current.filter(s => s !== service);
+                                updatePreference('catering', 'additionalServices', updated);
+                              }}
+                              className="rounded border-gray-300"
+                            />
+                            <span className="text-sm">{service}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
