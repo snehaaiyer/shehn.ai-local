@@ -399,195 +399,7 @@ async def search_custom_images(request: Request):
             'success': True,
 
 
-def build_enhanced_search_query(category: str, location: str, context: Dict) -> str:
-    """Build enhanced search query based on wedding preferences"""
-    base_query = f"{category} {location}"
-    
-    # Add wedding theme context
-    if context.get('wedding_theme'):
-        theme_keywords = {
-            'royal-palace-rajasthani': 'royal rajasthani heritage palace',
-            'traditional-regional-roots': 'traditional cultural authentic',
-            'vintage-classic': 'vintage classic elegant heritage',
-            'bollywood-glamour': 'bollywood glamour entertainment vibrant',
-            'minimalist-modern': 'modern minimalist contemporary sleek',
-            'luxury-contemporary': 'luxury premium contemporary high-end',
-            'eco-friendly-sustainable': 'eco sustainable organic natural',
-            'floral-paradise': 'floral garden natural flowers',
-            'bohemian-chic': 'bohemian boho artistic creative'
-        }
-        theme_words = theme_keywords.get(context['wedding_theme'], '')
-        if theme_words:
-            base_query += f" {theme_words}"
-    
-    # Add budget context
-    if context.get('budget_range'):
-        if 'luxury' in context['budget_range'].lower() or '50+' in context['budget_range']:
-            base_query += " luxury premium high-end"
-        elif 'budget' in context['budget_range'].lower() or '5-15' in context['budget_range']:
-            base_query += " affordable budget-friendly"
-    
-    # Add specific category enhancements
-    if category == 'venues' and context.get('venue_type'):
-        base_query += f" {context['venue_type'].replace('-', ' ')}"
-    elif category == 'catering' and context.get('cuisine'):
-        base_query += f" {context['cuisine'].replace('-', ' ')} cuisine"
-    elif category == 'photography' and context.get('photography_style'):
-        base_query += f" {context['photography_style']} photography"
-    
-    return base_query
 
-def enhance_vendors_with_preferences(vendors: List[Dict], context: Dict) -> List[Dict]:
-    """Enhance vendor data with preference-based scoring and filtering"""
-    enhanced_vendors = []
-    
-    for vendor in vendors:
-        enhanced_vendor = dict(vendor)
-        
-        # Calculate preference compatibility score
-        compatibility_score = calculate_vendor_compatibility(vendor, context)
-        enhanced_vendor['preferences_match_score'] = compatibility_score
-        enhanced_vendor['contact_score'] = max(compatibility_score, vendor.get('contact_score', 70))
-        
-        # Add preference-based insights
-        insights = generate_preference_insights(vendor, context)
-        enhanced_vendor['preference_insights'] = insights
-        
-        # Enhance description with preference relevance
-        enhanced_description = enhance_vendor_description(vendor, context)
-        enhanced_vendor['enhanced_description'] = enhanced_description
-        
-        enhanced_vendors.append(enhanced_vendor)
-    
-    # Sort by preference compatibility
-    enhanced_vendors.sort(key=lambda x: x['preferences_match_score'], reverse=True)
-    
-    return enhanced_vendors
-
-def calculate_vendor_compatibility(vendor: Dict, context: Dict) -> int:
-    """Calculate how well a vendor matches wedding preferences (0-100)"""
-    score = 70  # Base score
-    
-    vendor_name = vendor.get('name', '').lower()
-    vendor_desc = vendor.get('description', '').lower()
-    vendor_category = vendor.get('category', '')
-    
-    # Theme compatibility (+/-15 points)
-    theme = context.get('wedding_theme', '')
-    if theme:
-        theme_keywords = {
-            'royal': ['royal', 'palace', 'heritage', 'traditional'],
-            'traditional': ['traditional', 'cultural', 'authentic', 'heritage'],
-            'modern': ['modern', 'contemporary', 'sleek', 'minimalist'],
-            'luxury': ['luxury', 'premium', 'high-end', 'elite'],
-            'eco': ['eco', 'sustainable', 'organic', 'natural'],
-            'bollywood': ['bollywood', 'glamour', 'entertainment']
-        }
-        
-        for theme_type, keywords in theme_keywords.items():
-            if theme_type in theme:
-                matches = sum(1 for keyword in keywords 
-                             if keyword in vendor_name or keyword in vendor_desc)
-                if matches > 0:
-                    score += min(15, matches * 5)
-                break
-    
-    # Budget alignment (+/-10 points)
-    budget = context.get('budget_range', '')
-    vendor_price = vendor.get('price_range', '').lower()
-    
-    if budget and vendor_price:
-        if ('luxury' in budget.lower() and ('luxury' in vendor_price or 'premium' in vendor_price)):
-            score += 10
-        elif ('budget' in budget.lower() and ('budget' in vendor_price or 'affordable' in vendor_price)):
-            score += 10
-        elif ('mid' in budget.lower() and ('mid' in vendor_price or 'standard' in vendor_price)):
-            score += 10
-    
-    # Category priority bonus (+5 points)
-    priorities = context.get('priorities', [])
-    if vendor_category in priorities[:3]:  # Top 3 priorities
-        priority_index = priorities.index(vendor_category)
-        score += 5 - priority_index
-    
-    # Rating bonus (+/-5 points)
-    vendor_rating = vendor.get('rating', 4.0)
-    if vendor_rating >= 4.7:
-        score += 5
-    elif vendor_rating >= 4.5:
-        score += 3
-    elif vendor_rating < 4.0:
-        score -= 5
-    
-    # Experience bonus (+3 points)
-    experience = vendor.get('experience_years', 0)
-    if experience >= 10:
-        score += 3
-    elif experience >= 5:
-        score += 1
-    
-    return min(100, max(50, score))
-
-def generate_preference_insights(vendor: Dict, context: Dict) -> List[str]:
-    """Generate insights about how vendor matches preferences"""
-    insights = []
-    
-    # Theme insights
-    theme = context.get('wedding_theme', '')
-    if theme and 'royal' in theme:
-        if any(keyword in vendor.get('name', '').lower() 
-               for keyword in ['royal', 'palace', 'heritage']):
-            insights.append("🏛️ Perfect for royal wedding themes")
-    
-    # Budget insights
-    budget = context.get('budget_range', '')
-    vendor_price = vendor.get('price_range', '').lower()
-    if budget and 'luxury' in budget.lower() and 'luxury' in vendor_price:
-        insights.append("💎 Matches your luxury budget preferences")
-    
-    # Category priority insights
-    priorities = context.get('priorities', [])
-    if vendor.get('category') in priorities[:2]:
-        priority_rank = priorities.index(vendor.get('category')) + 1
-        insights.append(f"⭐ #{priority_rank} priority category for your wedding")
-    
-    # Capacity insights
-    guest_count = context.get('guest_count', 0)
-    vendor_capacity = vendor.get('capacity', 0)
-    if vendor_capacity and guest_count:
-        if vendor_capacity >= guest_count * 0.8 and vendor_capacity <= guest_count * 1.5:
-            insights.append(f"👥 Perfect size for your {guest_count} guests")
-    
-    return insights[:3]  # Limit to top 3 insights
-
-def enhance_vendor_description(vendor: Dict, context: Dict) -> str:
-    """Enhance vendor description with preference relevance"""
-    base_desc = vendor.get('description', '')
-    
-    # Add preference-specific enhancements
-    enhancements = []
-    
-    theme = context.get('wedding_theme', '')
-    if theme and 'traditional' in theme:
-        enhancements.append("Specializes in traditional wedding celebrations")
-    elif theme and 'modern' in theme:
-        enhancements.append("Expert in contemporary wedding styles")
-    
-    guest_count = context.get('guest_count', 0)
-    if guest_count > 200:
-        enhancements.append(f"Experienced with large weddings ({guest_count}+ guests)")
-    elif guest_count < 100:
-        enhancements.append("Perfect for intimate wedding celebrations")
-    
-    if enhancements:
-        return f"{base_desc}. {'. '.join(enhancements)}."
-    
-    return base_desc
-
-def get_enhanced_mock_vendors(category: str, location: str, context: Dict) -> List[Dict]:
-    """Get mock vendors enhanced with preference-based data"""
-    base_vendors = get_mock_vendors(category, location)
-    return enhance_vendors_with_preferences(base_vendors, context)
 
 
             'query': query,
@@ -814,6 +626,196 @@ def main():
         logger.error(f"❌ Server startup failed: {e}")
         logger.error("💡 Try checking dependencies: pip install fastapi uvicorn")
         raise
+
+def build_enhanced_search_query(category: str, location: str, context: Dict) -> str:
+    """Build enhanced search query based on wedding preferences"""
+    base_query = f"{category} {location}"
+    
+    # Add wedding theme context
+    if context.get('wedding_theme'):
+        theme_keywords = {
+            'royal-palace-rajasthani': 'royal rajasthani heritage palace',
+            'traditional-regional-roots': 'traditional cultural authentic',
+            'vintage-classic': 'vintage classic elegant heritage',
+            'bollywood-glamour': 'bollywood glamour entertainment vibrant',
+            'minimalist-modern': 'modern minimalist contemporary sleek',
+            'luxury-contemporary': 'luxury premium contemporary high-end',
+            'eco-friendly-sustainable': 'eco sustainable organic natural',
+            'floral-paradise': 'floral garden natural flowers',
+            'bohemian-chic': 'bohemian boho artistic creative'
+        }
+        theme_words = theme_keywords.get(context['wedding_theme'], '')
+        if theme_words:
+            base_query += f" {theme_words}"
+    
+    # Add budget context
+    if context.get('budget_range'):
+        if 'luxury' in context['budget_range'].lower() or '50+' in context['budget_range']:
+            base_query += " luxury premium high-end"
+        elif 'budget' in context['budget_range'].lower() or '5-15' in context['budget_range']:
+            base_query += " affordable budget-friendly"
+    
+    # Add specific category enhancements
+    if category == 'venues' and context.get('venue_type'):
+        base_query += f" {context['venue_type'].replace('-', ' ')}"
+    elif category == 'catering' and context.get('cuisine'):
+        base_query += f" {context['cuisine'].replace('-', ' ')} cuisine"
+    elif category == 'photography' and context.get('photography_style'):
+        base_query += f" {context['photography_style']} photography"
+    
+    return base_query
+
+def enhance_vendors_with_preferences(vendors: List[Dict], context: Dict) -> List[Dict]:
+    """Enhance vendor data with preference-based scoring and filtering"""
+    enhanced_vendors = []
+    
+    for vendor in vendors:
+        enhanced_vendor = dict(vendor)
+        
+        # Calculate preference compatibility score
+        compatibility_score = calculate_vendor_compatibility(vendor, context)
+        enhanced_vendor['preferences_match_score'] = compatibility_score
+        enhanced_vendor['contact_score'] = max(compatibility_score, vendor.get('contact_score', 70))
+        
+        # Add preference-based insights
+        insights = generate_preference_insights(vendor, context)
+        enhanced_vendor['preference_insights'] = insights
+        
+        # Enhance description with preference relevance
+        enhanced_description = enhance_vendor_description(vendor, context)
+        enhanced_vendor['enhanced_description'] = enhanced_description
+        
+        enhanced_vendors.append(enhanced_vendor)
+    
+    # Sort by preference compatibility
+    enhanced_vendors.sort(key=lambda x: x['preferences_match_score'], reverse=True)
+    
+    return enhanced_vendors
+
+def calculate_vendor_compatibility(vendor: Dict, context: Dict) -> int:
+    """Calculate how well a vendor matches wedding preferences (0-100)"""
+    score = 70  # Base score
+    
+    vendor_name = vendor.get('name', '').lower()
+    vendor_desc = vendor.get('description', '').lower()
+    vendor_category = vendor.get('category', '')
+    
+    # Theme compatibility (+/-15 points)
+    theme = context.get('wedding_theme', '')
+    if theme:
+        theme_keywords = {
+            'royal': ['royal', 'palace', 'heritage', 'traditional'],
+            'traditional': ['traditional', 'cultural', 'authentic', 'heritage'],
+            'modern': ['modern', 'contemporary', 'sleek', 'minimalist'],
+            'luxury': ['luxury', 'premium', 'high-end', 'elite'],
+            'eco': ['eco', 'sustainable', 'organic', 'natural'],
+            'bollywood': ['bollywood', 'glamour', 'entertainment']
+        }
+        
+        for theme_type, keywords in theme_keywords.items():
+            if theme_type in theme:
+                matches = sum(1 for keyword in keywords 
+                             if keyword in vendor_name or keyword in vendor_desc)
+                if matches > 0:
+                    score += min(15, matches * 5)
+                break
+    
+    # Budget alignment (+/-10 points)
+    budget = context.get('budget_range', '')
+    vendor_price = vendor.get('price_range', '').lower()
+    
+    if budget and vendor_price:
+        if ('luxury' in budget.lower() and ('luxury' in vendor_price or 'premium' in vendor_price)):
+            score += 10
+        elif ('budget' in budget.lower() and ('budget' in vendor_price or 'affordable' in vendor_price)):
+            score += 10
+        elif ('mid' in budget.lower() and ('mid' in vendor_price or 'standard' in vendor_price)):
+            score += 10
+    
+    # Category priority bonus (+5 points)
+    priorities = context.get('priorities', [])
+    if vendor_category in priorities[:3]:  # Top 3 priorities
+        priority_index = priorities.index(vendor_category)
+        score += 5 - priority_index
+    
+    # Rating bonus (+/-5 points)
+    vendor_rating = vendor.get('rating', 4.0)
+    if vendor_rating >= 4.7:
+        score += 5
+    elif vendor_rating >= 4.5:
+        score += 3
+    elif vendor_rating < 4.0:
+        score -= 5
+    
+    # Experience bonus (+3 points)
+    experience = vendor.get('experience_years', 0)
+    if experience >= 10:
+        score += 3
+    elif experience >= 5:
+        score += 1
+    
+    return min(100, max(50, score))
+
+def generate_preference_insights(vendor: Dict, context: Dict) -> List[str]:
+    """Generate insights about how vendor matches preferences"""
+    insights = []
+    
+    # Theme insights
+    theme = context.get('wedding_theme', '')
+    if theme and 'royal' in theme:
+        if any(keyword in vendor.get('name', '').lower() 
+               for keyword in ['royal', 'palace', 'heritage']):
+            insights.append("🏛️ Perfect for royal wedding themes")
+    
+    # Budget insights
+    budget = context.get('budget_range', '')
+    vendor_price = vendor.get('price_range', '').lower()
+    if budget and 'luxury' in budget.lower() and 'luxury' in vendor_price:
+        insights.append("💎 Matches your luxury budget preferences")
+    
+    # Category priority insights
+    priorities = context.get('priorities', [])
+    if vendor.get('category') in priorities[:2]:
+        priority_rank = priorities.index(vendor.get('category')) + 1
+        insights.append(f"⭐ #{priority_rank} priority category for your wedding")
+    
+    # Capacity insights
+    guest_count = context.get('guest_count', 0)
+    vendor_capacity = vendor.get('capacity', 0)
+    if vendor_capacity and guest_count:
+        if vendor_capacity >= guest_count * 0.8 and vendor_capacity <= guest_count * 1.5:
+            insights.append(f"👥 Perfect size for your {guest_count} guests")
+    
+    return insights[:3]  # Limit to top 3 insights
+
+def enhance_vendor_description(vendor: Dict, context: Dict) -> str:
+    """Enhance vendor description with preference relevance"""
+    base_desc = vendor.get('description', '')
+    
+    # Add preference-specific enhancements
+    enhancements = []
+    
+    theme = context.get('wedding_theme', '')
+    if theme and 'traditional' in theme:
+        enhancements.append("Specializes in traditional wedding celebrations")
+    elif theme and 'modern' in theme:
+        enhancements.append("Expert in contemporary wedding styles")
+    
+    guest_count = context.get('guest_count', 0)
+    if guest_count > 200:
+        enhancements.append(f"Experienced with large weddings ({guest_count}+ guests)")
+    elif guest_count < 100:
+        enhancements.append("Perfect for intimate wedding celebrations")
+    
+    if enhancements:
+        return f"{base_desc}. {'. '.join(enhancements)}."
+    
+    return base_desc
+
+def get_enhanced_mock_vendors(category: str, location: str, context: Dict) -> List[Dict]:
+    """Get mock vendors enhanced with preference-based data"""
+    base_vendors = get_mock_vendors(category, location)
+    return enhance_vendors_with_preferences(base_vendors, context)
 
 if __name__ == "__main__":
     import uvicorn
