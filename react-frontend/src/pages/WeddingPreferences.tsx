@@ -796,6 +796,21 @@ const WeddingPreferences: React.FC = () => {
                   <p className="text-gray-600">Customize your dream wedding experience</p>
                 </div>
               </div>
+              
+              {/* Find Vendors CTA Button */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => {
+                    // Save current preferences before navigating
+                    localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
+                    navigate('/vendor-discovery');
+                  }}
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                >
+                  <Users className="w-5 h-5" />
+                  Find Vendors
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1915,6 +1930,61 @@ const WeddingPreferences: React.FC = () => {
                 )}
               </div>
             )}
+          </div>
+
+          {/* Find Vendors CTA Section - Appears when preferences are set */}
+          {(preferences.basicDetails.yourName && preferences.basicDetails.location && 
+            (preferences.venue.venueType || preferences.theme.selectedTheme)) && (
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+              <div className="text-center">
+                <div className="mb-6">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#2F4F4F' }}>
+                    Ready to Find Your Perfect Vendors?
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Your preferences are set! Let's discover amazing vendors that match your vision.
+                  </p>
+                </div>
+
+                {/* Vendor Categories Preview */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                  {[
+                    { name: 'Venues', icon: '🏛️', category: 'venues' },
+                    { name: 'Photography', icon: '📸', category: 'photography' },
+                    { name: 'Catering', icon: '🍽️', category: 'catering' },
+                    { name: 'Decoration', icon: '🎨', category: 'decoration' },
+                    { name: 'Entertainment', icon: '🎵', category: 'entertainment' },
+                    { name: 'Beauty', icon: '💄', category: 'beauty' }
+                  ].map((category) => (
+                    <div key={category.category} className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                      <div className="text-2xl mb-2">{category.icon}</div>
+                      <p className="text-sm font-medium text-gray-700">{category.name}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    // Save current preferences before navigating
+                    localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
+                    navigate('/vendor-discovery');
+                  }}
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-300 flex items-center gap-3 mx-auto shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <Users className="w-6 h-6" />
+                  Find Vendors Now
+                  <span className="text-sm bg-white/20 px-2 py-1 rounded-full">Venues First!</span>
+                </button>
+
+                <p className="text-sm text-gray-500 mt-4">
+                  We'll start with venues and show you vendors for all categories based on your preferences
+                </p>
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
