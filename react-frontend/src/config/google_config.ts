@@ -16,7 +16,13 @@ export const GOOGLE_CONFIG = {
     'https://www.googleapis.com/auth/gmail.compose',
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/userinfo.email'
-  ].join(' ')
+  ].join(' '),
+  MAPS: {
+    API_KEY: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.REACT_APP_GOOGLE_API_KEY || 'REDACTED_GOOGLE_MAPS_KEY',
+    LIBRARIES: ['places', 'geometry', 'drawing'],
+    DEFAULT_CENTER: { lat: 19.0760, lng: 72.8777 }, // Mumbai
+    DEFAULT_ZOOM: 12
+  }
 };
 
 // Sandbox configuration for testing
@@ -36,6 +42,12 @@ export const GOOGLE_ENDPOINTS = {
     MESSAGES: 'https://www.googleapis.com/gmail/v1/users/me/messages',
     SEND: 'https://www.googleapis.com/gmail/v1/users/me/messages/send',
     THREADS: 'https://www.googleapis.com/gmail/v1/users/me/threads'
+  },
+  MAPS: {
+    GEOCODING: 'https://maps.googleapis.com/maps/api/geocode/json',
+    PLACES: 'https://maps.googleapis.com/maps/api/place',
+    DIRECTIONS: 'https://maps.googleapis.com/maps/api/directions/json',
+    DISTANCE_MATRIX: 'https://maps.googleapis.com/maps/api/distancematrix/json'
   }
 };
 
