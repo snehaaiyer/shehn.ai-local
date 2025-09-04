@@ -7,7 +7,7 @@ packages = ["bash", "geckodriver", "libxcrypt"]
 
 [deployment]
 run = ["sh", "-c", "python unified_wedding_server.py"]
-build = ["sh", "-c", "echo 'Using pre-built React app'"]
+build = ["sh", "-c", "cd react-frontend && npm install --legacy-peer-deps && npm run build:production"]
 
 [workflows]
 runButton = "Full Stack Production"
