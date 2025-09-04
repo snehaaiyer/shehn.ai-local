@@ -595,10 +595,8 @@ if __name__ == "__main__":
     print("📊 Health endpoint: http://0.0.0.0:8001/health")
     print("🔗 API docs: http://0.0.0.0:8001/docs")
     
-    # Use port 5000 for deployment (maps to 80/443 in production)
-    port = int(os.getenv('PORT', 8001))
-    if os.getenv('REPLIT_DEPLOYMENT'):
-        port = 5000
-        print(f"🌐 Running in deployment mode on port {port}")
+    # Use port 5000 for deployment (Replit maps this to 80/443)
+    port = int(os.getenv('PORT', 5000))
+    print(f"🌐 Starting server on port {port}")
     
     uvicorn.run(app, host="0.0.0.0", port=port, reload=False)
