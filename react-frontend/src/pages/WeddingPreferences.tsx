@@ -767,6 +767,19 @@ const WeddingPreferences: React.FC = () => {
     }
   };
 
+  // Mapping theme IDs to image paths with fallbacks
+  const themeImages: { [key: string]: string } = {
+    'royal-palace-rajasthani': `${process.env.PUBLIC_URL}/rajasthani royal.png`,
+    'traditional-regional-roots': `${process.env.PUBLIC_URL}/traditional.png`,
+    'vintage-classic': `${process.env.PUBLIC_URL}/vintage.png`,
+    'bollywood-glamour': `${process.env.PUBLIC_URL}/bollywoodglamor.png`,
+    'minimalist-modern': `${process.env.PUBLIC_URL}/minimalist pastel.png`,
+    'luxury-contemporary': `${process.env.PUBLIC_URL}/classic contemporary.png`,
+    'eco-friendly-sustainable': `${process.env.PUBLIC_URL}/eco sustainable.png`,
+    'floral-paradise': `${process.env.PUBLIC_URL}/floralparadise.png`,
+    'bohemian-chic': `${process.env.PUBLIC_URL}/boho.png`,
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-6 py-8">

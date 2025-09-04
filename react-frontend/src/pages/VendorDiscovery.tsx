@@ -705,7 +705,7 @@ const VendorDiscovery: React.FC = () => {
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.src = 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop';
+                            target.src = `${process.env.PUBLIC_URL}/images/venues/luxury hotel.png`;
                           }}
                         />
                       ) : (

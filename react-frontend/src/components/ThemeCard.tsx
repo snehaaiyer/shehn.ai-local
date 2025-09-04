@@ -32,6 +32,10 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${image})`
         }}
+        onError={(e) => {
+          const target = e.target as HTMLElement;
+          target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/images/themes/fallback-theme.jpg)`;
+        }}
       >
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
