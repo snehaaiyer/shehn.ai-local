@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-09-04T17:55:49.334594",
+  "client_id": "REDACTED_GOOGLE_CLIENT_ID",
+  "deployment_url": "https://shehnai.replit.app",
+  "required_apis": {
+    "Google Calendar API": {
+      "discovery_url": "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+      "status": "\u2705 Available"
+    },
+    "Gmail API": {
+      "discovery_url": "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
+      "status": "\u2705 Available"
+    },
+    "Google+ API (People API)": {
+      "discovery_url": "https://www.googleapis.com/discovery/v1/apis/people/v1/rest",
+      "status": "\u2705 Available"
+    },
+    "Google Drive API": {
+      "discovery_url": "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+      "status": "\u2705 Available"
+    }
+  },
+  "required_scopes": [
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.compose",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+  "redirect_uris": [
+    "https://shehnai.replit.app",
+    "https://shehnai.replit.app/oauth2callback"
+  ],
+  "wedding_features": {
+    "Calendar Events": "Google Calendar API - Create wedding events, vendor meetings",
+    "Email Invitations": "Gmail API - Send wedding invitations to guests",
+    "Vendor Communications": "Gmail API - Email vendor inquiries and confirmations",
+    "User Authentication": "OAuth2 + People API - Sign in and get user profile",
+    "Document Storage": "Google Drive API - Store contracts, guest lists (optional)"
+  },
+  "status": "APIs available, configuration needed"
+}
