@@ -10,7 +10,7 @@ run = ["sh", "-c", "python unified_wedding_server.py"]
 build = ["sh", "-c", "cd react-frontend && npm install --legacy-peer-deps && npm run build:production"]
 
 [workflows]
-runButton = "Test Wedding Flow"
+runButton = "Start Wedding App Clean"
 
 [[workflows.workflow]]
 name = "Start Wedding App"
@@ -163,6 +163,19 @@ args = "python unified_wedding_server.py"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd react-frontend && npm install --legacy-peer-deps && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
+
+[[workflows.workflow]]
+name = "Start Wedding App Clean"
+author = 37053864
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python unified_wedding_server.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd react-frontend && rm -rf node_modules/.cache && npm install --legacy-peer-deps && HOST=0.0.0.0 PORT=3000 BROWSER=none npm start"
 
 [[ports]]
 localPort = 3000

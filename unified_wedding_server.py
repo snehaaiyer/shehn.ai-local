@@ -78,13 +78,13 @@ db_service = None
 try:
     from replit_database_service import get_database_service
     db_service = get_database_service()
-    
+
     # Test database connection
     if db_service.test_connection():
         logger.info("✅ Replit PostgreSQL database connected")
     else:
         logger.warning("⚠️ Database connection failed - using fallback mode")
-        
+
 except Exception as e:
     logger.warning(f"⚠️ Database initialization failed: {e} - using mock data")
     db_service = None
@@ -186,7 +186,7 @@ async def get_vendor_data(category: str, request: Request):
 
         location = preferences.get('city', preferences.get('location', 'Mumbai'))
         use_serper = preferences.get('use_serper', 'true').lower() == 'true'
-        
+
         # Extract comprehensive wedding context
         wedding_context = {
             'location': location,
@@ -202,7 +202,7 @@ async def get_vendor_data(category: str, request: Request):
             'search_term': preferences.get('searchTerm', ''),
             'priorities': preferences.get('priorities', [])
         }
-        
+
         logger.info(f"🎯 Vendor search with comprehensive context: {wedding_context}")
 
         # Try PostgreSQL database first with enhanced context
@@ -233,10 +233,10 @@ async def get_vendor_data(category: str, request: Request):
                 # Build enhanced search query with preferences
                 enhanced_query = build_enhanced_search_query(category, location, wedding_context)
                 result = search_vendors(category, location, 8, enhanced_query)
-                
+
                 if result.get('success') and result.get('vendors'):
                     vendors = result['vendors']
-                    
+
                     # Apply preference-based enhancements
                     enhanced_vendors = enhance_vendors_with_preferences(vendors, wedding_context)
 
@@ -262,7 +262,7 @@ async def get_vendor_data(category: str, request: Request):
         # Enhanced mock data fallback with preferences
         mock_vendors = get_enhanced_mock_vendors(category, location, wedding_context)
         logger.info(f"✅ Using enhanced mock data: {len(mock_vendors)} vendors")
-        
+
         return JSONResponse({
             'success': True,
             'vendors': mock_vendors,
@@ -397,11 +397,6 @@ async def search_custom_images(request: Request):
 
         return JSONResponse({
             'success': True,
-
-
-
-
-
             'query': query,
             'images': images,
             'count': len(images)
@@ -443,14 +438,14 @@ async def save_wedding_data(request: Request):
                     })
             except Exception as db_error:
                 logger.error(f"Database save failed: {db_error}")
-        
+
         # Fallback: save to local file
         try:
             os.makedirs('wedding_data', exist_ok=True)
             filename = f"wedding_data/couple_{int(time.time())}.json"
             with open(filename, 'w') as f:
                 json.dump(couple_data, f, indent=2)
-            
+
             return JSONResponse({
                 'success': True,
                 'message': 'Wedding data saved to local file (database unavailable)',
@@ -512,7 +507,7 @@ async def get_google_auth_url():
     """Get Google OAuth authorization URL"""
     try:
         auth_url = f"https://accounts.google.com/o/oauth2/auth?client_id={GOOGLE_CLIENT_ID}&redirect_uri=https://shehnai.replit.app/oauth2callback&scope=https://www.googleapis.com/auth/calendar%20https://www.googleapis.com/auth/gmail.send%20https://www.googleapis.com/auth/userinfo.email&response_type=code&access_type=offline"
-        
+
         return JSONResponse({
             'success': True,
             'auth_url': auth_url
@@ -530,13 +525,13 @@ async def google_oauth_callback(request: Request):
     try:
         data = await request.json()
         auth_code = data.get('code', '')
-        
+
         if not auth_code:
             return JSONResponse({
                 'success': False,
                 'error': 'Authorization code missing'
             }, status_code=400)
-        
+
         # Exchange code for tokens (simplified for demo)
         return JSONResponse({
             'success': True,
@@ -546,7 +541,7 @@ async def google_oauth_callback(request: Request):
                 'provider': 'google'
             }
         })
-        
+
     except Exception as e:
         logger.error(f"Google OAuth callback error: {e}")
         return JSONResponse({
@@ -630,7 +625,7 @@ def main():
 def build_enhanced_search_query(category: str, location: str, context: Dict) -> str:
     """Build enhanced search query based on wedding preferences"""
     base_query = f"{category} {location}"
-    
+
     # Add wedding theme context
     if context.get('wedding_theme'):
         theme_keywords = {
@@ -647,14 +642,14 @@ def build_enhanced_search_query(category: str, location: str, context: Dict) -> 
         theme_words = theme_keywords.get(context['wedding_theme'], '')
         if theme_words:
             base_query += f" {theme_words}"
-    
+
     # Add budget context
     if context.get('budget_range'):
         if 'luxury' in context['budget_range'].lower() or '50+' in context['budget_range']:
             base_query += " luxury premium high-end"
         elif 'budget' in context['budget_range'].lower() or '5-15' in context['budget_range']:
             base_query += " affordable budget-friendly"
-    
+
     # Add specific category enhancements
     if category == 'venues' and context.get('venue_type'):
         base_query += f" {context['venue_type'].replace('-', ' ')}"
@@ -662,44 +657,44 @@ def build_enhanced_search_query(category: str, location: str, context: Dict) -> 
         base_query += f" {context['cuisine'].replace('-', ' ')} cuisine"
     elif category == 'photography' and context.get('photography_style'):
         base_query += f" {context['photography_style']} photography"
-    
+
     return base_query
 
 def enhance_vendors_with_preferences(vendors: List[Dict], context: Dict) -> List[Dict]:
     """Enhance vendor data with preference-based scoring and filtering"""
     enhanced_vendors = []
-    
+
     for vendor in vendors:
         enhanced_vendor = dict(vendor)
-        
+
         # Calculate preference compatibility score
         compatibility_score = calculate_vendor_compatibility(vendor, context)
         enhanced_vendor['preferences_match_score'] = compatibility_score
         enhanced_vendor['contact_score'] = max(compatibility_score, vendor.get('contact_score', 70))
-        
+
         # Add preference-based insights
         insights = generate_preference_insights(vendor, context)
         enhanced_vendor['preference_insights'] = insights
-        
+
         # Enhance description with preference relevance
         enhanced_description = enhance_vendor_description(vendor, context)
         enhanced_vendor['enhanced_description'] = enhanced_description
-        
+
         enhanced_vendors.append(enhanced_vendor)
-    
+
     # Sort by preference compatibility
     enhanced_vendors.sort(key=lambda x: x['preferences_match_score'], reverse=True)
-    
+
     return enhanced_vendors
 
 def calculate_vendor_compatibility(vendor: Dict, context: Dict) -> int:
     """Calculate how well a vendor matches wedding preferences (0-100)"""
     score = 70  # Base score
-    
+
     vendor_name = vendor.get('name', '').lower()
     vendor_desc = vendor.get('description', '').lower()
     vendor_category = vendor.get('category', '')
-    
+
     # Theme compatibility (+/-15 points)
     theme = context.get('wedding_theme', '')
     if theme:
@@ -711,19 +706,19 @@ def calculate_vendor_compatibility(vendor: Dict, context: Dict) -> int:
             'eco': ['eco', 'sustainable', 'organic', 'natural'],
             'bollywood': ['bollywood', 'glamour', 'entertainment']
         }
-        
+
         for theme_type, keywords in theme_keywords.items():
             if theme_type in theme:
-                matches = sum(1 for keyword in keywords 
+                matches = sum(1 for keyword in keywords
                              if keyword in vendor_name or keyword in vendor_desc)
                 if matches > 0:
                     score += min(15, matches * 5)
                 break
-    
+
     # Budget alignment (+/-10 points)
     budget = context.get('budget_range', '')
     vendor_price = vendor.get('price_range', '').lower()
-    
+
     if budget and vendor_price:
         if ('luxury' in budget.lower() and ('luxury' in vendor_price or 'premium' in vendor_price)):
             score += 10
@@ -731,13 +726,13 @@ def calculate_vendor_compatibility(vendor: Dict, context: Dict) -> int:
             score += 10
         elif ('mid' in budget.lower() and ('mid' in vendor_price or 'standard' in vendor_price)):
             score += 10
-    
+
     # Category priority bonus (+5 points)
     priorities = context.get('priorities', [])
     if vendor_category in priorities[:3]:  # Top 3 priorities
         priority_index = priorities.index(vendor_category)
         score += 5 - priority_index
-    
+
     # Rating bonus (+/-5 points)
     vendor_rating = vendor.get('rating', 4.0)
     if vendor_rating >= 4.7:
@@ -746,70 +741,70 @@ def calculate_vendor_compatibility(vendor: Dict, context: Dict) -> int:
         score += 3
     elif vendor_rating < 4.0:
         score -= 5
-    
+
     # Experience bonus (+3 points)
     experience = vendor.get('experience_years', 0)
     if experience >= 10:
         score += 3
     elif experience >= 5:
         score += 1
-    
+
     return min(100, max(50, score))
 
 def generate_preference_insights(vendor: Dict, context: Dict) -> List[str]:
     """Generate insights about how vendor matches preferences"""
     insights = []
-    
+
     # Theme insights
     theme = context.get('wedding_theme', '')
     if theme and 'royal' in theme:
-        if any(keyword in vendor.get('name', '').lower() 
+        if any(keyword in vendor.get('name', '').lower()
                for keyword in ['royal', 'palace', 'heritage']):
             insights.append("🏛️ Perfect for royal wedding themes")
-    
+
     # Budget insights
     budget = context.get('budget_range', '')
     vendor_price = vendor.get('price_range', '').lower()
     if budget and 'luxury' in budget.lower() and 'luxury' in vendor_price:
         insights.append("💎 Matches your luxury budget preferences")
-    
+
     # Category priority insights
     priorities = context.get('priorities', [])
     if vendor.get('category') in priorities[:2]:
         priority_rank = priorities.index(vendor.get('category')) + 1
         insights.append(f"⭐ #{priority_rank} priority category for your wedding")
-    
+
     # Capacity insights
     guest_count = context.get('guest_count', 0)
     vendor_capacity = vendor.get('capacity', 0)
     if vendor_capacity and guest_count:
         if vendor_capacity >= guest_count * 0.8 and vendor_capacity <= guest_count * 1.5:
             insights.append(f"👥 Perfect size for your {guest_count} guests")
-    
+
     return insights[:3]  # Limit to top 3 insights
 
 def enhance_vendor_description(vendor: Dict, context: Dict) -> str:
     """Enhance vendor description with preference relevance"""
     base_desc = vendor.get('description', '')
-    
+
     # Add preference-specific enhancements
     enhancements = []
-    
+
     theme = context.get('wedding_theme', '')
     if theme and 'traditional' in theme:
         enhancements.append("Specializes in traditional wedding celebrations")
     elif theme and 'modern' in theme:
         enhancements.append("Expert in contemporary wedding styles")
-    
+
     guest_count = context.get('guest_count', 0)
     if guest_count > 200:
         enhancements.append(f"Experienced with large weddings ({guest_count}+ guests)")
     elif guest_count < 100:
         enhancements.append("Perfect for intimate wedding celebrations")
-    
+
     if enhancements:
         return f"{base_desc}. {'. '.join(enhancements)}."
-    
+
     return base_desc
 
 def get_enhanced_mock_vendors(category: str, location: str, context: Dict) -> List[Dict]:
@@ -819,12 +814,12 @@ def get_enhanced_mock_vendors(category: str, location: str, context: Dict) -> Li
 
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 Starting Unified Wedding Server on port 8001...")
+    print("🌸 Starting Unified Wedding Server on port 8001...")
     print("📊 Health endpoint: http://0.0.0.0:8001/health")
     print("🔗 API docs: http://0.0.0.0:8001/docs")
-    
-    # Use port 5000 for deployment (Replit maps this to 80/443)
-    port = int(os.getenv('PORT', 5000))
+
+    # Use port 8001 for deployment (Replit maps this to 80/443)
+    port = int(os.getenv('PORT', 8001))
     print(f"🌐 Starting server on port {port}")
-    
-    uvicorn.run(app, host="0.0.0.0", port=port, reload=False)
+
+    uvicorn.run(app, host="0.0.0.0", port=port, reload=False, log_level="info")
