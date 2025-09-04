@@ -3,9 +3,9 @@ module.exports = {
   presets: [
     ['@babel/preset-env', {
       targets: {
-        node: 'current',
         browsers: ['> 1%', 'last 2 versions', 'not dead']
-      }
+      },
+      modules: false
     }],
     ['@babel/preset-react', {
       runtime: 'automatic'
@@ -13,8 +13,7 @@ module.exports = {
     '@babel/preset-typescript'
   ],
   plugins: [
-    '@babel/plugin-proposal-private-property-in-object',
-    '@babel/plugin-transform-private-property-in-object'
+    ['@babel/plugin-proposal-private-property-in-object', { loose: true }]
   ],
   env: {
     test: {
@@ -22,6 +21,11 @@ module.exports = {
         ['@babel/preset-env', { targets: { node: 'current' } }],
         ['@babel/preset-react', { runtime: 'automatic' }],
         '@babel/preset-typescript'
+      ]
+    },
+    production: {
+      plugins: [
+        ['@babel/plugin-proposal-private-property-in-object', { loose: true }]
       ]
     }
   }
