@@ -818,8 +818,8 @@ if __name__ == "__main__":
     print("📊 Health endpoint: http://0.0.0.0:8001/health")
     print("🔗 API docs: http://0.0.0.0:8001/docs")
 
-    # Use port 8001 for deployment (Replit maps this to 80/443)
-    port = int(os.getenv('PORT', 8001))
+    # Use port 8001 consistently (don't override with PORT env var)
+    port = 8001
     print(f"🌐 Starting server on port {port}")
 
     uvicorn.run(app, host="0.0.0.0", port=port, reload=False, log_level="info")
