@@ -41,7 +41,8 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 # Serper API key for enhanced search
 # Get your API key from https://serper.dev
-SERPER_API_KEY = os.getenv('SERPER_API_KEY', '')
+SERPER_API_KEY = os.getenv('SERPER_API_KEY', '44f3982e40a663fc992acb96f7763f3c9f79bed7')
 
-# If you have your API key, you can set it directly here:
-# SERPER_API_KEY = "your_actual_serper_api_key_here"
+# API key is set directly for immediate use
+if not SERPER_API_KEY:
+    SERPER_API_KEY = "44f3982e40a663fc992acb96f7763f3c9f79bed7"
