@@ -781,7 +781,7 @@ const VendorDiscovery: React.FC = () => {
                         <div className="flex gap-2">
                           {vendor.phone && (
                             <button
-                              onClick={() => handleWhatsAppContact(vendor)}
+                              onClick={() => handlePhoneCall(vendor.phone)}
                               className="flex-1 px-3 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
                             >
                               📞 Call
@@ -795,6 +795,23 @@ const VendorDiscovery: React.FC = () => {
                               💬 WhatsApp
                             </button>
                           )}
+                        </div>
+
+                        <div className="flex gap-2">
+                          {vendor.email && (
+                            <button
+                              onClick={() => handleGmailContact(vendor)}
+                              className="flex-1 px-3 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-1"
+                            >
+                              ✉️ Gmail
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleScheduleMeeting(vendor)}
+                            className="flex-1 px-3 py-2 bg-purple-500 text-white text-sm rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-1"
+                          >
+                            📅 Schedule
+                          </button>
                         </div>
 
                         <button

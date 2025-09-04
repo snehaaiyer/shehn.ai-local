@@ -922,16 +922,39 @@ const WeddingPreferences: React.FC = () => {
                     />
                   </div>
 
-                  {/* Location */}
+                  {/* Location with Google Maps Integration */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Wedding Location</label>
-                    <input
-                      type="text"
-                      value={preferences.basicDetails.location}
-                      onChange={(e) => updatePreference('basicDetails', 'location', e.target.value)}
-                      placeholder="City or venue location"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={preferences.basicDetails.location}
+                        onChange={(e) => updatePreference('basicDetails', 'location', e.target.value)}
+                        placeholder="City or venue location"
+                        className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      />
+                      <button
+                        onClick={() => window.open(`/vendor-communication?action=location&query=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:text-blue-800 transition-colors"
+                        title="Search with Google Maps"
+                      >
+                        🗺️
+                      </button>
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        onClick={() => window.open(`/vendor-communication?action=location&query=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
+                        className="px-3 py-1.5 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center gap-1"
+                      >
+                        🗺️ Search Venues
+                      </button>
+                      <button
+                        onClick={() => window.open(`/vendor-communication?action=calendar&eventType=location-visit&location=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
+                        className="px-3 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors flex items-center gap-1"
+                      >
+                        📅 Schedule Visit
+                      </button>
+                    </div>
                   </div>
 
                   {/* Budget Range */}
@@ -1850,13 +1873,22 @@ const WeddingPreferences: React.FC = () => {
                         )}
                       </button>
 
-                      <button
-                        onClick={() => window.open('/vendor-communication', '_blank')}
-                        className="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
-                      >
-                        <Calendar className="w-5 h-5" />
-                        Schedule with Google Calendar
-                      </button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                          onClick={() => window.open('/vendor-communication?action=calendar&eventType=wedding-planning', '_blank')}
+                          className="bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                          <Calendar className="w-5 h-5" />
+                          Schedule Planning
+                        </button>
+                        <button
+                          onClick={() => window.open(`/vendor-communication?action=email&subject=${encodeURIComponent('Wedding Planning Inquiry')}&body=${encodeURIComponent('Hi! I am planning my wedding and would like to discuss my requirements.')}&weddingData=${encodeURIComponent(JSON.stringify(preferences))}`, '_blank')}
+                          className="bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                          <Mail className="w-5 h-5" />
+                          Email Vendors
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}

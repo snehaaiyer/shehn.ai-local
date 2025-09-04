@@ -11,9 +11,14 @@ import {
   Send, 
   Loader2,
   LogIn,
-  LogOut
+  LogOut,
+  Phone,
+  MessageCircle,
+  Globe,
+  Navigation
 } from 'lucide-react';
 import { GoogleAPIService } from '../services/google_api_service';
+import { GoogleMapsService } from '../services/google_maps_service';
 import { ErrorBoundary } from './ErrorBoundary';
 
 interface WeddingEvent {
@@ -30,6 +35,16 @@ interface WeddingEvent {
     popup: boolean;
     minutes: number;
   };
+}
+
+interface GoogleIntegrationProps {
+  onLocationSelect?: (location: any) => void;
+  showLocationPicker?: boolean;
+  defaultLocation?: string;
+  showEmailComposer?: boolean;
+  showCalendarScheduler?: boolean;
+  vendorDetails?: any;
+  weddingPreferences?: any;
 }
 
 interface EmailTemplate {
@@ -148,6 +163,100 @@ const GoogleIntegration: React.FC = () => {
     }
   };
 
+  const GoogleIntegration: React.FC<GoogleIntegrationProps> = ({ 
+  onLocationSelect, 
+  showLocationPicker = false,
+  defaultLocation = '',
+  showEmailComposer = false,
+  showCalendarScheduler = false,
+  vendorDetails,
+  weddingPreferences
+}) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState<WeddingEvent[]>([]);
+  const [emails, setEmails] = useState<any[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(showEmailComposer);
+  const [editingEvent, setEditingEvent] = useState<WeddingEvent | null>(null);
+  const [guestList, setGuestList] = useState<string[]>([]);
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
+  
+  // Location picker state
+  const [showLocationPicker, setShowLocationPicker] = useState(showLocationPicker);
+  const [searchLocation, setSearchLocation] = useState(defaultLocation);
+  const [locationResults, setLocationResults] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+
+  // Form states
+  const [eventForm, setEventForm] = useState<WeddingEvent>({
+    title: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    location: defaultLocation,
+    attendees: [],
+    eventType: 'vendor-meeting',
+    reminders: { email: true, popup: true, minutes: 60 }
+  });
+
+  const [emailForm, setEmailForm] = useState({
+    to: vendorDetails?.email || '',
+    subject: `Wedding Inquiry - ${vendorDetails?.name || 'Vendor'}`,
+    body: `Hi ${vendorDetails?.name || 'there'},\n\nI'm planning my wedding and interested in your services.\n\nWedding Details:\n- Date: ${weddingPreferences?.weddingDate || 'TBD'}\n- Location: ${weddingPreferences?.location || 'TBD'}\n- Guest Count: ${weddingPreferences?.guestCount || 'TBD'}\n\nCould you please provide more information about your services and availability?\n\nBest regards`
+  });
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const isSignedIn = await GoogleAPIService.isSignedIn();
+      setIsAuthenticated(isSignedIn);
+      
+      if (isSignedIn) {
+        const profile = await GoogleAPIService.getUserProfile();
+        setUserProfile(profile);
+        
+        if (!showLocationPicker && !showEmailComposer && !showCalendarScheduler) {
+          await Promise.all([
+            loadEvents(),
+            loadEmails()
+          ]);
+        }
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    }
+  };
+
+  const handleSignIn = async () => {
+    try {
+      setLoading(true);
+      await GoogleAPIService.signIn();
+      await checkAuthStatus();
+    } catch (error) {
+      console.error('Sign in failed:', error);
+      setNotification({ type: 'error', message: 'Failed to sign in with Google' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await GoogleAPIService.signOut();
+      setIsAuthenticated(false);
+      setUserProfile(null);
+      setEvents([]);
+      setEmails([]);
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    }
+  };
+
   const loadEvents = async () => {
     try {
       setLoading(true);
@@ -202,16 +311,110 @@ const GoogleIntegration: React.FC = () => {
     }
   };
 
+  const loadEmails = async () => {
+    try {
+      setLoading(true);
+      const weddingEmails = await GoogleAPIService.getWeddingEmails();
+      setEmails(weddingEmails);
+    } catch (error) {
+      console.error('Failed to load emails:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateEvent = async () => {
+    try {
+      setLoading(true);
+      const eventId = await GoogleAPIService.createWeddingEvent(eventForm);
+      setEvents([...events, { ...eventForm, id: eventId }]);
+      setShowEventForm(false);
+      resetEventForm();
+      setNotification({ type: 'success', message: 'Event created successfully!' });
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      setNotification({ type: 'error', message: 'Failed to create event' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDeleteEvent = async (eventId: string) => {
     try {
       setLoading(true);
       await GoogleAPIService.deleteWeddingEvent(eventId);
       setEvents(events.filter(e => e.id !== eventId));
+      setNotification({ type: 'success', message: 'Event deleted successfully!' });
     } catch (error) {
       console.error('Failed to delete event:', error);
+      setNotification({ type: 'error', message: 'Failed to delete event' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSendEmail = async () => {
+    try {
+      setLoading(true);
+      await GoogleAPIService.sendWeddingInvitation(emailForm);
+      setShowEmailForm(false);
+      resetEmailForm();
+      setNotification({ type: 'success', message: 'Email sent successfully!' });
+      await loadEmails();
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      setNotification({ type: 'error', message: 'Failed to send email' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLocationSearch = async (query: string) => {
+    if (!query.trim()) {
+      setLocationResults([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const venues = await GoogleMapsService.searchWeddingVenues(query);
+      setLocationResults(venues);
+    } catch (error) {
+      console.error('Location search failed:', error);
+      setNotification({ type: 'error', message: 'Failed to search locations' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLocationSelect = (location: any) => {
+    setSelectedLocation(location);
+    setEventForm({ ...eventForm, location: location.address });
+    if (onLocationSelect) {
+      onLocationSelect(location);
+    }
+    setNotification({ type: 'success', message: `Location selected: ${location.name}` });
+  };
+
+  const resetEventForm = () => {
+    setEventForm({
+      title: '',
+      description: '',
+      startDate: '',
+      endDate: '',
+      location: defaultLocation,
+      attendees: [],
+      eventType: 'vendor-meeting',
+      reminders: { email: true, popup: true, minutes: 60 }
+    });
+  };
+
+  const resetEmailForm = () => {
+    setEmailForm({
+      to: '',
+      subject: '',
+      body: ''
+    });
   };
 
   const handleSendEmail = async () => {
@@ -229,27 +432,308 @@ const GoogleIntegration: React.FC = () => {
     }
   };
 
-  const handleBulkInvitations = async () => {
-    try {
-      setLoading(true);
-      const weddingDetails = {
-        date: eventForm.startDate,
-        time: new Date(eventForm.startDate).toLocaleTimeString(),
-        venue: eventForm.location,
-        address: eventForm.location,
-        coupleNames: userProfile?.name || 'The Happy Couple'
-      };
-      
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const messageIds = await GoogleAPIService.sendBulkInvitations(guestList, weddingDetails);
-      setGuestList([]);
-      await loadEmails();
-    } catch (error) {
-      console.error('Failed to send bulk invitations:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Notification component
+  const NotificationBanner = () => {
+    if (!notification) return null;
+
+    return (
+      <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+        notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+      }`}>
+        <div className="flex items-center gap-2">
+          <span>{notification.type === 'success' ? '✅' : '❌'}</span>
+          <span>{notification.message}</span>
+          <button 
+            onClick={() => setNotification(null)}
+            className="ml-2 text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    );
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+            <LogIn className="w-8 h-8 text-blue-600" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Connect with Google</h2>
+          <p className="text-gray-600 mb-6">
+            Sign in to access Gmail, Calendar, and Maps integration for seamless wedding planning
+          </p>
+          <button
+            onClick={handleSignIn}
+            disabled={loading}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <LogIn className="w-5 h-5" />
+            )}
+            Sign in with Google
+          </button>
+        </div>
+        <NotificationBanner />
+      </div>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <div className="space-y-6">
+        <NotificationBanner />
+        
+        {/* User Profile Header */}
+        <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800">Google Account Connected</h3>
+                <p className="text-sm text-gray-600">{userProfile?.email}</p>
+              </div>
+            </div>
+            <button
+              onClick={handleSignOut}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+        {/* Location Picker Component */}
+        {showLocationPicker && (
+          <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-blue-600" />
+              Location Search
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchLocation}
+                  onChange={(e) => {
+                    setSearchLocation(e.target.value);
+                    handleLocationSearch(e.target.value);
+                  }}
+                  placeholder="Search for wedding venues, cities, or addresses..."
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+                <Navigation className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
+
+              {locationResults.length > 0 && (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {locationResults.map((location, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleLocationSelect(location)}
+                      className="p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-800">{location.name}</h4>
+                          <p className="text-sm text-gray-600">{location.address}</p>
+                          {location.rating && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <span className="text-yellow-500">⭐</span>
+                              <span className="text-sm text-gray-600">{location.rating}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Email Composer Component */}
+        {showEmailComposer && (
+          <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Mail className="w-5 h-5 text-blue-600" />
+              Compose Email
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
+                <input
+                  type="email"
+                  value={emailForm.to}
+                  onChange={(e) => setEmailForm({ ...emailForm, to: e.target.value })}
+                  placeholder="vendor@example.com"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                <input
+                  type="text"
+                  value={emailForm.subject}
+                  onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                  placeholder="Wedding Inquiry"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                <textarea
+                  value={emailForm.body}
+                  onChange={(e) => setEmailForm({ ...emailForm, body: e.target.value })}
+                  rows={6}
+                  placeholder="Enter your message here..."
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={handleSendEmail}
+                  disabled={loading || !emailForm.to || !emailForm.subject}
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5" />
+                  )}
+                  Send Email
+                </button>
+                <button
+                  onClick={() => setShowEmailForm(false)}
+                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Calendar Scheduler Component */}
+        {showCalendarScheduler && (
+          <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              Schedule Meeting
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
+                <input
+                  type="text"
+                  value={eventForm.title}
+                  onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                  placeholder="Meeting with vendor"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
+                <select
+                  value={eventForm.eventType}
+                  onChange={(e) => setEventForm({ ...eventForm, eventType: e.target.value as any })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                >
+                  <option value="vendor-meeting">Vendor Meeting</option>
+                  <option value="ceremony">Ceremony</option>
+                  <option value="reception">Reception</option>
+                  <option value="rehearsal">Rehearsal</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Start Date & Time</label>
+                <input
+                  type="datetime-local"
+                  value={eventForm.startDate}
+                  onChange={(e) => setEventForm({ ...eventForm, startDate: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">End Date & Time</label>
+                <input
+                  type="datetime-local"
+                  value={eventForm.endDate}
+                  onChange={(e) => setEventForm({ ...eventForm, endDate: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input
+                  type="text"
+                  value={eventForm.location}
+                  onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
+                  placeholder="Meeting location or venue"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={eventForm.description}
+                  onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
+                  rows={3}
+                  placeholder="Meeting agenda or details..."
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleCreateEvent}
+                disabled={loading || !eventForm.title || !eventForm.startDate}
+                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Calendar className="w-5 h-5" />
+                )}
+                Create Event
+              </button>
+              <button
+                onClick={() => setShowEventForm(false)}
+                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </ErrorBoundary>
+  );
+};
+
+export default GoogleIntegration;
 
   const resetEventForm = () => {
     setEventForm({

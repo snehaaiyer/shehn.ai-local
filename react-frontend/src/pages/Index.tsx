@@ -100,6 +100,13 @@ const Index: React.FC = () => {
       icon: <MessageCircle className="w-6 h-6" />,
       style: { backgroundColor: '#2F4F4F' },
       href: "/chat"
+    },
+    {
+      title: "Google Integration",
+      description: "Gmail, Calendar & Maps integration",
+      icon: <Calendar className="w-6 h-6" />,
+      style: { backgroundColor: '#4285F4' },
+      href: "/vendor-communication"
     }
   ];
 

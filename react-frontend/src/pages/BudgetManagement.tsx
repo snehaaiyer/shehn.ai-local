@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3, Loader2, Save, Calendar } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3, Loader2, Save, Calendar, Mail, MapPin } from "lucide-react";
 
 interface BudgetCategory {
   id: string;
@@ -166,6 +166,42 @@ const BudgetManagement: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* Google Integration Buttons */}
+        <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+          <h2 className="text-xl font-bold mb-6" style={{ color: '#2F4F4F' }}>
+            🔗 Google Integration
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button 
+              onClick={() => window.open('/vendor-communication?action=calendar&eventType=vendor-consultation', '_blank')}
+              className="p-4 border-2 border-dashed border-blue-300 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 text-center"
+            >
+              <Calendar className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+              <h3 className="font-semibold text-blue-900">Schedule Meetings</h3>
+              <p className="text-sm text-blue-700 mt-1">Book vendor consultations</p>
+            </button>
+
+            <button 
+              onClick={() => window.open(`/vendor-communication?action=email&subject=${encodeURIComponent('Budget Discussion for Wedding')}&body=${encodeURIComponent(`Hi! I'm planning my wedding with a budget of ₹${totalBudget.toLocaleString()}. Could you please share your pricing and packages?`)}`, '_blank')}
+              className="p-4 border-2 border-dashed border-green-300 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all duration-300 text-center"
+            >
+              <Mail className="w-8 h-8 text-green-600 mx-auto mb-2" />
+              <h3 className="font-semibold text-green-900">Send Inquiries</h3>
+              <p className="text-sm text-green-700 mt-1">Email vendors with budget</p>
+            </button>
+
+            <button 
+              onClick={() => window.open('/vendor-communication?action=location&query=wedding venues near me', '_blank')}
+              className="p-4 border-2 border-dashed border-purple-300 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 text-center"
+            >
+              <MapPin className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+              <h3 className="font-semibold text-purple-900">Find Locations</h3>
+              <p className="text-sm text-purple-700 mt-1">Search venues on Maps</p>
+            </button>
+          </div>
+        </div>
+
           {/* Budget Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Budget Card */}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Search, DollarSign, Heart, MessageCircle,
-  X, Settings, User, LogOut, Sun, Moon, Calendar
+  X, Settings, User, LogOut, Sun, Moon, Calendar, Mail, MapPin
 } from "lucide-react";
 import { useAppStore } from '../store/useAppStore';
 
@@ -278,6 +278,39 @@ export const AnimatedSidebar: React.FC = () => {
             <div className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors cursor-pointer ${theme === 'dark' ? 'text-gray-200 hover:bg-gray-700' : 'text-deep-navy hover:bg-pastel-rose/20'}`}>
               <LogOut className="h-5 w-5" />
               <span>Logout</span>
+            </div>
+          </motion.div>
+          {/* Added Google integration buttons */}
+          <motion.div
+            className="px-4 py-4 space-y-2 border-t transition-colors duration-300"
+            custom={navigation.length + 2}
+            variants={menuItemVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+          >
+            <div className="space-y-2">
+              <button
+                onClick={() => window.open('/vendor-communication?action=email', '_blank')}
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Mail className="w-4 h-4" />
+                Gmail
+              </button>
+              <button
+                onClick={() => window.open('/vendor-communication?action=calendar', '_blank')}
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2.5 px-4 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Calendar className="w-4 h-4" />
+                Calendar
+              </button>
+              <button
+                onClick={() => window.open('/vendor-communication?action=location', '_blank')}
+                className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2.5 px-4 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <MapPin className="w-4 h-4" />
+                Maps
+              </button>
             </div>
           </motion.div>
         </div>

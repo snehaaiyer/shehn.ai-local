@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   MessageCircle,
+  Calendar,
   Mail,
   Phone,
-  FileText,
-  TrendingUp,
-  CheckCircle,
-  Clock,
-  AlertCircle,
+  MapPin,
   Send,
   Plus,
-  Search,
-  Download,
-  Eye,
-  Activity,
+  Clock,
+  User,
+  Building2,
+  Navigation,
+  Globe,
+  BarChart3,
   DollarSign,
-  Users,
+  Activity,
+  Eye,
+  TrendingUp,
+  CheckCircle,
+  AlertCircle,
   Heart,
   Timer,
-  BarChart3,
+  Search,
+  Download,
   MessageSquare
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import GoogleIntegration from '../components/GoogleIntegration';
 
 interface VendorCommunication {
   id: string;
@@ -101,7 +107,15 @@ const VendorCommunication: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // UI States
-  const [activeTab, setActiveTab] = useState<'overview' | 'communication' | 'budget' | 'availability'>('overview');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [newMessage, setNewMessage] = useState('');
+  const [selectedVendor, setSelectedVendor] = useState<any>(null);
+  const [showNewConversation, setShowNewConversation] = useState(false);
+  const [showGoogleIntegration, setShowGoogleIntegration] = useState(false);
+  const [googleAction, setGoogleAction] = useState<string>('');
+  const [vendorDetails, setVendorDetails] = useState<any>(null);
+  const [weddingPreferences, setWeddingPreferences] = useState<any>(null);
+
 
   // Tab definitions
   const tabs = [
@@ -110,6 +124,55 @@ const VendorCommunication: React.FC = () => {
     { id: 'budget' as const, label: 'Budget', icon: DollarSign },
     { id: 'availability' as const, label: 'Availability', icon: Activity },
   ];
+
+  useEffect(() => {
+    // Load any initial data or handle URL parameters
+    const handlePageLoad = async () => {
+      try {
+        // Load wedding preferences
+        const savedPreferences = localStorage.getItem('weddingPreferences');
+        if (savedPreferences) {
+          setWeddingPreferences(JSON.parse(savedPreferences));
+        }
+
+        // Handle URL parameters for Google integration
+        const urlParams = new URLSearchParams(location.search);
+        const action = urlParams.get('action');
+        const vendorName = urlParams.get('vendorName');
+        const vendorEmail = urlParams.get('vendorEmail');
+        const vendorCategory = urlParams.get('vendorCategory');
+
+        if (action) {
+          setGoogleAction(action);
+          setShowGoogleIntegration(true);
+
+          if (vendorName) {
+            setVendorDetails({
+              name: vendorName,
+              email: vendorEmail,
+              category: vendorCategory
+            });
+          }
+
+          // Set appropriate tab based on action
+          if (action === 'email') {
+            setActiveTab('google-email');
+          } else if (action === 'calendar') {
+            setActiveTab('google-calendar');
+          } else if (action === 'location') {
+            setActiveTab('google-maps');
+          }
+        }
+
+        console.log('Vendor Communication page loaded');
+      } catch (error) {
+        console.error('Error loading vendor communication data:', error);
+      }
+    };
+
+    handlePageLoad();
+  }, [location.search]);
+
 
   useEffect(() => {
     loadCommunications();
@@ -360,6 +423,13 @@ const VendorCommunication: React.FC = () => {
     return colors[compatibility as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
+  const mockVendors = [
+    { id: 'v1', name: 'Venue A', category: 'Venue' },
+    { id: 'v2', name: 'Photographer B', category: 'Photography' },
+    { id: 'v3', name: 'Caterer C', category: 'Catering' },
+  ];
+
+
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-6 py-8">
@@ -376,7 +446,7 @@ const VendorCommunication: React.FC = () => {
                   <p className="text-gray-600">Comprehensive vendor relationship management</p>
                 </div>
               </div>
-              <button 
+              <button
                 className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
                 style={{ backgroundColor: '#df8e8e', color: '#FFFFFF' }}
               >
@@ -465,6 +535,40 @@ const VendorCommunication: React.FC = () => {
                     {tab.label}
                   </button>
                 ))}
+                {/* Google Integration Tabs */}
+                <button
+                  onClick={() => setActiveTab('google-email')}
+                  className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-all duration-300 flex items-center justify-center gap-2 ${
+                    activeTab === 'google-email'
+                      ? 'border-salmon-500 text-salmon-600 bg-salmon-50/50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
+                  }`}
+                >
+                  <Mail className="w-4 h-4" />
+                  Gmail
+                </button>
+                <button
+                  onClick={() => setActiveTab('google-calendar')}
+                  className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-all duration-300 flex items-center justify-center gap-2 ${
+                    activeTab === 'google-calendar'
+                      ? 'border-salmon-500 text-salmon-600 bg-salmon-50/50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4" />
+                  Google Calendar
+                </button>
+                <button
+                  onClick={() => setActiveTab('google-maps')}
+                  className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-all duration-300 flex items-center justify-center gap-2 ${
+                    activeTab === 'google-maps'
+                      ? 'border-salmon-500 text-salmon-600 bg-salmon-50/50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
+                  }`}
+                >
+                  <MapPin className="w-4 h-4" />
+                  Google Maps
+                </button>
               </div>
             </div>
 
@@ -522,7 +626,7 @@ const VendorCommunication: React.FC = () => {
                   <option value="low">Low Priority</option>
                 </select>
 
-                <button 
+                <button
                   onClick={() => {
                     // Simple CSV export of filtered communications
                     const csvData = filteredCommunications.map(comm => ({
@@ -534,12 +638,12 @@ const VendorCommunication: React.FC = () => {
                       quote: comm.quotation?.amount || 'No quote',
                       updated: new Date(comm.updatedAt).toLocaleDateString()
                     }));
-                    
+
                     const csv = [
                       Object.keys(csvData[0] || {}).join(','),
                       ...csvData.map(row => Object.values(row).join(','))
                     ].join('\n');
-                    
+
                     const blob = new Blob([csv], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -851,6 +955,82 @@ const VendorCommunication: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              )}
+
+              {/* Contacts Tab */}
+              {activeTab === 'contacts' && (
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>
+                      Vendor Contacts
+                    </h2>
+                    <button
+                      onClick={() => setShowNewConversation(true)}
+                      className="px-4 py-2 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
+                      style={{ backgroundColor: '#D29B9B', color: '#FFFFFF' }}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Contact
+                    </button>
+                  </div>
+
+                  {mockVendors.map((vendor) => (
+                    <div key={vendor.id} className="bg-gray-50 rounded-xl p-4 mb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#D29B9B' }}>
+                            <Building2 className="w-5 h-5" style={{ color: '#FFFFFF' }} />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-800">{vendor.name}</h3>
+                            <p className="text-sm text-gray-600">{vendor.category}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors">
+                            <Phone className="w-4 h-4" />
+                          </button>
+                          <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors">
+                            <Mail className="w-4 h-4" />
+                          </button>
+                          <button className="p-2 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors">
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Google Gmail Tab */}
+              {activeTab === 'google-email' && (
+                <GoogleIntegration
+                  showEmailComposer={true}
+                  vendorDetails={vendorDetails}
+                  weddingPreferences={weddingPreferences}
+                />
+              )}
+
+              {/* Google Calendar Tab */}
+              {activeTab === 'google-calendar' && (
+                <GoogleIntegration
+                  showCalendarScheduler={true}
+                  vendorDetails={vendorDetails}
+                  weddingPreferences={weddingPreferences}
+                />
+              )}
+
+              {/* Google Maps Tab */}
+              {activeTab === 'google-maps' && (
+                <GoogleIntegration
+                  showLocationPicker={true}
+                  defaultLocation={new URLSearchParams(location.search).get('query') || weddingPreferences?.basicDetails?.location || ''}
+                  onLocationSelect={(location) => {
+                    console.log('Selected location:', location);
+                    // Handle location selection
+                  }}
+                />
               )}
             </div>
           </div>
