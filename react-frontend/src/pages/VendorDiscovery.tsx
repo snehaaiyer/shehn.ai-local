@@ -123,65 +123,21 @@ const VendorDiscovery: React.FC = () => {
     setErrorMessage('');
 
     try {
-      // Get comprehensive wedding preferences for enhanced search
-      const savedPreferences = localStorage.getItem('weddingPreferences');
-      let comprehensivePreferences = {};
-      
-      if (savedPreferences) {
-        const preferences = JSON.parse(savedPreferences);
-        comprehensivePreferences = {
-          // Basic details
-          guestCount: preferences.basicDetails?.guestCount || 100,
-          weddingDate: preferences.basicDetails?.weddingDate || '',
-          yourName: preferences.basicDetails?.yourName || '',
-          partnerName: preferences.basicDetails?.partnerName || '',
-          priorities: preferences.basicDetails?.priorities?.map(p => p.id) || [],
-          eventDuration: preferences.basicDetails?.eventDuration || '1',
-          
-          // Theme and style preferences
-          weddingTheme: preferences.theme?.selectedTheme || '',
-          
-          // Venue preferences
-          venueType: preferences.venue?.venueType || '',
-          capacity: preferences.venue?.capacity || preferences.basicDetails?.guestCount || 100,
-          
-          // Catering preferences
-          cuisine: preferences.catering?.cuisine || '',
-          mealType: preferences.catering?.mealType || '',
-          dietaryRestrictions: preferences.catering?.dietaryRestrictions || [],
-          budgetPerPerson: preferences.catering?.budgetPerPerson || '',
-          
-          // Photography preferences
-          photographyStyle: preferences.photography?.style || '',
-          coverageType: preferences.photography?.coverage || '',
-          videographyRequired: preferences.photography?.videography?.required || false,
-          droneCoverage: preferences.photography?.videography?.droneCoverage || false,
-          culturalCoverage: preferences.photography?.culturalCoverage || {},
-          
-          // Budget allocation insights
-          budgetRange: preferences.basicDetails?.budgetRange || ''
-        };
-      }
-
-      const enhancedSearchParams = {
+      const searchParams = {
         category: appliedFilters.category || selectedCategory,
         location: appliedFilters.location || selectedLocation,
         priceRange: appliedFilters.budget || selectedBudget,
         rating: appliedFilters.rating || selectedRating,
-        searchTerm: searchQuery,
-        
-        // Add comprehensive preference-based matching
-        weddingPreferences: comprehensivePreferences,
-        usePreferenceMatching: true
+        searchTerm: searchQuery
       };
 
-      console.log('🔍 Enhanced vendor search with wedding preferences:', enhancedSearchParams);
+      console.log('🔍 Searching vendors with params:', searchParams);
 
-      const response = await VendorDiscoveryService.searchVendors(enhancedSearchParams);
+      const response = await VendorDiscoveryService.searchVendors(searchParams);
 
       if (response.success && response.vendors) {
         setFilteredVendors(response.vendors);
-        console.log(`✅ Found ${response.vendors.length} preference-matched vendors`);
+        console.log(`✅ Found ${response.vendors.length} vendors`);
       } else {
         console.error('❌ Error searching vendors:', response.error);
         setErrorMessage(response.error || 'Failed to search vendors');
@@ -197,71 +153,118 @@ const VendorDiscovery: React.FC = () => {
     }
   }, [appliedFilters, selectedCategory, selectedLocation, selectedBudget, selectedRating, searchQuery]);
 
-  // Load comprehensive preferences for vendor discovery
+  // Load comprehensive preferences and apply intelligent defaults
   useEffect(() => {
-    const loadComprehensivePreferences = () => {
+    const loadDefaultPreferences = () => {
       try {
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
           const preferences = JSON.parse(savedPreferences);
           console.log('📋 Loading comprehensive wedding preferences for vendor discovery:', preferences);
 
-          // Basic location and budget
+          // Apply location preference
           if (preferences.basicDetails?.location) {
             const location = preferences.basicDetails.location.toLowerCase();
             setSelectedLocation(location);
             setAppliedFilters(prev => ({ ...prev, location }));
           }
 
-          // Enhanced budget mapping based on detailed preferences
+          // Determine initial category based on priorities
+          let initialCategory = 'venues'; // Default
+          if (preferences.basicDetails?.priorities && preferences.basicDetails.priorities.length > 0) {
+            const topPriority = preferences.basicDetails.priorities[0];
+            // Map priority IDs to vendor categories
+            const priorityCategoryMap: { [key: string]: string } = {
+              'venue': 'venues',
+              'venues': 'venues',
+              'photography': 'photography',
+              'catering': 'catering',
+              'decor': 'decoration',
+              'entertainment': 'entertainment',
+              'outfits': 'beauty',
+              'flowers': 'decoration',
+              'transportation': 'planners'
+            };
+            initialCategory = priorityCategoryMap[topPriority.id] || 'venues';
+            console.log(`🎯 Setting initial category to '${initialCategory}' based on top priority: ${topPriority.name}`);
+          }
+
+          setSelectedCategory(initialCategory);
+          setAppliedFilters(prev => ({ ...prev, category: initialCategory }));
+
+          // Apply budget preference with enhanced mapping
           if (preferences.basicDetails?.budgetRange) {
             const budget = preferences.basicDetails.budgetRange;
-            let budgetFilter = 'standard';
-            
-            if (budget.includes('5-15') || budget.includes('Budget')) {
-              budgetFilter = 'budget';
-            } else if (budget.includes('15-30') || budget.includes('Premium')) {
-              budgetFilter = 'premium';
-            } else if (budget.includes('30-50') || budget.includes('50+') || budget.includes('Luxury')) {
-              budgetFilter = 'luxury';
-            }
-            
+            const budgetMapping: { [key: string]: string } = {
+              '₹5-15 Lakhs': 'budget',
+              '₹15-30 Lakhs': 'standard', 
+              '₹30-50 Lakhs': 'premium',
+              '₹50+ Lakhs': 'luxury',
+              // Legacy support
+              'budget-5-15l': 'budget',
+              'premium-15-30l': 'standard',
+              'luxury-30-50l': 'premium',
+              'ultra-luxury-50l+': 'luxury'
+            };
+
+            const budgetFilter = budgetMapping[budget] || 'standard';
             setSelectedBudget(budgetFilter);
             setAppliedFilters(prev => ({ ...prev, budget: budgetFilter }));
+            console.log(`💰 Applied budget filter: ${budgetFilter} (from: ${budget})`);
           }
 
-          // Set category based on priorities
-          const priorities = preferences.basicDetails?.priorities || [];
-          let defaultCategory = 'venues';
-          
-          if (priorities.length > 0) {
-            const topPriority = priorities[0];
-            if (topPriority.id === 'photography') defaultCategory = 'photography';
-            else if (topPriority.id === 'catering') defaultCategory = 'catering';
-            else if (topPriority.id === 'decor') defaultCategory = 'decoration';
-            else if (topPriority.id === 'entertainment') defaultCategory = 'entertainment';
-            else if (topPriority.id === 'outfits') defaultCategory = 'beauty';
+          // Apply rating filter based on wedding style
+          let ratingFilter = '4.5'; // Default high rating
+          const weddingStyle = preferences.theme?.selectedTheme;
+          if (weddingStyle?.includes('luxury') || weddingStyle?.includes('royal') || weddingStyle?.includes('premium')) {
+            ratingFilter = '4.5'; // Premium weddings need high-rated vendors
+          } else if (weddingStyle?.includes('budget') || weddingStyle?.includes('simple')) {
+            ratingFilter = '4.0'; // More flexible for budget weddings
           }
-          
-          setSelectedCategory(defaultCategory);
-          setAppliedFilters(prev => ({ ...prev, category: defaultCategory }));
 
-          setSelectedRating('4.5');
-          setAppliedFilters(prev => ({ ...prev, rating: '4.5' }));
+          setSelectedRating(ratingFilter);
+          setAppliedFilters(prev => ({ ...prev, rating: ratingFilter }));
+          console.log(`⭐ Applied rating filter: ${ratingFilter} (based on style: ${weddingStyle})`);
+
+          // Store additional context for intelligent vendor matching
+          const vendorMatchingContext = {
+            weddingTheme: preferences.theme?.selectedTheme || '',
+            venueType: preferences.venue?.venueType || '',
+            guestCount: preferences.basicDetails?.guestCount || 100,
+            weddingDate: preferences.basicDetails?.weddingDate || '',
+            eventDuration: preferences.basicDetails?.eventDuration || '1',
+            catering: {
+              cuisine: preferences.catering?.cuisine || '',
+              mealType: preferences.catering?.mealType || '',
+              dietaryRestrictions: preferences.catering?.dietaryRestrictions || []
+            },
+            photography: {
+              style: preferences.photography?.style || '',
+              coverage: preferences.photography?.coverage || '',
+              videography: preferences.photography?.videography?.required || false,
+              multiDay: Object.values(preferences.photography?.multiDayCoverage || {}).some(Boolean)
+            },
+            priorities: preferences.basicDetails?.priorities?.slice(0, 3).map((p: any) => p.id) || []
+          };
+
+          localStorage.setItem('vendorMatchingContext', JSON.stringify(vendorMatchingContext));
+          console.log('🔍 Stored vendor matching context:', vendorMatchingContext);
+
         } else {
+          console.log('📝 No saved preferences found, using intelligent defaults');
           // Default to venues even without preferences
           setSelectedCategory('venues');
           setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
         }
       } catch (error) {
-        console.error('Error loading comprehensive preferences:', error);
+        console.error('❌ Error loading preferences for vendor discovery:', error);
         // Default to venues on error
         setSelectedCategory('venues');
         setAppliedFilters(prev => ({ ...prev, category: 'venues' }));
       }
     };
 
-    loadComprehensivePreferences();
+    loadDefaultPreferences();
   }, []);
 
   useEffect(() => {
@@ -429,24 +432,58 @@ const VendorDiscovery: React.FC = () => {
             </div>
           </div>
 
+          {/* Preferences Summary */}
+          {(() => {
+            const savedPreferences = localStorage.getItem('weddingPreferences');
+            const preferences = savedPreferences ? JSON.parse(savedPreferences) : null;
+            
+            if (preferences) {
+              return (
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#E6E6FA' }}>
+                  <h2 className="text-lg font-bold mb-4" style={{ color: '#2F4F4F' }}>
+                    🎯 Smart Matching Active
+                  </h2>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    {preferences.basicDetails?.location && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-blue-600" />
+                        <span className="text-gray-700">{preferences.basicDetails.location}</span>
+                      </div>
+                    )}
+                    {preferences.theme?.selectedTheme && (
+                      <div className="flex items-center gap-2">
+                        <Palette className="h-4 w-4 text-purple-600" />
+                        <span className="text-gray-700">{preferences.theme.selectedTheme.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+                      </div>
+                    )}
+                    {preferences.basicDetails?.budgetRange && (
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-green-600" />
+                        <span className="text-gray-700">{preferences.basicDetails.budgetRange}</span>
+                      </div>
+                    )}
+                    {preferences.basicDetails?.guestCount && (
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-orange-600" />
+                        <span className="text-gray-700">{preferences.basicDetails.guestCount} guests</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-3 text-xs text-gray-600">
+                    💡 Vendors are automatically filtered and ranked based on your wedding preferences. 
+                    Higher match scores indicate better alignment with your choices.
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
+
           {/* Search and Quick Filters */}
           <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>
-                {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.name} Search` : 'Vendor Search'}
-              </h2>
-              
-              {/* Preference-based indicator */}
-              <div className="flex items-center gap-2 text-sm">
-                <div className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full border border-green-200">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Preference-Based</span>
-                </div>
-                <div className="text-gray-500">
-                  Showing vendors matched to your wedding preferences
-                </div>
-              </div>
-            </div>
+            <h2 className="text-xl font-bold" style={{ color: '#2F4F4F' }}>
+              {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.name} Search` : 'Vendor Search'}
+            </h2>
 
             {/* Search Bar */}
             <div className="relative">
@@ -625,11 +662,34 @@ const VendorDiscovery: React.FC = () => {
                     {/* Compact Vendor Info */}
                     <div className="p-4">
                       <div className="mb-3">
-                        <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">{vendor.name}</h3>
+                        <div className="flex items-start justify-between mb-1">
+                          <h3 className="text-lg font-bold text-gray-800 line-clamp-1 flex-1">{vendor.name}</h3>
+                          {/* Preference Match Indicator */}
+                          {vendor.preferences_match_score && vendor.preferences_match_score >= 80 && (
+                            <div className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full flex items-center gap-1">
+                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              {vendor.preferences_match_score}% Match
+                            </div>
+                          )}
+                          {vendor.preferences_match_score && vendor.preferences_match_score >= 60 && vendor.preferences_match_score < 80 && (
+                            <div className="ml-2 px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
+                              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                              {vendor.preferences_match_score}% Match
+                            </div>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
                           <MapPin className="h-4 w-4" />
                           <span className="line-clamp-1">{vendor.location}</span>
                         </div>
+                        {/* Preference Insights */}
+                        {vendor.preference_insights && vendor.preference_insights.length > 0 && (
+                          <div className="mb-2">
+                            <div className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                              {vendor.preference_insights[0]}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Rating & Price */}
@@ -637,6 +697,11 @@ const VendorDiscovery: React.FC = () => {
                         <div className="flex items-center gap-1">
                           <Star className="h-4 w-4 text-yellow-400 fill-current" />
                           <span className="text-sm font-medium">{vendor.rating}</span>
+                          {vendor.compatibility_details?.priority_bonus > 0 && (
+                            <div className="ml-1 text-xs text-purple-600 font-medium">
+                              Priority
+                            </div>
+                          )}
                         </div>
                         <div className="text-xs text-gray-600">
                           {vendor.price_range.split('(')[0].trim()}
