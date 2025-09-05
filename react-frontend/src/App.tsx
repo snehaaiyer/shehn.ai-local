@@ -9,6 +9,7 @@ import BudgetManagement from './pages/BudgetManagement';
 import VendorDiscovery from './pages/VendorDiscovery';
 import VendorCommunication from './pages/VendorCommunication';
 import AIChat from './pages/AIChat';
+import GoogleIntegration from './components/GoogleIntegration';
 
 // Component imports
 import { AnimatedSidebar } from './components/AnimatedSidebar';
@@ -52,6 +53,7 @@ function App() {
               <Route path="/vendors" element={<VendorDiscovery />} />
               <Route path="/vendor-communication" element={<VendorCommunication />} />
               <Route path="/chat" element={<AIChat />} />
+              <Route path="/google-integration" element={<GoogleIntegration />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

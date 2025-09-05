@@ -797,8 +797,15 @@ const WeddingPreferences: React.FC = () => {
                 </div>
               </div>
 
-              {/* Find Vendors CTA Button */}
+              {/* Google Integration & Find Vendors Buttons */}
               <div className="flex items-center gap-4">
+                <button
+                  onClick={() => navigate('/google-integration')}
+                  className="bg-gradient-to-r from-blue-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Google Tools
+                </button>
                 <button
                   onClick={() => {
                     // Save current preferences before navigating

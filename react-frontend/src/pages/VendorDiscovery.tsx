@@ -459,14 +459,23 @@ const VendorDiscovery: React.FC = () => {
                   <p className="text-gray-600">Find the perfect vendors for your wedding</p>
                 </div>
               </div>
-              <button
-                onClick={() => setFiltersChanged(!filtersChanged)}
-                className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
-                style={{ backgroundColor: '#D29B9B', color: '#FFFFFF' }}
-              >
-                <Filter className="h-4 w-4" />
-                Filters
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => window.open('/google-integration', '_blank')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 flex items-center gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Google Tools
+                </button>
+                <button
+                  onClick={() => setFiltersChanged(!filtersChanged)}
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:opacity-90"
+                  style={{ backgroundColor: '#D29B9B', color: '#FFFFFF' }}
+                >
+                  <Filter className="h-4 w-4" />
+                  Filters
+                </button>
+              </div>
             </div>
           </div>
 
