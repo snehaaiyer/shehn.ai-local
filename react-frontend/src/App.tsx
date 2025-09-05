@@ -51,6 +51,7 @@ function App() {
               <Route path="/preferences" element={<WeddingPreferences />} />
               <Route path="/budget" element={<BudgetManagement />} />
               <Route path="/vendors" element={<VendorDiscovery />} />
+              <Route path="/vendor-discovery" element={<VendorDiscovery />} />
               <Route path="/vendor-communication" element={<VendorCommunication />} />
               <Route path="/google-integration" element={<GoogleIntegration />} />
               <Route path="*" element={<Navigate to="/" replace />} />
