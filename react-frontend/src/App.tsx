@@ -52,7 +52,6 @@ function App() {
               <Route path="/budget" element={<BudgetManagement />} />
               <Route path="/vendors" element={<VendorDiscovery />} />
               <Route path="/vendor-communication" element={<VendorCommunication />} />
-              <Route path="/chat" element={<AIChat />} />
               <Route path="/google-integration" element={<GoogleIntegration />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

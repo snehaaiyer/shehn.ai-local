@@ -90,45 +90,31 @@ export class GoogleAPIService {
    * Initialize Google API client
    */
   static async initialize(): Promise<boolean> {
+    if (this.isInitialized) return true;
+
+    // Check if credentials are properly configured
+    if (!GOOGLE_CONFIG.CLIENT_ID || GOOGLE_CONFIG.CLIENT_ID.includes('your_') ||
+        !GOOGLE_CONFIG.API_KEY || GOOGLE_CONFIG.API_KEY.includes('your_')) {
+      console.warn('Google API credentials not configured. Please set REACT_APP_GOOGLE_CLIENT_ID and REACT_APP_GOOGLE_API_KEY');
+      return false;
+    }
+
     try {
-      // Check if API keys are configured
-      if (!this.API_KEY || !this.CLIENT_ID || this.API_KEY === '' || this.CLIENT_ID === '') {
-        console.warn('Google API keys not configured. Google integration will be disabled.');
-        return false;
-      }
+      // Load Google API script
+      await this.loadGoogleAPI();
 
-      // Check if we're in a browser environment
-      if (typeof window === 'undefined') {
-        console.warn('Not in browser environment. Google integration will be disabled.');
-        return false;
-      }
-
-      // Load Google API script if not already loaded
-      if (!window.gapi) {
-        await this.loadGoogleAPIScript();
-      }
-
-      this.gapi = window.gapi;
-      
-      await this.gapi.load('client:auth2', async () => {
+      // Initialize gapi
+      await this.gapi.load('auth2:client', async () => {
         await this.gapi.client.init({
           apiKey: this.API_KEY,
           clientId: this.CLIENT_ID,
           discoveryDocs: this.DISCOVERY_DOCS,
-          scope: this.SCOPES
+          scope: this.SCOPES.join(' ')
         });
-
-        this.isInitialized = true;
-        
-        // Listen for sign-in state changes
-        this.gapi.auth2.getAuthInstance().isSignedIn.listen((signedIn: boolean) => {
-          this.isSignedIn = signedIn;
-        });
-
-        // Set initial sign-in state
-        this.isSignedIn = this.gapi.auth2.getAuthInstance().isSignedIn.get();
       });
 
+      this.isInitialized = true;
+      console.log('Google API initialized successfully');
       return true;
     } catch (error) {
       console.error('Failed to initialize Google API:', error);
@@ -139,7 +125,7 @@ export class GoogleAPIService {
   /**
    * Load Google API script dynamically
    */
-  private static loadGoogleAPIScript(): Promise<void> {
+  private static loadGoogleAPI(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (typeof window === 'undefined') {
         reject(new Error('Not in browser environment'));
@@ -230,7 +216,7 @@ export class GoogleAPIService {
       const authInstance = this.gapi.auth2.getAuthInstance();
       const user = authInstance.currentUser.get();
       const profile = user.getBasicProfile();
-      
+
       return {
         id: profile.getId(),
         name: profile.getName(),
@@ -377,7 +363,7 @@ export class GoogleAPIService {
       });
 
       return response.result.items
-        .filter((event: any) => 
+        .filter((event: any) =>
           event.summary?.toLowerCase().includes('wedding') ||
           event.summary?.toLowerCase().includes('ceremony') ||
           event.summary?.toLowerCase().includes('reception') ||
@@ -409,7 +395,7 @@ export class GoogleAPIService {
    */
   private static determineEventType(title: string, description: string): WeddingEvent['eventType'] {
     const text = `${title} ${description}`.toLowerCase();
-    
+
     if (text.includes('ceremony')) return 'ceremony';
     if (text.includes('reception')) return 'reception';
     if (text.includes('rehearsal')) return 'rehearsal';
@@ -429,7 +415,7 @@ export class GoogleAPIService {
       }
 
       const message = this.createEmailMessage(template);
-      
+
       const response = await this.gapi.client.gmail.users.messages.send({
         userId: 'me',
         resource: {
@@ -454,7 +440,7 @@ export class GoogleAPIService {
       }
 
       const message = this.createEmailMessage(template);
-      
+
       const response = await this.gapi.client.gmail.users.messages.send({
         userId: 'me',
         resource: {
@@ -508,7 +494,7 @@ export class GoogleAPIService {
   private static createEmailMessage(template: EmailTemplate): string {
     const boundary = 'boundary_' + Math.random().toString(36).substring(2);
     const date = new Date().toUTCString();
-    
+
     let message = '';
     message += `From: ${this.getUserEmail()}\r\n`;
     message += `To: ${template.to.join(', ')}\r\n`;
@@ -518,13 +504,13 @@ export class GoogleAPIService {
     message += `Date: ${date}\r\n`;
     message += `MIME-Version: 1.0\r\n`;
     message += `Content-Type: multipart/alternative; boundary="${boundary}"\r\n\r\n`;
-    
+
     message += `--${boundary}\r\n`;
     message += `Content-Type: text/plain; charset="UTF-8"\r\n\r\n`;
     message += `${template.body}\r\n\r\n`;
-    
+
     message += `--${boundary}--\r\n`;
-    
+
     return message;
   }
 
@@ -555,12 +541,12 @@ export class GoogleAPIService {
   static async createWeddingTimeline(weddingDate: string, events: WeddingEvent[]): Promise<string[]> {
     try {
       const eventIds: string[] = [];
-      
+
       for (const event of events) {
         const eventId = await this.createWeddingEvent(event);
         eventIds.push(eventId);
       }
-      
+
       return eventIds;
     } catch (error) {
       console.error('Failed to create wedding timeline:', error);
@@ -574,18 +560,18 @@ export class GoogleAPIService {
   static async sendBulkInvitations(guestList: string[], weddingDetails: any): Promise<string[]> {
     try {
       const messageIds: string[] = [];
-      
+
       for (const guestEmail of guestList) {
         const template: EmailTemplate = {
           subject: `You're Invited to Our Wedding!`,
           body: this.generateInvitationEmail(weddingDetails),
           to: [guestEmail]
         };
-        
+
         const messageId = await this.sendWeddingInvitation(template);
         messageIds.push(messageId);
       }
-      
+
       return messageIds;
     } catch (error) {
       console.error('Failed to send bulk invitations:', error);
@@ -626,7 +612,7 @@ ${weddingDetails.coupleNames || 'The Happy Couple'}
         body: this.generateVendorInquiryEmail(inquiryDetails),
         to: [vendorEmail]
       };
-      
+
       return await this.sendVendorEmail(template);
     } catch (error) {
       console.error('Failed to send vendor inquiry:', error);
@@ -665,4 +651,4 @@ declare global {
   interface Window {
     gapi: any;
   }
-} 
+}

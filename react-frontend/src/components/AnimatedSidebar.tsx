@@ -44,7 +44,7 @@ const navigation: NavItem[] = [
   { name: 'Budget Management', href: '/budget', icon: <DollarSign className="h-5 w-5" /> },
   { name: 'ShehnAI Chat', href: '/chat', icon: <MessageCircle className="h-5 w-5" /> },
   { name: 'Vendor Communication', href: '/vendor-communication', icon: <Calendar className="h-5 w-5" /> },
-  { name: 'Google Integration', href: '/google-integration', icon: <Calendar className="h-5 w-5" />}
+  { name: 'Google Tools', href: '/google-integration', icon: <Calendar className="h-5 w-5" />}
 ];
 
 const sidebarVariants = {

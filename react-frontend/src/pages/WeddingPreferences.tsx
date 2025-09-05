@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2, Mail, Search } from "lucide-react";
+import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2, Mail, Search, Settings } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
 
 
@@ -798,15 +798,46 @@ const WeddingPreferences: React.FC = () => {
               </div>
 
               {/* Google Integration & Find Vendors Buttons */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => navigate('/google-integration')}
-                  className="bg-gradient-to-r from-blue-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-green-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
-                >
-                  <Calendar className="w-5 h-5" />
-                  Google Tools
-                </button>
-                <button
+              {/* Google Tools Section */}
+              <div className="bg-gradient-to-r from-blue-50 to-red-50 p-6 rounded-xl border border-gray-200">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  <Calendar className="w-5 h-5 inline mr-2" style={{ color: '#2F4F4F' }} />
+                  Google Integration Tools
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <button
+                    onClick={() => navigate('/google-integration')}
+                    className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
+                  >
+                    <Settings className="w-6 h-6 text-blue-600" />
+                    <div className="text-left">
+                      <div className="font-medium text-gray-900">Google Hub</div>
+                      <div className="text-sm text-gray-600">Manage all integrations</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => window.open('https://calendar.google.com', '_blank')}
+                    className="flex items-center gap-3 p-4 bg-white hover:bg-blue-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
+                  >
+                    <Calendar className="w-6 h-6 text-blue-600" />
+                    <div className="text-left">
+                      <div className="font-medium text-gray-900">Calendar</div>
+                      <div className="text-sm text-gray-600">Schedule events</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => window.open('https://mail.google.com', '_blank')}
+                    className="flex items-center gap-3 p-4 bg-white hover:bg-red-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
+                  >
+                    <Mail className="w-6 h-6 text-red-600" />
+                    <div className="text-left">
+                      <div className="font-medium text-gray-900">Gmail</div>
+                      <div className="text-sm text-gray-600">Send emails</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <button
                   onClick={() => {
                     // Save current preferences before navigating
                     localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
@@ -817,7 +848,6 @@ const WeddingPreferences: React.FC = () => {
                   <Users className="w-5 h-5" />
                   Find Vendors
                 </button>
-              </div>
             </div>
           </div>
 
@@ -1515,7 +1545,7 @@ const WeddingPreferences: React.FC = () => {
                 {/* Multi-Day Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
                   <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Multi-Day Coverage</h3>
-                  <p className="text-gray-600 mb-4">Select which events you'd like photographed:</p>
+                  <p className="text-gray-600 mb-4">Select which events you\'d like photographed:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
                       <input 
@@ -1881,7 +1911,7 @@ const WeddingPreferences: React.FC = () => {
                 ) : (
                   <div className="text-center py-12">
                     <div className="mb-6">
-                      <FileText className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                      <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                       <h3 className="text-lg font-semibold text-gray-700 mb-2">Generate Your Wedding Blueprint</h3>
                       <p className="text-gray-600 mb-6">
                         Create a comprehensive AI-generated wedding blueprint based on your preferences.
