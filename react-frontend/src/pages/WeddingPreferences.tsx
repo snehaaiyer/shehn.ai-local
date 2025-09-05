@@ -798,46 +798,48 @@ const WeddingPreferences: React.FC = () => {
               </div>
 
               {/* Google Integration & Find Vendors Buttons */}
-              {/* Google Tools Section */}
-              <div className="bg-gradient-to-r from-blue-50 to-red-50 p-6 rounded-xl border border-gray-200">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">
-                  <Calendar className="w-5 h-5 inline mr-2" style={{ color: '#2F4F4F' }} />
-                  Google Integration Tools
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <button
-                    onClick={() => navigate('/google-integration')}
-                    className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
-                  >
-                    <Settings className="w-6 h-6 text-blue-600" />
-                    <div className="text-left">
-                      <div className="font-medium text-gray-900">Google Hub</div>
-                      <div className="text-sm text-gray-600">Manage all integrations</div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => window.open('https://calendar.google.com', '_blank')}
-                    className="flex items-center gap-3 p-4 bg-white hover:bg-blue-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
-                  >
-                    <Calendar className="w-6 h-6 text-blue-600" />
-                    <div className="text-left">
-                      <div className="font-medium text-gray-900">Calendar</div>
-                      <div className="text-sm text-gray-600">Schedule events</div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => window.open('https://mail.google.com', '_blank')}
-                    className="flex items-center gap-3 p-4 bg-white hover:bg-red-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
-                  >
-                    <Mail className="w-6 h-6 text-red-600" />
-                    <div className="text-left">
-                      <div className="font-medium text-gray-900">Gmail</div>
-                      <div className="text-sm text-gray-600">Send emails</div>
-                    </div>
-                  </button>
+              <div className="flex flex-col gap-4">
+                {/* Google Tools Section */}
+                <div className="bg-gradient-to-r from-blue-50 to-red-50 p-6 rounded-xl border border-gray-200">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                    <Calendar className="w-5 h-5 inline mr-2" style={{ color: '#2F4F4F' }} />
+                    Google Integration Tools
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button
+                      onClick={() => navigate('/google-integration')}
+                      className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <Settings className="w-6 h-6 text-blue-600" />
+                      <div className="text-left">
+                        <div className="font-medium text-gray-900">Google Hub</div>
+                        <div className="text-sm text-gray-600">Manage all integrations</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => window.open('https://calendar.google.com', '_blank')}
+                      className="flex items-center gap-3 p-4 bg-white hover:bg-blue-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <Calendar className="w-6 h-6 text-blue-600" />
+                      <div className="text-left">
+                        <div className="font-medium text-gray-900">Calendar</div>
+                        <div className="text-sm text-gray-600">Schedule events</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => window.open('https://mail.google.com', '_blank')}
+                      className="flex items-center gap-3 p-4 bg-white hover:bg-red-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <Mail className="w-6 h-6 text-red-600" />
+                      <div className="text-left">
+                        <div className="font-medium text-gray-900">Gmail</div>
+                        <div className="text-sm text-gray-600">Send emails</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <button
+                
+                <button
                   onClick={() => {
                     // Save current preferences before navigating
                     localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
@@ -848,6 +850,7 @@ const WeddingPreferences: React.FC = () => {
                   <Users className="w-5 h-5" />
                   Find Vendors
                 </button>
+              </div>
             </div>
           </div>
 
