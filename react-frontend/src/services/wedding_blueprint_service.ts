@@ -424,10 +424,7 @@ interface WeddingBlueprintResponse {
   };
 }
 
-export class WeddingBlueprintService {
-  /**
-   * Generate comprehensive wedding blueprint using AI services
-   */
+// Duplicate class declaration removed - keeping only the first one
   static async generateWeddingBlueprint(preferences: WeddingBlueprintRequest): Promise<WeddingBlueprintResponse> {
     try {
       console.log('Generating wedding blueprint for:', preferences);

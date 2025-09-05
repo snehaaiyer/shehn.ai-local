@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2, Mail, Search, Settings } from "lucide-react";
@@ -839,7 +838,7 @@ const WeddingPreferences: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => {
                     // Save current preferences before navigating
