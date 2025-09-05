@@ -595,7 +595,7 @@ const WeddingPreferences: React.FC = () => {
       try {
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
-          const parsedPreferences = JSON.parse(savedPreferences);
+          const parsedPreferences = JSON.JSON.parse(savedPreferences);
           console.log('📋 Loading saved preferences:', parsedPreferences);
 
           // Set basic details
