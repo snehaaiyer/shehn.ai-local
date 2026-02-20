@@ -21,9 +21,7 @@ CORS(app)  # Enable CORS for frontend access
 
 # NocoDB Configuration
 NOCODB_CONFIG = {
-    "BASE_URL": "http://localhost:8080",
-    "PROJECT_ID": "p2manqkz6afk3ma",
-    "API_TOKEN": "-h-Q9hbkAgU2DsSqXsRligOG1Qzpgb4OAx_QGwHk",
+    
     "TABLE_IDS": {
         "weddings": "mslkrxqymrbe01d",
         "venues": "m8o47zj6gmkmguz", 
