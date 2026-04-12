@@ -116,4 +116,5 @@ models/*.bin
 models/*.safetensors
 
 # Local configuration files
-config/local_* 
+config/local_* .claude/worktrees/
+.claude/worktrees/
