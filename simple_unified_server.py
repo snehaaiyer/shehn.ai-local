@@ -6,7 +6,7 @@ Includes vendor discovery functionality with communications agent
 
 import uvicorn
 import json
-from fastapi import FastAPI, Request, HTTPException, Body
+from fastapi import FastAPI, Request, HTTPException, Body, File, UploadFile, Form
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,6 +44,22 @@ except ImportError:
     ollama_service = None
 
 # External comms (Gmail, WhatsApp) removed — all communication is on-platform now
+
+# PDF text extraction — try pdfplumber first, fall back to PyPDF2, then basic
+try:
+    import pdfplumber
+    PDF_EXTRACTOR = 'pdfplumber'
+except ImportError:
+    try:
+        import PyPDF2
+        PDF_EXTRACTOR = 'PyPDF2'
+    except ImportError:
+        PDF_EXTRACTOR = None
+
+import io
+
+# In-memory feedback storage
+_ai_feedback: list = []
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -1858,9 +1874,10 @@ _events: Dict[int, dict] = {}
 _rsvp_invites: Dict[str, dict] = {}   # keyed by invite_code
 _rsvp_responses: List[dict] = []
 _timeline_events: Dict[int, dict] = {}
+_budget_transactions: Dict[int, dict] = {}
 _vendor_profiles: Dict[int, dict] = {}
 _users: List[dict] = []
-_next_id = {"bp": 1, "q": 1, "conv": 1, "msg": 1, "evt": 1, "tl": 1, "vp": 1}
+_next_id = {"bp": 1, "q": 1, "conv": 1, "msg": 1, "evt": 1, "tl": 1, "vp": 1, "tx": 1}
 
 def _id(kind: str) -> int:
     val = _next_id[kind]
@@ -2420,6 +2437,39 @@ async def generate_timeline(request: Request):
         generated.append(evt)
     return {"success": True, "data": generated}
 
+# ── Budget Transactions ──
+
+@app.post("/api/budget-transactions")
+async def create_budget_transaction(request: Request):
+    role, user_id = _get_role(request)
+    data = await request.json()
+    tx_id = _id("tx")
+    tx = {
+        "id": tx_id,
+        "couple_id": data.get("couple_id", user_id),
+        "category": data.get("category", ""),
+        "description": data.get("description", ""),
+        "amount": data.get("amount", 0),
+        "type": data.get("type", "expense"),
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "created_at": datetime.now().isoformat()
+    }
+    _budget_transactions[tx_id] = tx
+    return {"success": True, "data": tx}
+
+@app.get("/api/budget-transactions")
+async def get_budget_transactions(couple_id: int = 0):
+    results = [t for t in _budget_transactions.values() if not couple_id or t["couple_id"] == couple_id]
+    results.sort(key=lambda t: t.get("date", ""), reverse=True)
+    return {"success": True, "data": results}
+
+@app.delete("/api/budget-transactions/{tx_id}")
+async def delete_budget_transaction(tx_id: int):
+    if tx_id in _budget_transactions:
+        del _budget_transactions[tx_id]
+        return {"success": True}
+    return JSONResponse({"success": False, "error": "Not found"}, status_code=404)
+
 # ── Admin ──
 
 @app.get("/api/admin/vendors")
@@ -2923,6 +2973,27 @@ Respond in JSON:
         }}
 
 
+def _parse_indian_budget(budget_str) -> int:
+    """Parse Indian budget strings: '50L', '1.5 crore', '₹30,00,000', 50, etc. → integer rupees."""
+    if not budget_str:
+        return 3000000  # default ₹30L
+    s = str(budget_str).strip().lower().replace('₹', '').replace(',', '').replace(' ', '')
+    # Try extracting a float from the string (handles "1.5cr", "50.5l", "3000000")
+    num_match = re.search(r'(\d+\.?\d*)', s)
+    if not num_match:
+        return 3000000
+    num = float(num_match.group(1))
+    # Apply multiplier based on suffix
+    if 'cr' in s:
+        return int(num * 10000000)   # 1.5cr → 15000000
+    elif 'l' in s or 'lakh' in s:
+        return int(num * 100000)     # 50L → 5000000
+    elif num < 1000:
+        return int(num * 100000)     # bare 50 → assume lakhs → 5000000
+    else:
+        return int(num)              # already in rupees (e.g. 3000000)
+
+
 @app.post("/api/ai/generate-blueprint")
 async def ai_generate_blueprint(request: Request):
     """Generate a complete wedding blueprint from preferences using CrewAI orchestration or direct Ollama."""
@@ -2936,7 +3007,7 @@ async def ai_generate_blueprint(request: Request):
     city = data.get("city") or basic.get("location", "Mumbai")
     guest_count = int(data.get("guest_count") or basic.get("guestCount", 200))
     budget_str = data.get("budget") or basic.get("budgetRange", "₹30,00,000")
-    budget = int(''.join(filter(str.isdigit, str(budget_str)))) if budget_str else 3000000
+    budget = _parse_indian_budget(budget_str)
     wedding_date = data.get("wedding_date") or basic.get("weddingDate", "2026-12-15")
     wedding_type = data.get("wedding_type") or theme_obj.get("selectedTheme", "Traditional Hindu")
     events = data.get("events", ["mehendi", "sangeet", "ceremony", "reception"])
@@ -3891,6 +3962,147 @@ async def suggest_response(request: Request):
         ],
         "detected_intent": "followup"
     }})
+
+
+# ── Chat Feedback ───────────────────────────────────────────────────────────
+
+@app.post("/api/ai/feedback")
+async def submit_feedback(request: Request):
+    """Store thumbs up/down feedback for an AI message."""
+    try:
+        data = await request.json()
+        entry = {
+            "message_id": data.get("message_id", ""),
+            "feedback": data.get("feedback"),  # 'helpful', 'not_helpful', or null
+            "message_content": (data.get("message_content", "") or "")[:500],
+            "timestamp": data.get("timestamp", datetime.now().isoformat()),
+        }
+        # Update existing or append
+        for i, existing in enumerate(_ai_feedback):
+            if existing["message_id"] == entry["message_id"]:
+                if entry["feedback"] is None:
+                    _ai_feedback.pop(i)
+                else:
+                    _ai_feedback[i] = entry
+                return JSONResponse({"success": True})
+        if entry["feedback"] is not None:
+            _ai_feedback.append(entry)
+        return JSONResponse({"success": True})
+    except Exception as e:
+        logger.error(f"Feedback error: {e}")
+        return JSONResponse({"success": False, "error": str(e)}, status_code=400)
+
+
+@app.get("/api/ai/feedback")
+async def get_feedback():
+    """Retrieve all stored feedback (for admin/debugging)."""
+    return JSONResponse({"success": True, "data": _ai_feedback, "count": len(_ai_feedback)})
+
+
+# ── PDF Upload & AI Extraction ──────────────────────────────────────────────
+
+def _extract_text_from_pdf(file_bytes: bytes) -> str:
+    """Extract text from PDF bytes using available library."""
+    if PDF_EXTRACTOR == 'pdfplumber':
+        import pdfplumber
+        text_parts = []
+        with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text_parts.append(page_text)
+        return "\n\n".join(text_parts)
+    elif PDF_EXTRACTOR == 'PyPDF2':
+        import PyPDF2
+        reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
+        text_parts = []
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text_parts.append(page_text)
+        return "\n\n".join(text_parts)
+    else:
+        # Basic fallback — try to decode raw bytes
+        try:
+            raw = file_bytes.decode('utf-8', errors='ignore')
+            # Strip binary noise, keep printable text
+            cleaned = re.sub(r'[^\x20-\x7E\n\r\t]', ' ', raw)
+            cleaned = re.sub(r'\s{3,}', '\n', cleaned)
+            return cleaned[:5000]
+        except Exception:
+            return ""
+
+
+PDF_CONTEXT_PROMPTS = {
+    "vendor_quote": (
+        "Extract vendor name, services offered, pricing/rates, package details, "
+        "terms & conditions, contact info from this quotation. "
+        "Return JSON with keys: vendor_name, services, pricing, packages, terms, contact_info"
+    ),
+    "company_info": (
+        "Extract company name, services, specialties, pricing tier, locations served, "
+        "portfolio highlights from this vendor brochure. "
+        "Return JSON with keys: company_name, services, specialties, pricing_tier, locations, portfolio_highlights"
+    ),
+    "pinterest_board": (
+        "Analyze these wedding inspiration pins. Extract themes, color palettes, "
+        "decoration styles, venue types, outfit styles, and overall aesthetic preferences. "
+        "Return JSON with keys: themes, color_palettes, decoration_styles, venue_types, outfit_styles, overall_aesthetic"
+    ),
+    "general": (
+        "Extract key wedding-related information from this document. "
+        "Return JSON with relevant keys based on the content."
+    ),
+}
+
+
+@app.post("/api/ai/extract-pdf")
+async def extract_pdf(
+    file: UploadFile = File(...),
+    context: str = Form("general"),
+):
+    """Upload a PDF and extract structured data using AI."""
+    if not file.filename or not file.filename.lower().endswith('.pdf'):
+        return JSONResponse({"success": False, "error": "Please upload a PDF file."}, status_code=400)
+
+    try:
+        file_bytes = await file.read()
+        if len(file_bytes) > 10 * 1024 * 1024:
+            return JSONResponse({"success": False, "error": "File too large (max 10MB)."}, status_code=400)
+
+        # Extract text
+        extracted_text = _extract_text_from_pdf(file_bytes)
+        if not extracted_text or len(extracted_text.strip()) < 20:
+            return JSONResponse({"success": False, "error": "Could not extract readable text from this PDF. It may be image-based."})
+
+        # Truncate to fit in context window
+        extracted_text = extracted_text[:8000]
+
+        # Build prompt
+        context_prompt = PDF_CONTEXT_PROMPTS.get(context, PDF_CONTEXT_PROMPTS["general"])
+        prompt = (
+            f"{context_prompt}\n\n"
+            f"--- DOCUMENT TEXT ---\n{extracted_text}\n--- END ---\n\n"
+            "Return ONLY valid JSON, no extra text."
+        )
+
+        system = "You are a document analysis AI specializing in Indian wedding planning. Extract structured data from documents accurately."
+
+        raw = await _ask_gemini(system, prompt, max_tokens=2048, expect_json=True)
+
+        if not raw:
+            return JSONResponse({"success": False, "error": "AI extraction failed. Please try again."})
+
+        try:
+            parsed = json.loads(raw)
+            return JSONResponse({"success": True, "data": parsed, "context": context, "filename": file.filename})
+        except json.JSONDecodeError:
+            # Return raw text as a single field if JSON parsing fails
+            return JSONResponse({"success": True, "data": {"extracted_text": raw}, "context": context, "filename": file.filename})
+
+    except Exception as e:
+        logger.error(f"PDF extraction error: {e}")
+        return JSONResponse({"success": False, "error": f"Processing failed: {str(e)}"}, status_code=500)
 
 
 # Catch-all route must be defined last

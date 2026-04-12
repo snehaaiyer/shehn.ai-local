@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Search, DollarSign, Heart, MessageCircle,
   X, Settings, Sun, Moon, Mail, FileText, IndianRupee,
-  Bot, Store, User, Users, CheckCircle, Sparkles
+  Bot, Store, User, Users, CheckCircle, Sparkles, Calendar
 } from "lucide-react";
 import { useAppStore } from '../store/useAppStore';
 
@@ -46,6 +46,7 @@ const coupleNav: NavItem[] = [
   { name: 'Quotes', href: '/quotes', icon: <IndianRupee className="h-5 w-5" /> },
   { name: 'Messages', href: '/messages', icon: <MessageCircle className="h-5 w-5" /> },
   { name: 'Budget', href: '/budget', icon: <DollarSign className="h-5 w-5" /> },
+  { name: 'Timeline', href: '/timeline', icon: <Calendar className="h-5 w-5" /> },
   { name: 'Invites & RSVP', href: '/wedding-invites', icon: <Mail className="h-5 w-5" /> },
 ];
 

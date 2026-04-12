@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3, Calendar, Mail, MapPin, Star, Brain, Target, CheckCircle, AlertTriangle, Sparkles } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, Plus, Eye, BarChart3, Calendar, Mail, MapPin, Star, Brain, Target, CheckCircle, AlertTriangle, Sparkles, Trash2 } from "lucide-react";
 import { useAppStore } from '../store/useAppStore';
+import { BudgetService } from '../services/budget_service';
 import PlanningJourney from '../components/PlanningJourney';
 
 interface BudgetCategory {
@@ -43,32 +44,7 @@ interface ShortlistedVendor {
 const BudgetManagement: React.FC = () => {
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
 
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    {
-      id: '1',
-      category: 'Venue',
-      description: 'Deposit for Palace Gardens',
-      amount: 5000,
-      date: '2025-01-15',
-      type: 'expense'
-    },
-    {
-      id: '2',
-      category: 'Catering',
-      description: 'Menu tasting session',
-      amount: 200,
-      date: '2025-01-20',
-      type: 'expense'
-    },
-    {
-      id: '3',
-      category: 'Photography',
-      description: 'Engagement shoot',
-      amount: 1500,
-      date: '2025-01-25',
-      type: 'expense'
-    }
-  ]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [showAddTransaction, setShowAddTransaction] = useState(false);
   const [newTransaction, setNewTransaction] = useState<Omit<Transaction, 'id' | 'date'>>({
@@ -88,6 +64,30 @@ const BudgetManagement: React.FC = () => {
   // Read blueprintId from the global store
   const storeBlueprintId = useAppStore((state) => state.blueprintId);
   const storeWeddingPreferences = useAppStore((state) => state.weddingPreferences);
+  const currentUserId = useAppStore((state) => state.currentUserId);
+
+  const loadTransactions = async () => {
+    try {
+      const res = await BudgetService.getTransactions(currentUserId);
+      if (res.success && res.data) {
+        setTransactions(res.data.map(t => ({
+          id: String(t.id),
+          category: t.category,
+          description: t.description,
+          amount: t.amount,
+          date: t.date,
+          type: t.type
+        })));
+      }
+    } catch (err) {
+      console.error('Failed to load transactions:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId]);
 
   // Dynamic category generation based on selected events and preferences
   const generateDynamicCategories = (events: string[], preferences: any): BudgetCategory[] => {
@@ -765,16 +765,31 @@ const BudgetManagement: React.FC = () => {
   const remainingBudget = totalBudget - totalProjectedSpending;
   const budgetUtilization = (totalProjectedSpending / totalBudget) * 100;
 
-  const addTransaction = () => {
+  const addTransaction = async () => {
     if (newTransaction.category && newTransaction.description && newTransaction.amount > 0) {
-      const transaction: Transaction = {
-        ...newTransaction,
-        id: Date.now().toString(),
-        date: new Date().toISOString().split('T')[0]
-      };
-      setTransactions([transaction, ...transactions]);
-      setNewTransaction({ category: '', description: '', amount: 0, type: 'expense' });
-      setShowAddTransaction(false);
+      try {
+        await BudgetService.createTransaction({
+          couple_id: currentUserId,
+          category: newTransaction.category,
+          description: newTransaction.description,
+          amount: newTransaction.amount,
+          type: newTransaction.type
+        });
+        await loadTransactions();
+        setNewTransaction({ category: '', description: '', amount: 0, type: 'expense' });
+        setShowAddTransaction(false);
+      } catch (err) {
+        console.error('Failed to create transaction:', err);
+      }
+    }
+  };
+
+  const deleteTransaction = async (txId: string) => {
+    try {
+      await BudgetService.deleteTransaction(Number(txId));
+      await loadTransactions();
+    } catch (err) {
+      console.error('Failed to delete transaction:', err);
     }
   };
 
@@ -1271,12 +1286,21 @@ const BudgetManagement: React.FC = () => {
                         <p className="text-sm text-gray-600">{transaction.category} • {transaction.date}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className={`font-bold ${
-                        transaction.type === 'expense' ? 'text-rose-600' : 'text-sage-600'
-                      }`}>
-                        {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <div className={`font-bold ${
+                          transaction.type === 'expense' ? 'text-rose-600' : 'text-sage-600'
+                        }`}>
+                          {transaction.type === 'expense' ? '-' : '+'}₹{transaction.amount.toLocaleString()}
+                        </div>
                       </div>
+                      <button
+                        onClick={() => deleteTransaction(transaction.id)}
+                        className="p-1.5 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                        title="Delete transaction"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 ))}

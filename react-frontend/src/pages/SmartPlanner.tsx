@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Send, ChevronRight, MapPin, Users, Calendar, IndianRupee, Palette,
-  Check, MessageSquare, FileText, Loader2, ArrowRight, RotateCcw, RefreshCw, X } from 'lucide-react';
+  Check, MessageSquare, FileText, Loader2, ArrowRight, RotateCcw, RefreshCw, X, ThumbsUp, ThumbsDown, Upload } from 'lucide-react';
+import PDFUploadExtractor from '../components/PDFUploadExtractor';
 import { useAppStore, BlueprintData } from '../store/useAppStore';
 import { getThemeImage, VENUE_IMAGES } from '../config/theme_images';
 
@@ -50,6 +51,7 @@ interface ChatMessage {
   timestamp: Date;
   loading?: boolean;
   interactive?: InteractiveData;
+  feedback?: 'helpful' | 'not_helpful' | null;
 }
 
 // ── Intent Detection ────────────────────────────────────────────────────────
@@ -237,6 +239,20 @@ const SmartPlanner: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [showPDFUploader, setShowPDFUploader] = useState(false);
+
+  const handleFeedback = (messageId: string, feedback: 'helpful' | 'not_helpful') => {
+    setChatMessages(prev => prev.map(m => {
+      if (m.id !== messageId) return m;
+      const newFeedback = m.feedback === feedback ? null : feedback;
+      // Fire and forget to backend
+      fetch('/api/ai/feedback', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message_id: messageId, feedback: newFeedback, message_content: m.content, timestamp: new Date().toISOString() }),
+      }).catch(() => {});
+      return { ...m, feedback: newFeedback };
+    }));
+  };
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -1014,9 +1030,20 @@ const SmartPlanner: React.FC = () => {
 
   const renderChat = () => (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-rose-500" /><h3 className="font-semibold text-gray-800">Chat with ShehnAI</h3>
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-rose-500" /><h3 className="font-semibold text-gray-800">Chat with ShehnAI</h3>
+        </div>
+        <button onClick={() => setShowPDFUploader(!showPDFUploader)}
+          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all ${showPDFUploader ? 'bg-rose-50 border-rose-200 text-rose-600' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600'}`}>
+          <Upload className="w-3.5 h-3.5" /> Upload PDF
+        </button>
       </div>
+      {showPDFUploader && (
+        <div className="border-b border-gray-100">
+          <PDFUploadExtractor onClose={() => setShowPDFUploader(false)} />
+        </div>
+      )}
       <div className="max-h-96 overflow-y-auto p-4 space-y-3">
         {chatMessages.map(msg => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -1035,7 +1062,19 @@ const SmartPlanner: React.FC = () => {
             ) : (
               <div className="flex items-start gap-2 max-w-sm lg:max-w-lg">
                 <div className="p-1.5 rounded-full bg-rose-100 flex-shrink-0 mt-0.5"><Sparkles className="w-3 h-3 text-rose-500" /></div>
-                <div className="bg-gray-50 border border-gray-100 px-4 py-3 rounded-2xl text-sm text-gray-800 leading-relaxed">{renderMarkdown(msg.content)}</div>
+                <div>
+                  <div className="bg-gray-50 border border-gray-100 px-4 py-3 rounded-2xl text-sm text-gray-800 leading-relaxed">{renderMarkdown(msg.content)}</div>
+                  <div className="flex items-center gap-1 mt-1 ml-1">
+                    <button onClick={() => handleFeedback(msg.id, 'helpful')} title="Helpful"
+                      className={`p-1 rounded transition-all ${msg.feedback === 'helpful' ? 'text-green-500' : 'text-gray-300 hover:text-green-400'}`}>
+                      <ThumbsUp className="w-3.5 h-3.5" fill={msg.feedback === 'helpful' ? 'currentColor' : 'none'} />
+                    </button>
+                    <button onClick={() => handleFeedback(msg.id, 'not_helpful')} title="Not helpful"
+                      className={`p-1 rounded transition-all ${msg.feedback === 'not_helpful' ? 'text-red-500' : 'text-gray-300 hover:text-red-400'}`}>
+                      <ThumbsDown className="w-3.5 h-3.5" fill={msg.feedback === 'not_helpful' ? 'currentColor' : 'none'} />
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

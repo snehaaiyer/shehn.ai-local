@@ -11,6 +11,7 @@ import AIChat from './pages/AIChat';
 import SmartPlanner from './pages/SmartPlanner';
 import WeddingInvites from './pages/WeddingInvites';
 import BlueprintReview from './pages/BlueprintReview';
+import Timeline from './pages/Timeline';
 import Quotes from './pages/Quotes';
 import Messages from './pages/Messages';
 import PublicRSVP from './pages/PublicRSVP';
@@ -77,6 +78,7 @@ function App() {
                     <Route path="/quotes" element={<Quotes />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/plan" element={<SmartPlanner />} />
+                    <Route path="/timeline" element={<Timeline />} />
                   </>}
 
                   {/* Vendor routes */}

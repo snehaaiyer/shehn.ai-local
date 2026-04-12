@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Inbox, Building2, Camera, UtensilsCrossed, Flower2,
-  Sparkles, Music, Filter, SortAsc, ArrowUpDown
+  Sparkles, Music, Filter, SortAsc, ArrowUpDown, Upload
 } from 'lucide-react';
+import PDFUploadExtractor from '../components/PDFUploadExtractor';
 import { QuoteService } from '../services/quote_service';
 import { MessagingService } from '../services/messaging_service';
 import { MarketplaceAIService, QuoteAnalysis, VendorMatch } from '../services/marketplace_ai_service';
@@ -66,6 +67,9 @@ const Quotes: React.FC = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [showRankings, setShowRankings] = useState(false);
   const [analyzingQuoteId, setAnalyzingQuoteId] = useState<number | null>(null);
+
+  // PDF upload
+  const [showPDFUploader, setShowPDFUploader] = useState(false);
 
   // Inline toast
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -264,8 +268,17 @@ const Quotes: React.FC = () => {
             {quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'} received
           </p>
         </div>
-        {/* AI Rank + Sort */}
+        {/* AI Rank + Upload + Sort */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPDFUploader(!showPDFUploader)}
+            className={`flex items-center gap-1.5 text-sm font-medium border rounded-lg px-3 py-1.5 transition-colors ${
+              showPDFUploader ? 'text-rose-600 border-rose-200 bg-rose-50' : 'text-gray-600 border-gray-200 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600'
+            }`}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Upload Quote PDF
+          </button>
           <button
             onClick={handleRankVendors}
             disabled={aiLoading}
@@ -298,6 +311,23 @@ const Quotes: React.FC = () => {
         </div>
         </div>
       </motion.div>
+
+      {/* ── PDF Upload Panel ── */}
+      <AnimatePresence>
+        {showPDFUploader && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+          >
+            <PDFUploadExtractor
+              onClose={() => setShowPDFUploader(false)}
+              defaultContext="vendor_quote"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── AI Vendor Rankings Panel ── */}
       <AnimatePresence>
