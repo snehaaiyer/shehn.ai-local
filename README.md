@@ -1,65 +1,299 @@
+# Shehnai.AI — AI-Powered Indian Wedding Reverse Marketplace
 
-# BID AI Wedding Assistant
+Shehnai is a full-stack wedding planning platform where couples generate AI-powered wedding blueprints and publish them to a marketplace. Vendors browse blueprints relevant to their category, submit structured quotes, and compete for the couple's business. All communication happens on-platform.
 
-A comprehensive AI-powered wedding planning platform built with React frontend and Python backend services.
+## How It Works
 
-## 🚀 Quick Start
+### For Couples
+1. **Set Preferences** — Enter wedding date, city, guest count, budget, theme, and events
+2. **AI Generates Blueprint** — Gemini AI creates a personalized plan with city-tier pricing, budget allocation across 6 vendor categories, timeline, and cost-saving tips
+3. **Review & Publish** — Edit the blueprint, adjust category budgets, then publish to the marketplace
+4. **Receive Quotes** — Vendors submit structured quotes (per-plate for catering, per-day for photography, etc.). The platform auto-calculates totals for apples-to-apples comparison
+5. **Compare & Chat** — Shortlist vendors, message them on-platform, negotiate, and confirm bookings
+6. **Manage Invites** — Create wedding events, generate shareable RSVP links, track guest responses
 
-### Frontend (React)
+### For Vendors
+1. **Register** — Create a business profile with category, services, portfolio, and operating cities
+2. **Get Approved** — Superadmin reviews and approves the vendor
+3. **Browse Marketplace** — See published blueprints filtered to their category (e.g., a caterer only sees catering requirements)
+4. **Submit Quotes** — Fill category-specific pricing forms. Other vendors only see the bid count (sealed bids)
+5. **Message Couples** — Negotiate, revise quotes, and confirm bookings through on-platform messaging
+
+### For Admins
+1. **Approve/Reject Vendors** — Review pending vendor registrations
+2. **View Users** — Basic user listing across all roles
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        React Frontend                        │
+│  TypeScript · Tailwind CSS · Framer Motion · Zustand Store   │
+│  Port 5173 (Vite dev) or 5000                                │
+├─────────────────────────────────────────────────────────────┤
+│                     FastAPI Backend                           │
+│  simple_unified_server.py · Port 8000                        │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │ Blueprint │ │  Quotes  │ │ Messaging│ │   RSVP   │       │
+│  │   APIs    │ │   APIs   │ │   APIs   │ │   APIs   │       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │ Vendor   │ │ Timeline │ │  Admin   │ │  AI/Chat │       │
+│  │   APIs   │ │   APIs   │ │   APIs   │ │   APIs   │       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+├─────────────────────────────────────────────────────────────┤
+│                      AI Layer                                │
+│  Gemini 2.0 Flash (primary) · Ollama GLM4 (fallback)        │
+│  Claude Haiku 4.5 (vendor analysis) · CrewAI orchestration   │
+├─────────────────────────────────────────────────────────────┤
+│                      Data Layer                              │
+│  NocoDB (vendors, preferences) · In-memory stores            │
+│  (blueprints, quotes, conversations, RSVP)                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Python 3.10+
+- API keys: `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` (set in environment or `.env`)
+
+### 1. Backend
+```bash
+cd /path/to/shehnai-local
+pip install fastapi uvicorn httpx google-generativeai anthropic
+python simple_unified_server.py
+# Server starts on http://localhost:8000
+# 60 seed vendors (Bangalore + Mumbai) auto-loaded on startup
+```
+
+### 2. Frontend
 ```bash
 cd react-frontend
 npm install
-HOST=0.0.0.0 PORT=5000 BROWSER=none npm start
+npm start
+# App opens on http://localhost:5173
 ```
 
-### Backend Services
+### 3. Access
+- **Couple view**: http://localhost:5173/ (default)
+- **Vendor view**: Switch role in sidebar footer (Dev role switcher)
+- **Admin view**: Switch to "Admin" in sidebar footer
+- **Public RSVP**: http://localhost:5173/rsvp/:inviteCode (no login required)
+
+---
+
+## Project Structure
+
+```
+shehnai-local/
+├── simple_unified_server.py          # All backend APIs (FastAPI, ~4000 lines)
+├── react-frontend/
+│   ├── src/
+│   │   ├── App.tsx                   # Role-based routing (couple/vendor/admin)
+│   │   ├── store/useAppStore.ts      # Zustand global state
+│   │   ├── types/marketplace.ts      # TypeScript interfaces
+│   │   ├── config/
+│   │   │   └── api_config.ts         # API_BASE + auth headers
+│   │   ├── pages/
+│   │   │   ├── Index.tsx             # Couple dashboard
+│   │   │   ├── SmartPlanner.tsx      # AI chat planner with intent detection
+│   │   │   ├── WeddingPreferences.tsx# Preferences form
+│   │   │   ├── BlueprintReview.tsx   # View/edit/publish blueprint
+│   │   │   ├── Quotes.tsx            # Incoming vendor quotes
+│   │   │   ├── Messages.tsx          # Two-panel messaging
+│   │   │   ├── VendorDiscovery.tsx   # Browse vendors
+│   │   │   ├── BudgetManagement.tsx  # Budget tracker
+│   │   │   ├── WeddingInvites.tsx    # Events + RSVP links + tracker
+│   │   │   ├── PublicRSVP.tsx        # Guest-facing RSVP (no auth)
+│   │   │   ├── vendor/
+│   │   │   │   ├── VendorRegister.tsx
+│   │   │   │   ├── VendorDashboard.tsx
+│   │   │   │   ├── VendorMarketplace.tsx
+│   │   │   │   ├── VendorProfile.tsx
+│   │   │   │   └── VendorInbox.tsx
+│   │   │   └── admin/
+│   │   │       ├── VendorApprovals.tsx
+│   │   │       └── UserList.tsx
+│   │   ├── components/
+│   │   │   ├── AnimatedSidebar.tsx    # Role-based nav + dev role switcher
+│   │   │   ├── WeddingBlueprint.tsx   # Blueprint display component
+│   │   │   ├── ConversationList.tsx   # Reusable chat list (couple + vendor)
+│   │   │   ├── MessageThread.tsx      # Reusable message thread
+│   │   │   ├── QuoteCard.tsx          # Vendor quote display
+│   │   │   ├── QuoteFormModal.tsx     # Category-specific quote form
+│   │   │   ├── WeddingCalendar.tsx    # Timeline calendar
+│   │   │   └── ...
+│   │   └── services/
+│   │       ├── blueprint_service.ts   # Blueprint CRUD + publish
+│   │       ├── quote_service.ts       # Quote CRUD + status
+│   │       ├── messaging_service.ts   # Conversations + messages
+│   │       ├── rsvp_service.ts        # Events + invites + RSVP
+│   │       ├── timeline_service.ts    # Timeline CRUD + AI generate
+│   │       ├── vendor_service.ts      # Registration + profile + marketplace
+│   │       ├── admin_service.ts       # Vendor approval + users
+│   │       └── vendor_discovery_service.ts
+│   └── tailwind.config.js
+├── config/api_config.py               # Backend config (NocoDB, API keys)
+├── scripts/
+│   ├── setup_tables.py                # NocoDB table creation
+│   └── seed_vendors.py                # Seed vendor data
+└── PRD/                               # Product requirements document
+```
+
+---
+
+## Vendor Categories & Pricing
+
+The platform supports 6 vendor categories, each with structured pricing:
+
+| Category | Pricing Unit | Example Range |
+|----------|-------------|---------------|
+| **Venue** | Per plate (₹/person) | ₹2,500 – ₹6,000/plate |
+| **Photography** | Per day/event | ₹50K – ₹4L/day |
+| **Catering** | Per plate (when separate from venue) | ₹500 – ₹7,000/plate |
+| **Decoration** | Per function/event | ₹10K – ₹8L/function |
+| **Makeup & Beauty** | Per look/function | ₹10K – ₹50K/look |
+| **Entertainment** | Per event/night | ₹20K – ₹5L/event |
+
+Quotes include category-specific fields (e.g., drone coverage for photography, live counters for catering). The backend auto-calculates `total_estimated_price` from unit pricing x couple's requirements for apples-to-apples comparison.
+
+---
+
+## AI Features
+
+### Smart Planner Chat (`/plan`)
+- **Hybrid intent detection**: Messages with 2+ wedding details (city, budget, guests, theme) route to Gemini for holistic planning. Single-field changes (e.g., "change city to Delhi") handled locally
+- **Silent detail extraction**: Natural language like "60L budget boho wedding in Mumbai" automatically updates the blueprint store
+- **Cultural event suggestions**: Supports Marathi, Punjabi, South Indian, Bengali, Gujarati, Muslim, Rajasthani, North Indian wedding traditions with priority tiers (essential/recommended/optional)
+- **Interactive widgets**: Event checklists, budget inputs, and confirmation cards rendered inline in chat
+
+### Blueprint Generation (`/api/ai/generate-blueprint`)
+- City-tier pricing (metro/tier2/tier3) based on real market data
+- Dynamic budget allocation: catering computed first (scales with guests), remainder distributed by category
+- Gemini generates city+theme-specific insider tips
+- Cost-saving tips calculated from actual numbers (e.g., "reducing by 50 guests saves ₹X")
+
+### Vendor AI Tools
+- **Quote analysis**: AI evaluates quotes against budget and market rates
+- **Vendor matching**: Scores vendors against blueprint requirements
+- **Budget optimization**: Suggests reallocation across categories
+- **Message drafting**: AI-assisted vendor inquiries, negotiations, booking confirmations
+
+---
+
+## API Reference
+
+### Blueprints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/blueprints` | Create blueprint |
+| GET | `/api/blueprints/:id` | Get blueprint (filtered view for vendors) |
+| PUT | `/api/blueprints/:id` | Update blueprint |
+| PATCH | `/api/blueprints/:id/publish` | Publish to marketplace |
+| PATCH | `/api/blueprints/:id/unpublish` | Unpublish |
+
+### Quotes
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/blueprints/:id/quotes` | Submit quote (vendor) |
+| GET | `/api/blueprints/:id/quotes` | List quotes (couple) |
+| GET | `/api/blueprints/:id/quotes/count` | Bid count (public) |
+| PATCH | `/api/quotes/:id/status` | Shortlist/accept/reject |
+
+### Messaging
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/conversations` | Start thread |
+| GET | `/api/conversations` | List threads (by couple_id or vendor_id) |
+| GET | `/api/conversations/:id` | Full thread with messages |
+| POST | `/api/conversations/:id/messages` | Send message |
+
+### RSVP
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/events` | Create wedding event |
+| POST | `/api/rsvp-invites` | Generate shareable RSVP link |
+| GET | `/api/rsvp/:code` | Public: get event details |
+| POST | `/api/rsvp/:code` | Public: submit RSVP |
+| GET | `/api/rsvp-responses` | Get all responses (couple) |
+
+### Marketplace
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/marketplace` | Published blueprints (filtered by vendor category) |
+
+### Vendor
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/vendors/register` | Register (pending approval) |
+| GET | `/api/vendor-profile/:id` | Get profile |
+| PUT | `/api/vendor-profile/:id` | Update profile |
+
+### Admin
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/admin/vendors` | List vendors by status |
+| PATCH | `/api/admin/vendors/:id/approve` | Approve vendor |
+| PATCH | `/api/admin/vendors/:id/reject` | Reject with reason |
+
+### AI
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/ai/chat` | Chat assistant (Gemini -> Ollama -> fallback) |
+| POST | `/api/ai/generate-blueprint` | Generate full wedding blueprint |
+| POST | `/api/ai/plan-wedding` | CrewAI orchestrated planning |
+| POST | `/api/ai/suggest-events` | Cultural event suggestions |
+| POST | `/api/ai/analyze-quote` | AI quote analysis |
+| POST | `/api/ai/match-vendors` | Vendor-blueprint matching |
+| POST | `/api/ai/optimize-budget` | Budget reallocation suggestions |
+
+---
+
+## Pre-Auth Role System
+
+Authentication is not yet implemented. The platform uses header-based role switching:
+
+- All requests include `X-User-Role` (`couple` | `vendor` | `superadmin`) and `X-User-Id` headers
+- The sidebar has a dev role switcher to toggle between roles
+- Default: Couple (ID=1), Vendor (ID=11, Ashirwad Caterers Bangalore), Admin (ID=99)
+
+---
+
+## Seed Data
+
+On server startup, 60 vendors are auto-loaded across 6 categories:
+
+- **Bangalore** (30 vendors): 5 per category — venue, photography, catering, decoration, makeup, entertainment
+- **Mumbai** (30 vendors): 5 per category
+
+All seed vendors are pre-approved and have realistic Indian wedding business profiles with ratings, specialties, and price tiers.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, TypeScript, Tailwind CSS, Framer Motion, Zustand |
+| Backend | Python FastAPI, Uvicorn |
+| AI | Google Gemini 2.0 Flash, Anthropic Claude Haiku 4.5, Ollama (local fallback) |
+| Database | NocoDB (vendor data), In-memory stores (blueprints, quotes, messages) |
+| Orchestration | CrewAI (multi-agent wedding planning) |
+
+---
+
+## Testing
+
 ```bash
-python service_orchestrator.py
+cd react-frontend
+npm test                    # Run Jest + React Testing Library tests
+npm test -- --coverage      # With coverage report
 ```
 
-## 📁 Project Structure
-
-```
-├── react-frontend/          # React application (main frontend)
-├── services/               # Backend API services
-├── config/                 # Configuration files
-├── models/                 # Data models
-├── nocodb_schemas/         # Database schemas
-└── tests/                  # Test suites
-```
-
-## 🎯 Features
-
-- **React Frontend**: Modern, responsive wedding planning interface
-- **AI-Powered Recommendations**: Intelligent vendor matching and suggestions  
-- **Budget Management**: Comprehensive budget tracking and allocation
-- **Vendor Discovery**: Advanced search and filtering capabilities
-- **Wedding Preferences**: Style and theme customization
-- **Real-time Communication**: Vendor contact and messaging system
-
-## 🔧 Development
-
-The application runs on:
-- **Frontend**: React app on port 5000
-- **Backend APIs**: Various Python services on ports 8000, 5003, 5004
-
-## 🌐 Access
-
-Once running, access the application at:
-- **Main App**: http://localhost:5000 (or your Repl URL)
-- **API Services**: Backend services run automatically
-
-## 📊 Architecture
-
-- **Frontend**: React with TypeScript, Tailwind CSS
-- **Backend**: Python FastAPI services
-- **Database**: NocoDB for data management
-- **AI Integration**: Multiple AI service providers
-- **Search**: Enhanced RAG-based vendor search
-
-## 🧪 Testing
-
-Run the comprehensive test suite:
-```bash
-python run_tests.py
-```
+Test suites cover: BlueprintReview, Quotes, Messages, PublicRSVP, WeddingInvites, VendorScreens, AIChat.
