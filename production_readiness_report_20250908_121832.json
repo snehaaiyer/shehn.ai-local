@@ -1,0 +1,166 @@
+{
+  "overall_status": "CRITICAL - NOT PRODUCTION READY",
+  "test_execution": {
+    "start_time": "2025-09-08T12:18:31.239454",
+    "end_time": "2025-09-08T12:18:32.303494",
+    "duration_seconds": 1.06404,
+    "total_tests": 9
+  },
+  "test_results_summary": {
+    "passed": 4,
+    "failed": 1,
+    "critical": 4,
+    "warnings": 0,
+    "success_rate": "44.4%"
+  },
+  "critical_issues": [
+    {
+      "test_id": "BE_001",
+      "test_name": "Backend Health Check",
+      "category": "Backend",
+      "status": "CRITICAL",
+      "details": "Backend server not responding",
+      "duration": "0.00s",
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a41e20>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "timestamp": "2025-09-08T12:18:31.267416"
+    },
+    {
+      "test_id": "BE_002",
+      "test_name": "Backend API Endpoints",
+      "category": "Backend",
+      "status": "CRITICAL",
+      "details": "6 endpoints failed",
+      "duration": "0.01s",
+      "error": "GET / (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a424b0>: Failed to establish a new connection: [Errno 61] Connection refused'))); GET /health (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a43410>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /submit-wedding (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /submit-wedding (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1025e7440>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /ai-consultation (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /ai-consultation (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a43230>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /budget-analysis (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /budget-analysis (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a42840>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /vendor-search (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /vendor-search (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a43e00>: Failed to establish a new connection: [Errno 61] Connection refused')))",
+      "timestamp": "2025-09-08T12:18:31.273361"
+    },
+    {
+      "test_id": "BE_003",
+      "test_name": "AI Services",
+      "category": "Backend",
+      "status": "CRITICAL",
+      "details": "AI services not responding",
+      "duration": "0.00s",
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /ai-consultation (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a78740>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "timestamp": "2025-09-08T12:18:31.274631"
+    },
+    {
+      "test_id": "LOAD_001",
+      "test_name": "Concurrent Load Test",
+      "category": "Load Testing",
+      "status": "FAIL",
+      "details": "0.0% success rate with 10 users",
+      "duration": "0.02s",
+      "error": "",
+      "timestamp": "2025-09-08T12:18:31.295153"
+    },
+    {
+      "test_id": "SEC_001",
+      "test_name": "Security Basics",
+      "category": "Security",
+      "status": "CRITICAL",
+      "details": "4 security issues found",
+      "duration": "0.00s",
+      "error": "Missing security header: X-Content-Type-Options; Missing security header: X-Frame-Options; Missing security header: X-XSS-Protection; Missing security header: Strict-Transport-Security",
+      "timestamp": "2025-09-08T12:18:31.297914"
+    }
+  ],
+  "detailed_results": [
+    {
+      "test_id": "FE_001",
+      "test_name": "Frontend Accessibility",
+      "category": "Frontend",
+      "status": "PASS",
+      "details": "Frontend accessible at http://localhost:3000",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-08T12:18:31.244470"
+    },
+    {
+      "test_id": "FE_002",
+      "test_name": "Frontend Performance",
+      "category": "Frontend",
+      "status": "PASS",
+      "details": "Avg: 0.00s, Max: 0.00s",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-08T12:18:31.251527"
+    },
+    {
+      "test_id": "FE_003",
+      "test_name": "Frontend Routes",
+      "category": "Frontend",
+      "status": "PASS",
+      "details": "All 7 routes accessible",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-08T12:18:31.266226"
+    },
+    {
+      "test_id": "BE_001",
+      "test_name": "Backend Health Check",
+      "category": "Backend",
+      "status": "CRITICAL",
+      "details": "Backend server not responding",
+      "duration": "0.00s",
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a41e20>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "timestamp": "2025-09-08T12:18:31.267416"
+    },
+    {
+      "test_id": "BE_002",
+      "test_name": "Backend API Endpoints",
+      "category": "Backend",
+      "status": "CRITICAL",
+      "details": "6 endpoints failed",
+      "duration": "0.01s",
+      "error": "GET / (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a424b0>: Failed to establish a new connection: [Errno 61] Connection refused'))); GET /health (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a43410>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /submit-wedding (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /submit-wedding (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1025e7440>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /ai-consultation (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /ai-consultation (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a43230>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /budget-analysis (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /budget-analysis (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a42840>: Failed to establish a new connection: [Errno 61] Connection refused'))); POST /vendor-search (Error: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /vendor-search (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a43e00>: Failed to establish a new connection: [Errno 61] Connection refused')))",
+      "timestamp": "2025-09-08T12:18:31.273361"
+    },
+    {
+      "test_id": "BE_003",
+      "test_name": "AI Services",
+      "category": "Backend",
+      "status": "CRITICAL",
+      "details": "AI services not responding",
+      "duration": "0.00s",
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /ai-consultation (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x102a78740>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "timestamp": "2025-09-08T12:18:31.274631"
+    },
+    {
+      "test_id": "LOAD_001",
+      "test_name": "Concurrent Load Test",
+      "category": "Load Testing",
+      "status": "FAIL",
+      "details": "0.0% success rate with 10 users",
+      "duration": "0.02s",
+      "error": "",
+      "timestamp": "2025-09-08T12:18:31.295153"
+    },
+    {
+      "test_id": "SEC_001",
+      "test_name": "Security Basics",
+      "category": "Security",
+      "status": "CRITICAL",
+      "details": "4 security issues found",
+      "duration": "0.00s",
+      "error": "Missing security header: X-Content-Type-Options; Missing security header: X-Frame-Options; Missing security header: X-XSS-Protection; Missing security header: Strict-Transport-Security",
+      "timestamp": "2025-09-08T12:18:31.297914"
+    },
+    {
+      "test_id": "SYS_001",
+      "test_name": "System Resources",
+      "category": "System",
+      "status": "PASS",
+      "details": "CPU: 10.5%, RAM: 67.5%, Disk: 9.5%",
+      "duration": "1.01s",
+      "error": "",
+      "timestamp": "2025-09-08T12:18:32.303299"
+    }
+  ],
+  "production_readiness": {
+    "database_ready": false,
+    "security_ready": false,
+    "performance_ready": true,
+    "load_ready": false
+  }
+}

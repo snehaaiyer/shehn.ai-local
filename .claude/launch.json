@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "/Users/snehaaiyer/.pyenv/versions/3.12.7/bin/python",
+      "runtimeArgs": ["/tmp/shehnai_proxy.py"],
+      "port": 8001
+    }
+  ]
+}

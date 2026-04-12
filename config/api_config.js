@@ -24,8 +24,7 @@ export const API_CONFIG = {
     }
   },
 
-  NOCODB_BASE_URL: "http://localhost:8080/api/v2/tables",
-  API_TOKEN: "-h-Q9hbkAgU2DsSqXsRligOG1Qzpgb4OAx_QGwHk",
+  
   TABLE_IDS: {
     couples: "mcv14lxgtp3rwa5",
     weddings: "mslkrxqymrbe01d",

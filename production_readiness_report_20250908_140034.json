@@ -1,0 +1,136 @@
+{
+  "overall_status": "CRITICAL - NOT PRODUCTION READY",
+  "test_execution": {
+    "start_time": "2025-09-08T13:59:42.209670",
+    "end_time": "2025-09-08T14:00:34.875348",
+    "duration_seconds": 52.665678,
+    "total_tests": 9
+  },
+  "test_results_summary": {
+    "passed": 7,
+    "failed": 1,
+    "critical": 1,
+    "warnings": 0,
+    "success_rate": "77.8%"
+  },
+  "critical_issues": [
+    {
+      "test_id": "BE_003",
+      "test_name": "AI Services",
+      "category": "Backend",
+      "status": "FAIL",
+      "details": "AI consultation failed: HTTP 422",
+      "duration": "0.00s",
+      "error": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"yourName\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"partnerName\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"city\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"weddingDate\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"budget\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"guestCount\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"weddingType\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"duration\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"events\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"priorities\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}}]}",
+      "timestamp": "2025-09-08T14:00:33.847567"
+    },
+    {
+      "test_id": "SEC_001",
+      "test_name": "Security Basics",
+      "category": "Security",
+      "status": "CRITICAL",
+      "details": "4 security issues found",
+      "duration": "0.01s",
+      "error": "Missing security header: X-Content-Type-Options; Missing security header: X-Frame-Options; Missing security header: X-XSS-Protection; Missing security header: Strict-Transport-Security",
+      "timestamp": "2025-09-08T14:00:33.869772"
+    }
+  ],
+  "detailed_results": [
+    {
+      "test_id": "FE_001",
+      "test_name": "Frontend Accessibility",
+      "category": "Frontend",
+      "status": "PASS",
+      "details": "Frontend accessible at http://localhost:3000",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-08T13:59:42.214714"
+    },
+    {
+      "test_id": "FE_002",
+      "test_name": "Frontend Performance",
+      "category": "Frontend",
+      "status": "PASS",
+      "details": "Avg: 0.00s, Max: 0.00s",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-08T13:59:42.219894"
+    },
+    {
+      "test_id": "FE_003",
+      "test_name": "Frontend Routes",
+      "category": "Frontend",
+      "status": "PASS",
+      "details": "All 7 routes accessible",
+      "duration": "0.01s",
+      "error": "",
+      "timestamp": "2025-09-08T13:59:42.226077"
+    },
+    {
+      "test_id": "BE_001",
+      "test_name": "Backend Health Check",
+      "category": "Backend",
+      "status": "PASS",
+      "details": "Backend healthy with 0 features",
+      "duration": "0.00s",
+      "error": "",
+      "timestamp": "2025-09-08T13:59:42.227124"
+    },
+    {
+      "test_id": "BE_002",
+      "test_name": "Backend API Endpoints",
+      "category": "Backend",
+      "status": "PASS",
+      "details": "All 6 endpoints working",
+      "duration": "51.62s",
+      "error": "",
+      "timestamp": "2025-09-08T14:00:33.844182"
+    },
+    {
+      "test_id": "BE_003",
+      "test_name": "AI Services",
+      "category": "Backend",
+      "status": "FAIL",
+      "details": "AI consultation failed: HTTP 422",
+      "duration": "0.00s",
+      "error": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"yourName\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"partnerName\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"city\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"weddingDate\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"budget\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"guestCount\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"weddingType\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"duration\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"events\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}},{\"type\":\"missing\",\"loc\":[\"body\",\"priorities\"],\"msg\":\"Field required\",\"input\":{\"query\":\"I need help planning a wedding for 150 guests in Mumbai\",\"preferences\":{\"budget\":\"10-15 lakhs\",\"style\":\"traditional\",\"venue_type\":\"outdoor\"}}}]}",
+      "timestamp": "2025-09-08T14:00:33.847567"
+    },
+    {
+      "test_id": "LOAD_001",
+      "test_name": "Concurrent Load Test",
+      "category": "Load Testing",
+      "status": "PASS",
+      "details": "100.0% success rate with 10 users",
+      "duration": "0.02s",
+      "error": "",
+      "timestamp": "2025-09-08T14:00:33.864169"
+    },
+    {
+      "test_id": "SEC_001",
+      "test_name": "Security Basics",
+      "category": "Security",
+      "status": "CRITICAL",
+      "details": "4 security issues found",
+      "duration": "0.01s",
+      "error": "Missing security header: X-Content-Type-Options; Missing security header: X-Frame-Options; Missing security header: X-XSS-Protection; Missing security header: Strict-Transport-Security",
+      "timestamp": "2025-09-08T14:00:33.869772"
+    },
+    {
+      "test_id": "SYS_001",
+      "test_name": "System Resources",
+      "category": "System",
+      "status": "PASS",
+      "details": "CPU: 13.2%, RAM: 70.2%, Disk: 9.5%",
+      "duration": "1.01s",
+      "error": "",
+      "timestamp": "2025-09-08T14:00:34.875203"
+    }
+  ],
+  "production_readiness": {
+    "database_ready": false,
+    "security_ready": false,
+    "performance_ready": true,
+    "load_ready": true
+  }
+}

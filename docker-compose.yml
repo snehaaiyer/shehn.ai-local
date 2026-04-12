@@ -1,0 +1,12 @@
+version: '2.1'
+services: 
+  nocodb: 
+    image: nocodb/nocodb:latest
+    container_name: nocodb
+    ports: 
+      - "8080:8080"
+    restart: always
+    volumes: 
+      - "./nocodb_storage:/usr/app/data" 
+    environment: 
+      NC_DB: "sqlite:///usr/app/data/noco.db" 

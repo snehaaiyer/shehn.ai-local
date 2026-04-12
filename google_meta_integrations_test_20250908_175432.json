@@ -1,0 +1,63 @@
+{
+  "test_type": "Google & Meta Integrations Test",
+  "timestamp": "2025-09-08T17:54:32.280435",
+  "frontend_url": "http://localhost:3000",
+  "backend_url": "http://localhost:8001",
+  "results": [
+    {
+      "test": "FE_AVAILABILITY",
+      "status": "PASS",
+      "details": "Frontend accessible",
+      "timestamp": "2025-09-08T17:54:17.959457"
+    },
+    {
+      "test": "GOOGLE_CONFIG",
+      "status": "PASS",
+      "details": "Found: CLIENT_ID, API_KEY, SCOPES, Calendar API, Gmail API",
+      "timestamp": "2025-09-08T17:54:17.959736"
+    },
+    {
+      "test": "GOOGLE_SERVICES",
+      "status": "PASS",
+      "details": "Found 4 services: Main Google API service: Service class, Async operations, Google APIs; Authentication guard: Service class, Async operations, Google APIs",
+      "timestamp": "2025-09-08T17:54:17.960461"
+    },
+    {
+      "test": "GOOGLE_USAGE",
+      "status": "PASS",
+      "details": "Found Google integrations in 15 files",
+      "timestamp": "2025-09-08T17:54:17.972364"
+    },
+    {
+      "test": "ENV_VARIABLES",
+      "status": "PASS",
+      "details": "Found: GOOGLE_CLIENT_ID, GEMINI_API_KEY, GOOGLE_API_KEY",
+      "timestamp": "2025-09-08T17:54:17.972620"
+    },
+    {
+      "test": "GOOGLE_SCRIPTS",
+      "status": "PASS",
+      "details": "Found: Google Fonts",
+      "timestamp": "2025-09-08T17:54:17.974221"
+    },
+    {
+      "test": "BACKEND_GOOGLE_AGENT",
+      "status": "PASS",
+      "details": "Communications agent provides: Gmail templates, Calendar coordination, Maps integration, WhatsApp messaging",
+      "timestamp": "2025-09-08T17:54:32.279730"
+    },
+    {
+      "test": "GOOGLE_AUTH_WORKFLOW",
+      "status": "PASS",
+      "details": "Auth workflow includes: Auth requirement check, Sign-in workflow, Auth status check",
+      "timestamp": "2025-09-08T17:54:32.280367"
+    }
+  ],
+  "summary": {
+    "total_tests": 8,
+    "passed": 8,
+    "failed": 0,
+    "warnings": 0,
+    "success_rate": 100.0
+  }
+}

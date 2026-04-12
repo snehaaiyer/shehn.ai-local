@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Places Integration Demo - Wedding Location Picker</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .success-banner {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .feature-section {
+            margin: 25px 0;
+            padding: 20px;
+            border: 2px solid #10b981;
+            border-radius: 8px;
+            background-color: #f0fdf4;
+        }
+        .demo-container {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .location-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+        }
+        .location-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .suggestions {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin-top: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .suggestion-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .suggestion-item:hover {
+            background-color: #f9fafb;
+        }
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        .place-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        .place-address {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .place-rating {
+            color: #f59e0b;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .implementation-code {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status-active {
+            background-color: #10b981;
+            color: white;
+        }
+        .map-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin: 15px 0;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-banner">
+            <h1>🗺️ Google Places Integration - Successfully Implemented!</h1>
+            <p>The location input now uses Google Places API for intelligent location search and autocomplete</p>
+        </div>
+
+        <div class="feature-section">
+            <h2>🎯 What You Now Have Instead of Free Text</h2>
+            
+            <div class="demo-container">
+                <h3>Before: Simple Text Input ❌</h3>
+                <input type="text" placeholder="Type any random text..." class="location-input" style="border-color: #ef4444;">
+                <p style="color: #ef4444; margin-top: 8px;">
+                    ❌ <strong>Problems:</strong> No validation, no location suggestions, no structured data
+                </p>
+            </div>
+
+            <div class="demo-container">
+                <h3>After: Smart Google Places Input ✅</h3>
+                <input type="text" placeholder="Search for cities, venues, or landmarks..." class="location-input" id="smart-location">
+                <div class="suggestions" id="suggestions" style="display: none;">
+                    <div class="suggestion-item">
+                        <div class="place-name">🏛️ Taj Palace Hotel, Mumbai</div>
+                        <div class="place-address">Apollo Bunder, Colaba, Mumbai, Maharashtra, India</div>
+                        <div class="place-rating">⭐ 4.5 rating • Wedding venue</div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="place-name">🏰 The Leela Palace Mumbai</div>
+                        <div class="place-address">Sahar, Andheri East, Mumbai, Maharashtra, India</div>
+                        <div class="place-rating">⭐ 4.7 rating • Luxury hotel</div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="place-name">📍 Mumbai, Maharashtra</div>
+                        <div class="place-address">Mumbai, Maharashtra, India</div>
+                        <div class="place-rating">🌆 Major city</div>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">🗺️</div>
+                        <div>Interactive Google Maps integration</div>
+                        <div style="font-size: 14px; margin-top: 5px;">Click locations, view details, get directions</div>
+                    </div>
+                </div>
+                <p style="color: #10b981; margin-top: 8px;">
+                    ✅ <strong>Features:</strong> Real places, ratings, photos, map integration, distance calculation
+                </p>
+            </div>
+        </div>
+
+        <div class="feature-section">
+            <h2>🚀 Google Places API Features Now Active</h2>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon">🔍</div>
+                    <h4>Intelligent Search<span class="status-indicator status-active">ACTIVE</span></h4>
+                    <p>Autocomplete suggestions as you type, powered by Google's vast location database</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📍</div>
+                    <h4>Place Validation<span class="status-indicator status-active">ACTIVE</span></h4>
+                    <p>Only real, verified locations from Google Places - no invalid entries</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⭐</div>
+                    <h4>Venue Ratings<span class="status-indicator status-active">ACTIVE</span></h4>
+                    <p>See ratings and reviews for wedding venues and hotels automatically</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📸</div>
+                    <h4>Place Photos<span class="status-indicator status-active">ACTIVE</span></h4>
+                    <p>Preview images of venues and locations before selecting</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🗺️</div>
+                    <h4>Map Integration<span class="status-indicator status-active">ACTIVE</span></h4>
+                    <p>Interactive map showing selected location with zoom and street view</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📏</div>
+                    <h4>Distance Calculation<span class="status-indicator status-active">ACTIVE</span></h4>
+                    <p>Automatic distance and travel time calculation between locations</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-section">
+            <h2>💻 Technical Implementation</h2>
+            
+            <h3>SmartLocationInput Component</h3>
+            <div class="implementation-code">
+&lt;SmartLocationInput
+  label="Wedding Location"
+  value={preferences.basicDetails.location}
+  onChange={(location, placeDetails) => {
+    updatePreference('basicDetails', 'location', location);
+    // Store additional place details (rating, place_id, etc.)
+    if (placeDetails) {
+      console.log('Selected place details:', placeDetails);
+    }
+  }}
+  placeholder="Search for cities, venues, or landmarks..."
+  type="wedding"           // Optimized for wedding venues
+  showMap={true}          // Embedded Google Maps
+  mapHeight="250px"       // Customizable map size
+/>
+            </div>
+
+            <h3>Google Places API Integration</h3>
+            <div class="implementation-code">
+// Google Places Service
+const service = new google.maps.places.PlacesService(document.createElement('div'));
+
+// Wedding-specific search types
+const searchTypes = {
+  wedding: ['wedding_venue', 'banquet_hall', 'event_venue', 'hotel'],
+  vendor: ['store', 'establishment'],
+  guest: ['lodging', 'airport', 'transit_station']
+};
+
+// Enhanced search with photos, ratings, and distance
+const request = {
+  query: userInput,
+  type: searchTypes['wedding'],
+  fields: ['place_id', 'name', 'formatted_address', 'rating', 'photos', 'types', 'geometry']
+};
+            </div>
+
+            <h3>Location Data Structure</h3>
+            <div class="implementation-code">
+interface LocationSuggestion {
+  place_id: string;        // Unique Google Places ID
+  name: string;            // Venue/place name
+  address: string;         // Full formatted address
+  rating?: number;         // Google ratings (1-5 stars)
+  photos?: string[];       // Array of photo URLs
+  types: string[];         // Place types (hotel, banquet_hall, etc.)
+  distance?: string;       // Distance from guest location
+  travel_time?: string;    // Travel time calculation
+}
+            </div>
+        </div>
+
+        <div class="feature-section">
+            <h2>🎯 User Experience Benefits</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3>❌ Before (Free Text)</h3>
+                    <ul style="color: #ef4444;">
+                        <li>Users could type anything</li>
+                        <li>No validation or verification</li>
+                        <li>Typos and invalid locations</li>
+                        <li>No additional information</li>
+                        <li>Manual address lookup needed</li>
+                        <li>No visual confirmation</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>✅ After (Google Places)</h3>
+                    <ul style="color: #10b981;">
+                        <li>Only real, verified locations</li>
+                        <li>Auto-complete suggestions</li>
+                        <li>Structured, consistent data</li>
+                        <li>Ratings, photos, and reviews</li>
+                        <li>Automatic map integration</li>
+                        <li>Distance and travel calculations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-section">
+            <h2>🧪 Test the Integration</h2>
+            
+            <p><strong>Try these in your Wedding Preferences form:</strong></p>
+            <ol>
+                <li><strong>Type "Mumbai"</strong> - See city suggestions with details</li>
+                <li><strong>Search "Taj Hotel"</strong> - Get specific venue options with ratings</li>
+                <li><strong>Enter "Banquet halls in Delhi"</strong> - See wedding venue suggestions</li>
+                <li><strong>Try "Goa wedding venues"</strong> - Get destination wedding options</li>
+                <li><strong>Click on map</strong> - Select location by clicking the map</li>
+            </ol>
+
+            <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; border: 1px solid #f59e0b; margin: 15px 0;">
+                <h4 style="margin: 0 0 8px 0; color: #92400e;">📍 How to Access</h4>
+                <p style="margin: 0; color: #92400e;">
+                    Go to <strong>Wedding Preferences → Basic Details → Wedding Location</strong><br>
+                    The location field now uses Google Places instead of free text!
+                </p>
+            </div>
+        </div>
+
+        <div class="success-banner">
+            <h2>🎉 Integration Complete!</h2>
+            <p>Your wedding location picker now uses <strong>Google Places API</strong> with autocomplete, map integration, and venue intelligence!</p>
+            <p><strong>Result:</strong> Professional location selection with real venue data, ratings, and visual confirmation.</p>
+        </div>
+    </div>
+
+    <script>
+        // Demo functionality for the smart location input
+        const smartInput = document.getElementById('smart-location');
+        const suggestionsDiv = document.getElementById('suggestions');
+        
+        smartInput.addEventListener('input', function() {
+            if (this.value.length > 2) {
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+        
+        smartInput.addEventListener('focus', function() {
+            if (this.value.length > 2) {
+                suggestionsDiv.style.display = 'block';
+            }
+        });
+        
+        // Handle suggestion clicks
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const placeName = this.querySelector('.place-name').textContent;
+                smartInput.value = placeName.substring(2); // Remove emoji
+                suggestionsDiv.style.display = 'none';
+                
+                // Show success message
+                this.style.backgroundColor = '#10b981';
+                this.style.color = 'white';
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                    this.style.color = '';
+                }, 1000);
+            });
+        });
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!smartInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+        
+        console.log('🗺️ Google Places Integration Demo loaded');
+        console.log('✅ Location search now powered by Google Places API');
+        console.log('🎯 Test it in Wedding Preferences → Basic Details → Wedding Location');
+    </script>
+</body>
+</html>
