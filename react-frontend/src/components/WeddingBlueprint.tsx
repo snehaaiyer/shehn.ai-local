@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 import { Heart, DollarSign, Camera, Utensils, Palette, Loader2, Sparkles, Clock, TrendingUp, FileText, Building2 } from 'lucide-react';
-// Removed unused import: import { SimpleMockService } from '../services/simple_mock_service';
-import { WeddingBlueprintService, type WeddingBlueprintRequest, type SavedBlueprint } from '../services/wedding_blueprint_service';
 
 // Venue Categories Data
 const venueCategories = [
@@ -265,8 +263,8 @@ const themes = [
 ];
 
 interface WeddingBlueprintProps {
-  preferences: any;
-  onClose: () => void;
+  preferences?: any;
+  onClose?: () => void;
 }
 
 interface BlueprintData {
@@ -293,10 +291,9 @@ interface BlueprintData {
 
 const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddingData, onClose }) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [blueprintData, setBlueprintData] = useState<any>(null); // Changed to any to accommodate new structure
+  const [blueprintData, setBlueprintData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [savedBlueprint, setSavedBlueprint] = useState<SavedBlueprint | null>(null);
-  const [sendingEmails, setSendingEmails] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
 
   const handleGenerateBlueprint = async () => {
     if (!weddingData?.basicDetails?.yourName || !weddingData?.theme?.selectedTheme) {
@@ -310,8 +307,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
     try {
       console.log('🤖 Generating AI-powered wedding blueprint...');
 
-      // Create comprehensive blueprint request
-      const blueprintRequest: WeddingBlueprintRequest = {
+      const requestBody = {
         basicDetails: {
           guestCount: parseInt(weddingData.basicDetails.guestCount) || 200,
           weddingDate: weddingData.basicDetails.weddingDate || new Date().toISOString(),
@@ -337,56 +333,64 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
         }
       };
 
-      // Generate comprehensive AI blueprint
-      const blueprintResponse = await WeddingBlueprintService.generateWeddingBlueprint(blueprintRequest);
+      const res = await fetch('/api/ai/generate-blueprint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      const result = await res.json();
 
-      if (blueprintResponse.success && blueprintResponse.blueprint) {
-        setSavedBlueprint(blueprintResponse.blueprint);
+      if (result.success && result.data) {
+        const data = result.data;
+        setSavedId(data.id || Date.now().toString());
+
+        // Map backend blueprint format to display format
+        const ws = data.wedding_summary || {};
+        const bb = data.budget_breakdown || {};
+        const cs = data.category_specs || {};
+        const formatINR = (n: number) => `₹${(n / 100000).toFixed(1)}L`;
+
+        const makeRecs = (cat: string, icon: string) => {
+          const spec = cs[cat];
+          if (!spec) return [];
+          return [{
+            name: `${icon} ${cat.charAt(0).toUpperCase() + cat.slice(1)} — ${formatINR(spec.budget_allocated)}`,
+            description: Object.entries(spec.requirements || {}).map(([k, v]) => `${k}: ${v}`).join(' • '),
+            price: spec.notes || ''
+          }];
+        };
+
         setBlueprintData({
-          images: blueprintResponse.blueprint.images,
-          generatedDescription: blueprintResponse.blueprint.aiGeneratedContent.weddingSummary,
-          timestamp: blueprintResponse.blueprint.generatedAt,
-          aiContent: blueprintResponse.blueprint.aiGeneratedContent
+          images: data.images || [],
+          generatedDescription: `${data.title || 'Your Wedding'} — ${ws.city || ''}, ${ws.date || ''} — ${ws.guest_count || 0} guests, Budget: ${formatINR(ws.budget || 0)}, Theme: ${ws.theme || ''}`,
+          timestamp: new Date().toISOString(),
+          budgetBreakdown: bb,
+          costSavingTips: data.cost_saving_tips || [],
+          timeline: data.timeline || [],
+          budgetHealth: ws.budget_health || 'moderate',
+          budgetWarning: ws.budget_warning || null,
+          perGuest: ws.per_guest_budget || 0,
+          cityTier: ws.city_tier || '',
+          aiInsights: data.ai_insights || [],
+          aiContent: {
+            weddingSummary: `${data.title}`,
+            recommendations: {
+              venue: makeRecs('venue', '🏛️'),
+              catering: makeRecs('catering', '🍽️'),
+              photography: makeRecs('photography', '📸'),
+              decoration: makeRecs('decoration', '🌸')
+            }
+          }
         });
-
-        console.log('✅ AI Blueprint generated and saved successfully!');
-
-        // Automatically send vendor emails after blueprint generation
-        await sendVendorEmails(blueprintResponse.blueprint);
-
+        console.log('✅ AI Blueprint generated successfully!');
       } else {
-        throw new Error(blueprintResponse.error || 'Failed to generate AI wedding blueprint');
+        throw new Error(result.error || 'Failed to generate AI wedding blueprint');
       }
     } catch (error) {
       console.error('Blueprint generation error:', error);
       setError(error instanceof Error ? error.message : 'Failed to generate AI blueprint');
     } finally {
       setIsGenerating(false);
-    }
-  };
-
-  const sendVendorEmails = async (blueprint: SavedBlueprint) => {
-    setSendingEmails(true);
-    try {
-      console.log('📧 Sending category-specific vendor emails...');
-
-      const emailResult = await WeddingBlueprintService.sendVendorEmails(
-        blueprint,
-        'aiyersneha19@gmail.com' // Test email for all vendors
-      );
-
-      if (emailResult.success) {
-        console.log('✅ Vendor emails sent successfully:', emailResult.results);
-        alert(`Vendor emails sent successfully to all categories! Check aiyersneha19@gmail.com for ${emailResult.results.length} category-specific emails.`);
-      } else {
-        console.error('Failed to send vendor emails:', emailResult.error);
-        alert('Some vendor emails failed to send. Check console for details.');
-      }
-    } catch (error) {
-      console.error('Error sending vendor emails:', error);
-      alert('Failed to send vendor emails. Check console for details.');
-    } finally {
-      setSendingEmails(false);
     }
   };
 
@@ -409,16 +413,16 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D5A3D' }}>
                 <Sparkles className="w-6 h-6" style={{ color: '#FFFFFF' }} />
               </div>
               <div>
-                <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Wedding Blueprint</h1>
+                <h1 className="text-2xl font-bold" style={{ color: '#3D5A3D' }}>Wedding Blueprint</h1>
                 <p className="text-gray-600">Your AI-generated wedding vision</p>
               </div>
             </div>
             <button
-              onClick={onClose}
+              onClick={() => onClose?.()}
               className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
             >
               ×
@@ -430,8 +434,8 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
         <div className="p-6">
           {!blueprintData && !isGenerating && (
             <div className="text-center py-12">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-pink-100 to-purple-100 flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 text-purple-600" />
+              <div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="w-10 h-10 text-rose-600" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Generate Your Wedding Blueprint</h2>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
@@ -439,21 +443,16 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
               </p>
               <button
                 onClick={handleGenerateBlueprint}
-                disabled={isGenerating || sendingEmails}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isGenerating}
+                className="bg-rose-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-rose-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? (
                   <div className="flex items-center space-x-2">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                     <span>Generating AI Blueprint...</span>
                   </div>
-                ) : sendingEmails ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Sending Vendor Emails...</span>
-                  </div>
                 ) : (
-                  '🤖 Generate AI Blueprint & Send Vendor Emails'
+                  '🤖 Generate AI Blueprint'
                 )}
               </button>
             </div>
@@ -461,15 +460,15 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
 
           {isGenerating && (
             <div className="text-center py-12">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-pink-100 to-purple-100 flex items-center justify-center mx-auto mb-6">
-                <Loader2 className="w-10 h-10 text-purple-600 animate-spin" />
+              <div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-6">
+                <Loader2 className="w-10 h-10 text-rose-600 animate-spin" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Creating Your Wedding Blueprint</h2>
               <p className="text-gray-600 mb-4">Generating images and recommendations...</p>
               <div className="flex justify-center space-x-2">
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-rose-400 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-rose-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-rose-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           )}
@@ -490,13 +489,11 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
             </div>
           )}
 
-          {savedBlueprint && (
-            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">✅ Blueprint Saved Successfully!</h4>
-              <p className="text-green-700 text-sm">
-                ID: {savedBlueprint.id}<br/>
-                Generated: {new Date(savedBlueprint.generatedAt).toLocaleString()}<br/>
-                Content: AI-powered recommendations for venues, catering, photography & decoration
+          {savedId && (
+            <div className="mt-4 p-4 bg-sage-50 border border-sage-200 rounded-lg">
+              <h4 className="font-semibold text-sage-800 mb-2">✅ Blueprint Generated Successfully!</h4>
+              <p className="text-sage-700 text-sm">
+                AI-powered recommendations for venues, catering, photography & decoration
               </p>
             </div>
           )}
@@ -507,69 +504,155 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
               <h3 className="text-2xl font-bold text-gray-800">🤖 Your AI-Generated Wedding Blueprint</h3>
 
               {blueprintData.generatedDescription && (
-                <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
-                  <h4 className="font-semibold text-purple-800 mb-2">Wedding Vision Summary</h4>
-                  <p className="text-purple-700">{blueprintData.generatedDescription}</p>
+                <div className="bg-rose-50 p-6 rounded-lg border border-rose-200">
+                  <h4 className="font-semibold text-rose-800 mb-2">Wedding Vision Summary</h4>
+                  <p className="text-rose-700">{blueprintData.generatedDescription}</p>
+                  {blueprintData.perGuest > 0 && (
+                    <div className="mt-3 flex items-center gap-3 text-sm">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        blueprintData.budgetHealth === 'comfortable' ? 'bg-green-100 text-green-700' :
+                        blueprintData.budgetHealth === 'moderate' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
+                        {blueprintData.budgetHealth === 'comfortable' ? '✅ Comfortable budget' :
+                         blueprintData.budgetHealth === 'moderate' ? '⚠️ Moderate budget' :
+                         '🔴 Tight budget'}
+                      </span>
+                      <span className="text-rose-600">₹{blueprintData.perGuest.toLocaleString('en-IN')}/guest</span>
+                      {blueprintData.cityTier && <span className="text-gray-500">• {blueprintData.cityTier} city rates</span>}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {blueprintData.budgetWarning && (
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                  <p className="text-amber-800 text-sm">{blueprintData.budgetWarning}</p>
+                </div>
+              )}
+
+              {blueprintData.aiInsights && blueprintData.aiInsights.length > 0 && (
+                <div className="bg-indigo-50 p-6 rounded-lg border border-indigo-200">
+                  <h4 className="font-semibold text-indigo-800 mb-3">🧠 AI Insider Tips</h4>
+                  <ul className="space-y-2">
+                    {blueprintData.aiInsights.map((insight: string, i: number) => (
+                      <li key={i} className="flex items-start gap-2 text-indigo-700">
+                        <span className="text-indigo-500 mt-0.5">💡</span>
+                        <span>{insight}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
               {blueprintData.aiContent && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Venue Recommendations */}
-                  <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-800 mb-3">🏛️ Venue Recommendations</h4>
+                  <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h4 className="font-semibold text-gray-800 mb-3">🏛️ Venue Recommendations</h4>
                     <div className="space-y-2">
-                      {blueprintData.aiContent.recommendations.venue.map((item, index) => (
-                        <div key={index} className="bg-white p-3 rounded border border-blue-100">
-                          <h5 className="font-medium text-blue-900">{item.name}</h5>
-                          <p className="text-blue-700 text-sm">{item.description}</p>
-                          <p className="text-blue-600 text-xs font-medium">{item.price}</p>
+                      {blueprintData.aiContent.recommendations.venue.map((item: any, index: number) => (
+                        <div key={index} className="bg-white p-3 rounded border border-gray-100">
+                          <h5 className="font-medium text-gray-900">{item.name}</h5>
+                          <p className="text-gray-700 text-sm">{item.description}</p>
+                          <p className="text-gray-600 text-xs font-medium">{item.price}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Catering Recommendations */}
-                  <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-                    <h4 className="font-semibold text-green-800 mb-3">🍽️ Catering Recommendations</h4>
+                  <div className="bg-sage-50 p-6 rounded-lg border border-sage-200">
+                    <h4 className="font-semibold text-sage-800 mb-3">🍽️ Catering Recommendations</h4>
                     <div className="space-y-2">
-                      {blueprintData.aiContent.recommendations.catering.map((item, index) => (
-                        <div key={index} className="bg-white p-3 rounded border border-green-100">
-                          <h5 className="font-medium text-green-900">{item.name}</h5>
-                          <p className="text-green-700 text-sm">{item.description}</p>
-                          <p className="text-green-600 text-xs font-medium">{item.price}</p>
+                      {blueprintData.aiContent.recommendations.catering.map((item: any, index: number) => (
+                        <div key={index} className="bg-white p-3 rounded border border-sage-100">
+                          <h5 className="font-medium text-sage-900">{item.name}</h5>
+                          <p className="text-sage-700 text-sm">{item.description}</p>
+                          <p className="text-sage-600 text-xs font-medium">{item.price}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Photography Recommendations */}
-                  <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
-                    <h4 className="font-semibold text-yellow-800 mb-3">📸 Photography Recommendations</h4>
+                  <div className="bg-rose-50 p-6 rounded-lg border border-rose-200">
+                    <h4 className="font-semibold text-rose-800 mb-3">📸 Photography Recommendations</h4>
                     <div className="space-y-2">
-                      {blueprintData.aiContent.recommendations.photography.map((item, index) => (
-                        <div key={index} className="bg-white p-3 rounded border border-yellow-100">
-                          <h5 className="font-medium text-yellow-900">{item.name}</h5>
-                          <p className="text-yellow-700 text-sm">{item.description}</p>
-                          <p className="text-yellow-600 text-xs font-medium">{item.price}</p>
+                      {blueprintData.aiContent.recommendations.photography.map((item: any, index: number) => (
+                        <div key={index} className="bg-white p-3 rounded border border-rose-100">
+                          <h5 className="font-medium text-rose-900">{item.name}</h5>
+                          <p className="text-rose-700 text-sm">{item.description}</p>
+                          <p className="text-rose-600 text-xs font-medium">{item.price}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Decoration Recommendations */}
-                  <div className="bg-pink-50 p-6 rounded-lg border border-pink-200">
-                    <h4 className="font-semibold text-pink-800 mb-3">🌸 Decoration Recommendations</h4>
+                  <div className="bg-rose-50 p-6 rounded-lg border border-rose-200">
+                    <h4 className="font-semibold text-rose-800 mb-3">🌸 Decoration Recommendations</h4>
                     <div className="space-y-2">
-                      {blueprintData.aiContent.recommendations.decoration.map((item, index) => (
-                        <div key={index} className="bg-white p-3 rounded border border-pink-100">
-                          <h5 className="font-medium text-pink-900">{item.name}</h5>
-                          <p className="text-pink-700 text-sm">{item.description}</p>
-                          <p className="text-pink-600 text-xs font-medium">{item.price}</p>
+                      {blueprintData.aiContent.recommendations.decoration.map((item: any, index: number) => (
+                        <div key={index} className="bg-white p-3 rounded border border-rose-100">
+                          <h5 className="font-medium text-rose-900">{item.name}</h5>
+                          <p className="text-rose-700 text-sm">{item.description}</p>
+                          <p className="text-rose-600 text-xs font-medium">{item.price}</p>
                         </div>
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Budget Breakdown */}
+              {blueprintData.budgetBreakdown && Object.keys(blueprintData.budgetBreakdown).length > 0 && (
+                <div className="bg-white p-6 rounded-lg border border-gray-200">
+                  <h4 className="font-semibold text-gray-800 mb-4">💰 Budget Breakdown</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {Object.entries(blueprintData.budgetBreakdown).map(([cat, amount]: [string, any]) => (
+                      <div key={cat} className="bg-gray-50 p-3 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 capitalize">{cat}</p>
+                        <p className="text-lg font-bold text-gray-800">₹{(amount / 100000).toFixed(1)}L</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Timeline */}
+              {blueprintData.timeline && blueprintData.timeline.length > 0 && (
+                <div className="bg-white p-6 rounded-lg border border-gray-200">
+                  <h4 className="font-semibold text-gray-800 mb-3">📅 Event Timeline</h4>
+                  <div className="space-y-3">
+                    {blueprintData.timeline.map((item: any, i: number) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-rose-100 flex-shrink-0 flex items-center justify-center text-rose-600 text-sm font-bold">{i + 1}</div>
+                        <div>
+                          <p className="text-gray-800 font-medium">
+                            {typeof item === 'string' ? item : item.event}
+                            {item.date && <span className="text-gray-500 text-sm ml-2">— {item.date}</span>}
+                          </p>
+                          {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Cost Saving Tips */}
+              {blueprintData.costSavingTips && blueprintData.costSavingTips.length > 0 && (
+                <div className="bg-green-50 p-6 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-3">💡 Cost-Saving Tips</h4>
+                  <ul className="space-y-2">
+                    {blueprintData.costSavingTips.map((tip: string, i: number) => (
+                      <li key={i} className="flex items-start gap-2 text-green-700">
+                        <span className="text-green-500 mt-0.5">✓</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
@@ -577,7 +660,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-800">AI-Generated Wedding Images</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {blueprintData.images.map((image, index) => (
+                    {blueprintData.images.map((image: string, index: number) => (
                       <div key={index} className="relative group">
                         <img
                           src={image}
@@ -598,7 +681,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
               <div className="flex justify-between items-center text-sm text-gray-500 border-t pt-4">
                 <span>Generated on: {new Date(blueprintData.timestamp).toLocaleString()}</span>
                 <span className="flex items-center space-x-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span className="w-2 h-2 bg-sage-500 rounded-full"></span>
                   <span>AI-Powered & Saved</span>
                 </span>
               </div>

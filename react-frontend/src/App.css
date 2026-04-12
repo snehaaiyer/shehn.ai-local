@@ -8,56 +8,52 @@
 
 /* Pleasing Pastel Color Scheme */
 :root {
-  /* Modern Dashboard-Inspired Pastel Color Palette */
-  --soft-beige: #f0e4dd;
-  --salmon-pink: #df8e8e;
-  --soft-peach: #df8e8e;
-  --deep-navy: #152347;
-  --muted-green: #133337;
-  --highlight-yellow: #f1d243;
-  --sky-blue: #9cb7d2;
-  --muted-red: #eb5757;
-  --light-coral: #df8e8e;
-  --light-blush: #e3d2d3;
+  /* Two-color palette: Coral + Dark Sage */
+  --salmon-pink: #D4736E;
+  --soft-peach: #D4736E;
+  --deep-navy: #3D5A3D;
+  --muted-green: #3D5A3D;
+  --light-coral: #D4736E;
+  --light-blush: #FFE8E5;
 
-  /* Primary Colors for UI Elements */
-  --primary-lavender: #df8e8e; /* Salmon Pink */
-  --primary-rose: #eb5757; /* Muted Red */
-  --primary-mint: #133337; /* Muted Green */
-  --primary-peach: #df8e8e; /* Soft Peach */
-  --primary-sky: #9cb7d2; /* Sky Blue */
-  --primary-lilac: #e3d2d3; /* Light Blush */
-  --primary-coral: #df8e8e; /* Light Coral */
-  --primary-sage: #f1d243; /* Highlight Yellow */
+  /* Primary Colors */
+  --primary-lavender: #D4736E;
+  --primary-rose: #C0605B;
+  --primary-mint: #3D5A3D;
+  --primary-peach: #D4736E;
+  --primary-sky: #D4736E;
+  --primary-lilac: #FFE8E5;
+  --primary-coral: #D4736E;
+  --primary-sage: #3D5A3D;
 
   /* Pastel Background Colors */
-  --pastel-lavender: #f0e4dd; /* Soft Beige */
-  --pastel-rose: #df8e8e; /* Salmon Pink */
-  --pastel-mint: #133337; /* Muted Green */
-  --pastel-peach: #df8e8e; /* Soft Peach */
-  --pastel-sky: #9cb7d2; /* Sky Blue */
-  --pastel-lilac: #e3d2d3; /* Light Blush */
-  --pastel-coral: #df8e8e; /* Light Coral */
-  --pastel-sage: #f1d243; /* Highlight Yellow */
+  --pastel-lavender: #FFF5F4;
+  --pastel-rose: #D4736E;
+  --pastel-mint: #3D5A3D;
+  --pastel-peach: #D4736E;
+  --pastel-sky: #D4736E;
+  --pastel-lilac: #FFE8E5;
+  --pastel-coral: #D4736E;
+  --pastel-sage: #4A6B4A;
 
   /* Light Background Variations */
-  --pastel-lavender-light: #faf7f5;
-  --pastel-rose-light: #fdf5f5;
-  --pastel-mint-light: #f5f9f8;
-  --pastel-peach-light: #fefaf7;
-  --pastel-sky-light: #f7fafc;
-  --pastel-lilac-light: #fdfcfc;
-  --pastel-coral-light: #fffbf8;
-  --pastel-sage-light: #fefef8;
+  --pastel-lavender-light: #FFF5F4;
+  --pastel-rose-light: #FFF5F4;
+  --pastel-mint-light: #F4F7F4;
+  --pastel-peach-light: #FFF5F4;
+  --pastel-sky-light: #FFF5F4;
+  --pastel-lilac-light: #FFF5F4;
+  --pastel-coral-light: #FFF5F4;
+  --pastel-sage-light: #F4F7F4;
 
   /* Accent Colors */
-  --accent-gold: #f1d243;
-  --accent-silver: #9cb7d2;
-  --accent-bronze: #df8e8e;
+  --accent-gold: #D4736E;
+  --accent-silver: #5C7C5C;
+  --accent-bronze: #D4736E;
 
   /* Text Colors */
-  --text-primary: #152347; /* Deep Navy */
-  --text-secondary: #133337; /* Muted Green */
+  --text-primary: #3D5A3D; /* Dark Sage */
+  --text-secondary: #4A6B4A; /* Medium Sage */
   --text-muted: #9cb7d2; /* Sky Blue */
 }
 
@@ -157,7 +153,7 @@
 }
 
 .focus\:ring-pastel-lavender\/20:focus {
-  --tw-ring-color: rgb(223 142 142 / 0.2);
+  --tw-ring-color: rgb(212 115 110 / 0.2);
 }
 
 /* Hover States */
@@ -179,7 +175,7 @@
 
 /* Opacity Variations */
 .bg-pastel-lavender\/20 { background-color: rgb(240 228 221 / 0.2); }
-.bg-pastel-rose\/20 { background-color: rgb(223 142 142 / 0.2); }
+.bg-pastel-rose\/20 { background-color: rgb(212 115 110 / 0.2); }
 .bg-pastel-mint\/20 { background-color: rgb(98 139 133 / 0.2); }
 .bg-pastel-peach\/20 { background-color: rgb(244 193 173 / 0.2); }
 .bg-pastel-sky\/20 { background-color: rgb(156 183 210 / 0.2); }
@@ -188,7 +184,7 @@
 .bg-pastel-sage\/20 { background-color: rgb(241 210 67 / 0.2); }
 
 .bg-pastel-lavender\/40 { background-color: rgb(240 228 221 / 0.4); }
-.bg-pastel-rose\/40 { background-color: rgb(223 142 142 / 0.4); }
+.bg-pastel-rose\/40 { background-color: rgb(212 115 110 / 0.4); }
 .bg-pastel-mint\/40 { background-color: rgb(98 139 133 / 0.4); }
 .bg-pastel-peach\/40 { background-color: rgb(244 193 173 / 0.4); }
 .bg-pastel-sky\/40 { background-color: rgb(156 183 210 / 0.4); }

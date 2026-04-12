@@ -11,7 +11,7 @@ from datetime import datetime
 def check_main_server():
     """Check main server status"""
     try:
-        response = requests.get('http://localhost:5000/health', timeout=5)
+        response = requests.get('http://localhost:8000/health', timeout=5)
         if response.status_code == 200:
             data = response.json()
             print("✅ Main Server: HEALTHY")
@@ -29,14 +29,14 @@ def check_api_endpoints():
     """Check API endpoints"""
     endpoints = [
         ('/api/health', 'API Health'),
-        ('/api/theme-images', 'Theme Images'),
-        ('/vendor-discovery', 'Vendor Discovery')
+        ('/api/budget-analysis', 'Budget Analysis'),
+        ('/api/docs', 'API Docs')
     ]
     
     results = []
     for endpoint, name in endpoints:
         try:
-            response = requests.get(f'http://localhost:5000{endpoint}', timeout=3)
+            response = requests.get(f'http://localhost:8000{endpoint}', timeout=3)
             if response.status_code == 200:
                 print(f"✅ {name}: WORKING")
                 results.append(True)
@@ -62,7 +62,7 @@ def main():
     
     if main_healthy and api_healthy:
         print("🎉 ALL SERVICES OPERATIONAL")
-        print("🌐 Access your app at: http://localhost:5000")
+        print("🌐 Access your app at: http://localhost:8000")
     else:
         print("⚠️ SOME SERVICES HAVE ISSUES")
         print("Run 'python start_all_services.py' to restart")

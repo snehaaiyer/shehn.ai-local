@@ -16,8 +16,8 @@ check_port() {
 
 # Function to start backend
 start_backend() {
-    echo "🔧 Starting Backend Services on port 5000..."
-    check_port 5000
+    echo "🔧 Starting Backend Services on port 8000..."
+    check_port 8000
     python simple_unified_server.py &
     BACKEND_PID=$!
     echo "✅ Backend started with PID: $BACKEND_PID"
@@ -25,7 +25,7 @@ start_backend() {
     # Wait for backend to be ready
     echo "⏳ Waiting for backend to be ready..."
     for i in {1..30}; do
-        if curl -s http://0.0.0.0:5000/health > /dev/null 2>&1; then
+        if curl -s http://0.0.0.0:8000/health > /dev/null 2>&1; then
             echo "✅ Backend is ready!"
             break
         fi
@@ -36,26 +36,8 @@ start_backend() {
 
 # Function to start React frontend
 start_frontend() {
-    echo "🎨 Starting React Frontend on port 3000..."
-    check_port 5000
-    cd react-frontend
-    
-    # Install dependencies if needed
-    if [ ! -d "node_modules" ]; then
-        echo "📦 Installing React dependencies..."
-        npm install
-    fi
-    
-    # Set environment variables
-    export HOST=0.0.0.0
-    export PORT=5000
-    export BROWSER=none
-    
-    echo "🚀 Starting React development server..."
-    npm start &
-    FRONTEND_PID=$!
-    cd ..
-    echo "✅ Frontend started with PID: $FRONTEND_PID"
+    echo "🎨 Frontend is being served by the Backend on port 8000."
+    echo "✅ Static build found and mounted."
 }
 
 # Start services
@@ -66,10 +48,10 @@ start_frontend
 echo ""
 echo "🎉 BID AI Wedding Assistant is starting up!"
 echo "=================================================="
-echo "🔧 Backend API: http://0.0.0.0:5000"
-echo "🎨 React Frontend: http://0.0.0.0:5000"
-echo "📊 Health Check: http://0.0.0.0:5000/health"
-echo "📋 API Docs: http://0.0.0.0:5000/api/docs"
+echo "🔧 Backend API: http://0.0.0.0:8000"
+echo "🎨 React Frontend: http://0.0.0.0:8000"
+echo "📊 Health Check: http://0.0.0.0:8000/health"
+echo "📋 API Docs: http://0.0.0.0:8000/api/docs"
 echo "=================================================="
 echo ""
 echo "🏃 Services are starting... Please wait a moment for full initialization."

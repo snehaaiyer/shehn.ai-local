@@ -1,4 +1,4 @@
-import { VenueImageGenerator } from './venue_image_generator';
+// venue_image_generator removed — using local theme images
 
 interface Vendor {
   id: string;
@@ -79,7 +79,8 @@ export class VendorDiscoveryService {
           return backendResponse;
         }
       } catch (backendError) {
-        console.warn('⚠️ Backend API unavailable, using enhanced mock data:', backendError);
+        console.warn('⚠️ Backend API unavailable (possibly rate limited), using enhanced mock data:', backendError);
+        // Force use of mock data when backend fails (e.g., rate limits)
       }
 
       // Fallback to enhanced mock data that respects preferences
@@ -184,6 +185,123 @@ export class VendorDiscoveryService {
 
     console.log(`🎯 Preferences-based filtering reduced vendors from ${vendors.length} to ${filtered.length}`);
     return filtered;
+  }
+
+  /**
+   * Build detailed vendor preferences for AI agent processing
+   */
+  static buildDetailedVendorPreferences(params: VendorSearchParams, weddingData: any): any {
+    const preferences = this.getDetailedPreferencesFromStorage();
+    
+    return {
+      venue: {
+        type: preferences?.venue?.venueType || 'Hotel',
+        capacity: preferences?.venue?.capacity || weddingData.guestCount,
+        selected: preferences?.venue?.selectedVenue || '',
+        requirements: `Capacity for ${weddingData.guestCount} guests, ${preferences?.venue?.venueType || 'flexible'} setting`
+      },
+      catering: {
+        cuisine: preferences?.catering?.cuisine || 'Multi-cuisine',
+        meal_type: preferences?.catering?.mealType || 'Buffet',
+        dietary_restrictions: preferences?.catering?.dietaryRestrictions || [],
+        must_have_dishes: preferences?.catering?.mustHaveDishes || '',
+        budget_per_person: preferences?.catering?.budgetPerPerson || '',
+        special_services: preferences?.catering?.additionalServices || [],
+        requirements: `${preferences?.catering?.cuisine || 'Multi-cuisine'} cuisine, ${preferences?.catering?.mealType || 'buffet'} style${preferences?.catering?.dietaryRestrictions?.length ? `, dietary restrictions: ${preferences?.catering?.dietaryRestrictions.join(', ')}` : ''}`
+      },
+      photography: {
+        style: preferences?.photography?.style || 'Traditional',
+        coverage: preferences?.photography?.coverage || 'Full day',
+        special_requests: preferences?.photography?.specialRequests || '',
+        multi_day_coverage: preferences?.photography?.multiDayCoverage || {},
+        videography: preferences?.photography?.videography || { required: false },
+        cultural_coverage: preferences?.photography?.culturalCoverage || {},
+        deliverables: preferences?.photography?.deliverables || {},
+        requirements: `${preferences?.photography?.style || 'traditional'} photography style, ${preferences?.photography?.coverage || 'full day'} coverage${preferences?.photography?.specialRequests ? `, special requests: ${preferences?.photography?.specialRequests}` : ''}`
+      },
+      decoration: {
+        style: preferences?.decoration?.style || 'Traditional',
+        color_scheme: preferences?.decoration?.colorScheme || 'Red and Gold',
+        floral_preferences: preferences?.decoration?.floralPreferences || [],
+        lighting_style: preferences?.decoration?.lightingStyle || 'Warm',
+        requirements: `${preferences?.decoration?.style || 'traditional'} decoration style, ${preferences?.decoration?.colorScheme || 'classic'} color scheme, ${preferences?.decoration?.floralPreferences?.length ? `floral: ${preferences?.decoration?.floralPreferences.join(', ')}` : 'traditional flowers'}`
+      }
+    };
+  }
+
+  /**
+   * Extract category-specific requirements for targeted vendor matching
+   */
+  static extractCategorySpecificRequirements(category: string, weddingData: any): string {
+    const preferences = this.getDetailedPreferencesFromStorage();
+    
+    switch (category) {
+      case 'venues':
+        return `Venue for ${weddingData.guestCount} guests, ${preferences?.venue?.venueType || 'flexible'} type, ${weddingData.theme?.selectedTheme || 'traditional'} theme suitable, location in ${weddingData.location}${preferences?.venue?.selectedVenue ? `, preference: ${preferences.venue.selectedVenue}` : ''}`;
+      
+      case 'catering':
+        return `${preferences?.catering?.cuisine || 'Multi-cuisine'} catering for ${weddingData.guestCount} guests, ${preferences?.catering?.mealType || 'buffet'} service${preferences?.catering?.dietaryRestrictions?.length ? `, accommodating ${preferences.catering.dietaryRestrictions.join(', ')} dietary needs` : ''}${preferences?.catering?.mustHaveDishes ? `, must include: ${preferences.catering.mustHaveDishes}` : ''}`;
+      
+      case 'photography':
+        return `${preferences?.photography?.style || 'Traditional'} wedding photography, ${preferences?.photography?.coverage || 'full day'} coverage${preferences?.photography?.videography?.required ? ', videography required' : ''}${preferences?.photography?.videography?.droneCoverage ? ', drone coverage needed' : ''}${preferences?.photography?.specialRequests ? `, special: ${preferences.photography.specialRequests}` : ''}`;
+      
+      case 'decoration':
+        return `${preferences?.decoration?.style || 'Traditional'} decoration style, ${preferences?.decoration?.colorScheme || 'classic'} color palette${preferences?.decoration?.floralPreferences?.length ? `, floral: ${preferences.decoration.floralPreferences.join(', ')}` : ''}${preferences?.decoration?.lightingStyle ? `, ${preferences.decoration.lightingStyle} lighting` : ''}`;
+      
+      default:
+        return `${category} services for ${weddingData.theme?.selectedTheme || 'traditional'} wedding, ${weddingData.guestCount} guests, in ${weddingData.location}`;
+    }
+  }
+
+  /**
+   * Extract priority factors for vendor ranking
+   */
+  static extractPriorityFactors(weddingData: any): string[] {
+    const priorities = weddingData.basicDetails?.priorities || [];
+    const factors: string[] = [];
+    
+    priorities.forEach((priority: any) => {
+      if (typeof priority === 'object' && priority.name) {
+        factors.push(priority.name.toLowerCase());
+      } else if (typeof priority === 'string') {
+        factors.push(priority.toLowerCase());
+      }
+    });
+    
+    return factors.length > 0 ? factors : ['venues', 'catering', 'photography'];
+  }
+
+  /**
+   * Extract cultural requirements for authentic vendor matching
+   */
+  static extractCulturalRequirements(weddingData: any): string {
+    const requirements = [];
+    
+    if (weddingData.weddingType) {
+      requirements.push(`${weddingData.weddingType} wedding style`);
+    }
+    
+    if (weddingData.events?.selectedEvents?.length) {
+      requirements.push(`Events: ${weddingData.events.selectedEvents.join(', ')}`);
+    }
+    
+    if (weddingData.theme?.selectedTheme) {
+      requirements.push(`Theme: ${weddingData.theme.selectedTheme}`);
+    }
+    
+    // Add regional/cultural preferences based on location
+    if (weddingData.location) {
+      const region = weddingData.location.toLowerCase();
+      if (region.includes('delhi') || region.includes('punjab')) {
+        requirements.push('North Indian traditions');
+      } else if (region.includes('mumbai') || region.includes('maharashtra')) {
+        requirements.push('Maharashtrian traditions');
+      } else if (region.includes('chennai') || region.includes('bangalore')) {
+        requirements.push('South Indian traditions');
+      }
+    }
+    
+    return requirements.join(', ');
   }
 
   /**
@@ -321,7 +439,7 @@ export class VendorDiscoveryService {
 
         // Additional attributes for enhanced filtering
         specialRequirements: preferences.basicDetails?.specialRequirements || '',
-        culturalRequirements: this.extractCulturalRequirements(preferences),
+        culturalRequirements: this.extractCulturalRequirementsFromPreferences(preferences),
         accessibilityNeeds: preferences.basicDetails?.accessibilityNeeds || '',
         seasonalPreferences: this.extractSeasonalPreferences(preferences.basicDetails?.weddingDate)
       };
@@ -402,7 +520,7 @@ export class VendorDiscoveryService {
   /**
    * Extract cultural requirements from preferences
    */
-  static extractCulturalRequirements(preferences: any): string[] {
+  static extractCulturalRequirementsFromPreferences(preferences: any): string[] {
     const requirements: string[] = [];
 
     const theme = preferences.theme?.selectedTheme?.toLowerCase();
@@ -474,15 +592,32 @@ export class VendorDiscoveryService {
       ragEnabled: true
     };
 
-    console.log('🚀 Calling RAG-Enhanced Semantic Search API:', `${backendUrl}/api/rag-vendor-search`);
-    console.log('📤 Semantic search request:', requestBody);
+    console.log('🚀 Calling Vendor Search API:', `${backendUrl}/vendor-search`);
+    console.log('📤 Vendor search request:', requestBody);
 
-    const response = await fetch(`${backendUrl}/api/rag-vendor-search`, {
+    const response = await fetch(`${backendUrl}/vendor-search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify({
+        city: params.location || weddingData.location || 'Bangalore',
+        category: params.category || 'venues',
+        budget: params.priceRange || weddingData.budget || '₹30-50 Lakhs',
+        wedding_type: weddingData.weddingType || 'Traditional',
+        guest_count: weddingData.guestCount || 200,
+        // Enhanced detailed preferences for AI agent filtering
+        detailed_preferences: this.buildDetailedVendorPreferences(params, weddingData),
+        user_requirements: this.extractCategorySpecificRequirements(params.category || 'venues', weddingData),
+        priority_factors: this.extractPriorityFactors(weddingData),
+        search_context: {
+          events: weddingData.events?.selectedEvents || [],
+          duration: weddingData.basicDetails?.eventDuration || '3 days',
+          style_preferences: weddingData.theme?.selectedTheme || 'Traditional',
+          cultural_requirements: this.extractCulturalRequirements(weddingData),
+          seasonal_preferences: this.extractSeasonalPreferences(weddingData.basicDetails?.weddingDate)
+        }
+      })
     });
 
     if (!response.ok) {
@@ -778,26 +913,19 @@ export class VendorDiscoveryService {
           description: vendor.description
         };
 
-        const imageResponse = await VenueImageGenerator.generateVenueImages(venueRequest);
+        // Use placeholder images (VenueImageGenerator removed)
+        vendor.images = vendor.images || ['/classic contemporary.png'];
 
-        if (imageResponse.success && imageResponse.images) {
-          generatedImages[vendor.name] = imageResponse;
+        // Add delay between requests
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-          // Update vendor images with generated ones
-          vendor.images = [
-            imageResponse.images.mainImage,
-            imageResponse.images.ceremonyImage,
-            imageResponse.images.receptionImage
-          ].filter((img): img is string => img !== undefined && img !== null && img !== '');
-        } else {
-          // Use fallback images
-          const fallbackResponse = VenueImageGenerator.generateFallbackVenueImages(venueRequest);
-          generatedImages[vendor.name] = fallbackResponse;
+      } catch (error) {
+        console.error(`Error generating images for ${vendor.name}:`, error);
+      }
+    }
 
-          vendor.images = [
-            fallbackResponse.images?.mainImage,
-            fallbackResponse.images?.ceremonyImage,
-
+    return generatedImages;
+  }
 
   /**
    * Filter vendors by theme compatibility
@@ -1083,38 +1211,6 @@ export class VendorDiscoveryService {
     return factors > 0 ? alignmentScore / factors : 0.7;
   }
 
-            fallbackResponse.images?.receptionImage
-          ].filter((img): img is string => img !== undefined && img !== null);
-        }
-
-        // Add delay between requests
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-      } catch (error) {
-        console.error(`Error generating images for ${vendor.name}:`, error);
-
-        // Use fallback images
-        const fallbackResponse = VenueImageGenerator.generateFallbackVenueImages({
-          venueType: vendor.venue_type || 'hotels',
-          venueName: vendor.name,
-          location: vendor.location,
-          capacity: vendor.capacity || 200,
-          priceRange: vendor.price_range,
-          amenities: vendor.amenities || [],
-          description: vendor.description
-        });
-
-        generatedImages[vendor.name] = fallbackResponse;
-        vendor.images = [
-          fallbackResponse.images?.mainImage,
-          fallbackResponse.images?.ceremonyImage,
-          fallbackResponse.images?.receptionImage
-        ].filter((img): img is string => img !== undefined && img !== null);
-      }
-    }
-
-    return generatedImages;
-  }
 
   /**
    * Apply UI-based filters
@@ -1167,6 +1263,25 @@ export class VendorDiscoveryService {
     }
 
     return filtered;
+  }
+
+  /**
+   * Get default wedding data
+   */
+  static getDefaultWeddingData(): any {
+    return {
+      yourName: 'User',
+      partnerName: 'Partner',
+      city: 'Mumbai',
+      weddingDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      budgetRange: '₹10-20L',
+      guestCount: 200,
+      weddingType: 'Traditional Hindu',
+      duration: '3 days',
+      events: ['Mehendi', 'Sangeet', 'Wedding Ceremony', 'Reception'],
+      priorities: ['venue', 'catering', 'photography'],
+      flexibility: { budget: 0.2, location: 0.1, date: 0.3, style: 0.2 }
+    };
   }
 
   /**
@@ -1361,26 +1476,6 @@ export class VendorDiscoveryService {
     ];
   }
 
-  /**
-   * Get default wedding data
-   */
-  static getDefaultWeddingData(): any {
-    return {
-      yourName: 'User',
-      partnerName: 'Partner',
-      guestCount: 100,
-      budgetRange: 'Mid Range - 5-15 Lakhs',
-      city: 'Mumbai',
-      weddingDate: '',
-      eventDuration: '1',
-      weddingStyle: 'traditional',
-      venueType: '',
-      cuisine: '',
-      photographyStyle: '',
-      priorities: ['venue', 'catering', 'photography'],
-      flexibility: { budget: 0.2, location: 0.1, date: 0.3, style: 0.2 }
-    };
-  }
 
   /**
    * Get vendor by ID

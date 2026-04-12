@@ -1,107 +1,216 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+type UserRole = 'couple' | 'vendor' | 'superadmin';
+
+/* ─── Blueprint: the single source of truth for the couple's wedding plan ─── */
+export interface BlueprintData {
+  // Wedding basics
+  city: string;
+  date: string;
+  guestCount: string;
+  budget: string;
+  theme: string;
+  events: string[];
+  // AI-generated plan
+  budgetBreakdown: Record<string, number>;     // { venue: 1800000, photography: 500000, ... }
+  categorySpecs: Record<string, any>;           // { venue: { requirements: {...}, notes: '' }, ... }
+  timeline: any[];
+  costSavingTips: string[];
+  aiSummary: string;
+}
+
+export type PlanningStage = 'preferences' | 'blueprint' | 'published' | 'vendors' | 'booked';
+
 interface AppState {
-  // UI State
+  // UI
   sidebarOpen: boolean;
   theme: 'light' | 'dark';
 
-  // Wedding Planning State
-  weddingPreferences: {
-    weddingType: string;
-    city: string;
-    guestCount: string;
-    weddingStyle: string;
-    weddingDate: string;
-    budget: string;
-    events: string[];
-    priorities: string[];
-    specialRequirements: string;
-  };
+  // Role & Identity
+  currentRole: UserRole;
+  currentUserId: number;
 
-  // Chat State
-  chatHistory: Array<{
-    role: 'user' | 'assistant';
-    content: string;
-    timestamp: number;
-  }>;
+  // ─── THE BLUEPRINT (single source of truth) ───
+  blueprintId: number | null;
+  blueprint: BlueprintData | null;
+  planningStage: PlanningStage;
 
-  // Vendor State
+  // Vendor pipeline
+  shortlistedVendors: Array<{ id: string; category: string; name: string }>;
+  draftVendorMessages: any[];
+
+  // Messaging
+  activeConversationId: number | null;
+  unreadMessageCount: number;
+
+  // Legacy fields (kept for backward compatibility during migration)
+  weddingPreferences: Record<string, any>;
+  chatHistory: Array<{ role: 'user' | 'assistant'; content: string; timestamp: number }>;
   selectedVendors: any[];
   vendorSearchResults: any[];
 }
 
 interface AppStore extends AppState {
-  // UI Actions
+  // UI
   setSidebarOpen: (open: boolean) => void;
   toggleTheme: () => void;
 
-  // Wedding Preferences Actions
-  updateWeddingPreferences: (preferences: Partial<AppState['weddingPreferences']>) => void;
+  // Role
+  setRole: (role: UserRole) => void;
+  setUserId: (id: number) => void;
 
-  // Chat Actions
-  addChatMessage: (message: { role: 'user' | 'assistant'; content: string }) => void;
+  // ─── BLUEPRINT ACTIONS (the only way plan data should be written) ───
+  setBlueprintId: (id: number | null) => void;
+  setBlueprint: (data: BlueprintData) => void;
+  updateBlueprint: (partial: Partial<BlueprintData>) => void;
+  setPlanningStage: (stage: PlanningStage) => void;
+  clearPlan: () => void;
+
+  // Vendor pipeline
+  shortlistVendor: (vendor: { id: string; category: string; name: string }) => void;
+  unshortlistVendor: (vendorId: string) => void;
+  setDraftVendorMessages: (msgs: any[]) => void;
+
+  // Messaging
+  setActiveConversation: (id: number | null) => void;
+  setUnreadCount: (count: number) => void;
+
+  // Legacy (backward compat)
+  updateWeddingPreferences: (prefs: Record<string, any>) => void;
+  addChatMessage: (msg: { role: 'user' | 'assistant'; content: string }) => void;
   clearChatHistory: () => void;
-
-  // Vendor Actions
   addSelectedVendor: (vendor: any) => void;
   removeSelectedVendor: (vendorId: string) => void;
   setVendorSearchResults: (results: any[]) => void;
   clearSelectedVendors: () => void;
 }
 
+const EMPTY_BLUEPRINT: BlueprintData = {
+  city: '', date: '', guestCount: '', budget: '', theme: '', events: [],
+  budgetBreakdown: {}, categorySpecs: {}, timeline: [], costSavingTips: [], aiSummary: '',
+};
+
 export const useAppStore = create<AppStore>()(
   persist(
     (set, get) => ({
-      // Initial state
+      // ─── Initial state ───
       sidebarOpen: false,
       theme: 'light',
+      currentRole: 'couple',
+      currentUserId: 1,
 
-      weddingPreferences: {
-        weddingType: '',
-        city: '',
-        guestCount: '',
-        weddingStyle: '',
-        weddingDate: '',
-        budget: '',
-        events: [],
-        priorities: [],
-        specialRequirements: ''
-      },
+      blueprintId: null,
+      blueprint: null,
+      planningStage: 'preferences',
 
+      shortlistedVendors: [],
+      draftVendorMessages: [],
+
+      activeConversationId: null,
+      unreadMessageCount: 0,
+
+      // Legacy
+      weddingPreferences: {},
       chatHistory: [],
       selectedVendors: [],
       vendorSearchResults: [],
 
-      // UI Actions
-      setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
-      toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
+      // ─── UI Actions ───
+      setSidebarOpen: (open) => set({ sidebarOpen: open }),
+      toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
 
-      // Wedding Preferences Actions
-      updateWeddingPreferences: (preferences) =>
-        set((state) => ({
-          weddingPreferences: { ...state.weddingPreferences, ...preferences }
-        })),
+      // ─── Role ───
+      setRole: (role) => { localStorage.setItem('shehnai_role', role); set({ currentRole: role }); },
+      setUserId: (id) => { localStorage.setItem('shehnai_user_id', String(id)); set({ currentUserId: id }); },
 
-      // Chat Actions
-      addChatMessage: (message) =>
-        set((state) => ({
-          chatHistory: [...state.chatHistory, { ...message, timestamp: Date.now() }]
-        })),
+      // ─── BLUEPRINT ACTIONS ───
+      setBlueprintId: (id) => {
+        const stage = id ? (get().planningStage === 'preferences' ? 'blueprint' : get().planningStage) : 'preferences';
+        set({ blueprintId: id, planningStage: stage });
+      },
 
+      setBlueprint: (data) => {
+        set({ blueprint: data, planningStage: data ? 'blueprint' : 'preferences' });
+        // Sync to legacy weddingPreferences for backward compat
+        set({
+          weddingPreferences: {
+            basicDetails: { location: data.city, guestCount: data.guestCount, budgetRange: data.budget, weddingDate: data.date },
+            theme: { selectedTheme: data.theme },
+            events: data.events,
+            budget_breakdown: data.budgetBreakdown,
+            category_specs: data.categorySpecs,
+          }
+        });
+      },
+
+      updateBlueprint: (partial) => {
+        const current = get().blueprint || EMPTY_BLUEPRINT;
+        const updated = { ...current, ...partial };
+        set({ blueprint: updated });
+        // Keep legacy in sync
+        if (partial.city || partial.guestCount || partial.budget || partial.date || partial.theme) {
+          const prefs = get().weddingPreferences || {};
+          set({
+            weddingPreferences: {
+              ...prefs,
+              basicDetails: {
+                ...(prefs.basicDetails || {}),
+                ...(partial.city ? { location: partial.city } : {}),
+                ...(partial.guestCount ? { guestCount: partial.guestCount } : {}),
+                ...(partial.budget ? { budgetRange: partial.budget } : {}),
+                ...(partial.date ? { weddingDate: partial.date } : {}),
+              },
+              ...(partial.theme ? { theme: { selectedTheme: partial.theme } } : {}),
+            }
+          });
+        }
+      },
+
+      setPlanningStage: (stage) => set({ planningStage: stage }),
+
+      clearPlan: () => set({
+        blueprintId: null, blueprint: null, planningStage: 'preferences',
+        shortlistedVendors: [], draftVendorMessages: [],
+        weddingPreferences: {},
+      }),
+
+      // ─── Vendor Pipeline ───
+      shortlistVendor: (vendor) => {
+        const current = get().shortlistedVendors;
+        if (!current.find(v => v.id === vendor.id)) {
+          const updated = [...current, vendor];
+          set({ shortlistedVendors: updated });
+          localStorage.setItem('shortlistedVendors', JSON.stringify(updated));
+          // Auto-advance stage
+          if (get().planningStage === 'published') set({ planningStage: 'vendors' });
+        }
+      },
+      unshortlistVendor: (vendorId) => {
+        const updated = get().shortlistedVendors.filter(v => v.id !== vendorId);
+        set({ shortlistedVendors: updated });
+        localStorage.setItem('shortlistedVendors', JSON.stringify(updated));
+      },
+      setDraftVendorMessages: (msgs) => set({ draftVendorMessages: msgs }),
+
+      // ─── Messaging ───
+      setActiveConversation: (id) => set({ activeConversationId: id }),
+      setUnreadCount: (count) => set({ unreadMessageCount: count }),
+
+      // ─── Legacy (backward compat) ───
+      updateWeddingPreferences: (prefs) => set((s) => ({
+        weddingPreferences: { ...s.weddingPreferences, ...prefs }
+      })),
+      addChatMessage: (msg) => set((s) => ({
+        chatHistory: [...s.chatHistory, { ...msg, timestamp: Date.now() }]
+      })),
       clearChatHistory: () => set({ chatHistory: [] }),
-
-      // Vendor Actions
-      addSelectedVendor: (vendor) =>
-        set((state) => ({
-          selectedVendors: [...state.selectedVendors, vendor]
-        })),
-
-      removeSelectedVendor: (vendorId) =>
-        set((state) => ({
-          selectedVendors: state.selectedVendors.filter(v => v.id !== vendorId)
-        })),
-
+      addSelectedVendor: (vendor) => set((s) => ({
+        selectedVendors: [...s.selectedVendors, vendor]
+      })),
+      removeSelectedVendor: (vendorId) => set((s) => ({
+        selectedVendors: s.selectedVendors.filter(v => v.id !== vendorId)
+      })),
       setVendorSearchResults: (results) => set({ vendorSearchResults: results }),
       clearSelectedVendors: () => set({ selectedVendors: [] }),
     }),
@@ -110,6 +219,13 @@ export const useAppStore = create<AppStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         theme: state.theme,
+        currentRole: state.currentRole,
+        currentUserId: state.currentUserId,
+        blueprintId: state.blueprintId,
+        blueprint: state.blueprint,
+        planningStage: state.planningStage,
+        shortlistedVendors: state.shortlistedVendors,
+        draftVendorMessages: state.draftVendorMessages,
         weddingPreferences: state.weddingPreferences,
         selectedVendors: state.selectedVendors,
       }),

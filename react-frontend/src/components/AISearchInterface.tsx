@@ -139,7 +139,7 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
       {/* AI Search Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <Sparkles className="h-8 w-8 text-purple-600" />
+          <Sparkles className="h-8 w-8 text-rose-600" />
           <h1 className="text-3xl font-bold text-gray-900">AI-Powered Vendor Search</h1>
         </div>
         <p className="text-gray-600">Get intelligent recommendations based on your preferences</p>
@@ -155,12 +155,12 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="Search for photographers, venues, caterers..."
-            className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+            className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent text-lg"
           />
           <button
             onClick={handleSearch}
             disabled={isSearching}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-rose-500 text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50"
           >
             {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
           </button>
@@ -169,9 +169,9 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
 
       {/* AI Analysis Panel */}
       {showAiAnalysis && (
-        <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+        <div className="mb-6 p-4 bg-rose-50 rounded-xl border border-rose-200">
           <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-5 w-5 text-purple-600" />
+            <Sparkles className="h-5 w-5 text-rose-600" />
             <h3 className="font-semibold text-gray-900">AI Analysis</h3>
           </div>
           {isSearching ? (
@@ -220,14 +220,14 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-100 rounded-lg">
-                          <CategoryIcon className="h-5 w-5 text-purple-600" />
+                        <div className="p-2 bg-rose-100 rounded-lg">
+                          <CategoryIcon className="h-5 w-5 text-rose-600" />
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-900">{vendor.name}</h4>
                           <div className="flex items-center gap-4 text-sm text-gray-600">
                             <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 text-yellow-500" />
+                              <Star className="h-4 w-4 text-rose-400" />
                               <span>{vendor.rating}</span>
                             </div>
                             <div className="flex items-center gap-1">
@@ -242,7 +242,7 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm font-medium text-purple-600">
+                        <div className="text-sm font-medium text-rose-600">
                           AI Score: {vendor.ai_score?.toFixed(0)}%
                         </div>
                         <div className="text-xs text-gray-500">#{index + 1}</div>
@@ -250,7 +250,7 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
                     </div>
                     {vendor.ai_insights && (
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Lightbulb className="h-4 w-4 text-yellow-500" />
+                        <Lightbulb className="h-4 w-4 text-rose-400" />
                         <span>{vendor.ai_insights}</span>
                       </div>
                     )}
@@ -268,10 +268,10 @@ const AISearchInterface: React.FC<AISearchInterfaceProps> = ({ onVendorSelect })
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="w-full text-left p-4 bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all"
+                  className="w-full text-left p-4 bg-white rounded-xl border border-gray-200 hover:border-rose-300 hover:bg-rose-50 transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <TrendingUp className="h-5 w-5 text-purple-600" />
+                    <TrendingUp className="h-5 w-5 text-rose-600" />
                     <span className="text-gray-700">{suggestion}</span>
                   </div>
                 </button>

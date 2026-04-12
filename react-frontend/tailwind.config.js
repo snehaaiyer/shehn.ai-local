@@ -6,24 +6,32 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'wedding': {
-          'rose': '#f43f5e',
-          'blush': '#fdf2f8',
-          'lavender': '#f3e8ff',
-          'sage': '#f0fdf4'
+        // Override rose with warm coral palette
+        'rose': {
+          50: '#FFF5F4',
+          100: '#FFE8E5',
+          200: '#FFD0CB',
+          300: '#FFABA3',
+          400: '#E07A7A',
+          500: '#D4736E',
+          600: '#C0605B',
+          700: '#A14D49',
+          800: '#853D3A',
+          900: '#6B302E',
         },
-        'romantic': {
-          50: '#fdf2f8',
-          100: '#fce7f3',
-          200: '#fbcfe8',
-          300: '#f9a8d4',
-          400: '#f472b6',
-          500: '#ec4899',
-          600: '#db2777',
-          700: '#be185d',
-          800: '#9d174d',
-          900: '#831843',
-        }
+        // Dark sage accent
+        'sage': {
+          50: '#F4F7F4',
+          100: '#E4EBE4',
+          200: '#C8D6C8',
+          300: '#9FB69F',
+          400: '#7A9A7A',
+          500: '#5C7C5C',
+          600: '#4A6B4A',
+          700: '#3D5A3D',
+          800: '#324A32',
+          900: '#283C28',
+        },
       },
       fontFamily: {
         'display': ['Inter', 'system-ui', 'sans-serif'],

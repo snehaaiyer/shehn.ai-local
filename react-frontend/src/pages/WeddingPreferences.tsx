@@ -1,13 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2, Mail, Search, Settings } from "lucide-react";
+import { Heart, Palette, Building2, Camera, Utensils, Sparkles, Users, FileText, Calendar, Loader2, Mail } from "lucide-react";
 import WeddingBlueprint from "../components/WeddingBlueprint";
+import { useFormValidation, validationRules, ValidationRules } from '../hooks/useFormValidation';
+import FieldError from '../components/FieldError';
+import { GooglePlacesInput } from '../components/GooglePlacesInput';
+import { useAppStore } from '../store/useAppStore';
 
 
 interface Priority {
   id: string;
   name: string;
   description: string;
+}
+
+interface IndianWeddingEvent {
+  id: string;
+  name: string;
+  description: string;
+  category: 'pre-wedding' | 'main-wedding' | 'post-wedding' | 'optional';
+  duration: string; // e.g., "2-3 hours", "Full day"
+  recommended: boolean;
+  importance: 'essential' | 'traditional' | 'optional';
+  guestType: 'intimate' | 'extended' | 'all';
+  timing: 'morning' | 'afternoon' | 'evening' | 'night' | 'flexible';
+  venue: 'home' | 'hall' | 'outdoor' | 'temple' | 'flexible';
+  emoji: string;
 }
 
 interface WeddingPreferencesData {
@@ -88,13 +106,34 @@ interface WeddingPreferencesData {
     };
     budgetRange: string;
   };
+  events: {
+    selectedEvents: string[];
+    customEvents: IndianWeddingEvent[];
+    aiRecommendations: IndianWeddingEvent[];
+  };
 }
 
 const WeddingPreferences: React.FC = () => {
   const navigate = useNavigate();
+  const { updateWeddingPreferences } = useAppStore();
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [isGenerating, setIsGenerating] = useState(false); // State for blueprint generation
+  const [showAIRecommendations, setShowAIRecommendations] = useState(false);
+  const [loadedFromSmartPlanner, setLoadedFromSmartPlanner] = useState(false);
+
+  // Validation rules for form fields
+  const basicDetailsValidationRules: ValidationRules = {
+    yourName: validationRules.required('Your name'),
+    partnerName: validationRules.required("Partner's name"),
+    contactNumber: validationRules.phone,
+    weddingDate: validationRules.dateNotPast,
+    guestCount: validationRules.positiveNumber,
+    location: validationRules.required('Wedding location'),
+    budgetRange: validationRules.required('Budget range')
+  };
+
+  const { errors, validateField, validateAll, clearFieldError, markFieldTouched } = useFormValidation(basicDetailsValidationRules);
 
 
   const [preferences, setPreferences] = useState<WeddingPreferencesData>({
@@ -183,8 +222,414 @@ const WeddingPreferences: React.FC = () => {
         editingStyle: ''
       },
       budgetRange: ''
+    },
+    events: {
+      selectedEvents: [],
+      customEvents: [],
+      aiRecommendations: []
     }
   });
+
+  // Comprehensive Indian Wedding Events Database
+  const indianWeddingEvents: IndianWeddingEvent[] = [
+    // Pre-Wedding Rituals
+    {
+      id: 'tilak-ceremony',
+      name: 'Tilak/Roka Ceremony',
+      description: 'Traditional engagement ceremony where families formally accept the alliance',
+      category: 'pre-wedding',
+      duration: '2-3 hours',
+      recommended: true,
+      importance: 'traditional',
+      guestType: 'intimate',
+      timing: 'morning',
+      venue: 'home',
+      emoji: '🙏'
+    },
+    {
+      id: 'ring-ceremony',
+      name: 'Ring Ceremony (Sagai)',
+      description: 'Exchange of rings between the couple in presence of family',
+      category: 'pre-wedding',
+      duration: '2-3 hours',
+      recommended: true,
+      importance: 'traditional',
+      guestType: 'extended',
+      timing: 'evening',
+      venue: 'hall',
+      emoji: '💍'
+    },
+    {
+      id: 'mehendi',
+      name: 'Mehendi Ceremony',
+      description: 'Henna application ceremony with music, dance, and celebrations',
+      category: 'pre-wedding',
+      duration: '4-6 hours',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'extended',
+      timing: 'afternoon',
+      venue: 'home',
+      emoji: '🎨'
+    },
+    {
+      id: 'sangeet',
+      name: 'Sangeet Night',
+      description: 'Musical night with performances by family and friends',
+      category: 'pre-wedding',
+      duration: '4-5 hours',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'evening',
+      venue: 'hall',
+      emoji: '🎵'
+    },
+    {
+      id: 'haldi',
+      name: 'Haldi Ceremony',
+      description: 'Turmeric paste application for purification and blessing',
+      category: 'pre-wedding',
+      duration: '2-3 hours',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'intimate',
+      timing: 'morning',
+      venue: 'home',
+      emoji: '🌿'
+    },
+    {
+      id: 'chooda-ceremony',
+      name: 'Chooda Ceremony',
+      description: 'Traditional bangle ceremony for the bride (North Indian)',
+      category: 'pre-wedding',
+      duration: '1-2 hours',
+      recommended: false,
+      importance: 'traditional',
+      guestType: 'intimate',
+      timing: 'morning',
+      venue: 'home',
+      emoji: '🔗'
+    },
+    
+    // Main Wedding Day
+    {
+      id: 'ganesh-puja',
+      name: 'Ganesh Puja',
+      description: 'Invoking Lord Ganesha for auspicious beginning',
+      category: 'main-wedding',
+      duration: '1 hour',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'intimate',
+      timing: 'morning',
+      venue: 'temple',
+      emoji: '🐘'
+    },
+    {
+      id: 'baraat',
+      name: 'Baraat Procession',
+      description: 'Groom\'s grand procession to the wedding venue',
+      category: 'main-wedding',
+      duration: '2-3 hours',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'morning',
+      venue: 'outdoor',
+      emoji: '🎠'
+    },
+    {
+      id: 'jaimala',
+      name: 'Jaimala/Varmala',
+      description: 'Exchange of garlands between bride and groom',
+      category: 'main-wedding',
+      duration: '30 minutes',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'morning',
+      venue: 'hall',
+      emoji: '🌺'
+    },
+    {
+      id: 'mandap-ceremony',
+      name: 'Mandap Ceremony',
+      description: 'Sacred wedding ceremony under the mandap',
+      category: 'main-wedding',
+      duration: '2-3 hours',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'morning',
+      venue: 'hall',
+      emoji: '🏛️'
+    },
+    {
+      id: 'saptapadi',
+      name: 'Saptapadi (Seven Pheras)',
+      description: 'Seven sacred vows around the holy fire',
+      category: 'main-wedding',
+      duration: '45 minutes',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'morning',
+      venue: 'hall',
+      emoji: '🔥'
+    },
+    {
+      id: 'sindoor-ceremony',
+      name: 'Sindoor & Mangalsutra',
+      description: 'Groom applies sindoor and ties mangalsutra',
+      category: 'main-wedding',
+      duration: '15 minutes',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'morning',
+      venue: 'hall',
+      emoji: '❤️'
+    },
+    
+    // Post-Wedding Events
+    {
+      id: 'bidaai',
+      name: 'Bidaai Ceremony',
+      description: 'Emotional farewell of the bride from her family',
+      category: 'post-wedding',
+      duration: '1 hour',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'intimate',
+      timing: 'afternoon',
+      venue: 'home',
+      emoji: '😢'
+    },
+    {
+      id: 'ghar-pravesh',
+      name: 'Ghar Pravesh',
+      description: 'Bride\'s first entry into groom\'s home',
+      category: 'post-wedding',
+      duration: '2 hours',
+      recommended: true,
+      importance: 'traditional',
+      guestType: 'intimate',
+      timing: 'evening',
+      venue: 'home',
+      emoji: '🏠'
+    },
+    {
+      id: 'reception',
+      name: 'Wedding Reception',
+      description: 'Grand celebration dinner for extended family and friends',
+      category: 'post-wedding',
+      duration: '4-5 hours',
+      recommended: true,
+      importance: 'essential',
+      guestType: 'all',
+      timing: 'evening',
+      venue: 'hall',
+      emoji: '🎉'
+    },
+    {
+      id: 'muh-dikhai',
+      name: 'Muh Dikhai',
+      description: 'Bride meets groom\'s extended family',
+      category: 'post-wedding',
+      duration: '2-3 hours',
+      recommended: false,
+      importance: 'traditional',
+      guestType: 'extended',
+      timing: 'afternoon',
+      venue: 'home',
+      emoji: '👨‍👩‍👧‍👦'
+    },
+    
+    // Optional/Additional Events
+    {
+      id: 'cocktail-party',
+      name: 'Cocktail Party',
+      description: 'Modern celebration with drinks and music',
+      category: 'optional',
+      duration: '3-4 hours',
+      recommended: false,
+      importance: 'optional',
+      guestType: 'extended',
+      timing: 'evening',
+      venue: 'hall',
+      emoji: '🍸'
+    },
+    {
+      id: 'bachelor-party',
+      name: 'Bachelor/Bachelorette',
+      description: 'Pre-wedding celebration with friends',
+      category: 'optional',
+      duration: '4-6 hours',
+      recommended: false,
+      importance: 'optional',
+      guestType: 'intimate',
+      timing: 'evening',
+      venue: 'flexible',
+      emoji: '🎭'
+    },
+    {
+      id: 'prewedding-shoot',
+      name: 'Pre-Wedding Photoshoot',
+      description: 'Professional photoshoot before wedding',
+      category: 'optional',
+      duration: '4-6 hours',
+      recommended: false,
+      importance: 'optional',
+      guestType: 'intimate',
+      timing: 'flexible',
+      venue: 'outdoor',
+      emoji: '📸'
+    },
+    {
+      id: 'kanya-daan',
+      name: 'Kanya Daan',
+      description: 'Father giving away the bride (specific ritual)',
+      category: 'main-wedding',
+      duration: '30 minutes',
+      recommended: true,
+      importance: 'traditional',
+      guestType: 'all',
+      timing: 'morning',
+      venue: 'hall',
+      emoji: '👨‍👧'
+    },
+    {
+      id: 'aashirwad',
+      name: 'Aashirwad Ceremony',
+      description: 'Blessing ceremony by elders',
+      category: 'post-wedding',
+      duration: '1 hour',
+      recommended: true,
+      importance: 'traditional',
+      guestType: 'extended',
+      timing: 'morning',
+      venue: 'home',
+      emoji: '🙌'
+    }
+  ];
+
+  // AI-powered event recommendation logic
+  const getAIEventRecommendations = (eventDuration: string, guestCount: number, budgetRange: string): IndianWeddingEvent[] => {
+    const durationDays = parseInt(eventDuration) || 1;
+    let recommendations: IndianWeddingEvent[] = [];
+
+    if (durationDays === 1) {
+      // Single day wedding - essential events only
+      recommendations = indianWeddingEvents.filter(event => 
+        event.importance === 'essential' && 
+        (event.category === 'main-wedding' || (event.category === 'pre-wedding' && event.id === 'haldi'))
+      );
+    } else if (durationDays === 2) {
+      // Two day wedding - essential + some traditional
+      recommendations = indianWeddingEvents.filter(event => 
+        event.importance === 'essential' || 
+        (event.importance === 'traditional' && ['mehendi', 'sangeet', 'reception'].includes(event.id))
+      );
+    } else if (durationDays === 3) {
+      // Three day wedding - comprehensive celebration
+      recommendations = indianWeddingEvents.filter(event => 
+        event.importance !== 'optional' || 
+        (event.importance === 'optional' && ['cocktail-party'].includes(event.id))
+      );
+    } else if (durationDays >= 4) {
+      // Extended celebration - all events
+      recommendations = [...indianWeddingEvents];
+    }
+
+    // Filter by guest count
+    if (guestCount <= 50) {
+      recommendations = recommendations.filter(event => 
+        event.guestType === 'intimate' || 
+        (event.guestType === 'extended' && event.importance === 'essential')
+      );
+    } else if (guestCount <= 150) {
+      recommendations = recommendations.filter(event => 
+        event.guestType !== 'all' || event.importance === 'essential'
+      );
+    }
+
+    // Filter by budget
+    if (budgetRange.includes('5-15')) {
+      recommendations = recommendations.filter(event => 
+        event.importance === 'essential' || 
+        (event.importance === 'traditional' && ['mehendi', 'haldi'].includes(event.id))
+      );
+    }
+
+    return recommendations.map(event => ({ ...event, recommended: true }));
+  };
+
+  // Generate AI recommendations when basic details change
+  useEffect(() => {
+    if (preferences.basicDetails.eventDuration && preferences.basicDetails.guestCount && preferences.basicDetails.budgetRange) {
+      const aiRecommendations = getAIEventRecommendations(
+        preferences.basicDetails.eventDuration,
+        preferences.basicDetails.guestCount,
+        preferences.basicDetails.budgetRange
+      );
+      
+      setPreferences(prev => ({
+        ...prev,
+        events: {
+          ...prev.events,
+          aiRecommendations
+        }
+      }));
+      
+      setShowAIRecommendations(true);
+    }
+  }, [preferences.basicDetails.eventDuration, preferences.basicDetails.guestCount, preferences.basicDetails.budgetRange]);
+
+  const toggleEventSelection = (eventId: string) => {
+    setPreferences(prev => ({
+      ...prev,
+      events: {
+        ...prev.events,
+        selectedEvents: prev.events.selectedEvents.includes(eventId)
+          ? prev.events.selectedEvents.filter(id => id !== eventId)
+          : [...prev.events.selectedEvents, eventId]
+      }
+    }));
+  };
+
+  const getAITipsForGuestCount = (guestCount: number): string[] => {
+    if (guestCount <= 50) {
+      return [
+        "🏠 Consider intimate venues like boutique hotels, private dining rooms, or family homes",
+        "🌿 Garden venues and smaller banquet halls work perfectly for this size",
+        "💰 You can focus budget on premium per-person experiences",
+        "🎯 Ideal for destination weddings or heritage properties"
+      ];
+    } else if (guestCount <= 100) {
+      return [
+        "🏛️ Traditional wedding venues and mid-sized banquet halls are perfect",
+        "🌟 Consider hotel ballrooms or community halls with good facilities",
+        "⚖️ Balance between intimate feel and grand celebration",
+        "🎪 Outdoor venues with weather backup options work well"
+      ];
+    } else if (guestCount <= 200) {
+      return [
+        "🏨 Large banquet halls, hotel ballrooms, or convention centers recommended",
+        "🎯 Look for venues with multiple spaces for different events",
+        "🚗 Ensure adequate parking and accessibility for guests",
+        "🍽️ Choose venues with proven large-scale catering capabilities"
+      ];
+    } else {
+      return [
+        "🏟️ Premium hotels, resorts, or large convention centers required",
+        "🎪 Consider venues that specialize in big Indian weddings",
+        "🚌 Plan for guest transportation and accommodation logistics",
+        "👥 Venues with dedicated wedding planning teams are essential",
+        "🎨 Multiple mandap setups and extensive decoration space needed"
+      ];
+    }
+  };
 
   // Wedding Theme Categories for better organization
   const themeCategories = [
@@ -501,6 +946,12 @@ const WeddingPreferences: React.FC = () => {
       description: 'Photography, videography, and cultural coverage'
     },
     {
+      id: 'events',
+      name: 'Wedding Events',
+      icon: Calendar,
+      description: 'AI-recommended Indian wedding ceremonies and events'
+    },
+    {
       id: 'blueprint',
       name: 'Wedding Blueprint',
       icon: FileText,
@@ -551,6 +1002,9 @@ const WeddingPreferences: React.FC = () => {
   );
 
   const updatePreference = useCallback((section: keyof WeddingPreferencesData, key: string, value: any, subKey?: string) => {
+    // Only validate on blur or after user interaction, not on every keystroke
+    // This prevents flickering during typing
+
     setPreferences(prev => {
       // Handle deeply nested updates carefully
       let updatedSection = { ...prev[section] as any };
@@ -571,31 +1025,46 @@ const WeddingPreferences: React.FC = () => {
         updatedSection[key] = value;
       }
 
-      return {
+      const newPreferences = {
         ...prev,
         [section]: updatedSection
       };
+
+      // Auto-save to localStorage using the new state
+      localStorage.setItem('weddingPreferences', JSON.stringify(newPreferences));
+
+      // Sync to app store
+      updateWeddingPreferences({
+        weddingType: newPreferences.theme?.selectedTheme || '',
+        city: newPreferences.basicDetails?.location || '',
+        guestCount: String(newPreferences.basicDetails?.guestCount || ''),
+        weddingStyle: newPreferences.theme?.selectedTheme || '',
+        weddingDate: newPreferences.basicDetails?.weddingDate || '',
+        budget: newPreferences.basicDetails?.budgetRange || '',
+        events: newPreferences.events?.selectedEvents || [],
+      });
+
+      // Auto-save to NocoDB (debounced) using the new state
+      saveToNocoDB(newPreferences);
+
+      return newPreferences;
     });
+  }, [saveToNocoDB, updateWeddingPreferences]);
 
-    // Auto-save to localStorage
-    const updatedPreferences = {
-      ...preferences,
-      [section]: subKey 
-        ? { ...preferences[section], [key]: { ...(preferences[section] as any)[key], [subKey]: value } }
-        : { ...preferences[section], [key]: value }
-    };
-    localStorage.setItem('weddingPreferences', JSON.stringify(updatedPreferences));
-
-    // Auto-save to NocoDB (debounced)
-    saveToNocoDB(updatedPreferences);
-  }, [preferences, saveToNocoDB]);
+  // Better number input handling
+  const handleNumberChange = useCallback((field: string, value: string) => {
+    const numValue = value === '' ? 0 : parseInt(value, 10);
+    if (!isNaN(numValue) && numValue >= 0) {
+      updatePreference('basicDetails', field, numValue);
+    }
+  }, [updatePreference]);
 
   useEffect(() => {
     const loadDefaultPreferences = () => {
       try {
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
-          const parsedPreferences = JSON.JSON.parse(savedPreferences);
+          const parsedPreferences = JSON.parse(savedPreferences);
           console.log('📋 Loading saved preferences:', parsedPreferences);
 
           // Set basic details
@@ -676,6 +1145,11 @@ const WeddingPreferences: React.FC = () => {
           }
 
           console.log('✅ Successfully loaded preferences');
+
+          // Detect if preferences came from Smart Planner (has basicDetails with populated fields)
+          if (parsedPreferences.basicDetails?.yourName || parsedPreferences.basicDetails?.location || parsedPreferences.theme?.selectedTheme) {
+            setLoadedFromSmartPlanner(true);
+          }
         } else {
           console.log('📝 No saved preferences found, using defaults');
         }
@@ -762,6 +1236,8 @@ const WeddingPreferences: React.FC = () => {
           (preferences.photography.multiDayCoverage?.weddingCeremony) || 
           (preferences.photography.multiDayCoverage?.reception)
         );
+      case 'events':
+        return preferences.events?.selectedEvents && preferences.events.selectedEvents.length > 0;
       default:
         return false;
     }
@@ -784,68 +1260,45 @@ const WeddingPreferences: React.FC = () => {
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
+          {/* Smart Planner Banner */}
+          {loadedFromSmartPlanner && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <span className="text-sm text-emerald-800 font-medium">Pre-filled from Smart Planner -- fine-tune below</span>
+            </div>
+          )}
           {/* Header */}
-          <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+          <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2F4F4F' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D5A3D' }}>
                   <Heart className="w-6 h-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#2F4F4F' }}>Wedding Preferences</h1>
+                  <h1 className="text-2xl font-bold" style={{ color: '#3D5A3D' }}>Wedding Preferences</h1>
                   <p className="text-gray-600">Customize your dream wedding experience</p>
                 </div>
               </div>
 
-              {/* Google Integration & Find Vendors Buttons */}
+              {/* Find Vendors Button */}
               <div className="flex flex-col gap-4">
-                {/* Google Tools Section */}
-                <div className="bg-gradient-to-r from-blue-50 to-red-50 p-6 rounded-xl border border-gray-200">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">
-                    <Calendar className="w-5 h-5 inline mr-2" style={{ color: '#2F4F4F' }} />
-                    Google Integration Tools
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button
-                      onClick={() => navigate('/google-integration')}
-                      className="flex items-center gap-3 p-4 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
-                    >
-                      <Settings className="w-6 h-6 text-blue-600" />
-                      <div className="text-left">
-                        <div className="font-medium text-gray-900">Google Hub</div>
-                        <div className="text-sm text-gray-600">Manage all integrations</div>
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => window.open('https://calendar.google.com', '_blank')}
-                      className="flex items-center gap-3 p-4 bg-white hover:bg-blue-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
-                    >
-                      <Calendar className="w-6 h-6 text-blue-600" />
-                      <div className="text-left">
-                        <div className="font-medium text-gray-900">Calendar</div>
-                        <div className="text-sm text-gray-600">Schedule events</div>
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => window.open('https://mail.google.com', '_blank')}
-                      className="flex items-center gap-3 p-4 bg-white hover:bg-red-50 rounded-lg border border-gray-200 transition-all shadow-sm hover:shadow-md"
-                    >
-                      <Mail className="w-6 h-6 text-red-600" />
-                      <div className="text-left">
-                        <div className="font-medium text-gray-900">Gmail</div>
-                        <div className="text-sm text-gray-600">Send emails</div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
 
                 <button
                   onClick={() => {
                     // Save current preferences before navigating
                     localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
+                    updateWeddingPreferences({
+                      weddingType: preferences.theme?.selectedTheme || '',
+                      city: preferences.basicDetails?.location || '',
+                      guestCount: String(preferences.basicDetails?.guestCount || ''),
+                      weddingStyle: preferences.theme?.selectedTheme || '',
+                      weddingDate: preferences.basicDetails?.weddingDate || '',
+                      budget: preferences.basicDetails?.budgetRange || '',
+                      events: preferences.events?.selectedEvents || [],
+                    });
                     navigate('/vendor-discovery');
                   }}
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                  className="bg-rose-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-rose-600 transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow-md"
                 >
                   <Users className="w-5 h-5" />
                   Find Vendors
@@ -857,13 +1310,13 @@ const WeddingPreferences: React.FC = () => {
           {/* Find Vendors CTA Section - Appears when preferences are set */}
           {(preferences.basicDetails.yourName && preferences.basicDetails.location && 
             (preferences.venue.venueType || preferences.theme.selectedTheme)) && (
-            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+            <div className="bg-rose-50 rounded-2xl p-8 border border-gray-200 shadow-sm">
               <div className="text-center">
                 <div className="mb-6">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-rose-500 rounded-full flex items-center justify-center">
                     <Users className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#2F4F4F' }}>
+                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#3D5A3D' }}>
                     Ready to Find Your Perfect Vendors?
                   </h3>
                   <p className="text-gray-600 mb-6">
@@ -892,9 +1345,18 @@ const WeddingPreferences: React.FC = () => {
                   onClick={() => {
                     // Save current preferences before navigating
                     localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
+                    updateWeddingPreferences({
+                      weddingType: preferences.theme?.selectedTheme || '',
+                      city: preferences.basicDetails?.location || '',
+                      guestCount: String(preferences.basicDetails?.guestCount || ''),
+                      weddingStyle: preferences.theme?.selectedTheme || '',
+                      weddingDate: preferences.basicDetails?.weddingDate || '',
+                      budget: preferences.basicDetails?.budgetRange || '',
+                      events: preferences.events?.selectedEvents || [],
+                    });
                     navigate('/vendor-discovery');
                   }}
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-300 flex items-center gap-3 mx-auto shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="bg-rose-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-rose-600 transition-all duration-300 flex items-center gap-3 mx-auto shadow-sm hover:shadow-md"
                 >
                   <Users className="w-6 h-6" />
                   Find Vendors Now
@@ -909,7 +1371,7 @@ const WeddingPreferences: React.FC = () => {
           )}
 
           {/* Horizontal Tab Navigation */}
-          <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
             <div className="flex overflow-x-auto gap-2 pb-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -927,14 +1389,14 @@ const WeddingPreferences: React.FC = () => {
                         : tab.disabled
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : isComplete
-                        ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
+                        ? 'bg-sage-50 text-sage-700 border border-sage-200 hover:bg-sage-100'
                         : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{tab.name}</span>
                     {isComplete && !isActive && (
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-sage-500 rounded-full"></div>
                     )}
                   </button>
                 );
@@ -943,12 +1405,12 @@ const WeddingPreferences: React.FC = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+          <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
             {/* Basic Details Tab */}
             {activeTab === 'basic' && (
               <div>
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#2F4F4F' }}>
-                  <Users className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                  <Users className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Wedding Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -979,7 +1441,7 @@ const WeddingPreferences: React.FC = () => {
                       type="tel"
                       value={preferences.basicDetails.contactNumber}
                       onChange={(e) => updatePreference('basicDetails', 'contactNumber', e.target.value)}
-                      placeholder="Phone number"
+                      placeholder="Phone number (e.g., +91 9876543210)"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
                   </div>
@@ -996,7 +1458,7 @@ const WeddingPreferences: React.FC = () => {
                         />
                         <button
                           onClick={() => window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wedding%20Day&dates=${preferences.basicDetails.weddingDate.replace(/-/g, '')}/`, '_blank')}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:text-blue-800 transition-colors"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-600 hover:text-gray-800 transition-colors"
                           title="Add to Google Calendar"
                         >
                           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -1045,42 +1507,48 @@ const WeddingPreferences: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Guest Count</label>
                     <input
                       type="number"
+                      min="1"
                       value={preferences.basicDetails.guestCount}
-                      onChange={(e) => updatePreference('basicDetails', 'guestCount', parseInt(e.target.value, 10) || 0)}
+                      onChange={(e) => handleNumberChange('guestCount', e.target.value)}
                       placeholder="Number of guests"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
                     />
                   </div>
 
-                  {/* Location with Google Maps Integration */}
+                  {/* Location with Google Places API */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Wedding Location</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={preferences.basicDetails.location}
-                        onChange={(e) => updatePreference('basicDetails', 'location', e.target.value)}
-                        placeholder="City or venue location"
-                        className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
-                      />
-                      <button
-                        onClick={() => window.open(`/vendor-communication?action=location&query=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-blue-600 hover:text-blue-800 transition-colors"
-                        title="Search with Google Maps"
-                      >
-                        🗺️
-                      </button>
-                    </div>
+                    <GooglePlacesInput
+                      label="Wedding Location"
+                      value={preferences.basicDetails.location}
+                      onChange={(location, placeDetails) => {
+                        updatePreference('basicDetails', 'location', location);
+                        // Store additional place details for venue recommendations
+                        if (placeDetails) {
+                          console.log('Selected place:', placeDetails);
+                          // You can store place_id, rating, coordinates, etc.
+                          updatePreference('basicDetails', 'locationDetails', {
+                            place_id: placeDetails.place_id,
+                            name: placeDetails.name,
+                            rating: placeDetails.rating,
+                            types: placeDetails.types,
+                            coordinates: placeDetails.geometry?.location
+                          });
+                        }
+                      }}
+                      placeholder="Search for cities, venues, banquet halls, hotels..."
+                      types={['establishment', 'locality', 'sublocality', 'administrative_area_level_2']}
+                      country="IN"
+                    />
                     <div className="mt-2 flex gap-2">
                       <button
-                        onClick={() => window.open(`/vendor-communication?action=location&query=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
-                        className="px-3 py-1.5 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center gap-1"
+                        onClick={() => window.open(`/vendors?location=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
+                        className="px-3 py-1.5 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-1"
                       >
                         🗺️ Search Venues
                       </button>
                       <button
-                        onClick={() => window.open(`/vendor-communication?action=calendar&eventType=location-visit&location=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
-                        className="px-3 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors flex items-center gap-1"
+                        onClick={() => window.open('/messages', '_blank')}
+                        className="px-3 py-1.5 text-xs bg-sage-100 text-sage-700 rounded-lg hover:bg-sage-200 transition-colors flex items-center gap-1"
                       >
                         📅 Schedule Visit
                       </button>
@@ -1107,7 +1575,7 @@ const WeddingPreferences: React.FC = () => {
                 {/* Priority Ranking Section */}
                 <div className="mt-6">
                   <div className="mb-4">
-                    <h3 className="text-lg font-semibold mb-1" style={{ color: '#2F4F4F' }}>
+                    <h3 className="text-lg font-semibold mb-1" style={{ color: '#3D5A3D' }}>
                       🎯 Wedding Priorities
                     </h3>
                     <p className="text-gray-600 text-sm">
@@ -1115,7 +1583,7 @@ const WeddingPreferences: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-3 rounded-xl border border-pink-100">
+                  <div className="bg-rose-50 p-3 rounded-xl border border-rose-100">
                     <div className="space-y-1.5">
                       {preferences.basicDetails.priorities.map((priority, index) => (
                         <div
@@ -1153,7 +1621,7 @@ const WeddingPreferences: React.FC = () => {
                                 {Array.from({ length: Math.min(5, 8 - index) }).map((_, i) => (
                                   <div
                                     key={i}
-                                    className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-pink-400 to-purple-400"
+                                    className="w-1.5 h-1.5 rounded-full bg-rose-400"
                                   />
                                 ))}
                               </div>
@@ -1188,7 +1656,7 @@ const WeddingPreferences: React.FC = () => {
                         </div>
                         <div className="text-xs text-gray-600 text-right">
                           <div><strong className="text-pink-600">1st:</strong> {preferences.basicDetails.priorities[0]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}</div>
-                          <div><strong className="text-purple-600">2nd:</strong> {preferences.basicDetails.priorities[1]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}</div>
+                          <div><strong className="text-rose-600">2nd:</strong> {preferences.basicDetails.priorities[1]?.name.replace(/🏛️|📸|🍽️|🎨|🎵|👗|🌸|🚗/g, '').trim()}</div>
                         </div>
                       </div>
                     </div>
@@ -1201,8 +1669,8 @@ const WeddingPreferences: React.FC = () => {
             {activeTab === 'venue' && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#2F4F4F' }}>
-                    <Building2 className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#3D5A3D' }}>
+                    <Building2 className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                     Venue Selection
                   </h2>
                 </div>
@@ -1210,7 +1678,7 @@ const WeddingPreferences: React.FC = () => {
                   {venueCategories.map((category) => (
                     <div key={category.id} className="space-y-4">
                       <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold" style={{ color: '#2F4F4F' }}>
+                        <h3 className="text-lg font-semibold" style={{ color: '#3D5A3D' }}>
                           {category.name}
                         </h3>
                         <p className="text-sm text-gray-600">{category.description}</p>
@@ -1251,7 +1719,7 @@ const WeddingPreferences: React.FC = () => {
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                             </div>
-                            <h4 className="font-semibold text-base mb-1" style={{ color: '#2F4F4F' }}>
+                            <h4 className="font-semibold text-base mb-1" style={{ color: '#3D5A3D' }}>
                               {venue.name}
                             </h4>
                             <p className="text-gray-600 text-xs mb-2" style={{ 
@@ -1289,8 +1757,8 @@ const WeddingPreferences: React.FC = () => {
             {activeTab === 'theme' && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#2F4F4F' }}>
-                    <Palette className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#3D5A3D' }}>
+                    <Palette className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                     Wedding Theme Selection
                   </h2>
                   <p className="text-gray-600 mt-2">Choose from our curated collection of wedding themes, organized by style and aesthetic</p>
@@ -1299,7 +1767,7 @@ const WeddingPreferences: React.FC = () => {
                   {themeCategories.map((category) => (
                     <div key={category.id} className="space-y-4">
                       <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold" style={{ color: '#2F4F4F' }}>
+                        <h3 className="text-lg font-semibold" style={{ color: '#3D5A3D' }}>
                           {category.name}
                         </h3>
                         <p className="text-sm text-gray-600">{category.description}</p>
@@ -1342,7 +1810,7 @@ const WeddingPreferences: React.FC = () => {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                               </div>
-                              <h4 className="font-semibold text-base mb-2" style={{ color: '#2F4F4F' }}>
+                              <h4 className="font-semibold text-base mb-2" style={{ color: '#3D5A3D' }}>
                                 {theme.name}
                               </h4>
                               <p className="text-gray-600 text-sm mb-3" style={{ 
@@ -1377,14 +1845,14 @@ const WeddingPreferences: React.FC = () => {
             {/* Catering Tab */}
             {activeTab === 'catering' && (
               <div className="space-y-8">
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#2F4F4F' }}>
-                  <Utensils className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                  <Utensils className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Catering Preferences
                 </h2>
 
                 {/* Basic Catering Preferences */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Cuisine & Service Style</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Cuisine & Service Style</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Primary Cuisine Type</label>
@@ -1447,7 +1915,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Dietary Requirements */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Dietary Requirements</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Dietary Requirements</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
                       'Vegetarian Only',
@@ -1484,7 +1952,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Special Menu Items */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Special Menu Preferences</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Special Menu Preferences</h3>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Must-Have Dishes</label>
@@ -1511,7 +1979,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Catering Budget */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Catering Budget</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Catering Budget</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Budget Per Person</label>
@@ -1558,14 +2026,14 @@ const WeddingPreferences: React.FC = () => {
             {/* Photography Tab */}
             {activeTab === 'photography' && (
               <div className="space-y-8">
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#2F4F4F' }}>
-                  <Camera className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                  <Camera className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Photography & Videography Preferences
                 </h2>
 
                 {/* Basic Photography Preferences */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Basic Photography</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Basic Photography</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Photography Style</label>
@@ -1601,7 +2069,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Multi-Day Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Multi-Day Coverage</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Multi-Day Coverage</h3>
                   <p className="text-gray-600 mb-4">Select which events you would like photographed:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
@@ -1681,7 +2149,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Videography Services */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Videography Services</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Videography Services</h3>
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2">
                       <input 
@@ -1738,7 +2206,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Cultural Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Cultural Ceremony Coverage</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Cultural Ceremony Coverage</h3>
                   <p className="text-gray-600 mb-4">Select cultural elements you want captured:</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
@@ -1801,7 +2269,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Deliverables */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Final Deliverables</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Final Deliverables</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
                       <input 
@@ -1862,7 +2330,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Technical Preferences */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Technical Preferences</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Technical Preferences</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Equipment Preference</label>
@@ -1918,7 +2386,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Budget Range */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Photography Budget</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Photography Budget</h3>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range for Photography & Videography</label>
                     <select
@@ -1938,7 +2406,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Special Requests */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#2F4F4F' }}>Special Requests</h3>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Special Requests</h3>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Additional Requirements</label>
                     <textarea
@@ -1953,11 +2421,190 @@ const WeddingPreferences: React.FC = () => {
               </div>
             )}
 
+            {/* Wedding Events Tab */}
+            {activeTab === 'events' && (
+              <div className="space-y-8">
+                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                  <Calendar className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
+                  Wedding Events & Ceremonies
+                </h2>
+
+                {/* AI Tips for Guest Count */}
+                {preferences.basicDetails.guestCount > 0 && (
+                  <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          AI Venue Tips for {preferences.basicDetails.guestCount} Guests
+                        </h3>
+                        <p className="text-sm text-gray-700">Based on your guest count and Indian wedding requirements</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {getAITipsForGuestCount(preferences.basicDetails.guestCount).map((tip, index) => (
+                        <div key={index} className="flex items-start gap-2 bg-white/50 rounded-lg p-3">
+                          <div className="w-2 h-2 rounded-full bg-gray-500 mt-2 flex-shrink-0"></div>
+                          <span className="text-sm text-gray-800">{tip}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* AI Event Recommendations */}
+                {showAIRecommendations && preferences.events.aiRecommendations.length > 0 && (
+                  <div className="bg-sage-50 rounded-2xl p-6 border border-sage-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-sage-100 flex items-center justify-center">
+                          <Sparkles className="w-5 h-5 text-sage-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-sage-900">
+                            AI Recommended Events ({preferences.basicDetails.eventDuration} day{parseInt(preferences.basicDetails.eventDuration) !== 1 ? 's' : ''})
+                          </h3>
+                          <p className="text-sm text-sage-700">Perfect for your {preferences.basicDetails.guestCount} guests and {preferences.basicDetails.budgetRange} budget</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const allRecommendedIds = preferences.events.aiRecommendations.map(e => e.id);
+                          setPreferences(prev => ({
+                            ...prev,
+                            events: {
+                              ...prev.events,
+                              selectedEvents: allRecommendedIds
+                            }
+                          }));
+                        }}
+                        className="px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors text-sm"
+                      >
+                        Select All Recommended
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {preferences.events.aiRecommendations.map((event) => (
+                        <div 
+                          key={event.id} 
+                          className="bg-white/50 rounded-lg p-3 border border-sage-200"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-lg">{event.emoji}</span>
+                            <span className="font-medium text-sage-900 text-sm">{event.name}</span>
+                          </div>
+                          <p className="text-xs text-sage-700">{event.description}</p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-sage-600">
+                              {event.duration} • {event.importance}
+                            </span>
+                            <button
+                              onClick={() => toggleEventSelection(event.id)}
+                              className={`px-2 py-1 rounded text-xs transition-colors ${
+                                preferences.events.selectedEvents.includes(event.id)
+                                  ? 'bg-sage-600 text-white'
+                                  : 'bg-white border border-sage-600 text-sage-600 hover:bg-sage-50'
+                              }`}
+                            >
+                              {preferences.events.selectedEvents.includes(event.id) ? 'Selected' : 'Select'}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* All Events by Category */}
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-800">All Indian Wedding Events</h3>
+                    <div className="text-sm text-gray-600">
+                      {preferences.events.selectedEvents.length} events selected
+                    </div>
+                  </div>
+
+                  {['pre-wedding', 'main-wedding', 'post-wedding', 'optional'].map((category) => {
+                    const categoryEvents = indianWeddingEvents.filter(event => event.category === category);
+                    const categoryNames = {
+                      'pre-wedding': '🎭 Pre-Wedding Ceremonies',
+                      'main-wedding': '👰 Main Wedding Day',
+                      'post-wedding': '🎊 Post-Wedding Events',
+                      'optional': '🎪 Optional Celebrations'
+                    };
+
+                    return (
+                      <div key={category} className="bg-white rounded-2xl p-6 border border-gray-200">
+                        <h4 className="text-lg font-semibold mb-4 text-gray-800">
+                          {categoryNames[category as keyof typeof categoryNames]}
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {categoryEvents.map((event) => {
+                            const isSelected = preferences.events.selectedEvents.includes(event.id);
+                            const isRecommended = preferences.events.aiRecommendations.some(rec => rec.id === event.id);
+                            
+                            return (
+                              <div 
+                                key={event.id}
+                                className={`relative rounded-lg p-4 border-2 transition-all duration-300 cursor-pointer ${
+                                  isSelected 
+                                    ? 'border-rose-500 bg-rose-50'
+                                    : 'border-gray-200 bg-white hover:border-gray-300'
+                                }`}
+                                onClick={() => toggleEventSelection(event.id)}
+                              >
+                                {isRecommended && (
+                                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-sage-500 rounded-full flex items-center justify-center">
+                                    <Sparkles className="w-3 h-3 text-white" />
+                                  </div>
+                                )}
+                                
+                                <div className="flex items-start gap-3">
+                                  <span className="text-2xl">{event.emoji}</span>
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <h5 className="font-medium text-gray-900">{event.name}</h5>
+                                      <span className={`px-2 py-1 text-xs rounded-full ${
+                                        event.importance === 'essential' ? 'bg-red-100 text-red-700' :
+                                        event.importance === 'traditional' ? 'bg-rose-100 text-rose-700' :
+                                        'bg-gray-100 text-gray-700'
+                                      }`}>
+                                        {event.importance}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                                      <span>⏱️ {event.duration}</span>
+                                      <span>👥 {event.guestType}</span>
+                                      <span>📍 {event.venue}</span>
+                                    </div>
+                                  </div>
+                                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                    isSelected
+                                      ? 'border-rose-500 bg-rose-500'
+                                      : 'border-gray-300'
+                                  }`}>
+                                    {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Wedding Blueprint Tab */}
             {activeTab === 'blueprint' && (
               <div>
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#2F4F4F' }}>
-                  <FileText className="w-5 h-5 mr-2" style={{ color: '#2F4F4F' }} />
+                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                  <FileText className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Wedding Blueprint
                 </h2>
                 {showBlueprint ? (
@@ -1976,8 +2623,8 @@ const WeddingPreferences: React.FC = () => {
                     </div>
 
                     {!(preferences.venue.venueType && preferences.theme.selectedTheme) && (
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                        <p className="text-yellow-800 text-sm">
+                      <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-6">
+                        <p className="text-rose-800 text-sm">
                           ⚠️ <strong>Note:</strong> Venue Type and Decor & Theme selections are required for blueprint generation. 
                           Other fields are optional but recommended for a complete blueprint.
                         </p>
@@ -1988,7 +2635,7 @@ const WeddingPreferences: React.FC = () => {
                       <button
                         onClick={handleGenerateBlueprint}
                         disabled={isGenerating || !hasRequiredFields()}
-                        className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 px-8 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-rose-500 text-white py-4 px-8 rounded-xl font-semibold hover:bg-rose-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isGenerating ? (
                           <>
@@ -2005,15 +2652,15 @@ const WeddingPreferences: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button
-                          onClick={() => window.open('/vendor-communication?action=calendar&eventType=wedding-planning', '_blank')}
-                          className="bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
+                          onClick={() => window.open('/messages', '_blank')}
+                          className="bg-sage-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-sage-700 transition-all duration-300 flex items-center justify-center gap-2"
                         >
                           <Calendar className="w-5 h-5" />
                           Schedule Planning
                         </button>
                         <button
-                          onClick={() => window.open(`/vendor-communication?action=email&subject=${encodeURIComponent('Wedding Planning Inquiry')}&body=${encodeURIComponent('Hi! I am planning my wedding and would like to discuss my requirements.')}&weddingData=${encodeURIComponent(JSON.stringify(preferences))}`, '_blank')}
-                          className="bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 flex items-center justify-center gap-2"
+                          onClick={() => window.open('/vendors', '_blank')}
+                          className="bg-rose-500 text-white py-3 px-6 rounded-xl font-semibold hover:bg-rose-600 transition-all duration-300 flex items-center justify-center gap-2"
                         >
                           <Mail className="w-5 h-5" />
                           Email Vendors

@@ -32,14 +32,14 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           p-3 rounded-xl 
           ${gradient 
             ? 'bg-salmon-pink text-white' 
-            : 'bg-pink-100 text-pink-600'
+            : 'bg-rose-100 text-rose-600'
           }
         `}>
           {icon}
         </div>
         {trend && (
           <div className={`flex items-center gap-1 text-sm font-medium ${
-            trendDirection === 'up' ? 'text-purple-600' : 'text-pink-600'
+            trendDirection === 'up' ? 'text-sage-600' : 'text-rose-600'
           }`}>
             <span>{trend}</span>
           </div>

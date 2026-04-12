@@ -34,7 +34,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({
         }}
         onError={(e) => {
           const target = e.target as HTMLElement;
-          target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/images/themes/fallback-theme.jpg)`;
+          target.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/classic contemporary.png)`;
         }}
       >
         {/* Overlay */}

@@ -21,7 +21,7 @@ import {
   Copy
 } from 'lucide-react';
 import { ErrorBoundary } from './ErrorBoundary';
-import VendorCommunicationService from '../services/vendor_communication_service';
+// TODO: Replace with MessagingService once built (Phase 3)
 
 interface Vendor {
   id: string;
@@ -287,12 +287,8 @@ Best regards,
         subject: customSubject
       };
 
-      let result;
-      if (communicationType === 'email') {
-        result = await VendorCommunicationService.sendEmail(payload);
-      } else {
-        result = await VendorCommunicationService.sendWhatsApp(payload);
-      }
+      // TODO: Replace with MessagingService.createConversation() in Phase 3
+      const result = { success: true, message: 'On-platform messaging coming soon' };
 
       if (result.success) {
         // Update vendor status
@@ -305,7 +301,7 @@ Best regards,
         setShowCommunicationModal(false);
         alert(`${communicationType === 'email' ? 'Email' : 'WhatsApp message'} sent successfully!`);
       } else {
-        alert(`Failed to send ${communicationType}: ${result.error}`);
+        alert(`Failed to send ${communicationType}: ${result.message}`);
       }
     } catch (error) {
       console.error('Error sending communication:', error);
@@ -322,9 +318,9 @@ Best regards,
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'booked': return 'bg-green-100 text-green-800';
-      case 'quoted': return 'bg-blue-100 text-blue-800';
-      case 'contacted': return 'bg-yellow-100 text-yellow-800';
+      case 'booked': return 'bg-sage-100 text-sage-800';
+      case 'quoted': return 'bg-gray-100 text-gray-800';
+      case 'contacted': return 'bg-rose-100 text-rose-800';
       case 'pending': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -353,13 +349,13 @@ Best regards,
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 to-gray-50">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-pink-600 to-purple-700 p-2 rounded-lg">
+                <div className="bg-rose-500 p-2 rounded-lg">
                   <Users className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -371,7 +367,7 @@ Best regards,
               </div>
               <button
                 onClick={() => setShowAddVendor(true)}
-                className="bg-gradient-to-r from-pink-600 to-purple-700 text-white px-4 py-2 rounded-lg hover:from-pink-700 hover:to-purple-800 transition-all duration-300 flex items-center gap-2"
+                className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-all duration-300 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Add Vendor
@@ -393,7 +389,7 @@ Best regards,
                       placeholder="Search vendors..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20 transition-all duration-300"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-rose-300 focus:ring-2 focus:ring-rose-300/20 transition-all duration-300"
                     />
                   </div>
                 </div>
@@ -401,7 +397,7 @@ Best regards,
                   <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20 transition-all duration-300"
+                    className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-300 focus:ring-2 focus:ring-rose-300/20 transition-all duration-300"
                   >
                     <option value="all">All Categories</option>
                     <option value="venues">Venues</option>
@@ -413,7 +409,7 @@ Best regards,
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20 transition-all duration-300"
+                    className="px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-300 focus:ring-2 focus:ring-rose-300/20 transition-all duration-300"
                   >
                     <option value="all">All Status</option>
                     <option value="pending">Pending</option>
@@ -428,7 +424,7 @@ Best regards,
             {/* Vendors Grid */}
             {loading ? (
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600 mx-auto mb-4"></div>
                 <p className="text-gray-600">Loading vendors...</p>
               </div>
             ) : (
@@ -456,7 +452,7 @@ Best regards,
                       </div>
                       {vendor.rating && (
                         <div className="flex items-center text-sm text-gray-600">
-                          <Star className="w-4 h-4 mr-2 fill-yellow-400 text-yellow-400" />
+                          <Star className="w-4 h-4 mr-2 fill-rose-400 text-rose-400" />
                           {vendor.rating}/5.0
                         </div>
                       )}
@@ -484,7 +480,7 @@ Best regards,
                       {vendor.email && (
                         <button
                           onClick={() => handleCommunicate(vendor, 'email')}
-                          className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
                         >
                           <Mail className="w-4 h-4" />
                           Email
@@ -493,7 +489,7 @@ Best regards,
                       {vendor.whatsapp && (
                         <button
                           onClick={() => handleCommunicate(vendor, 'whatsapp')}
-                          className="flex-1 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 bg-sage-100 hover:bg-sage-200 text-sage-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
                         >
                           <MessageCircle className="w-4 h-4" />
                           WhatsApp
@@ -555,7 +551,7 @@ Best regards,
                         setCustomSubject(template.subject ? formatMessage(template.subject, selectedVendor) : '');
                       }
                     }}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20 transition-all duration-300"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-300 focus:ring-2 focus:ring-rose-300/20 transition-all duration-300"
                   >
                     <option value="">Custom Message</option>
                     {templates
@@ -579,7 +575,7 @@ Best regards,
                         type="text"
                         value={customSubject}
                         onChange={(e) => setCustomSubject(e.target.value)}
-                        className="w-full px-4 py-2 pr-10 border border-gray-200 rounded-lg focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20 transition-all duration-300"
+                        className="w-full px-4 py-2 pr-10 border border-gray-200 rounded-lg focus:border-rose-300 focus:ring-2 focus:ring-rose-300/20 transition-all duration-300"
                         placeholder="Email subject"
                       />
                       <button
@@ -601,7 +597,7 @@ Best regards,
                       value={customMessage}
                       onChange={(e) => setCustomMessage(e.target.value)}
                       rows={12}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-pink-300 focus:ring-2 focus:ring-pink-300/20 transition-all duration-300 resize-none"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-rose-300 focus:ring-2 focus:ring-rose-300/20 transition-all duration-300 resize-none"
                       placeholder={`Enter your ${communicationType} message...`}
                     />
                     <button
@@ -624,7 +620,7 @@ Best regards,
                 <button
                   onClick={sendCommunication}
                   disabled={loading || !customMessage}
-                  className="bg-gradient-to-r from-pink-600 to-purple-700 text-white px-6 py-2 rounded-lg hover:from-pink-700 hover:to-purple-800 transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
+                  className="bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600 transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
                 >
                   {loading ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

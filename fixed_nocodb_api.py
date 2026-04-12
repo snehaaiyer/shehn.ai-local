@@ -10,12 +10,12 @@ from config.api_config import (
     NOCODB_API_TOKEN,
     TABLE_IDS,
     NOCODB_HEADERS,
-    get_nocodb_url
+    NOCODB_BASE_URL
 )
 
 class NocoDBAPI:
     def __init__(self):
-        self.base_url = get_nocodb_url()
+        self.base_url = NOCODB_BASE_URL
         self.headers = NOCODB_HEADERS
         self.table_ids = TABLE_IDS
     

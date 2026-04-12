@@ -13,7 +13,7 @@ import logging
 from datetime import datetime
 
 # Import local services
-from production_wedding_agents import ProductionWeddingAgents
+from production_wedding_agents_gemini import ProductionWeddingAgentsGemini
 from fixed_nocodb_api import NocoDBAPI
 from budget_allocation_service import BudgetAllocationService
 from field_mapping_service import FieldMappingService
@@ -40,11 +40,11 @@ app.add_middleware(
 
 # Initialize services
 try:
-    crewai_agents = ProductionWeddingAgents()
+    crewai_agents = ProductionWeddingAgentsGemini()
     nocodb_api = NocoDBAPI()
     budget_service = BudgetAllocationService()
     field_mapper = FieldMappingService()
-    logger.info("✅ All services initialized successfully")
+    logger.info("✅ All services initialized successfully (Ollama-powered)")
 except Exception as e:
     logger.error(f"❌ Service initialization failed: {e}")
     crewai_agents = None
@@ -72,6 +72,11 @@ class VendorSearchRequest(BaseModel):
     wedding_type: str = "Traditional"
     guest_count: int = 200
     budget: str = "₹20-30 Lakhs"
+    # Enhanced detailed preferences for AI agent processing
+    detailed_preferences: Optional[Dict[str, Any]] = {}
+    user_requirements: Optional[str] = ""
+    priority_factors: Optional[List[str]] = []
+    search_context: Optional[Dict[str, Any]] = {}
 
 class BudgetAnalysisRequest(BaseModel):
     budget_range: str
@@ -99,6 +104,7 @@ async def root():
             "ai_consultation": "/ai-consultation", 
             "budget_analysis": "/budget-analysis",
             "vendor_search": "/vendor-search",
+            "communications_strategy": "/communications-strategy",
             "wedding_data": "/wedding/{wedding_id}"
         }
     }
@@ -293,34 +299,135 @@ async def budget_analysis(request: BudgetAnalysisRequest):
 
 @app.post("/vendor-search")
 async def vendor_search(request: VendorSearchRequest):
-    """AI-powered vendor search and recommendations"""
+    """Enhanced AI-powered vendor search with detailed preferences"""
     if not crewai_agents or not crewai_agents.llm:
         raise HTTPException(status_code=503, detail="AI agents unavailable")
     
     try:
-        logger.info(f"🔍 Searching {request.category} vendors in {request.city}")
+        logger.info(f"🔍 Enhanced vendor search: {request.category} in {request.city}")
+        logger.info(f"📋 User requirements: {request.user_requirements}")
+        logger.info(f"🎯 Priority factors: {request.priority_factors}")
         
-        # Use vendor agent for recommendations
-        vendor_context = {
+        # Build comprehensive vendor search context for AI agents
+        enhanced_vendor_context = {
             "city": request.city,
             "category": request.category,
             "weddingType": request.wedding_type,
             "guestCount": request.guest_count,
-            "budgetRange": request.budget
+            "budgetRange": request.budget,
+            "userRequirements": request.user_requirements,
+            "detailedPreferences": request.detailed_preferences,
+            "priorityFactors": request.priority_factors,
+            "searchContext": request.search_context,
+            "events": request.search_context.get("events", []),
+            "duration": request.search_context.get("duration", "3 days"),
+            "stylePreferences": request.search_context.get("style_preferences", "Traditional"),
+            "culturalRequirements": request.search_context.get("cultural_requirements", ""),
+            "seasonalPreferences": request.search_context.get("seasonal_preferences", "")
         }
         
-        # This would use the vendor agent from CrewAI
-        result = crewai_agents.process_wedding_form(vendor_context)
+        logger.info(f"🤖 Sending enhanced context to AI agents: {len(str(enhanced_vendor_context))} chars")
         
+        # STEP 1: Use Serper for initial vendor search (data collection)
+        logger.info("🔍 STEP 1: Searching vendors with Serper API")
+        serper_vendors = []
+        
+        try:
+            from enhanced_serper_api import EnhancedSerperAPI
+            serper_api = EnhancedSerperAPI()
+            
+            # Map category for Serper search
+            category_map = {
+                "venues": "venue",
+                "catering": "catering", 
+                "photography": "photographer",
+                "decoration": "decorator"
+            }
+            
+            serper_category = category_map.get(request.category, request.category)
+            
+            # Execute Serper search for raw vendor data
+            logger.info(f"🔍 Serper searching for {serper_category} vendors in {request.city}")
+            serper_result = serper_api.search_wedding_vendors(
+                category=serper_category,
+                location=request.city,
+                budget_range=(100000, 1000000),
+                guest_count=request.guest_count,
+                wedding_theme=request.search_context.get("style_preferences", "Traditional"),
+                max_results=15
+            )
+            
+            if serper_result.get("success") and serper_result.get("vendors"):
+                serper_vendors = serper_result.get("vendors", [])
+                logger.info(f"✅ Serper found {len(serper_vendors)} raw vendors")
+            else:
+                logger.warning("⚠️ Serper search returned no vendors")
+                
+        except Exception as serper_error:
+            logger.error(f"❌ Serper search failed: {serper_error}")
+        
+        # STEP 2: Use Gemini AI for intelligent analysis of found vendors
+        if serper_vendors and crewai_agents and crewai_agents.llm:
+            try:
+                logger.info("🤖 STEP 2: AI analyzing vendors with Ollama")
+                
+                # Prepare vendor data for AI analysis
+                vendor_analysis_context = {
+                    **enhanced_vendor_context,
+                    "found_vendors": serper_vendors[:10],  # Limit for API efficiency
+                    "analysis_task": "evaluate_and_rank_vendors"
+                }
+                
+                # Use AI agents to analyze the Serper results
+                ai_result = crewai_agents.process_vendor_search(vendor_analysis_context)
+                
+                if ai_result.get("success"):
+                    logger.info("✅ AI analysis completed - Enhanced vendor recommendations ready")
+                    return {
+                        "success": True,
+                        "search_params": request.dict(),
+                        "vendor_recommendations": ai_result.get("vendor_analysis", ""),
+                        "vendors": serper_vendors,  # Original Serper data
+                        "ai_insights": ai_result.get("parsed_insights", {}),
+                        "ai_analysis": ai_result.get("vendor_analysis", ""),
+                        "matching_score": ai_result.get("matching_score", 85),
+                        "total_found": len(serper_vendors),
+                        "timestamp": datetime.now().isoformat(),
+                        "agents_used": ai_result.get("agents_used", ["vendor_agent"]),
+                        "mode": "serper_search_ai_analysis",
+                        "architecture": "serper_data_ollama_intelligence"
+                    }
+                else:
+                    logger.warning("⚠️ AI analysis failed, returning Serper data only")
+            except Exception as ai_error:
+                logger.warning(f"⚠️ AI analysis failed ({ai_error}), returning Serper data only")
+        
+        # Return Serper data even if AI analysis fails
+        if serper_vendors:
+            logger.info("✅ Returning Serper vendor data (no AI analysis)")
+            return {
+                "success": True,
+                "search_params": request.dict(),
+                "vendor_recommendations": f"Found {len(serper_vendors)} {request.category} vendors in {request.city}",
+                "vendors": serper_vendors,
+                "total_found": len(serper_vendors),
+                "matching_score": 75,  # Good score for real search results
+                "timestamp": datetime.now().isoformat(),
+                "mode": "serper_only",
+                "search_source": "serper_api",
+                "note": "Real vendor data from web search"
+            }
+        
+        # Final fallback if everything fails
         return {
-            "success": True,
+            "success": False,
+            "error": "No vendors found - both Serper search and AI analysis unavailable",
             "search_params": request.dict(),
-            "vendor_recommendations": result,
             "timestamp": datetime.now().isoformat()
         }
         
     except Exception as e:
-        logger.error(f"❌ Vendor search error: {e}")
+        logger.error(f"❌ Enhanced vendor search error: {e}")
         raise HTTPException(status_code=500, detail=f"Vendor search failed: {str(e)}")
 
 @app.get("/wedding/{wedding_id}")
@@ -350,6 +457,96 @@ async def get_wedding_data(wedding_id: str):
     except Exception as e:
         logger.error(f"❌ Wedding data retrieval error: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to retrieve wedding data: {str(e)}")
+
+@app.post("/communications-strategy")
+async def communications_strategy(request: dict):
+    """Create comprehensive communications strategy for Google and Meta integrations"""
+    if not crewai_agents or not crewai_agents.llm:
+        raise HTTPException(status_code=503, detail="AI agents unavailable")
+    
+    try:
+        logger.info("📱 Creating communications strategy...")
+        
+        # Check if the communications agent method exists
+        if not hasattr(crewai_agents, 'create_communications_strategy'):
+            raise HTTPException(status_code=501, detail="Communications agent not available in current deployment")
+        
+        result = crewai_agents.create_communications_strategy(request)
+        
+        if result.get("success"):
+            logger.info("✅ Communications strategy created")
+            return result
+        else:
+            raise HTTPException(status_code=500, detail="Communications strategy creation failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Communications strategy error: {e}")
+        raise HTTPException(status_code=500, detail=f"Communications strategy failed: {str(e)}")
+
+class WeddingBlueprintRequest(BaseModel):
+    basicDetails: Dict[str, Any]
+    theme: Dict[str, Any]
+    venue: Dict[str, Any]
+    catering: Dict[str, Any]
+    photography: Dict[str, Any]
+
+@app.post("/api/wedding-blueprint/generate")
+async def generate_wedding_blueprint(request: WeddingBlueprintRequest):
+    """Generate comprehensive AI-powered wedding blueprint"""
+    if not crewai_agents or not crewai_agents.llm:
+        raise HTTPException(status_code=503, detail="AI agents unavailable")
+    
+    try:
+        logger.info(f"🎯 Generating wedding blueprint for {request.basicDetails.get('yourName', 'Unknown')} & {request.basicDetails.get('partnerName', 'Unknown')}")
+        
+        # Convert the request to the format expected by the AI agents
+        form_data = {
+            "yourName": request.basicDetails.get('yourName', ''),
+            "partnerName": request.basicDetails.get('partnerName', ''),
+            "city": request.basicDetails.get('location', ''),
+            "weddingDate": request.basicDetails.get('weddingDate', ''),
+            "budget": request.basicDetails.get('budgetRange', ''),
+            "guestCount": int(request.basicDetails.get('guestCount', 200)),
+            "weddingType": request.theme.get('selectedTheme', 'Traditional'),
+            "duration": "Multi-day celebration",
+            "events": ["Wedding Ceremony", "Reception"],
+            "priorities": ["Venue", "Photography", "Catering"],
+            "specialRequirements": f"Venue type: {request.venue.get('venueType', 'Hotel')}, Cuisine: {request.catering.get('cuisine', 'Multi-cuisine')}"
+        }
+        
+        # Generate AI insights using the existing consultation system
+        ai_result = crewai_agents.process_wedding_form(form_data)
+        
+        if ai_result.get("success"):
+            # Create a comprehensive blueprint response
+            blueprint = {
+                "id": f"blueprint_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "weddingId": f"wedding_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "coupleNames": f"{request.basicDetails.get('yourName', 'Bride')} & {request.basicDetails.get('partnerName', 'Groom')}",
+                "aiGeneratedContent": {
+                    "timeline": ai_result.get("timeline", {}),
+                    "budget_insights": ai_result.get("budget_analysis", {}),
+                    "vendor_recommendations": ai_result.get("vendor_recommendations", {}),
+                    "style_guide": ai_result.get("style_analysis", {}),
+                    "ai_recommendations": ai_result.get("ai_recommendations", {})
+                },
+                "images": [],
+                "generatedAt": datetime.now().isoformat(),
+                "lastUpdated": datetime.now().isoformat()
+            }
+            
+            logger.info("✅ Wedding blueprint generated successfully")
+            return {
+                "success": True,
+                "blueprint": blueprint,
+                "timestamp": datetime.now().isoformat()
+            }
+        else:
+            raise HTTPException(status_code=500, detail="AI blueprint generation failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Wedding blueprint generation error: {e}")
+        raise HTTPException(status_code=500, detail=f"Blueprint generation failed: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

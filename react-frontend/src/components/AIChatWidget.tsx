@@ -47,7 +47,7 @@ const AIChatWidget: React.FC = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-rose-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50"
       >
         <MessageCircle size={24} />
       </button>
@@ -57,7 +57,7 @@ const AIChatWidget: React.FC = () => {
   return (
     <div className="fixed bottom-6 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl border z-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-t-lg">
+      <div className="flex items-center justify-between p-4 bg-rose-500 text-white rounded-t-lg">
         <div className="flex items-center space-x-2">
           <Bot size={20} />
           <span className="font-semibold">AI Assistant</span>
@@ -85,14 +85,14 @@ const AIChatWidget: React.FC = () => {
               className={`flex space-x-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <Bot size={14} className="text-white" />
                 </div>
               )}
               <div
                 className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
                   msg.role === 'user'
-                    ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white'
+                    ? 'bg-rose-500 text-white'
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
@@ -108,7 +108,7 @@ const AIChatWidget: React.FC = () => {
         )}
         {isLoading && (
           <div className="flex space-x-2 justify-start">
-            <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center flex-shrink-0">
               <Bot size={14} className="text-white" />
             </div>
             <div className="bg-gray-100 px-3 py-2 rounded-lg">
@@ -131,13 +131,13 @@ const AIChatWidget: React.FC = () => {
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me about your wedding..."
-            className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm"
+            className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm"
             disabled={isLoading}
           />
           <button
             onClick={handleSendMessage}
             disabled={!message.trim() || isLoading}
-            className="px-3 py-2 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 bg-rose-500 text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={16} />
           </button>

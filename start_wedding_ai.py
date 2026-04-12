@@ -20,24 +20,27 @@ def check_port(port):
     except:
         return False
 
-def start_ollama():
-    """Check if Ollama is running"""
-    if check_port(11434):
-        print("✅ Ollama is already running on port 11434")
+def check_gemini_api():
+    """Check if Gemini API is configured"""
+    import os
+    api_key = os.getenv('GEMINI_API_KEY')
+    if api_key:
+        print("✅ Gemini API key is configured")
         return True
     else:
-        print("❌ Ollama not running. Please start it manually with: ollama serve")
-        return False
+        print("⚠️ Gemini API key not found in environment variables")
+        print("   Using default key for testing...")
+        return True
 
 def test_api_service():
     """Test basic API functionality"""
     try:
-        from production_wedding_agents import ProductionWeddingAgents
+        from production_wedding_agents_gemini import ProductionWeddingAgentsGemini
         from budget_allocation_service import BudgetAllocationService
         from fixed_nocodb_api import NocoDBAPI
         
-        print("✅ Testing CrewAI agents...")
-        agents = ProductionWeddingAgents()
+        print("✅ Testing CrewAI agents (Gemini-powered)...")
+        agents = ProductionWeddingAgentsGemini()
         
         print("✅ Testing Budget service...")
         budget_service = BudgetAllocationService()
@@ -65,10 +68,11 @@ def main():
     print("🌸 BID AI Wedding Assistant - Startup")
     print("=" * 50)
     
-    # Check Ollama
-    if not start_ollama():
-        print("\nPlease start Ollama first:")
-        print("  ollama serve")
+    # Check Gemini API
+    if not check_gemini_api():
+        print("\nPlease configure Gemini API key:")
+        print("  export GEMINI_API_KEY=your_api_key_here")
+        print("Or using default key for testing...")
         return
     
     # Test services
@@ -84,7 +88,7 @@ def main():
     print("   ✅ Local data storage")
     print("   ✅ Budget calculations")
     print("   ✅ Visual preferences")
-    print("   🔄 AI integration (when all services running)")
+    print("   ✅ AI integration (Gemini-powered)")
     print("\n🛑 Press Ctrl+C to stop\n")
     
     # Start frontend

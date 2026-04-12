@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Sparkles } from 'lucide-react';
+import { useAppStore } from '../store/useAppStore';
 
 interface Message {
   id: string;
@@ -37,6 +38,7 @@ const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => 
 };
 
 const AIChat: React.FC = () => {
+  const { blueprintId } = useAppStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +91,10 @@ const AIChat: React.FC = () => {
 
     let welcome = "🎉 Welcome to ShehnAI Chat! I'm your intelligent wedding planning assistant.\n\n";
 
+    if (blueprintId) {
+      welcome += "I have your wedding blueprint loaded — ask me anything about your plan!\n\n";
+    }
+
     if (weddingDate && location && budget) {
       welcome += `I can see you're planning a ${budget} wedding in ${location} on ${weddingDate}.\n\n`;
     }
@@ -101,12 +107,6 @@ const AIChat: React.FC = () => {
     welcome += "📋 Create wedding timelines\n";
     welcome += "💰 Analyze your budget\n";
     welcome += "💬 Communicate with vendors\n\n";
-
-    // Check if in demo mode
-    const isDemoMode = !process.env.REACT_APP_GOOGLE_API_KEY || !process.env.REACT_APP_GEMINI_API_KEY;
-    if (isDemoMode) {
-      welcome += "🔄 Demo Mode: I'm running in demo mode without API keys. Add your API keys for full functionality!\n\n";
-    }
 
     welcome += "Just tell me what you need help with!";
 
@@ -146,21 +146,26 @@ const AIChat: React.FC = () => {
     setMessages(prev => [...prev, loadingMessage]);
 
     try {
-      // Use the AI assistant service
-      // Demo response for now
-      const result = { action: 'message', data: { response: 'This is a demo response. Add API keys for full functionality.' } };
+      // Call backend AI chat endpoint (CrewAI + Ollama GLM4)
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: inputMessage, blueprintId: blueprintId || undefined, context: (() => { try { return JSON.parse(localStorage.getItem('weddingPreferences') || '{}'); } catch { return {}; } })() })
+      });
+      const result = await res.json();
+      const aiResponse = result.response || result.data?.response || 'Sorry, I could not process that request.';
 
       setMessages(prev => {
         const filtered = prev.filter(msg => !msg.loading);
         return [...filtered, {
           id: Date.now().toString(),
-          content: result.data.response,
+          content: aiResponse,
           sender: 'ai',
           timestamp: new Date(),
-          taskResult: {
-            action: result.action,
+          taskResult: result.data && Object.keys(result.data).length > 0 ? {
+            action: 'message',
             data: result.data
-          }
+          } : undefined
         }];
       });
     } catch (error) {
@@ -200,11 +205,11 @@ const AIChat: React.FC = () => {
           <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#133337' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D5A3D' }}>
                   <LogoWithFallback size="w-6 h-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#133337' }}>ShehnAI Chat</h1>
+                  <h1 className="text-2xl font-bold" style={{ color: '#3D5A3D' }}>ShehnAI Chat</h1>
                   <p className="text-gray-600">Your wedding planning companion</p>
                 </div>
               </div>
@@ -220,11 +225,11 @@ const AIChat: React.FC = () => {
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#133337' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D5A3D' }}>
                   <Sparkles className="h-6 w-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: '#133337' }}>Chat with ShehnAI Chat</h2>
+                  <h2 className="text-xl font-bold" style={{ color: '#3D5A3D' }}>Chat with ShehnAI Chat</h2>
                   <p className="text-sm text-gray-600">
                     {isDemoMode
                       ? "Demo mode - Try asking about wedding planning tasks"
@@ -242,7 +247,7 @@ const AIChat: React.FC = () => {
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {message.sender === 'user' ? (
-                      <div className="px-4 py-3 rounded-2xl max-w-xs lg:max-w-md" style={{ backgroundColor: '#133337' }}>
+                      <div className="px-4 py-3 rounded-2xl max-w-xs lg:max-w-md" style={{ backgroundColor: '#3D5A3D' }}>
                         <p className="text-sm" style={{ color: '#FFFFFF' }}>{message.content}</p>
                       </div>
                     ) : (
@@ -283,7 +288,7 @@ const AIChat: React.FC = () => {
                       }
                     }}
                                       placeholder="Ask me anything about your wedding planning..."
-                  className="w-full p-4 border border-gray-200 rounded-xl transition-all duration-300 resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-full p-4 border border-gray-200 rounded-xl transition-all duration-300 resize-none focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
                   style={{ outline: 'none' }}
                   rows={3}
                 />
@@ -315,7 +320,7 @@ const AIChat: React.FC = () => {
                       borderColor: 'rgba(255, 255, 255, 0.3)'
                     }}
                   >
-                    <div className="text-sm font-medium" style={{ color: '#133337' }}>{prompt}</div>
+                    <div className="text-sm font-medium" style={{ color: '#3D5A3D' }}>{prompt}</div>
                   </button>
                 ))}
               </div>
@@ -324,19 +329,19 @@ const AIChat: React.FC = () => {
 
           {/* Quick Actions Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#EFAFAB' }}>
-              <h3 className="text-lg font-bold mb-4" style={{ color: '#133337' }}>Quick Actions</h3>
+            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg">
+              <h3 className="text-lg font-bold mb-4" style={{ color: '#3D5A3D' }}>Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#EFAFAB', color: '#133337' }}>
+                <button onClick={() => { setInputMessage('Schedule a meeting with a vendor'); }} className="w-full p-3 rounded-lg transition-all duration-300 bg-rose-500 text-white hover:bg-rose-600">
                   Schedule Meeting
                 </button>
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#F5EADB', color: '#133337' }}>
+                <button onClick={() => { setInputMessage('Find vendors in my area'); }} className="w-full p-3 rounded-lg transition-all duration-300 bg-rose-100 text-rose-800 hover:bg-rose-200">
                   Find Vendors
                 </button>
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#FF7F50', color: '#133337' }}>
+                <button onClick={() => { setInputMessage('Analyze my wedding budget'); }} className="w-full p-3 rounded-lg transition-all duration-300 bg-rose-500 text-white hover:bg-rose-600">
                   Budget Analysis
                 </button>
-                <button className="w-full p-3 rounded-lg transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#133337', color: '#FFFFFF' }}>
+                <button onClick={() => { setInputMessage('Create a wedding planning timeline'); }} className="w-full p-3 rounded-lg transition-all duration-300 text-white hover:opacity-90" style={{ backgroundColor: '#3D5A3D' }}>
                   Timeline Help
                 </button>
               </div>

@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-09-04T18:23:37.245882",
+  "timestamp": "2025-09-05T14:34:50.307655",
   "client_id": "REDACTED_GOOGLE_CLIENT_ID",
   "test_results": {
     "oauth_flow": false,
     "apis_availability": true,
     "server_endpoints": false,
     "frontend_config": true,
-    "environment_vars": false,
+    "environment_vars": true,
     "integration_component": true,
     "api_service": true
   },
-  "success_rate": 57.14285714285714,
+  "success_rate": 71.42857142857143,
   "recommendations": []
 }

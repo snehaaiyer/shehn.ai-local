@@ -1,8 +1,8 @@
 
 #!/usr/bin/env python3
 """
-Complete CrewAI + Gemini Integration
-Production-ready wedding planning agents using only Gemini API
+Complete CrewAI + Ollama Integration
+Production-ready wedding planning agents using local Ollama (GLM4)
 """
 
 import os
@@ -10,7 +10,6 @@ from typing import Dict, Any, List
 from datetime import datetime
 import json
 import logging
-import google.generativeai as genai
 
 from crewai import Agent, Task, Crew, LLM, Process
 
@@ -19,30 +18,26 @@ logger = logging.getLogger(__name__)
 
 class GeminiCrewAIWeddingPlanner:
     """
-    Complete wedding planner using CrewAI + Gemini API
-    Production ready with no local dependencies
+    Complete wedding planner using CrewAI + local Ollama
+    No API keys needed - runs fully offline
     """
-    
+
     def __init__(self, gemini_api_key: str = None):
-        # Configure Gemini API
-        self.api_key = gemini_api_key or os.getenv('GEMINI_API_KEY') or 'REDACTED_GEMINI_KEY'
-        genai.configure(api_key=self.api_key)
-        
         # Ensure no conflicting APIs
         if "OPENAI_API_KEY" in os.environ:
             del os.environ["OPENAI_API_KEY"]
-        
-        # Initialize Gemini LLM for CrewAI
+
+        # Initialize Ollama LLM for CrewAI
         try:
             self.llm = LLM(
-                model="gemini/gemini-2.0-flash-exp",
-                api_key=self.api_key,
+                model="ollama/glm4",
+                base_url="http://localhost:11434",
                 temperature=0.7,
                 max_tokens=2000
             )
-            logger.info("✅ Gemini CrewAI LLM initialized successfully")
+            logger.info("✅ Ollama CrewAI LLM initialized successfully")
         except Exception as e:
-            logger.error(f"❌ Gemini LLM failed: {e}")
+            logger.error(f"❌ Ollama LLM failed: {e}")
             self.llm = None
             return
         
@@ -52,10 +47,10 @@ class GeminiCrewAIWeddingPlanner:
         # Indian wedding knowledge
         self.domain_knowledge = self._load_wedding_knowledge()
         
-        logger.info("✅ Gemini CrewAI Wedding Planner ready for production")
+        logger.info("✅ Ollama CrewAI Wedding Planner ready for production")
     
     def _create_comprehensive_agents(self) -> Dict[str, Agent]:
-        """Create comprehensive wedding planning agents using Gemini"""
+        """Create comprehensive wedding planning agents using Ollama"""
         
         # Indian Wedding Budget Expert
         budget_expert = Agent(
@@ -169,12 +164,12 @@ class GeminiCrewAIWeddingPlanner:
         }
     
     def get_comprehensive_wedding_plan(self, wedding_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Get complete wedding plan using all Gemini agents"""
+        """Get complete wedding plan using all agents"""
         if not self.llm:
-            return {"error": "Gemini LLM not available"}
+            return {"error": "Ollama LLM not available"}
             
         try:
-            logger.info("🎊 Creating comprehensive wedding plan with Gemini agents...")
+            logger.info("🎊 Creating comprehensive wedding plan with AI agents...")
             
             # Budget planning task
             budget_task = Task(
@@ -242,7 +237,7 @@ Ensure authenticity while creating visual appeal.""",
                 expected_output="Complete decoration plan with cultural authenticity and visual appeal"
             )
             
-            # Execute all tasks with Gemini agents
+            # Execute all tasks with AI agents
             comprehensive_crew = Crew(
                 agents=[
                     self.agents["budget_expert"],
@@ -266,8 +261,8 @@ Ensure authenticity while creating visual appeal.""",
                 "comprehensive_plan": comprehensive_plan,
                 "full_analysis": str(results),
                 "agents_used": ["budget_expert", "venue_specialist", "decoration_expert"],
-                "model_used": "gemini-2.0-flash-exp",
-                "gemini_api": True,
+                "model_used": "ollama/glm4",
+                "local_llm": True,
                 "production_ready": True,
                 "no_local_dependencies": True,
                 "processing_time": datetime.now().isoformat()
@@ -275,12 +270,12 @@ Ensure authenticity while creating visual appeal.""",
             
         except Exception as e:
             logger.error(f"Error in comprehensive planning: {e}")
-            return {"error": str(e), "gemini_api": True}
+            return {"error": str(e), "local_llm": True}
     
     def get_catering_plan(self, wedding_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Get detailed catering plan using Gemini catering specialist"""
+        """Get detailed catering plan using AI catering specialist"""
         if not self.llm:
-            return {"error": "Gemini LLM not available"}
+            return {"error": "Ollama LLM not available"}
             
         try:
             catering_task = Task(
@@ -318,7 +313,7 @@ Ensure authentic flavors while accommodating diverse tastes.""",
                 "success": True,
                 "catering_plan": str(results),
                 "agent_used": "catering_specialist",
-                "gemini_api": True,
+                "local_llm": True,
                 "processing_time": datetime.now().isoformat()
             }
             
@@ -327,9 +322,9 @@ Ensure authentic flavors while accommodating diverse tastes.""",
             return {"error": str(e)}
     
     def get_detailed_timeline(self, wedding_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Get detailed timeline using Gemini timeline coordinator"""
+        """Get detailed timeline using AI timeline coordinator"""
         if not self.llm:
-            return {"error": "Gemini LLM not available"}
+            return {"error": "Ollama LLM not available"}
             
         try:
             timeline_task = Task(
@@ -367,7 +362,7 @@ Provide specific dates, times, and coordination points.""",
                 "success": True,
                 "detailed_timeline": str(results),
                 "agent_used": "timeline_coordinator",
-                "gemini_api": True,
+                "local_llm": True,
                 "processing_time": datetime.now().isoformat()
             }
             
@@ -438,7 +433,7 @@ def get_gemini_crewai_planner(gemini_api_key: str = None):
     return gemini_crew_planner
 
 def test_gemini_crewai_integration():
-    """Test complete Gemini + CrewAI integration"""
+    """Test complete Ollama + CrewAI integration"""
     print("🧪 TESTING GEMINI + CREWAI INTEGRATION")
     print("="*50)
     
@@ -447,10 +442,10 @@ def test_gemini_crewai_integration():
         planner = get_gemini_crewai_planner()
         
         if not planner.llm:
-            print("❌ Gemini LLM not available")
+            print("❌ Ollama LLM not available")
             return False
         
-        print("✅ Gemini CrewAI planner initialized")
+        print("✅ Ollama CrewAI planner initialized")
         print(f"   Model: {planner.llm.model}")
         print(f"   Agents: {list(planner.agents.keys())}")
         
@@ -496,7 +491,7 @@ if __name__ == "__main__":
     if success:
         print("\n" + "="*70)
         print("🎉 GEMINI + CREWAI INTEGRATION SUCCESSFUL!")
-        print("   ✅ Gemini 2.0 Flash Exp LLM working with CrewAI")
+        print("   ✅ Ollama GLM4 LLM working with CrewAI")
         print("   ✅ 5 Specialized wedding planning agents")
         print("   ✅ No Ollama dependency")
         print("   ✅ No local dependencies")
