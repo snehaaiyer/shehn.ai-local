@@ -101,7 +101,7 @@ export const SmartLocationInput: React.FC<SmartLocationInputProps> = ({
 
     // Create and load the script
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_API_KEY || 'REDACTED_GOOGLE_MAPS_KEY'}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_API_KEY || ''}&libraries=places`;
     script.async = true;
     script.defer = true;
     

@@ -2,7 +2,7 @@
 
 export const GOOGLE_CONFIG = {
   MAPS: {
-    API_KEY: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.REACT_APP_GOOGLE_API_KEY || 'REDACTED_GOOGLE_MAPS_KEY',
+    API_KEY: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || process.env.REACT_APP_GOOGLE_API_KEY || '',
     LIBRARIES: ['places', 'geometry'],
     DEFAULT_CENTER: { lat: 19.0760, lng: 72.8777 }, // Mumbai
     DEFAULT_ZOOM: 12
