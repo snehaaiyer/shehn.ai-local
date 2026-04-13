@@ -173,15 +173,29 @@ Quotes include category-specific fields (e.g., drone coverage for photography, l
 
 ## Agentic AI Architecture
 
-### CrewAI Multi-Agent Orchestration
+### Separated Agent Architecture
 
-Shehn.AI uses **15 specialized AI agents** organized into **3 crews** for wedding blueprint generation:
+Shehn.AI uses **10 specialized AI agents** in **2 separate systems** — one for couples, one for vendors:
 
-| Crew | Agents | Purpose |
-|------|--------|---------|
-| **Research Crew** | Venue Scout, Catering Analyst, Photo/Video Strategist, Decor Planner, Entertainment Curator | Market research across all 6 vendor categories |
-| **Planning Crew** | Budget Optimizer, Timeline Architect, Vendor Matcher, Guest Logistics, Culture Specialist | Budget allocation, scheduling, ritual integration |
-| **Content Crew** | Blueprint Writer, Cost Analyzer, Communication Drafter, Quality Reviewer, Summary Generator | Final document assembly and quality assurance |
+**Couple Agents** (`couple_agents.py` — 5 agents):
+
+| Agent | Role | What It Does |
+|-------|------|-------------|
+| **Budget Optimizer** | Financial planner | Allocate budget, find savings, rebalance categories |
+| **Vendor Matcher** | Matching specialist | Score & rank vendor quotes using 7-factor algorithm (100pts) |
+| **Style Consultant** | Creative director | Theme, decor, palette, cultural ceremony recommendations |
+| **Timeline Planner** | Coordinator | Multi-day scheduling, vendor arrival times, buffer planning |
+| **Communication Coach** | Message drafter | Inquiry, negotiation, and booking messages to vendors |
+
+**Vendor Agents** (`vendor_agents.py` — 5 agents):
+
+| Agent | Role | What It Does |
+|-------|------|-------------|
+| **Profile Optimizer** | Marketing specialist | SEO descriptions, portfolio tips, profile completeness scoring |
+| **Quote Strategist** | Pricing consultant | Competitive pricing, value-adds, win probability estimation |
+| **Blueprint Analyzer** | Opportunity scout | Score blueprints as business opportunities, recommend bid/skip |
+| **Competitive Insights** | Market analyst | Positioning, pricing advice, competitor comparison |
+| **Communication Drafter** | Response writer | Reply to inquiries, follow-ups, persuasive messaging |
 
 ### Orchestration Patterns
 - **Sequential**: Research → Planning → Content (full blueprint generation)

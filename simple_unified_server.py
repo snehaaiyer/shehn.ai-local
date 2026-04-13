@@ -65,19 +65,39 @@ _ai_feedback: list = []
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# CrewAI multi-agent orchestration — optional
+# ── CrewAI multi-agent orchestration (2 separate agent systems) ──
+
+# Couple-facing agents (budget, vendor matching, style, timeline, comms)
 try:
-    from production_wedding_agents_gemini import ProductionWeddingAgentsGemini
-    crewai_agents = ProductionWeddingAgentsGemini()
-    CREWAI_AVAILABLE = crewai_agents.llm is not None
-    if CREWAI_AVAILABLE:
-        logger.info("✅ CrewAI orchestration loaded (Ollama/GLM4)")
+    from couple_agents import CoupleAgents
+    couple_ai = CoupleAgents()
+    COUPLE_AGENTS_AVAILABLE = couple_ai.agents_ready
+    if COUPLE_AGENTS_AVAILABLE:
+        logger.info("✅ Couple AI agents loaded (5 agents)")
     else:
-        logger.warning("⚠️ CrewAI loaded but LLM not available")
+        logger.warning("⚠️ Couple agents loaded but LLM not available")
 except Exception as e:
-    crewai_agents = None
-    CREWAI_AVAILABLE = False
-    logger.warning(f"⚠️ CrewAI not available: {e}")
+    couple_ai = None
+    COUPLE_AGENTS_AVAILABLE = False
+    logger.warning(f"⚠️ Couple agents not available: {e}")
+
+# Vendor-facing agents (profile, quoting, blueprint analysis, competitive, comms)
+try:
+    from vendor_agents import VendorAgents
+    vendor_ai = VendorAgents()
+    VENDOR_AGENTS_AVAILABLE = vendor_ai.agents_ready
+    if VENDOR_AGENTS_AVAILABLE:
+        logger.info("✅ Vendor AI agents loaded (5 agents)")
+    else:
+        logger.warning("⚠️ Vendor agents loaded but LLM not available")
+except Exception as e:
+    vendor_ai = None
+    VENDOR_AGENTS_AVAILABLE = False
+    logger.warning(f"⚠️ Vendor agents not available: {e}")
+
+# Legacy compatibility — old endpoints check CREWAI_AVAILABLE
+CREWAI_AVAILABLE = COUPLE_AGENTS_AVAILABLE or VENDOR_AGENTS_AVAILABLE
+crewai_agents = None  # Deprecated — use couple_ai / vendor_ai directly
 
 # Configure static file serving for React frontend
 STATIC_DIR = Path(__file__).parent / "react-frontend" / "build"
@@ -1364,15 +1384,14 @@ async def get_ai_wedding_suggestions(request: Request):
     """Get AI-powered wedding planning suggestions using CrewAI or direct Ollama"""
     try:
         data = await request.json()
-        # Try CrewAI orchestration first
-        if CREWAI_AVAILABLE and crewai_agents:
+        # Try couple AI style agent
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
             try:
-                import asyncio
-                result = await asyncio.to_thread(crewai_agents.process_wedding_form, data)
+                result = await asyncio.to_thread(couple_ai.suggest_style, {"preferences": data})
                 if result and result.get("success"):
-                    return JSONResponse({"success": True, "data": result.get("parsed_insights", {}), "agent_analysis": result.get("agent_analysis", ""), "provider": "CrewAI (Ollama)", "timestamp": datetime.now().isoformat()})
+                    return JSONResponse({"success": True, "data": result.get("style", {}), "provider": "CoupleAI style_agent", "timestamp": datetime.now().isoformat()})
             except Exception as e:
-                logger.warning(f"CrewAI failed for suggestions, falling back: {e}")
+                logger.warning(f"Couple AI suggestions failed, falling back: {e}")
         prompt = f"Given these wedding details: {json.dumps(data)}\nProvide 5 actionable wedding planning suggestions as JSON: {{\"suggestions\": [{{\"title\": \"...\", \"description\": \"...\", \"priority\": \"high|medium|low\"}}]}}"
         response = await _ask_claude(MARKET_SYSTEM, prompt, 600)
         try:
@@ -1391,15 +1410,14 @@ async def get_ai_vendor_analysis(request: Request):
         data = await request.json()
         vendors = data.get('vendors', [])
         preferences = data.get('preferences', {})
-        # Try CrewAI vendor_agent
-        if CREWAI_AVAILABLE and crewai_agents:
+        # Try couple AI vendor matching agent
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
             try:
-                import asyncio
-                result = await asyncio.to_thread(crewai_agents.analyze_vendor_list, {"vendors": vendors[:5], "preferences": preferences})
+                result = await asyncio.to_thread(couple_ai.match_vendors, {"quotes": vendors[:5], "category_spec": preferences, "budget_allocated": preferences.get("budget", 0)})
                 if result and result.get("success"):
-                    return JSONResponse({"success": True, "data": {"analysis": result.get("analysis", ""), "recommendation": ""}, "provider": "CrewAI vendor_agent (GLM4)", "timestamp": datetime.now().isoformat()})
+                    return JSONResponse({"success": True, "data": {"analysis": result.get("rankings", ""), "recommendation": ""}, "provider": "CoupleAI vendor_agent", "timestamp": datetime.now().isoformat()})
             except Exception as e:
-                logger.warning(f"CrewAI vendor analysis failed, falling back: {e}")
+                logger.warning(f"Couple AI vendor analysis failed, falling back: {e}")
         prompt = f"Analyze these vendors for an Indian wedding:\nVendors: {json.dumps(vendors[:5])}\nPreferences: {json.dumps(preferences)}\nReturn JSON: {{\"analysis\": [{{\"vendor_name\": \"...\", \"score\": 1-10, \"strengths\": [...], \"concerns\": [...]}}], \"recommendation\": \"...\"}}"
         response = await _ask_claude(MARKET_SYSTEM, prompt, 600)
         try:
@@ -1416,15 +1434,14 @@ async def get_ai_timeline(request: Request):
     """Get AI-generated wedding timeline using CrewAI timeline_agent or direct Ollama."""
     try:
         data = await request.json()
-        # Try CrewAI timeline_agent
-        if CREWAI_AVAILABLE and crewai_agents:
+        # Try couple AI timeline agent
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
             try:
-                import asyncio
-                result = await asyncio.to_thread(crewai_agents.generate_timeline, data)
+                result = await asyncio.to_thread(couple_ai.generate_timeline, data)
                 if result and result.get("success"):
-                    return JSONResponse({"success": True, "data": {"timeline_analysis": result.get("timeline", "")}, "provider": "CrewAI timeline_agent (GLM4)", "timestamp": datetime.now().isoformat()})
+                    return JSONResponse({"success": True, "data": {"timeline_analysis": result.get("timeline", "")}, "provider": "CoupleAI timeline_agent", "timestamp": datetime.now().isoformat()})
             except Exception as e:
-                logger.warning(f"CrewAI timeline failed, falling back: {e}")
+                logger.warning(f"Couple AI timeline failed, falling back: {e}")
         prompt = f"Create a wedding planning timeline for: {json.dumps(data)}\nReturn JSON: {{\"timeline\": [{{\"month\": \"...\", \"tasks\": [{{\"task\": \"...\", \"category\": \"...\", \"priority\": \"high|medium|low\"}}]}}]}}"
         response = await _ask_claude(MARKET_SYSTEM, prompt, 800)
         try:
@@ -1443,12 +1460,11 @@ async def get_ai_vendor_recommendations(request: Request):
         data = await request.json()
         search_query = data.get('search_query', '')
         wedding_context = data.get('wedding_context', {})
-        # Try CrewAI vendor search
-        if CREWAI_AVAILABLE and crewai_agents:
+        # Try couple AI vendor matching
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
             try:
-                import asyncio
                 search_ctx = {**wedding_context, "category": search_query, "userRequirements": search_query}
-                result = await asyncio.to_thread(crewai_agents.process_vendor_search, search_ctx)
+                result = await asyncio.to_thread(couple_ai.match_vendors, {"quotes": [], "category_spec": search_ctx, "budget_allocated": wedding_context.get("budget", 0)})
                 if result and result.get("success"):
                     return JSONResponse({"success": True, "data": result.get("parsed_insights", {}), "vendor_analysis": result.get("vendor_analysis", ""), "provider": "CrewAI vendor_agent (GLM4)", "timestamp": datetime.now().isoformat()})
             except Exception as e:
@@ -2831,25 +2847,25 @@ Be concise — 2-3 sentences per insight. Use ₹ symbol and Indian number forma
 
 @app.post("/api/ai/analyze-quote")
 async def ai_analyze_quote(request: Request):
-    """Couple-facing: Analyze a vendor quote using CrewAI budget_agent or direct Ollama."""
+    """Couple-facing: Analyze a vendor quote using couple budget_agent or direct LLM."""
     data = await request.json()
     quote = data.get("quote", {})
     budget_allocated = data.get("budget_allocated", 0)
     category = data.get("category", "")
     wedding_summary = data.get("wedding_summary", {})
 
-    # Try CrewAI budget_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try couple AI budget agent
+    if COUPLE_AGENTS_AVAILABLE and couple_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.analyze_quote, {
+            result = await asyncio.to_thread(couple_ai.analyze_quote, {
                 "quote": quote, "budget_allocated": budget_allocated,
                 "category": category, "wedding_summary": wedding_summary
             })
             if result and result.get("success"):
-                return {"success": True, "data": {"analysis": result.get("analysis", ""), "value_rating": "fair"}, "provider": "CrewAI budget_agent (GLM4)"}
+                analysis = result.get("analysis", "")
+                return {"success": True, "data": analysis if isinstance(analysis, dict) else {"analysis": analysis, "value_rating": "fair"}, "provider": "CoupleAI budget_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI quote analysis failed, falling back: {e}")
+            logger.warning(f"Couple AI quote analysis failed, falling back: {e}")
 
     prompt = f"""Analyze this {category} vendor quote for an Indian wedding:
 - Quote total: ₹{quote.get('total_estimated_price', 0):,}
@@ -2877,7 +2893,7 @@ Respond in this exact JSON format:
 
 @app.post("/api/ai/match-vendors")
 async def ai_match_vendors(request: Request):
-    """Couple-facing: Score and rank vendors using CrewAI vendor_agent or direct Ollama."""
+    """Couple-facing: Score and rank vendors using couple vendor_agent or direct LLM."""
     data = await request.json()
     quotes = data.get("quotes", [])
     category_spec = data.get("category_spec", {})
@@ -2886,17 +2902,16 @@ async def ai_match_vendors(request: Request):
     if not quotes:
         return {"success": True, "data": []}
 
-    # Try CrewAI vendor_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try couple AI vendor matching agent
+    if COUPLE_AGENTS_AVAILABLE and couple_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.match_vendors, {
+            result = await asyncio.to_thread(couple_ai.match_vendors, {
                 "quotes": quotes[:8], "category_spec": category_spec, "budget_allocated": budget_allocated
             })
             if result and result.get("success"):
-                return {"success": True, "data": result.get("rankings", ""), "provider": "CrewAI vendor_agent (GLM4)"}
+                return {"success": True, "data": result.get("rankings", ""), "provider": "CoupleAI vendor_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI vendor matching failed, falling back: {e}")
+            logger.warning(f"Couple AI vendor matching failed, falling back: {e}")
 
     vendors_summary = "\n".join([
         f"- {q.get('vendor_name','?')}: ₹{q.get('total_estimated_price',0):,}, rating {q.get('vendor_rating',0)}, {q.get('vendor_experience',0)} yrs exp. Inclusions: {q.get('inclusions','N/A')[:80]}"
@@ -2926,23 +2941,23 @@ Respond as JSON array, one object per vendor, sorted best-first:
 
 @app.post("/api/ai/optimize-budget")
 async def ai_optimize_budget(request: Request):
-    """Couple-facing: Suggest budget reallocations using CrewAI budget_agent or direct Ollama."""
+    """Couple-facing: Suggest budget reallocations using couple budget_agent or direct LLM."""
     data = await request.json()
     budget_breakdown = data.get("budget_breakdown", {})
     quotes_by_category = data.get("quotes_by_category", {})
     wedding_summary = data.get("wedding_summary", {})
 
-    # Try CrewAI budget_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try couple AI budget agent
+    if COUPLE_AGENTS_AVAILABLE and couple_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.optimize_budget, {
+            result = await asyncio.to_thread(couple_ai.optimize_budget, {
                 "budget_breakdown": budget_breakdown, "quotes_by_category": quotes_by_category, "wedding_summary": wedding_summary
             })
             if result and result.get("success"):
-                return {"success": True, "data": {"optimization": result.get("optimization", "")}, "provider": "CrewAI budget_agent (GLM4)"}
+                opt = result.get("optimization", "")
+                return {"success": True, "data": opt if isinstance(opt, dict) else {"optimization": opt}, "provider": "CoupleAI budget_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI budget optimization failed, falling back: {e}")
+            logger.warning(f"Couple AI budget optimization failed, falling back: {e}")
 
     prompt = f"""An Indian wedding in {wedding_summary.get('city', 'India')} with {wedding_summary.get('guest_count', 200)} guests and total budget ₹{wedding_summary.get('budget', 0):,}.
 
@@ -2969,27 +2984,36 @@ Respond in JSON:
 
 @app.post("/api/ai/suggest-message")
 async def ai_suggest_message(request: Request):
-    """Both roles: Draft a contextual message using CrewAI communications_agent or direct Ollama."""
+    """Both roles: Draft a contextual message using role-specific communication agent."""
     data = await request.json()
     role = data.get("role", "couple")
     context = data.get("context", "")
     conversation_history = data.get("conversation_history", [])
     quote_info = data.get("quote_info", {})
 
-    # Try CrewAI communications_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Route to the correct agent system based on role
+    if role == "vendor" and VENDOR_AGENTS_AVAILABLE and vendor_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.suggest_message, {
-                "role": role, "context": context,
-                "conversation_history": conversation_history[-5:],
+            result = await asyncio.to_thread(vendor_ai.draft_response, {
+                "context": context, "conversation_history": conversation_history[-5:],
+                "quote_info": quote_info, "vendor_profile": data.get("vendor_profile", {})
+            })
+            if result and result.get("success"):
+                msg = result.get("message", "")
+                return {"success": True, "data": msg if isinstance(msg, dict) else {"message": msg, "tone": "professional"}, "provider": "VendorAI comms_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI message suggestion failed, falling back: {e}")
+    elif role == "couple" and COUPLE_AGENTS_AVAILABLE and couple_ai:
+        try:
+            result = await asyncio.to_thread(couple_ai.suggest_message, {
+                "context": context, "conversation_history": conversation_history[-5:],
                 "quote_info": quote_info
             })
             if result and result.get("success"):
                 msg = result.get("message", "")
-                return {"success": True, "data": {"message": msg, "tone": "professional"}, "provider": "CrewAI communications_agent (GLM4)"}
+                return {"success": True, "data": msg if isinstance(msg, dict) else {"message": msg, "tone": "professional"}, "provider": "CoupleAI comms_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI message suggestion failed, falling back: {e}")
+            logger.warning(f"Couple AI message suggestion failed, falling back: {e}")
 
     history_text = "\n".join([f"[{m.get('sender_role','?')}]: {m.get('content','')[:100]}" for m in conversation_history[-5:]])
 
@@ -3024,18 +3048,14 @@ async def ai_style_analysis(request: Request):
     preferences = data.get("preferences", {})
     wedding_context = data.get("wedding_context", {})
 
-    # Try CrewAI style_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try couple AI style agent
+    if COUPLE_AGENTS_AVAILABLE and couple_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.process_visual_preferences, preferences, wedding_context)
+            result = await asyncio.to_thread(couple_ai.suggest_style, {"preferences": {**preferences, **wedding_context}})
             if result and result.get("success"):
-                return {"success": True, "data": {
-                    "style_analysis": result.get("style_analysis", ""),
-                    "visual_matches": result.get("visual_matches", {})
-                }, "provider": "CrewAI style_agent (GLM4)"}
+                return {"success": True, "data": result.get("style", {}), "provider": "CoupleAI style_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI style analysis failed, falling back: {e}")
+            logger.warning(f"Couple AI style analysis failed, falling back: {e}")
 
     prompt = f"""Analyze visual preferences for an Indian wedding:
 Preferences: {json.dumps(preferences)}
@@ -3061,18 +3081,17 @@ async def ai_communications_strategy(request: Request):
     """Couple-facing: Create communication strategy using CrewAI communications_agent or direct Ollama."""
     data = await request.json()
 
-    # Try CrewAI communications_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try couple AI communications coach
+    if COUPLE_AGENTS_AVAILABLE and couple_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.create_communications_strategy, data)
+            result = await asyncio.to_thread(couple_ai.suggest_message, {
+                "context": "communications strategy", "quote_info": {},
+                "conversation_history": []
+            })
             if result and result.get("success"):
-                return {"success": True, "data": {
-                    "strategy": result.get("communications_strategy", ""),
-                    "platforms_covered": result.get("platforms_covered", [])
-                }, "provider": "CrewAI communications_agent (GLM4)"}
+                return {"success": True, "data": {"strategy": result.get("message", "")}, "provider": "CoupleAI comms_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI communications strategy failed, falling back: {e}")
+            logger.warning(f"Couple AI communications strategy failed, falling back: {e}")
 
     prompt = f"""Create a wedding communications strategy:
 Details: {json.dumps(data)}
@@ -3265,19 +3284,19 @@ async def ai_bid_assistant(request: Request):
     existing_bids = data.get("existing_bid_count", 0)
     vendor_services = data.get("vendor_services", [])
 
-    # Try CrewAI bid_assistant (budget + vendor agents)
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try vendor AI quote strategist
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.bid_assistant, {
-                "category": category, "blueprint_summary": blueprint_summary,
-                "budget_allocated": budget_allocated, "existing_bid_count": existing_bids,
-                "vendor_services": vendor_services
+            result = await asyncio.to_thread(vendor_ai.suggest_quote, {
+                "category": category,
+                "blueprint": {"wedding_summary": blueprint_summary, "budget_breakdown": {category: budget_allocated}},
+                "vendor_profile": {"services": vendor_services},
+                "bid_count": existing_bids
             })
             if result and result.get("success"):
-                return {"success": True, "data": {"bid_advice": result.get("bid_advice", "")}, "provider": "CrewAI budget+vendor agents (GLM4)"}
+                return {"success": True, "data": result.get("quote_strategy", {}), "provider": "VendorAI quote_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI bid assistant failed, falling back: {e}")
+            logger.warning(f"Vendor AI bid assistant failed, falling back: {e}")
 
     prompt = f"""Help a {category} vendor price their quote for an Indian wedding:
 - City: {blueprint_summary.get('city', 'India')}, Guests: {blueprint_summary.get('guest_count', 200)}
@@ -3312,18 +3331,18 @@ async def ai_listing_insights(request: Request):
     category_spec = data.get("category_spec", {})
     bid_count = data.get("bid_count", 0)
 
-    # Try CrewAI vendor_agent
-    if CREWAI_AVAILABLE and crewai_agents:
+    # Try vendor AI blueprint analyzer
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
         try:
-            import asyncio
-            result = await asyncio.to_thread(crewai_agents.listing_insights, {
-                "category": category, "wedding_summary": wedding_summary,
-                "category_spec": category_spec, "bid_count": bid_count
+            result = await asyncio.to_thread(vendor_ai.analyze_blueprint, {
+                "blueprint": {"wedding_summary": wedding_summary, "budget_breakdown": {category: wedding_summary.get("budget", 0)}, "category_specs": {category: category_spec}, "bid_count": bid_count},
+                "vendor_profile": {},
+                "category": category
             })
             if result and result.get("success"):
-                return {"success": True, "data": {"insights": result.get("insights", "")}, "provider": "CrewAI vendor_agent (GLM4)"}
+                return {"success": True, "data": result.get("opportunity", {}), "provider": "VendorAI blueprint_agent"}
         except Exception as e:
-            logger.warning(f"CrewAI listing insights failed, falling back: {e}")
+            logger.warning(f"Vendor AI listing insights failed, falling back: {e}")
 
     prompt = f"""Analyze this wedding listing for a {category} vendor:
 - City: {wedding_summary.get('city', 'India')}, Date: {wedding_summary.get('date', 'TBD')}
@@ -4006,6 +4025,19 @@ async def vendor_onboard_assist(request: Request):
     business_name = data.get("business_name", "")
     category = data.get("category", "")
 
+    # Try vendor AI profile agent
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
+        try:
+            result = await asyncio.to_thread(vendor_ai.onboard_assist, {
+                "business_name": business_name, "category": category
+            })
+            if result and result.get("success"):
+                suggestions = result.get("suggestions", result.get("raw", ""))
+                return {"success": True, "suggestions": suggestions if isinstance(suggestions, dict) else {"description": str(suggestions)}, "provider": "VendorAI profile_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI onboarding failed, falling back: {e}")
+
+    # Fallback: direct Gemini
     prompt = f"""Generate for a wedding {category} vendor named "{business_name}" in India:
 1. A professional business description (2-3 sentences, SEO-friendly)
 2. 5 common service packages with typical pricing in INR
@@ -4014,7 +4046,6 @@ async def vendor_onboard_assist(request: Request):
 Format as JSON: {{"description": "...", "services": [{{"name": "...", "base_price": number, "unit": "per event/per day/per plate"}}], "cities": ["..."]}}"""
 
     result = await _ask_gemini(CHAT_SYSTEM, prompt, 1024)
-    # Try to parse JSON from result
     try:
         json_match = re.search(r'\{[\s\S]*\}', result)
         if json_match:
@@ -4032,6 +4063,26 @@ async def enhance_vendor_description(request: Request):
     description = data.get("description", "")
     category = data.get("category", "")
 
+    # Try vendor AI profile agent
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
+        try:
+            result = await asyncio.to_thread(vendor_ai.optimize_profile, {
+                "business_name": data.get("business_name", ""),
+                "category": category,
+                "description": description,
+                "services": data.get("services", []),
+                "cities": data.get("cities", []),
+                "rating": data.get("rating", 0),
+                "experience_years": data.get("experience_years", 0),
+            })
+            if result and result.get("success"):
+                profile = result.get("profile", {})
+                if isinstance(profile, dict) and "enhanced_description" in profile:
+                    return {"success": True, "enhanced_description": profile["enhanced_description"], "profile_tips": profile.get("portfolio_tips", []), "provider": "VendorAI profile_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI description enhancement failed, falling back: {e}")
+
+    # Fallback: direct Gemini
     prompt = f"Improve this Indian wedding {category} vendor description for SEO and customer appeal. Keep it professional, under 200 words, highlight USPs: {description}"
     result = await _ask_gemini(CHAT_SYSTEM, prompt, 512)
     if not result:
@@ -4039,13 +4090,128 @@ async def enhance_vendor_description(request: Request):
     return {"success": True, "enhanced_description": result}
 
 
+@app.post("/api/ai/vendor-quote-assist")
+async def vendor_quote_assist(request: Request):
+    """Vendor-facing: AI helps craft a competitive quote for a blueprint."""
+    data = await request.json()
+    category = data.get("category", "")
+    blueprint = data.get("blueprint", {})
+    vendor_profile = data.get("vendor_profile", {})
+    bid_count = data.get("bid_count", 0)
+
+    # Try vendor AI quote agent
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
+        try:
+            result = await asyncio.to_thread(vendor_ai.suggest_quote, {
+                "category": category, "blueprint": blueprint,
+                "vendor_profile": vendor_profile, "bid_count": bid_count
+            })
+            if result and result.get("success"):
+                return {"success": True, "data": result.get("quote_strategy", {}), "provider": "VendorAI quote_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI quote assist failed, falling back: {e}")
+
+    # Fallback: direct LLM
+    ws = blueprint.get("wedding_summary", {})
+    budget = blueprint.get("budget_breakdown", {}).get(category, 0)
+    prompt = f"""Help a {category} vendor craft a competitive quote for a wedding in {ws.get('city', 'India')}, {ws.get('guest_count', 200)} guests, budget ₹{budget:,}. {bid_count} bids already placed.
+Return JSON: {{"recommended_price": 0, "value_adds": ["..."], "positioning_tip": "...", "win_probability": 0}}"""
+    response = await _ask_claude(MARKET_SYSTEM, prompt, 400)
+    try:
+        return {"success": True, "data": json.loads(response)}
+    except json.JSONDecodeError:
+        return {"success": True, "data": {"recommended_price": budget, "value_adds": ["Complimentary tasting/trial", "Extended coverage hours", "Same-day highlights reel"], "positioning_tip": "Highlight your unique specialties and past work in this city.", "win_probability": 40}}
+
+
+@app.post("/api/ai/vendor-blueprint-analysis")
+async def vendor_blueprint_analysis(request: Request):
+    """Vendor-facing: Analyze a blueprint as a business opportunity."""
+    data = await request.json()
+    blueprint = data.get("blueprint", {})
+    vendor_profile = data.get("vendor_profile", {})
+    category = data.get("category", "")
+
+    # Try vendor AI blueprint analyzer
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
+        try:
+            result = await asyncio.to_thread(vendor_ai.analyze_blueprint, {
+                "blueprint": blueprint, "vendor_profile": vendor_profile, "category": category
+            })
+            if result and result.get("success"):
+                return {"success": True, "data": result.get("opportunity", {}), "provider": "VendorAI blueprint_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI blueprint analysis failed, falling back: {e}")
+
+    # Fallback
+    ws = blueprint.get("wedding_summary", {})
+    budget = blueprint.get("budget_breakdown", {}).get(category, 0)
+    return {"success": True, "data": {
+        "opportunity_score": 70, "estimated_revenue": f"₹{budget:,}",
+        "competition_level": "medium", "recommendation": "bid",
+        "match_factors": f"Wedding in {ws.get('city', '?')} with ₹{budget:,} for {category}"
+    }}
+
+
+@app.post("/api/ai/vendor-competitive-analysis")
+async def vendor_competitive_analysis(request: Request):
+    """Vendor-facing: Market positioning and competitive insights."""
+    data = await request.json()
+    vendor_profile = data.get("vendor_profile", {})
+    category = data.get("category", "")
+    city = data.get("city", "")
+
+    # Gather competitors from seed data
+    competitors = [v for v in _vendor_profiles.values()
+                   if v.get("category") == category and v.get("city", "").lower() == city.lower()
+                   and v.get("id") != vendor_profile.get("id")][:8]
+
+    # Try vendor AI competitive agent
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
+        try:
+            result = await asyncio.to_thread(vendor_ai.competitive_analysis, {
+                "vendor_profile": vendor_profile, "category": category,
+                "city": city, "competitors": competitors
+            })
+            if result and result.get("success"):
+                return {"success": True, "data": result.get("competitive", {}), "provider": "VendorAI competitive_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI competitive analysis failed, falling back: {e}")
+
+    # Fallback
+    return {"success": True, "data": {
+        "market_position": "mid-range",
+        "pricing_advice": "Your pricing is competitive for your experience level.",
+        "strengths": ["Established rating", "Operating in major metro", "Category experience"],
+        "gaps": ["Could expand to more cities", "Portfolio could be refreshed"],
+        "growth_tips": [
+            "Respond to inquiries within 2 hours for 3x better conversion",
+            "Add 10+ portfolio images across different event types",
+            f"Offer {category}-specific packages at 3 price tiers"
+        ]
+    }}
+
+
 @app.post("/api/ai/vendor-business-tips")
 async def vendor_business_tips(request: Request):
     """Category-specific business tips for vendor dashboard."""
     data = await request.json()
     category = data.get("category", "")
+    vendor_profile = data.get("vendor_profile", {})
 
-    # Return category-specific tips (static for now, fast response)
+    # Try vendor AI competitive agent for personalized tips
+    if VENDOR_AGENTS_AVAILABLE and vendor_ai:
+        try:
+            result = await asyncio.to_thread(vendor_ai.get_business_tips, {
+                "category": category, "vendor_profile": vendor_profile
+            })
+            if result and result.get("success"):
+                tips_data = result.get("business_tips", {})
+                if isinstance(tips_data, dict) and "tips" in tips_data:
+                    return {"success": True, "tips": tips_data["tips"], "season_alert": tips_data.get("season_alert", ""), "category": category, "provider": "VendorAI competitive_agent"}
+        except Exception as e:
+            logger.warning(f"Vendor AI business tips failed, falling back: {e}")
+
+    # Fallback: static category-specific tips
     tips_map = {
         "venue": [
             "Peak wedding season (Oct-Feb) books 6+ months ahead — update availability calendar early",
@@ -4127,15 +4293,17 @@ async def draft_vendor_inquiry(request: Request):
     couple_id = data.get("couple_id", "default")
 
     try:
-        if CREWAI_AVAILABLE:
-            result = await asyncio.to_thread(
-                crewai_agents.draft_vendor_inquiry,
-                vendor_name, category, couple_preferences, budget_allocated, couple_id
-            )
-            parsed = json.loads(result) if isinstance(result, str) else result
-            return JSONResponse({"success": True, "data": parsed})
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
+            result = await asyncio.to_thread(couple_ai.suggest_message, {
+                "context": f"Initial inquiry to {vendor_name} for {category} services",
+                "quote_info": {"category": category, "total_estimated_price": budget_allocated},
+                "conversation_history": []
+            })
+            if result and result.get("success"):
+                msg = result.get("message", {})
+                return JSONResponse({"success": True, "data": msg if isinstance(msg, dict) else {"message": str(msg)}, "provider": "CoupleAI comms_agent"})
     except Exception as e:
-        logger.warning(f"CrewAI draft inquiry failed: {e}")
+        logger.warning(f"Couple AI draft inquiry failed: {e}")
 
     # Fallback: template-based
     city = couple_preferences.get("city", "your city")
@@ -4180,15 +4348,17 @@ async def draft_negotiation(request: Request):
     couple_id = data.get("couple_id", "default")
 
     try:
-        if CREWAI_AVAILABLE:
-            result = await asyncio.to_thread(
-                crewai_agents.draft_negotiation_response,
-                vendor_name, category, quote_details, budget, couple_id
-            )
-            parsed = json.loads(result) if isinstance(result, str) else result
-            return JSONResponse({"success": True, "data": parsed})
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
+            result = await asyncio.to_thread(couple_ai.suggest_message, {
+                "context": f"Negotiate with {vendor_name} on {category} quote — currently ₹{quote_details.get('total_estimated_price', 0):,} vs budget ₹{budget:,}",
+                "quote_info": {**quote_details, "category": category},
+                "conversation_history": []
+            })
+            if result and result.get("success"):
+                msg = result.get("message", {})
+                return JSONResponse({"success": True, "data": msg if isinstance(msg, dict) else {"message": str(msg)}, "provider": "CoupleAI comms_agent"})
     except Exception as e:
-        logger.warning(f"CrewAI negotiation draft failed: {e}")
+        logger.warning(f"Couple AI negotiation draft failed: {e}")
 
     # Fallback: simple logic
     quote_total = quote_details.get("total_estimated_price", 0)
@@ -4246,15 +4416,17 @@ async def booking_confirmation(request: Request):
     couple_id = data.get("couple_id", "default")
 
     try:
-        if CREWAI_AVAILABLE:
-            result = await asyncio.to_thread(
-                crewai_agents.generate_booking_confirmation,
-                vendor_name, category, agreed_terms, couple_id
-            )
-            parsed = json.loads(result) if isinstance(result, str) else result
-            return JSONResponse({"success": True, "data": parsed})
+        if COUPLE_AGENTS_AVAILABLE and couple_ai:
+            result = await asyncio.to_thread(couple_ai.suggest_message, {
+                "context": f"Booking confirmation with {vendor_name} for {category} — agreed price ₹{agreed_terms.get('agreed_price', 0):,}",
+                "quote_info": {"category": category, "total_estimated_price": agreed_terms.get("agreed_price", 0)},
+                "conversation_history": []
+            })
+            if result and result.get("success"):
+                msg = result.get("message", {})
+                return JSONResponse({"success": True, "data": msg if isinstance(msg, dict) else {"message": str(msg)}, "provider": "CoupleAI comms_agent"})
     except Exception as e:
-        logger.warning(f"CrewAI booking confirmation failed: {e}")
+        logger.warning(f"Couple AI booking confirmation failed: {e}")
 
     # Fallback
     price = agreed_terms.get("agreed_price", "as discussed")
