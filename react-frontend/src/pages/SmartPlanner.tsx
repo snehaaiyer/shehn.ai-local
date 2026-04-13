@@ -363,6 +363,10 @@ const SmartPlanner: React.FC = () => {
     try { const r = localStorage.getItem('weddingPreferences'); if (!r) return null; const p = JSON.parse(r); return p.basicDetails || p; }
     catch { return null; }
   };
+  const loadFullStoredPrefs = (): Record<string, any> | null => {
+    try { const r = localStorage.getItem('weddingPreferences'); if (!r) return null; return JSON.parse(r); }
+    catch { return null; }
+  };
   const getPrefsFlat = () => {
     const s = loadStoredPrefs() || {};
     return { city: weddingPreferences.city || s.location || s.city || '', guestCount: weddingPreferences.guestCount || s.guestCount || '',
@@ -773,7 +777,7 @@ const SmartPlanner: React.FC = () => {
     try {
       const res = await fetch(`${API_BASE}/api/ai/plan-wedding`, { method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-User-Role': 'couple', 'X-User-Id': '1' },
-        body: JSON.stringify({ prompt: finalPrompt, dateFlexibility: dateFlexibility !== 'exact' ? dateFlexibility : undefined }) });
+        body: JSON.stringify({ prompt: finalPrompt, dateFlexibility: dateFlexibility !== 'exact' ? dateFlexibility : undefined, savedPreferences: loadFullStoredPrefs() || undefined }) });
       const data = await res.json();
       if (data.success) {
         setPlanResult(data);

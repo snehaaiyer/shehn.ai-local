@@ -3396,6 +3396,9 @@ async def ai_generate_blueprint(request: Request):
     # Support both flat fields and nested objects from WeddingBlueprint.tsx
     basic = data.get("basicDetails", {})
     theme_obj = data.get("theme", {})
+    catering_prefs = data.get("catering", {})
+    photo_prefs = data.get("photography", {})
+    venue_prefs = data.get("venue", {})
 
     city = data.get("city") or basic.get("location", "Mumbai")
     guest_count = int(data.get("guest_count") or basic.get("guestCount", 200))
@@ -3406,7 +3409,19 @@ async def ai_generate_blueprint(request: Request):
     events = data.get("events", ["mehendi", "sangeet", "ceremony", "reception"])
     couple_names = f"{basic.get('yourName', 'Bride')} & {basic.get('partnerName', 'Groom')}"
 
-    logger.info(f"📋 Generating AI blueprint for {city}, {guest_count} guests, ₹{budget:,}")
+    # User-saved catering preferences
+    user_cuisine = catering_prefs.get("cuisineType", "")
+    user_meal_type = catering_prefs.get("mealType", "")  # "vegetarian", "non-vegetarian", "both"
+    user_dietary = catering_prefs.get("dietaryRestrictions", [])
+    user_must_have = catering_prefs.get("mustHaveDishes", "")
+    # User-saved photography preferences
+    user_photo_style = photo_prefs.get("style", "")
+    user_videography = photo_prefs.get("videography", {})
+    user_deliverables = photo_prefs.get("deliverables", {})
+    # User-saved venue preferences
+    user_venue_type = venue_prefs.get("venueType", "")
+
+    logger.info(f"📋 Generating AI blueprint for {city}, {guest_count} guests, ₹{budget:,} (cuisine={user_cuisine or 'auto'}, diet={user_meal_type or 'auto'})")
 
     # ── Step 1: Market-rate intelligence (city-specific, data-driven) ──────
     # Real market data: WedMeGood 2025-26, ShaadiSaga, WeddingWire India
@@ -3439,45 +3454,81 @@ async def ai_generate_blueprint(request: Request):
 
     # ── Step 2: Smart budget allocation (adapts to budget tightness) ──────
     per_guest = budget / guest_count if guest_count > 0 else 5000
-    # Calculate catering cost FIRST since it scales with guests (non-negotiable)
-    catering_per_plate = max(venue_rate[0], min(venue_rate[1], int(per_guest * 0.35)))
-    catering_total = catering_per_plate * guest_count
-
-    # Remaining budget after catering
-    remaining = budget - catering_total
+    num_events = len(events)
     is_tight = per_guest < 3000  # budget is tight
 
-    if remaining <= 0:
-        # Budget can't even cover catering — flag and redistribute
-        catering_total = int(budget * 0.40)
-        catering_per_plate = catering_total // max(guest_count, 1)
-        remaining = budget - catering_total
-        budget_warning = f"⚠️ Budget is very tight at ₹{int(per_guest):,}/guest. Catering alone needs ₹{venue_rate[0]:,}/plate minimum. Consider reducing guest list to {int(budget / venue_rate[0] / 1.8)} guests."
+    # Market-rate per-plate costs by city tier (WedMeGood/ShaadiSaga 2025-26)
+    # These are what caterers actually charge — NOT derived from total budget
+    PLATE_RATES = {
+        "metro":  {"budget": (800, 1200), "mid": (1200, 1800), "premium": (1800, 3000)},
+        "tier2":  {"budget": (600, 900),  "mid": (900, 1400),  "premium": (1400, 2200)},
+        "tier3":  {"budget": (400, 700),  "mid": (700, 1100),  "premium": (1100, 1800)},
+    }
+    plate_tier = PLATE_RATES.get(tier, PLATE_RATES["tier2"])
+
+    # Allocate TOTAL budget proportionally first, then derive per-plate from allocation
+    # Industry standard: venue 30-35%, catering 25-30%, photography 10-15%, decor 10-12%, makeup 5%, entertainment 5%
+    if is_tight:
+        v_pct, cat_pct, ph_pct, dec_pct, mk_pct, ent_pct = 0.30, 0.30, 0.15, 0.12, 0.08, 0.05
+    else:
+        v_pct, cat_pct, ph_pct, dec_pct, mk_pct, ent_pct = 0.32, 0.28, 0.15, 0.13, 0.07, 0.05
+
+    venue_budget = int(budget * v_pct)
+    catering_total = int(budget * cat_pct)
+    photo_budget = int(budget * ph_pct)
+    decor_budget = int(budget * dec_pct)
+    makeup_budget = int(budget * mk_pct)
+    ent_budget = int(budget * ent_pct)
+
+    # Not all events need full catering — mehendi/sangeet are lighter meals
+    FULL_MEAL_EVENTS = {"ceremony", "reception", "wedding"}
+    LIGHT_MEAL_EVENTS = {"mehendi", "sangeet", "haldi", "cocktail"}
+    full_meals = sum(1 for e in events if e.lower() in FULL_MEAL_EVENTS)
+    light_meals = sum(1 for e in events if e.lower() in LIGHT_MEAL_EVENTS)
+    # Weight: full meal = 1.0, light meal = 0.5
+    meal_weight = max(full_meals + light_meals * 0.5, 1.0)
+    # Per-plate = total catering / (guests × meal_weight)
+    catering_per_plate = int(catering_total / (guest_count * meal_weight))
+
+    # Clamp per-plate to market-rate range for the city tier
+    if catering_per_plate >= plate_tier["premium"][0]:
+        catering_per_plate = min(catering_per_plate, plate_tier["premium"][1])
+    elif catering_per_plate >= plate_tier["mid"][0]:
+        catering_per_plate = min(catering_per_plate, plate_tier["mid"][1])
+    else:
+        catering_per_plate = max(catering_per_plate, plate_tier["budget"][0])
+
+    # Recalculate catering_total from clamped per-plate (don't overshoot budget)
+    catering_total = int(catering_per_plate * guest_count * meal_weight)
+    # If clamping changed the total, redistribute the difference to venue
+    budget_used = venue_budget + catering_total + photo_budget + decor_budget + makeup_budget + ent_budget
+    if budget_used < budget:
+        venue_budget += (budget - budget_used)
+    elif budget_used > budget:
+        # Reduce catering to fit, recalc per-plate
+        catering_total = budget - (venue_budget + photo_budget + decor_budget + makeup_budget + ent_budget)
+        catering_per_plate = int(catering_total / (guest_count * meal_weight))
+
+    if catering_per_plate < plate_tier["budget"][0]:
+        budget_warning = f"⚠️ Budget is very tight at ₹{int(per_guest):,}/guest. Catering needs at least ₹{plate_tier['budget'][0]:,}/plate. Consider reducing guest list to {int(budget / plate_tier['budget'][0] / 2)} guests."
     elif is_tight:
         budget_warning = f"💡 At ₹{int(per_guest):,}/guest, the budget is tight but doable. We've optimised allocations to prioritise essentials."
     else:
         budget_warning = None
 
-    # Distribute remaining budget intelligently
-    if is_tight:
-        venue_pct, photo_pct, decor_pct, makeup_pct, ent_pct = 0.30, 0.25, 0.20, 0.15, 0.10
-    else:
-        venue_pct, photo_pct, decor_pct, makeup_pct, ent_pct = 0.28, 0.28, 0.22, 0.12, 0.10
-
-    venue_budget = int(remaining * venue_pct)
-    photo_budget = int(remaining * photo_pct)
-    decor_budget = int(remaining * decor_pct)
-    makeup_budget = int(remaining * makeup_pct)
-    ent_budget = int(remaining * ent_pct)
-
     # ── Step 3: Personalised vendor specs (based on actual budget) ─────────
-    num_events = len(events)
     decor_per_event = decor_budget // max(num_events, 1)
     makeup_looks = num_events + 1  # +1 for trial
     photo_days = min(num_events, 3)
 
-    # Venue recommendation based on budget
-    if venue_budget >= 1500000:
+    # Venue recommendation based on user preference + budget
+    if user_venue_type:
+        venue_style = user_venue_type
+        if venue_budget >= 500000:
+            venue_notes = f"'{user_venue_type}' style in {city}. Good budget range — visit 3-5 options before deciding."
+        else:
+            venue_notes = f"'{user_venue_type}' style in {city}. Negotiate for weekday/off-season discounts."
+    elif venue_budget >= 1500000:
         venue_style, venue_notes = "5-star hotel or heritage palace", f"Premium venues in {city}. Budget allows luxury. Book 10-12 months ahead."
     elif venue_budget >= 500000:
         venue_style, venue_notes = "4-star hotel or premium banquet hall", f"Good range of options in {city}. Visit 3-5 venues before deciding."
@@ -3487,20 +3538,52 @@ async def ai_generate_blueprint(request: Request):
         venue_style, venue_notes = "community hall, farmhouse, or terrace venue", f"Budget-friendly options in {city}. Consider off-peak dates (Mon-Thu) for 20-30% savings."
 
     # Photography recommendation
-    if photo_budget >= 300000:
+    # Use user-preferred photo style if set, else derive from budget tier
+    if user_photo_style:
+        photo_style = user_photo_style
+        if photo_budget >= 300000:
+            photo_notes = f"Budget allows top photographers for '{user_photo_style}' style. Include pre-wedding shoot, drone coverage, same-day edit."
+        elif photo_budget >= 150000:
+            photo_notes = f"Good mid-range coverage for '{user_photo_style}' style, {photo_days} days. Prioritise ceremony + reception."
+        else:
+            photo_notes = f"'{user_photo_style}' style — cover key moments: ceremony, couple portraits, family formals."
+    elif photo_budget >= 300000:
         photo_style, photo_notes = "premium candid + cinematic", f"Budget allows top photographers. Include pre-wedding shoot (₹25-50K), drone coverage, same-day edit."
     elif photo_budget >= 150000:
         photo_style, photo_notes = "candid + traditional combo", f"Good mid-range coverage for {photo_days} days. Prioritise ceremony + reception. Pre-wedding shoot may stretch budget."
     else:
         photo_style, photo_notes = "focused essential coverage", f"Cover key moments — ceremony, couple portraits, family formals. Skip pre-wedding to stay in budget."
 
-    # Catering insight
-    if catering_per_plate >= 2500:
-        cater_tier, cater_notes = "premium multi-cuisine", f"₹{catering_per_plate:,}/plate allows 4-6 live counters, premium desserts, welcome drinks."
-    elif catering_per_plate >= 1500:
-        cater_tier, cater_notes = "standard multi-cuisine", f"₹{catering_per_plate:,}/plate — 2-3 live counters, good variety. Bundle with venue for 10-15% savings."
+    # Determine veg/non-veg split from user preference instead of hard-coding
+    if user_meal_type and "veg" in user_meal_type.lower() and "non" not in user_meal_type.lower():
+        veg_pct, nonveg_pct = 1.0, 0.0
+    elif user_meal_type and "non" in user_meal_type.lower():
+        veg_pct, nonveg_pct = 0.4, 0.6
     else:
-        cater_tier, cater_notes = "value vegetarian/regional", f"₹{catering_per_plate:,}/plate is tight. Go pure veg to save ₹200-400/plate. Limit live counters to 1-2."
+        veg_pct, nonveg_pct = 0.7, 0.3  # default "both"
+    veg_count, nonveg_count = int(guest_count * veg_pct), int(guest_count * nonveg_pct)
+
+    # Use user-preferred cuisine if set, else classify by budget tier
+    # Classify catering tier based on city-specific market rates
+    if user_cuisine:
+        cater_tier = user_cuisine
+    elif catering_per_plate >= plate_tier["premium"][0]:
+        cater_tier = "premium multi-cuisine"
+    elif catering_per_plate >= plate_tier["mid"][0]:
+        cater_tier = "standard multi-cuisine"
+    else:
+        cater_tier = "value vegetarian/regional"
+
+    if catering_per_plate >= plate_tier["premium"][0]:
+        cater_notes = f"₹{catering_per_plate:,}/plate allows 4-6 live counters, premium desserts, welcome drinks."
+    elif catering_per_plate >= plate_tier["mid"][0]:
+        cater_notes = f"₹{catering_per_plate:,}/plate — 2-3 live counters, good variety. Bundle with venue for 10-15% savings."
+    else:
+        cater_notes = f"₹{catering_per_plate:,}/plate is tight. Go pure veg to save ₹200-400/plate. Limit live counters to 1-2."
+    if user_dietary:
+        cater_notes += f" Dietary: {', '.join(user_dietary)}."
+    if user_must_have:
+        cater_notes += f" Must-have: {user_must_have}."
 
     fmt = lambda x: f"₹{x/100000:.1f}L" if x >= 100000 else f"₹{x:,}"
 
@@ -3568,7 +3651,11 @@ async def ai_generate_blueprint(request: Request):
             },
             "photography": {
                 "budget_allocated": photo_budget,
-                "requirements": {"style": photo_style, "coverage": f"{photo_days} days, all events", "deliverables": "500+ edited photos, 10-min highlight reel"},
+                "requirements": {
+                    "style": photo_style, "coverage": f"{photo_days} days, all events",
+                    "deliverables": ", ".join(f"{k}: {v}" for k, v in user_deliverables.items() if v) if user_deliverables else "500+ edited photos, 10-min highlight reel",
+                    **({"videography": f"{'Required' if user_videography.get('required') else 'Optional'} — {user_videography.get('style', 'cinematic')}"} if user_videography.get("required") else {}),
+                },
                 "notes": photo_notes
             },
             "catering": {
@@ -3576,8 +3663,8 @@ async def ai_generate_blueprint(request: Request):
                 "requirements": {
                     "cuisine": cater_tier,
                     "per_plate": f"₹{catering_per_plate:,}",
-                    "veg_nonveg": f"{int(guest_count*0.7)} veg / {int(guest_count*0.3)} non-veg",
-                    "counters": "2-4 live counters" if catering_per_plate >= 1500 else "1-2 live counters"
+                    "veg_nonveg": f"{veg_count} veg / {nonveg_count} non-veg" if nonveg_count > 0 else f"{veg_count} veg (pure vegetarian)",
+                    "counters": "4-6 live counters" if catering_per_plate >= plate_tier["premium"][0] else ("2-4 live counters" if catering_per_plate >= plate_tier["mid"][0] else "1-2 live counters")
                 },
                 "notes": cater_notes
             },
@@ -3700,11 +3787,12 @@ async def smart_plan_wedding(request: Request):
     data = await request.json()
     prompt = data.get("prompt", "")
     date_flexibility = data.get("dateFlexibility", None)  # '2weeks', '1month', '3months'
+    saved_prefs = data.get("savedPreferences", {}) or {}  # Full preferences from frontend localStorage
 
     if not prompt or len(prompt.strip()) < 10:
         return JSONResponse({"success": False, "error": "Please describe your dream wedding in a sentence or two!"}, status_code=400)
 
-    logger.info(f"🎯 Smart Planner: '{prompt[:80]}...'")
+    logger.info(f"🎯 Smart Planner: '{prompt[:80]}...' (saved prefs: {'yes' if saved_prefs else 'no'})")
     results = {"steps": []}
 
     # ── STEP 1: Extract preferences from natural language ─────────────
@@ -3726,20 +3814,38 @@ async def smart_plan_wedding(request: Request):
     if not extracted:
         extracted = _keyword_extract(prompt)
 
-    # Fill defaults for missing fields
-    city = extracted.get("city", "Mumbai")
-    guest_count = int(extracted.get("guestCount", 200))
-    budget_str = extracted.get("budget", "₹30,00,000")
+    # Merge with saved preferences — AI-extracted values override saved prefs
+    # (if user mentioned it in the prompt, that's more recent intent)
+    saved_basic = saved_prefs.get("basicDetails", {})
+    saved_catering = saved_prefs.get("catering", {})
+    saved_photo = saved_prefs.get("photography", {})
+    saved_venue = saved_prefs.get("venue", {})
+    saved_theme = saved_prefs.get("theme", {})
+    saved_events_obj = saved_prefs.get("events", {})
+    saved_events_list = saved_events_obj.get("selectedEvents", []) if isinstance(saved_events_obj, dict) else (saved_events_obj if isinstance(saved_events_obj, list) else [])
+
+    # Fill fields: prompt-extracted > saved preferences > defaults
+    city = extracted.get("city") or saved_basic.get("location") or saved_basic.get("city") or "Mumbai"
+    guest_count = int(extracted.get("guestCount") or saved_basic.get("guestCount") or 200)
+    budget_str = extracted.get("budget") or saved_basic.get("budgetRange") or saved_basic.get("budget") or "₹30,00,000"
     budget = int(''.join(filter(str.isdigit, str(budget_str)))) if budget_str else 3000000
     if budget < 1000: budget *= 100000
-    wedding_date = extracted.get("weddingDate", "2026-12-15")
-    wedding_type = extracted.get("weddingType", "Traditional Hindu")
-    events = extracted.get("events", ["mehendi", "sangeet", "ceremony", "reception"])
-    your_name = extracted.get("yourName", "")
-    partner_name = extracted.get("partnerName", "")
-    venue_type = extracted.get("venueType", "")
-    cuisine_type = extracted.get("cuisineType", "")
-    photo_style = extracted.get("photoStyle", "")
+    wedding_date = extracted.get("weddingDate") or saved_basic.get("weddingDate") or "2026-12-15"
+    wedding_type = extracted.get("weddingType") or saved_theme.get("selectedTheme") or "Traditional Hindu"
+    events = extracted.get("events") or saved_events_list or ["mehendi", "sangeet", "ceremony", "reception"]
+    your_name = extracted.get("yourName") or saved_basic.get("yourName") or ""
+    partner_name = extracted.get("partnerName") or saved_basic.get("partnerName") or ""
+    venue_type = extracted.get("venueType") or saved_venue.get("venueType") or ""
+    cuisine_type = extracted.get("cuisineType") or saved_catering.get("cuisine") or saved_catering.get("cuisineType") or ""
+    photo_style = extracted.get("photoStyle") or saved_photo.get("style") or ""
+
+    # Carry forward detailed preferences that can't be extracted from prompt text
+    dietary_restrictions = saved_catering.get("dietaryRestrictions", [])
+    meal_type = saved_catering.get("mealType", "")  # e.g. "vegetarian", "non-vegetarian", "both"
+    budget_per_person = saved_catering.get("budgetPerPerson", "")
+    must_have_dishes = saved_catering.get("mustHaveDishes", "")
+    videography = saved_photo.get("videography", {})
+    photo_deliverables = saved_photo.get("deliverables", {})
 
     # Calculate flexible date range (max 3 months)
     date_range = None
@@ -3766,9 +3872,19 @@ async def smart_plan_wedding(request: Request):
             **({"dateFlexibility": date_flexibility, "dateRange": date_range} if date_range else {}),
         },
         "theme": {"selectedTheme": wedding_type},
-        "venue": {"venueType": venue_type or "Luxury Hotel"},
-        "catering": {"cuisineType": cuisine_type or "Multi-Cuisine"},
-        "photography": {"style": photo_style or "Candid + Traditional"},
+        "venue": {"venueType": venue_type or saved_venue.get("venueType") or ""},
+        "catering": {
+            "cuisineType": cuisine_type or "Multi-Cuisine",
+            "mealType": meal_type,
+            "dietaryRestrictions": dietary_restrictions,
+            "budgetPerPerson": budget_per_person,
+            "mustHaveDishes": must_have_dishes,
+        },
+        "photography": {
+            "style": photo_style or "Candid + Traditional",
+            "videography": videography,
+            "deliverables": photo_deliverables,
+        },
         "events": events,
     }
 
