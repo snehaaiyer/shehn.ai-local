@@ -388,6 +388,21 @@ const VendorMarketplace: React.FC = () => {
                       <span className="inline-flex items-center gap-1"><Users className="h-4 w-4 text-gray-400" /> {summary.guest_count || '?'} guests</span>
                     </div>
                     <div className="flex items-center gap-3">
+                      {listing.vendor_quote_status === 'shortlisted' && (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 rounded-full px-2.5 py-1">
+                          ⭐ Shortlisted
+                        </span>
+                      )}
+                      {listing.vendor_quote_status === 'accepted' && (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 rounded-full px-2.5 py-1">
+                          ✅ Accepted
+                        </span>
+                      )}
+                      {listing.vendor_quote_status === 'submitted' && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full px-2.5 py-1">
+                          Bid Submitted
+                        </span>
+                      )}
                       {bidCount > 0 && (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600 bg-rose-50 rounded-full px-2.5 py-1">
                           <Flame className="h-3.5 w-3.5" /> {bidCount} vendors quoted
@@ -398,10 +413,12 @@ const VendorMarketplace: React.FC = () => {
                   </div>
 
                   <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-                    <span className="inline-flex items-center gap-1 text-gray-700">
-                      <IndianRupee className="h-3.5 w-3.5" />
-                      Budget: {summary.budget ? `${(summary.budget / 100000).toFixed(1)}L` : 'N/A'}
-                    </span>
+                    {catSpec?.budget_allocated > 0 && (
+                      <span className="inline-flex items-center gap-1 text-gray-700">
+                        <IndianRupee className="h-3.5 w-3.5" />
+                        {categoryLabel} Budget: ₹{catSpec.budget_allocated.toLocaleString('en-IN')}
+                      </span>
+                    )}
                     {summary.theme && (
                       <span className="text-gray-500">Theme: {summary.theme}</span>
                     )}
@@ -437,11 +454,10 @@ const VendorMarketplace: React.FC = () => {
                         {/* Full wedding summary */}
                         <div>
                           <h3 className="text-sm font-semibold text-gray-700 mb-2">Wedding Summary</h3>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm text-gray-600">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm text-gray-600">
                             <div><span className="text-gray-400 text-xs block">Date</span>{summary.date || 'TBD'}</div>
                             <div><span className="text-gray-400 text-xs block">City</span>{summary.city || 'N/A'}</div>
                             <div><span className="text-gray-400 text-xs block">Guests</span>{summary.guest_count || '?'}</div>
-                            <div><span className="text-gray-400 text-xs block">Total Budget</span>&#8377;{summary.budget?.toLocaleString('en-IN') || 'N/A'}</div>
                           </div>
                           {summary.events?.length > 0 && (
                             <div className="mt-2">

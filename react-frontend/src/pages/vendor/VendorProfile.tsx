@@ -7,6 +7,7 @@ import {
 import { VendorService } from '../../services/vendor_service';
 import { useAppStore } from '../../store/useAppStore';
 import { VendorProfile as VendorProfileType, VendorCategory } from '../../types/marketplace';
+import { API_BASE } from '../../config/api_config';
 
 const CATEGORIES: { value: VendorCategory; label: string }[] = [
   { value: 'venue', label: 'Venue' },
@@ -100,7 +101,7 @@ const VendorProfilePage: React.FC = () => {
     if (!description.trim() || !category) return;
     setAiEnhancing(true);
     try {
-      const res = await fetch('/api/ai/chat', {
+      const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -128,9 +128,9 @@ describe('AIChat Screen', () => {
       });
     });
 
-    test('renders Shehnai logo with fallback support', () => {
+    test('renders Shehn.AI logo with fallback support', () => {
       renderAIChat();
-      const logoImg = screen.queryByAltText('Shehnai.AI');
+      const logoImg = screen.queryByAltText('Shehn.AI');
       // Logo is rendered either as img or as fallback div
       expect(logoImg || screen.queryByText('S')).toBeTruthy();
     });
@@ -679,7 +679,7 @@ describe('AIChat Screen', () => {
   describe('Logo Fallback', () => {
     test('shows fallback "S" when logo image fails to load', () => {
       renderAIChat();
-      const logoImg = screen.queryByAltText('Shehnai.AI');
+      const logoImg = screen.queryByAltText('Shehn.AI');
       if (logoImg) {
         fireEvent.error(logoImg);
         expect(screen.getByText('S')).toBeInTheDocument();

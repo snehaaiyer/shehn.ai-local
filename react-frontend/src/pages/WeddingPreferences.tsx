@@ -115,7 +115,9 @@ interface WeddingPreferencesData {
 
 const WeddingPreferences: React.FC = () => {
   const navigate = useNavigate();
-  const { updateWeddingPreferences } = useAppStore();
+  const { updateWeddingPreferences, blueprint, blueprintId, updateBlueprint } = useAppStore();
+  const theme = useAppStore(s => s.theme);
+  const isDark = theme === 'dark';
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [isGenerating, setIsGenerating] = useState(false); // State for blueprint generation
@@ -1062,6 +1064,32 @@ const WeddingPreferences: React.FC = () => {
   useEffect(() => {
     const loadDefaultPreferences = () => {
       try {
+        // Pre-fill from blueprint (AI planner) if available
+        const bp = blueprint;  // from zustand store
+        if (bp && (bp.city || bp.budget || bp.guestCount)) {
+          setPreferences(prev => ({
+            ...prev,
+            basicDetails: {
+              ...prev.basicDetails,
+              location: bp.city || prev.basicDetails.location,
+              guestCount: bp.guestCount ? parseInt(bp.guestCount) || prev.basicDetails.guestCount : prev.basicDetails.guestCount,
+              budgetRange: bp.budget || prev.basicDetails.budgetRange,
+              weddingDate: bp.date || prev.basicDetails.weddingDate,
+            },
+            theme: {
+              ...prev.theme,
+              selectedTheme: bp.theme || prev.theme.selectedTheme,
+            },
+            events: {
+              ...prev.events,
+              selectedEvents: bp.events?.length ? bp.events : prev.events.selectedEvents,
+            }
+          }));
+          setLoadedFromSmartPlanner(true);
+          console.log('📋 Pre-filled preferences from AI blueprint:', bp);
+          return; // Skip localStorage loading since blueprint is more recent
+        }
+
         const savedPreferences = localStorage.getItem('weddingPreferences');
         if (savedPreferences) {
           const parsedPreferences = JSON.parse(savedPreferences);
@@ -1160,7 +1188,8 @@ const WeddingPreferences: React.FC = () => {
     };
 
     loadDefaultPreferences();
-  }, [updatePreference]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updatePreference, blueprint?.city, blueprint?.budget, blueprint?.guestCount, blueprint?.date, blueprint?.theme]);
 
   // Drag and Drop State
   const [draggedIndex, setDraggedIndex] = useState<number>(-1);
@@ -1207,6 +1236,32 @@ const WeddingPreferences: React.FC = () => {
       setIsGenerating(false);
     }, 1500);
   };
+
+  const syncPreferencesToBlueprint = useCallback(() => {
+    // Save to localStorage
+    localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
+    // Sync to legacy store
+    updateWeddingPreferences({
+      weddingType: preferences.theme?.selectedTheme || '',
+      city: preferences.basicDetails?.location || '',
+      guestCount: String(preferences.basicDetails?.guestCount || ''),
+      weddingStyle: preferences.theme?.selectedTheme || '',
+      weddingDate: preferences.basicDetails?.weddingDate || '',
+      budget: preferences.basicDetails?.budgetRange || '',
+      events: preferences.events?.selectedEvents || [],
+    });
+    // Also sync to the blueprint store (the source of truth)
+    if (blueprintId) {
+      updateBlueprint({
+        city: preferences.basicDetails?.location || '',
+        guestCount: String(preferences.basicDetails?.guestCount || ''),
+        budget: preferences.basicDetails?.budgetRange || '',
+        date: preferences.basicDetails?.weddingDate || '',
+        theme: preferences.theme?.selectedTheme || '',
+        events: preferences.events?.selectedEvents || [],
+      });
+    }
+  }, [preferences, blueprintId, updateBlueprint, updateWeddingPreferences]);
 
   const hasRequiredFields = () => {
     return preferences.venue.venueType && preferences.theme.selectedTheme;
@@ -1257,45 +1312,61 @@ const WeddingPreferences: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-6 py-8">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="container mx-auto px-4 sm:px-6 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Smart Planner Banner */}
           {loadedFromSmartPlanner && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <span className="text-sm text-emerald-800 font-medium">Pre-filled from Smart Planner -- fine-tune below</span>
+            <div className={`rounded-xl px-5 py-3 flex items-center justify-between border ${isDark ? 'bg-emerald-900/20 border-emerald-800' : 'bg-emerald-50 border-emerald-200'}`}>
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span className="text-sm text-emerald-800 font-medium">Pre-filled from AI Planner — edit below or skip to continue</span>
+              </div>
+              <button onClick={() => navigate(blueprintId ? '/blueprint' : '/plan')}
+                className="text-xs px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all">
+                Skip for now →
+              </button>
             </div>
           )}
           {/* Header */}
-          <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+          <div className={`rounded-2xl p-8 border shadow-sm ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D5A3D' }}>
                   <Heart className="w-6 h-6" style={{ color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color: '#3D5A3D' }}>Wedding Preferences</h1>
-                  <p className="text-gray-600">Customize your dream wedding experience</p>
+                  <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
+                    {blueprintId ? 'Edit Preferences' : 'Wedding Preferences'}
+                  </h1>
+                  <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                    {blueprintId ? 'Fine-tune the details collected by AI — changes auto-sync to your blueprint' : 'Customize your dream wedding experience'}
+                  </p>
                 </div>
               </div>
-
-              {/* Find Vendors Button */}
-              <div className="flex flex-col gap-4">
-
+              <div className="flex items-center gap-3">
+                {blueprintId && (
+                  <button
+                    onClick={() => navigate('/plan')}
+                    className={`text-sm px-4 py-2.5 border rounded-xl transition-all flex items-center gap-1.5 ${isDark ? 'border-gray-700 text-gray-400 hover:bg-gray-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Back to AI Planner
+                  </button>
+                )}
                 <button
                   onClick={() => {
-                    // Save current preferences before navigating
-                    localStorage.setItem('weddingPreferences', JSON.stringify(preferences));
-                    updateWeddingPreferences({
-                      weddingType: preferences.theme?.selectedTheme || '',
-                      city: preferences.basicDetails?.location || '',
-                      guestCount: String(preferences.basicDetails?.guestCount || ''),
-                      weddingStyle: preferences.theme?.selectedTheme || '',
-                      weddingDate: preferences.basicDetails?.weddingDate || '',
-                      budget: preferences.basicDetails?.budgetRange || '',
-                      events: preferences.events?.selectedEvents || [],
-                    });
+                    // Save & sync before navigating
+                    syncPreferencesToBlueprint();
+                    navigate(blueprintId ? '/blueprint' : '/plan');
+                  }}
+                  className={`text-sm px-4 py-2.5 rounded-xl transition-all ${isDark ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  Skip for now
+                </button>
+                <button
+                  onClick={() => {
+                    syncPreferencesToBlueprint();
                     navigate('/vendor-discovery');
                   }}
                   className="bg-rose-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-rose-600 transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow-md"
@@ -1310,16 +1381,16 @@ const WeddingPreferences: React.FC = () => {
           {/* Find Vendors CTA Section - Appears when preferences are set */}
           {(preferences.basicDetails.yourName && preferences.basicDetails.location && 
             (preferences.venue.venueType || preferences.theme.selectedTheme)) && (
-            <div className="bg-rose-50 rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className={`rounded-2xl p-8 border shadow-sm ${isDark ? 'bg-rose-900/20 border-gray-700' : 'bg-rose-50 border-gray-200'}`}>
               <div className="text-center">
                 <div className="mb-6">
                   <div className="w-16 h-16 mx-auto mb-4 bg-rose-500 rounded-full flex items-center justify-center">
                     <Users className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#3D5A3D' }}>
+                  <h3 className={`text-xl sm:text-2xl font-bold mb-2 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                     Ready to Find Your Perfect Vendors?
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     Your preferences are set! Let's discover amazing vendors that match your vision.
                   </p>
                 </div>
@@ -1334,9 +1405,9 @@ const WeddingPreferences: React.FC = () => {
                     { name: 'Entertainment', icon: '🎵', category: 'entertainment' },
                     { name: 'Beauty', icon: '💄', category: 'beauty' }
                   ].map((category) => (
-                    <div key={category.category} className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                    <div key={category.category} className={`rounded-lg p-4 shadow-sm border hover:shadow-md transition-all duration-300 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
                       <div className="text-2xl mb-2">{category.icon}</div>
-                      <p className="text-sm font-medium text-gray-700">{category.name}</p>
+                      <p className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{category.name}</p>
                     </div>
                   ))}
                 </div>
@@ -1363,7 +1434,7 @@ const WeddingPreferences: React.FC = () => {
                   <span className="text-sm bg-white/20 px-2 py-1 rounded-full">Venues First!</span>
                 </button>
 
-                <p className="text-sm text-gray-500 mt-4">
+                <p className={`text-sm mt-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   We'll start with venues and show you vendors for all categories based on your preferences
                 </p>
               </div>
@@ -1371,7 +1442,7 @@ const WeddingPreferences: React.FC = () => {
           )}
 
           {/* Horizontal Tab Navigation */}
-          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+          <div className={`rounded-2xl p-6 border shadow-sm ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex overflow-x-auto gap-2 pb-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -1384,13 +1455,13 @@ const WeddingPreferences: React.FC = () => {
                     onClick={() => handleTabChange(tab.id)}
                     disabled={tab.disabled}
                     className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
-                      isActive 
-                        ? 'bg-deep-navy text-white shadow-lg' 
+                      isActive
+                        ? 'bg-deep-navy text-white shadow-lg'
                         : tab.disabled
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        ? (isDark ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-100 text-gray-400 cursor-not-allowed')
                         : isComplete
-                        ? 'bg-sage-50 text-sage-700 border border-sage-200 hover:bg-sage-100'
-                        : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
+                        ? (isDark ? 'bg-sage-900/30 text-sage-400 border border-sage-800 hover:bg-sage-900/40' : 'bg-sage-50 text-sage-700 border border-sage-200 hover:bg-sage-100')
+                        : (isDark ? 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600' : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100')
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -1405,50 +1476,50 @@ const WeddingPreferences: React.FC = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+          <div className={`rounded-2xl p-4 sm:p-8 border shadow-sm ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             {/* Basic Details Tab */}
             {activeTab === 'basic' && (
               <div>
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                <h2 className={`text-lg sm:text-xl font-bold mb-6 flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   <Users className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Wedding Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Basic Information */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Your Name</label>
                     <input
                       type="text"
                       value={preferences.basicDetails.yourName}
                       onChange={(e) => updatePreference('basicDetails', 'yourName', e.target.value)}
                       placeholder="Your name"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Partner's Name</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Partner's Name</label>
                     <input
                       type="text"
                       value={preferences.basicDetails.partnerName}
                       onChange={(e) => updatePreference('basicDetails', 'partnerName', e.target.value)}
                       placeholder="Partner's name"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Contact Number</label>
                     <input
                       type="tel"
                       value={preferences.basicDetails.contactNumber}
                       onChange={(e) => updatePreference('basicDetails', 'contactNumber', e.target.value)}
                       placeholder="Phone number (e.g., +91 9876543210)"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     />
                   </div>
 
                   {/* Wedding Date */}
                   <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Wedding Date</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Wedding Date</label>
                       <div className="relative">
                         <input
                           type="date"
@@ -1476,7 +1547,7 @@ const WeddingPreferences: React.FC = () => {
                     <select
                       value={preferences.basicDetails.eventDuration}
                       onChange={(e) => updatePreference('basicDetails', 'eventDuration', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     >
                       <option value="">Select duration</option>
                       <option value="1">1 Day</option>
@@ -1497,21 +1568,21 @@ const WeddingPreferences: React.FC = () => {
                       onChange={(e) => updatePreference('basicDetails', 'datesFlexible', e.target.checked)}
                       className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                     />
-                    <label htmlFor="datesFlexible" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="datesFlexible" className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                       My dates are flexible
                     </label>
                   </div>
 
                   {/* Guest Count */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Guest Count</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Guest Count</label>
                     <input
                       type="number"
                       min="1"
                       value={preferences.basicDetails.guestCount}
                       onChange={(e) => handleNumberChange('guestCount', e.target.value)}
                       placeholder="Number of guests"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     />
                   </div>
 
@@ -1542,7 +1613,7 @@ const WeddingPreferences: React.FC = () => {
                     <div className="mt-2 flex gap-2">
                       <button
                         onClick={() => window.open(`/vendors?location=${encodeURIComponent(preferences.basicDetails.location)}`, '_blank')}
-                        className="px-3 py-1.5 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-1"
+                        className={`px-3 py-1.5 text-xs rounded-lg transition-colors flex items-center gap-1 ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                       >
                         🗺️ Search Venues
                       </button>
@@ -1557,11 +1628,11 @@ const WeddingPreferences: React.FC = () => {
 
                   {/* Budget Range */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Budget Range</label>
                     <select
                       value={preferences.basicDetails.budgetRange}
                       onChange={(e) => updatePreference('basicDetails', 'budgetRange', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     >
                       <option value="">Select budget range</option>
                       <option value="₹5-15 Lakhs">₹5-15 Lakhs (Budget)</option>
@@ -1575,10 +1646,10 @@ const WeddingPreferences: React.FC = () => {
                 {/* Priority Ranking Section */}
                 <div className="mt-6">
                   <div className="mb-4">
-                    <h3 className="text-lg font-semibold mb-1" style={{ color: '#3D5A3D' }}>
+                    <h3 className={`text-lg font-semibold mb-1 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                       🎯 Wedding Priorities
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       Drag to reorder by importance (most important at top)
                     </p>
                   </div>
@@ -1593,7 +1664,7 @@ const WeddingPreferences: React.FC = () => {
                           onDragEnd={handleDragEnd}
                           onDragOver={handleDragOver}
                           onDrop={(e) => handleDrop(e, index)}
-                          className={`bg-white rounded-lg p-2.5 border border-gray-200 cursor-move transition-all duration-200 hover:shadow-sm hover:border-pink-300 group ${
+                          className={`rounded-lg p-2.5 border cursor-move transition-all duration-200 hover:shadow-sm hover:border-pink-300 group ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} ${
                             draggedIndex === index ? 'opacity-50 scale-95' : ''
                           }`}
                         >
@@ -1606,7 +1677,7 @@ const WeddingPreferences: React.FC = () => {
                               </div>
 
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-medium text-gray-800 group-hover:text-pink-700 transition-colors text-sm truncate">
+                                <h4 className={`font-medium group-hover:text-pink-700 transition-colors text-sm truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
                                   {priority.name}
                                 </h4>
                                 <p className="text-xs text-gray-500 mt-0.5 truncate">
@@ -1669,7 +1740,7 @@ const WeddingPreferences: React.FC = () => {
             {activeTab === 'venue' && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#3D5A3D' }}>
+                  <h2 className={`text-lg sm:text-xl font-bold flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                     <Building2 className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                     Venue Selection
                   </h2>
@@ -1677,11 +1748,11 @@ const WeddingPreferences: React.FC = () => {
                 <div className="space-y-8">
                   {venueCategories.map((category) => (
                     <div key={category.id} className="space-y-4">
-                      <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold" style={{ color: '#3D5A3D' }}>
+                      <div className={`border-b pb-2 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                        <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                           {category.name}
                         </h3>
-                        <p className="text-sm text-gray-600">{category.description}</p>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{category.description}</p>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {category.venues.map((venue) => (
@@ -1691,7 +1762,7 @@ const WeddingPreferences: React.FC = () => {
                             className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-md ${
                               preferences.venue.venueType === venue.id
                                 ? 'border-deep-navy bg-deep-navy/5 shadow-md'
-                                : 'border-gray-200 hover:border-gray-300'
+                                : (isDark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-200 hover:border-gray-300')
                             }`}
                           >
                             <div className="aspect-video bg-gray-100 rounded-lg mb-3 overflow-hidden relative">
@@ -1719,7 +1790,7 @@ const WeddingPreferences: React.FC = () => {
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                             </div>
-                            <h4 className="font-semibold text-base mb-1" style={{ color: '#3D5A3D' }}>
+                            <h4 className={`font-semibold text-base mb-1 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                               {venue.name}
                             </h4>
                             <p className="text-gray-600 text-xs mb-2" style={{ 
@@ -1757,20 +1828,20 @@ const WeddingPreferences: React.FC = () => {
             {activeTab === 'theme' && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold flex items-center" style={{ color: '#3D5A3D' }}>
+                  <h2 className={`text-lg sm:text-xl font-bold flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                     <Palette className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                     Wedding Theme Selection
                   </h2>
-                  <p className="text-gray-600 mt-2">Choose from our curated collection of wedding themes, organized by style and aesthetic</p>
+                  <p className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Choose from our curated collection of wedding themes, organized by style and aesthetic</p>
                 </div>
                 <div className="space-y-8">
                   {themeCategories.map((category) => (
                     <div key={category.id} className="space-y-4">
-                      <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold" style={{ color: '#3D5A3D' }}>
+                      <div className={`border-b pb-2 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                        <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                           {category.name}
                         </h3>
-                        <p className="text-sm text-gray-600">{category.description}</p>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{category.description}</p>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {category.themes.map((theme) => {
@@ -1782,7 +1853,7 @@ const WeddingPreferences: React.FC = () => {
                               className={`p-6 border-2 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-md ${
                                 preferences.theme.selectedTheme === theme.id
                                   ? 'border-deep-navy bg-deep-navy/5 shadow-md'
-                                  : 'border-gray-200 hover:border-gray-300'
+                                  : (isDark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-200 hover:border-gray-300')
                               }`}
                             >
                               <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
@@ -1845,21 +1916,21 @@ const WeddingPreferences: React.FC = () => {
             {/* Catering Tab */}
             {activeTab === 'catering' && (
               <div className="space-y-8">
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                <h2 className={`text-lg sm:text-xl font-bold mb-6 flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   <Utensils className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Catering Preferences
                 </h2>
 
                 {/* Basic Catering Preferences */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Cuisine & Service Style</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Cuisine & Service Style</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Primary Cuisine Type</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Primary Cuisine Type</label>
                       <select
                         value={preferences.catering.cuisine}
                         onChange={(e) => updatePreference('catering', 'cuisine', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select cuisine</option>
                         <option value="north-indian">North Indian</option>
@@ -1879,11 +1950,11 @@ const WeddingPreferences: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Service Style</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Service Style</label>
                       <select
                         value={preferences.catering.mealType}
                         onChange={(e) => updatePreference('catering', 'mealType', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select service style</option>
                         <option value="buffet">Buffet Style</option>
@@ -1895,11 +1966,11 @@ const WeddingPreferences: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Meal Times</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Meal Times</label>
                       <select
                         value={preferences.catering.mealTiming || ''}
                         onChange={(e) => updatePreference('catering', 'mealTiming', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select meal timing</option>
                         <option value="breakfast">Breakfast</option>
@@ -1915,7 +1986,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Dietary Requirements */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Dietary Requirements</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Dietary Requirements</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
                       'Vegetarian Only',
@@ -1931,7 +2002,7 @@ const WeddingPreferences: React.FC = () => {
                       'Organic',
                       'No Special Requirements'
                     ].map((restriction) => (
-                      <label key={restriction} className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                      <label key={restriction} className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                         <input 
                           type="checkbox" 
                           checked={preferences.catering.dietaryRestrictions?.includes(restriction) || false}
@@ -1952,26 +2023,26 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Special Menu Items */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Special Menu Preferences</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Special Menu Preferences</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Must-Have Dishes</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Must-Have Dishes</label>
                       <textarea
                         value={preferences.catering.mustHaveDishes || ''}
                         onChange={(e) => updatePreference('catering', 'mustHaveDishes', e.target.value)}
                         placeholder="List any specific dishes or items that must be included..."
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Food Allergies or Restrictions</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Food Allergies or Restrictions</label>
                       <textarea
                         value={preferences.catering.allergies || ''}
                         onChange={(e) => updatePreference('catering', 'allergies', e.target.value)}
                         placeholder="List any food allergies or specific restrictions for guests..."
                         rows={2}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       />
                     </div>
                   </div>
@@ -1979,14 +2050,14 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Catering Budget */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Catering Budget</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Catering Budget</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Budget Per Person</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Budget Per Person</label>
                       <select
                         value={preferences.catering.budgetPerPerson || ''}
                         onChange={(e) => updatePreference('catering', 'budgetPerPerson', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select budget per person</option>
                         <option value="₹500-800">₹500-800 (Basic)</option>
@@ -1997,7 +2068,7 @@ const WeddingPreferences: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Additional Services</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Additional Services</label>
                       <div className="space-y-2">
                         {['Bar Service', 'Live Counters', 'Welcome Drinks', 'Late Night Snacks'].map((service) => (
                           <label key={service} className="flex items-center space-x-2">
@@ -2026,21 +2097,21 @@ const WeddingPreferences: React.FC = () => {
             {/* Photography Tab */}
             {activeTab === 'photography' && (
               <div className="space-y-8">
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                <h2 className={`text-lg sm:text-xl font-bold mb-6 flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   <Camera className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Photography & Videography Preferences
                 </h2>
 
                 {/* Basic Photography Preferences */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Basic Photography</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Basic Photography</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Photography Style</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Photography Style</label>
                       <select
                         value={preferences.photography.style}
                         onChange={(e) => updatePreference('photography', 'style', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select style</option>
                         <option value="traditional">Traditional</option>
@@ -2051,11 +2122,11 @@ const WeddingPreferences: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Coverage Type</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Coverage Type</label>
                       <select
                         value={preferences.photography.coverage}
                         onChange={(e) => updatePreference('photography', 'coverage', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select coverage</option>
                         <option value="full-day">Full Day</option>
@@ -2069,10 +2140,10 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Multi-Day Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Multi-Day Coverage</h3>
-                  <p className="text-gray-600 mb-4">Select which events you would like photographed:</p>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Multi-Day Coverage</h3>
+                  <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Select which events you would like photographed:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.preWeddingShoot || false}
@@ -2081,7 +2152,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Pre-Wedding Shoot</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.engagementShoot || false}
@@ -2090,7 +2161,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Engagement Shoot</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.mehendiCeremony || false}
@@ -2099,7 +2170,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Mehendi Ceremony</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.haldiCeremony || false}
@@ -2108,7 +2179,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Haldi Ceremony</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.sangeetCeremony || false}
@@ -2117,7 +2188,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Sangeet Ceremony</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.weddingCeremony || false}
@@ -2126,7 +2197,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Wedding Ceremony</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.reception || false}
@@ -2135,7 +2206,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Reception</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.multiDayCoverage?.postWeddingShoot || false}
@@ -2149,7 +2220,7 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Videography Services */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Videography Services</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Videography Services</h3>
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2">
                       <input 
@@ -2164,11 +2235,11 @@ const WeddingPreferences: React.FC = () => {
                     {preferences.photography.videography?.required && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Video Style</label>
+                          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Video Style</label>
                           <select
                             value={preferences.photography.videography?.style || ''}
                             onChange={(e) => updatePreference('photography', 'videography', e.target.value, 'style')}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                           >
                             <option value="">Select video style</option>
                             <option value="cinematic">Cinematic</option>
@@ -2178,11 +2249,11 @@ const WeddingPreferences: React.FC = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Coverage Duration</label>
+                          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Coverage Duration</label>
                           <select
                             value={preferences.photography.videography?.coverageDuration || ''}
                             onChange={(e) => updatePreference('photography', 'videography', e.target.value, 'coverageDuration')}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                           >
                             <option value="">Select duration</option>
                             <option value="full-day">Full Day</option>
@@ -2206,10 +2277,10 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Cultural Coverage */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Cultural Ceremony Coverage</h3>
-                  <p className="text-gray-600 mb-4">Select cultural elements you want captured:</p>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Cultural Ceremony Coverage</h3>
+                  <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Select cultural elements you want captured:</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.culturalCoverage.mandapCeremony}
@@ -2218,7 +2289,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Mandap Ceremony</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.culturalCoverage.agniCeremony}
@@ -2227,7 +2298,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Agni Ceremony</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.culturalCoverage.familyPortraits}
@@ -2236,7 +2307,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Family Portraits</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.culturalCoverage.traditionalAttire}
@@ -2245,7 +2316,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Traditional Attire</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.culturalCoverage.culturalPerformances}
@@ -2256,22 +2327,22 @@ const WeddingPreferences: React.FC = () => {
                     </label>
                   </div>
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Specific Rituals to Capture</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Specific Rituals to Capture</label>
                     <textarea
                       value={preferences.photography.culturalCoverage.specificRituals.join(', ')}
                       onChange={(e) => updatePreference('photography', 'culturalCoverage', e.target.value.split(',').map(s => s.trim()).filter(s => s), 'specificRituals')}
                       placeholder="List any specific rituals, ceremonies, or moments you want captured (comma-separated)..."
                       rows={3}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     />
                   </div>
                 </div>
 
                 {/* Deliverables */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Final Deliverables</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Final Deliverables</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.deliverables.digitalGallery}
@@ -2280,7 +2351,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Digital Gallery</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.deliverables.physicalAlbum}
@@ -2289,7 +2360,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Physical Album</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.deliverables.videoHighlights}
@@ -2298,7 +2369,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Video Highlights</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.deliverables.fullVideo}
@@ -2307,7 +2378,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Full Video</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.deliverables.prints}
@@ -2316,7 +2387,7 @@ const WeddingPreferences: React.FC = () => {
                       />
                       <span className="text-sm">Prints</span>
                     </label>
-                    <label className="flex items-center space-x-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 cursor-pointer">
+                    <label className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer ${isDark ? 'bg-gray-700 border-gray-600 hover:border-gray-500' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
                       <input 
                         type="checkbox" 
                         checked={preferences.photography.deliverables.socialMediaSharing}
@@ -2330,14 +2401,14 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Technical Preferences */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Technical Preferences</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Technical Preferences</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Equipment Preference</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Equipment Preference</label>
                       <select
                         value={preferences.photography.technicalPreferences.equipmentType}
                         onChange={(e) => updatePreference('photography', 'technicalPreferences', e.target.value, 'equipmentType')}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select equipment</option>
                         <option value="dslr">DSLR</option>
@@ -2347,11 +2418,11 @@ const WeddingPreferences: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Lighting Style</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Lighting Style</label>
                       <select
                         value={preferences.photography.technicalPreferences.lightingStyle}
                         onChange={(e) => updatePreference('photography', 'technicalPreferences', e.target.value, 'lightingStyle')}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select lighting</option>
                         <option value="natural">Natural Light</option>
@@ -2369,11 +2440,11 @@ const WeddingPreferences: React.FC = () => {
                       <span>Backup Photographer Required</span>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Editing Style</label>
+                      <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Editing Style</label>
                       <select
                         value={preferences.photography.technicalPreferences.editingStyle}
                         onChange={(e) => updatePreference('photography', 'technicalPreferences', e.target.value, 'editingStyle')}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                       >
                         <option value="">Select editing style</option>
                         <option value="natural">Natural</option>
@@ -2386,13 +2457,13 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Budget Range */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Photography Budget</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Photography Budget</h3>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range for Photography & Videography</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Budget Range for Photography & Videography</label>
                     <select
                       value={preferences.photography.budgetRange}
                       onChange={(e) => updatePreference('photography', 'budgetRange', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     >
                       <option value="">Select budget range</option>
                       <option value="budget-50k-1L">₹50K - ₹1 Lakh</option>
@@ -2406,15 +2477,15 @@ const WeddingPreferences: React.FC = () => {
 
                 {/* Special Requests */}
                 <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#3D5A3D' }}>Special Requests</h3>
+                  <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Special Requests</h3>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Additional Requirements</label>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Additional Requirements</label>
                     <textarea
                       value={preferences.photography.specialRequests}
                       onChange={(e) => updatePreference('photography', 'specialRequests', e.target.value)}
                       placeholder="Any special photography or videography requests, specific shots, or additional requirements..."
                       rows={4}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300"
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'border-gray-200 focus:border-gray-400 focus:ring-gray-400/20'}`}
                     />
                   </div>
                 </div>
@@ -2424,30 +2495,30 @@ const WeddingPreferences: React.FC = () => {
             {/* Wedding Events Tab */}
             {activeTab === 'events' && (
               <div className="space-y-8">
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                <h2 className={`text-lg sm:text-xl font-bold mb-6 flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   <Calendar className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Wedding Events & Ceremonies
                 </h2>
 
                 {/* AI Tips for Guest Count */}
                 {preferences.basicDetails.guestCount > 0 && (
-                  <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                  <div className={`rounded-2xl p-6 border ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-gray-600" />
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-gray-600' : 'bg-gray-100'}`}>
+                        <Sparkles className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
                           AI Venue Tips for {preferences.basicDetails.guestCount} Guests
                         </h3>
-                        <p className="text-sm text-gray-700">Based on your guest count and Indian wedding requirements</p>
+                        <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Based on your guest count and Indian wedding requirements</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {getAITipsForGuestCount(preferences.basicDetails.guestCount).map((tip, index) => (
-                        <div key={index} className="flex items-start gap-2 bg-white/50 rounded-lg p-3">
+                        <div key={index} className={`flex items-start gap-2 rounded-lg p-3 ${isDark ? 'bg-gray-600/50' : 'bg-white/50'}`}>
                           <div className="w-2 h-2 rounded-full bg-gray-500 mt-2 flex-shrink-0"></div>
-                          <span className="text-sm text-gray-800">{tip}</span>
+                          <span className={`text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{tip}</span>
                         </div>
                       ))}
                     </div>
@@ -2520,8 +2591,8 @@ const WeddingPreferences: React.FC = () => {
                 {/* All Events by Category */}
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-800">All Indian Wedding Events</h3>
-                    <div className="text-sm text-gray-600">
+                    <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>All Indian Wedding Events</h3>
+                    <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       {preferences.events.selectedEvents.length} events selected
                     </div>
                   </div>
@@ -2536,8 +2607,8 @@ const WeddingPreferences: React.FC = () => {
                     };
 
                     return (
-                      <div key={category} className="bg-white rounded-2xl p-6 border border-gray-200">
-                        <h4 className="text-lg font-semibold mb-4 text-gray-800">
+                      <div key={category} className={`rounded-2xl p-6 border ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                        <h4 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
                           {categoryNames[category as keyof typeof categoryNames]}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2549,9 +2620,9 @@ const WeddingPreferences: React.FC = () => {
                               <div 
                                 key={event.id}
                                 className={`relative rounded-lg p-4 border-2 transition-all duration-300 cursor-pointer ${
-                                  isSelected 
-                                    ? 'border-rose-500 bg-rose-50'
-                                    : 'border-gray-200 bg-white hover:border-gray-300'
+                                  isSelected
+                                    ? (isDark ? 'border-rose-500 bg-rose-900/30' : 'border-rose-500 bg-rose-50')
+                                    : (isDark ? 'border-gray-600 bg-gray-700 hover:border-gray-500' : 'border-gray-200 bg-white hover:border-gray-300')
                                 }`}
                                 onClick={() => toggleEventSelection(event.id)}
                               >
@@ -2565,7 +2636,7 @@ const WeddingPreferences: React.FC = () => {
                                   <span className="text-2xl">{event.emoji}</span>
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                      <h5 className="font-medium text-gray-900">{event.name}</h5>
+                                      <h5 className={`font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{event.name}</h5>
                                       <span className={`px-2 py-1 text-xs rounded-full ${
                                         event.importance === 'essential' ? 'bg-red-100 text-red-700' :
                                         event.importance === 'traditional' ? 'bg-rose-100 text-rose-700' :
@@ -2574,8 +2645,8 @@ const WeddingPreferences: React.FC = () => {
                                         {event.importance}
                                       </span>
                                     </div>
-                                    <p className="text-sm text-gray-600 mb-2">{event.description}</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                                    <p className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{event.description}</p>
+                                    <div className={`flex items-center gap-4 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                       <span>⏱️ {event.duration}</span>
                                       <span>👥 {event.guestType}</span>
                                       <span>📍 {event.venue}</span>
@@ -2603,7 +2674,7 @@ const WeddingPreferences: React.FC = () => {
             {/* Wedding Blueprint Tab */}
             {activeTab === 'blueprint' && (
               <div>
-                <h2 className="text-xl font-bold mb-6 flex items-center" style={{ color: '#3D5A3D' }}>
+                <h2 className={`text-lg sm:text-xl font-bold mb-6 flex items-center ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   <FileText className="w-5 h-5 mr-2" style={{ color: '#3D5A3D' }} />
                   Wedding Blueprint
                 </h2>
@@ -2616,14 +2687,14 @@ const WeddingPreferences: React.FC = () => {
                   <div className="text-center py-12">
                     <div className="mb-6">
                       <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                      <h3 className="text-lg font-semibold text-gray-700 mb-2">Generate Your Wedding Blueprint</h3>
-                      <p className="text-gray-600 mb-6">
+                      <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Generate Your Wedding Blueprint</h3>
+                      <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         Create a comprehensive AI-generated wedding blueprint based on your preferences.
                       </p>
                     </div>
 
                     {!(preferences.venue.venueType && preferences.theme.selectedTheme) && (
-                      <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-6">
+                      <div className={`rounded-lg p-4 mb-6 border ${isDark ? 'bg-rose-900/30 border-rose-800' : 'bg-rose-50 border-rose-200'}`}>
                         <p className="text-rose-800 text-sm">
                           ⚠️ <strong>Note:</strong> Venue Type and Decor & Theme selections are required for blueprint generation. 
                           Other fields are optional but recommended for a complete blueprint.

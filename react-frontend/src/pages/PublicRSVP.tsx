@@ -73,7 +73,7 @@ const PublicRSVP: React.FC = () => {
       >
         {/* Logo / Title */}
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-rose-600">Shehnai</h1>
+          <h1 className="text-3xl font-bold text-rose-600">Shehn.AI</h1>
           <p className="text-gray-500 mt-1">You're invited to celebrate with us!</p>
         </div>
 

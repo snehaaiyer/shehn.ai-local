@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Upload, FileText, Sparkles, Check, X, Loader2, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { API_BASE } from '../config/api_config';
 
 type PDFContext = 'vendor_quote' | 'company_info' | 'pinterest_board' | 'general';
 
@@ -67,7 +68,7 @@ const PDFUploadExtractor: React.FC<PDFUploadExtractorProps> = ({ onClose, defaul
       formData.append('file', file);
       formData.append('context', context);
 
-      const res = await fetch('/api/ai/extract-pdf', {
+      const res = await fetch(`${API_BASE}/api/ai/extract-pdf`, {
         method: 'POST',
         body: formData,
       });

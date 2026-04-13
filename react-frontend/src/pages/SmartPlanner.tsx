@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Send, ChevronRight, MapPin, Users, Calendar, IndianRupee, Palette,
-  Check, MessageSquare, FileText, Loader2, ArrowRight, RotateCcw, RefreshCw, X, ThumbsUp, ThumbsDown, Upload } from 'lucide-react';
+  Check, MessageSquare, FileText, Loader2, ArrowRight, RotateCcw, RefreshCw, X, ThumbsUp, ThumbsDown, Upload, History, Clock } from 'lucide-react';
 import PDFUploadExtractor from '../components/PDFUploadExtractor';
 import { useAppStore, BlueprintData } from '../store/useAppStore';
+import { BlueprintService } from '../services/blueprint_service';
 import { getThemeImage, VENUE_IMAGES } from '../config/theme_images';
+import { API_BASE } from '../config/api_config';
 
 // ── Intent Detection Types ──────────────────────────────────────────────────
 
@@ -14,6 +16,8 @@ type ChatIntent =
   | { type: 'change_city'; city?: string; raw: string }
   | { type: 'change_guests'; count?: string; raw: string }
   | { type: 'change_theme'; theme?: string; raw: string }
+  | { type: 'change_duration'; days?: number; raw: string }
+  | { type: 'show_planned_events'; raw: string }
   | { type: 'find_vendors'; category?: string; raw: string }
   | { type: 'show_blueprint'; raw: string }
   | { type: 'help_decide'; context: string; raw: string }
@@ -59,6 +63,30 @@ interface ChatMessage {
 function detectIntent(message: string, blueprint: BlueprintData | null): ChatIntent {
   const msg = message.toLowerCase().trim();
 
+  // ── SHOW PLANNED EVENTS — "what events", "what's planned", "how many days", "what functions" ──
+  // Must come BEFORE multi-detail guard since these are queries about current plan, not new details
+  if (/what\s+(events?|functions?)\s+(are|is|have|do\s+i\s+have)\s+(planned|in\s+my|in\s+the|set|scheduled|lined|currently)|what.?s\s+planned|how\s+many\s+days|how\s+many\s+events|show\s+me\s+(my\s+)?(events?|functions?)|list\s+(my\s+)?(events?|functions?)|what\s+are\s+my\s+events/i.test(msg)) {
+    // Check if they ALSO mention changing duration (e.g., "what events are planned? i am thinking 2 days")
+    const daysMatch = msg.match(/(\d+)\s*days?|(\bone|two|three|four|five)\s*days?/i);
+    if (daysMatch) {
+      const dayNum = daysMatch[1] ? parseInt(daysMatch[1]) : { 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5 }[(daysMatch[2] || '').toLowerCase()] || 2;
+      return { type: 'change_duration', days: dayNum, raw: message };
+    }
+    return { type: 'show_planned_events', raw: message };
+  }
+
+  // ── CHANGE DURATION — "2 days wedding", "make it a 3 day wedding", "thinking 2 days" ──
+  if (/\b(thinking|want|make\s+it|change\s+to|set\s+to|prefer)\s+(a\s+)?(\d+|one|two|three|four|five)\s*days?/i.test(msg)
+    || /\b(\d+)\s*days?\s*(wedding|celebration|event)/i.test(msg)
+    || /\bduration\s*(to|of|is)?\s*(\d+)/i.test(msg)) {
+    const daysMatch = msg.match(/(\d+)\s*days?/i) || msg.match(/(one|two|three|four|five)\s*days?/i);
+    let dayNum = 2;
+    if (daysMatch) {
+      dayNum = parseInt(daysMatch[1]) || { 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5 }[(daysMatch[1] || '').toLowerCase()] || 2;
+    }
+    return { type: 'change_duration', days: dayNum, raw: message };
+  }
+
   // ── MULTI-DETAIL GUARD ──
   // If the message contains 2+ wedding details (city, budget, guests, theme, venue type),
   // it's a rich planning message — NOT a single-field change. Send to Gemini.
@@ -84,27 +112,35 @@ function detectIntent(message: string, blueprint: BlueprintData | null): ChatInt
     return { type: 'add_event', detected_events: detected, raw: message };
   }
 
-  // Change budget — only when it's clearly a single change request
-  if (/^(change|update|set|increase|decrease)\s+(my\s+)?budget/i.test(msg) || /^budget\s+to\b/i.test(msg)) {
-    const amount = msg.match(/\u20B9?\s*(\d+)\s*(lakh|lakhs|l\b|crore|cr)/i);
+  // Change budget — when it's clearly about changing budget amount
+  if (/^(change|update|set|increase|decrease)\s+(my\s+)?(wedding\s+)?budget/i.test(msg) || /^budget\s+to\b/i.test(msg)
+    || /\b(change|update|set)\s+(the\s+)?budget\s+to\b/i.test(msg)
+    || /\bbudget\s+(should\s+be|is|to)\s+\d/i.test(msg)) {
+    const amount = msg.match(/\u20B9?\s*(\d+\.?\d*)\s*(lakh|lakhs|l\b|crore|cr)/i);
     return { type: 'change_budget', amount: amount ? amount[0] : undefined, raw: message };
   }
 
-  // Change city — only when it's clearly a relocation request
-  if (/^(change|move|shift|switch)\s+(my\s+)?(city|location|wedding)\s+to\b/i.test(msg)) {
+  // Change city — when user mentions changing location/city/wedding venue location
+  if (/^(change|move|shift|switch|update|set)\s+(my\s+)?(wedding\s+)?(city|location|venue\s+location|place)\s+to\b/i.test(msg)
+    || /\b(change|move|shift)\s+(to|the\s+wedding\s+to)\s+(mumbai|delhi|bangalore|bengaluru|hyderabad|chennai|kolkata|pune|jaipur|udaipur|goa|lucknow|ahmedabad)\b/i.test(msg)
+    || /\bwedding\s+(in|at|to)\s+(mumbai|delhi|bangalore|bengaluru|hyderabad|chennai|kolkata|pune|jaipur|udaipur|goa|lucknow|ahmedabad)\b/i.test(msg) && /\b(change|move|shift|switch|update|set)\b/i.test(msg)) {
     const cities = ['mumbai','delhi','bangalore','bengaluru','hyderabad','chennai','kolkata','pune','jaipur','udaipur','goa','lucknow','ahmedabad'];
     const city = cities.find(c => msg.includes(c));
     return { type: 'change_city', city: city, raw: message };
   }
 
-  // Change guests — only when it's clearly about guest count
-  if (/^(change|update|set|increase|decrease)\s+(my\s+)?guest/i.test(msg) || /^guest\s*(count|number)\s+to\b/i.test(msg)) {
-    const count = msg.match(/(\d+)\s*(guests?|people|pax)?/i);
+  // Change guests — when it's clearly about guest count
+  if (/^(change|update|set|increase|decrease)\s+(my\s+)?(wedding\s+)?guest/i.test(msg) || /^guest\s*(count|number)\s+to\b/i.test(msg)
+    || /\b(change|update|set)\s+(the\s+)?guest\s*(count|number|list)?\s+to\b/i.test(msg)
+    || /\b(\d{2,4})\s*(guests?|people|pax|invitees)\b/i.test(msg) && /\b(change|update|set|expecting|have|want)\b/i.test(msg)) {
+    const count = msg.match(/(\d{2,4})\s*(guests?|people|pax)?/i);
     return { type: 'change_guests', count: count ? count[1] : undefined, raw: message };
   }
 
-  // Change theme — only when it's clearly about theme
-  if (/^(change|update|set|switch)\s+(my\s+)?theme/i.test(msg) || /^theme\s+to\b/i.test(msg)) {
+  // Change theme — when it's clearly about theme/style
+  if (/^(change|update|set|switch)\s+(my\s+)?(wedding\s+)?theme/i.test(msg) || /^theme\s+to\b/i.test(msg)
+    || /\b(change|update|set|switch)\s+(the\s+)?(wedding\s+)?theme\s+to\b/i.test(msg)
+    || /\b(want|make)\s+(a|it)\s+(royal|minimalist|modern|traditional|bohemian|rustic|elegant|vintage|boho)\b/i.test(msg) && /\b(theme|style|wedding)\b/i.test(msg)) {
     const themes = ['royal','minimalist','modern','traditional','bohemian','rustic','elegant','vintage','destination','palace','boho'];
     const theme = themes.find(t => msg.includes(t));
     return { type: 'change_theme', theme: theme, raw: message };
@@ -150,7 +186,7 @@ const CITY_OPTIONS = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'K
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 /** Lightweight inline markdown to JSX renderer (no external deps). */
-const renderMarkdown = (text: string): React.ReactNode => {
+const renderMarkdown = (text: string, isDark?: boolean): React.ReactNode => {
   const lines = text.split('\n');
   const elements: React.ReactNode[] = [];
   let key = 0;
@@ -164,7 +200,7 @@ const renderMarkdown = (text: string): React.ReactNode => {
       elements.push(
         <div key={key++} className="flex items-start gap-2 ml-2 my-0.5">
           <span className="text-rose-400 mt-1 text-xs">{'\u2022'}</span>
-          <span>{inlineFormat(bulletMatch[1])}</span>
+          <span>{inlineFormat(bulletMatch[1], isDark)}</span>
         </div>
       );
       continue;
@@ -175,27 +211,27 @@ const renderMarkdown = (text: string): React.ReactNode => {
       elements.push(
         <div key={key++} className="flex items-start gap-2 ml-2 my-0.5">
           <span className="text-rose-500 font-semibold text-xs mt-0.5 min-w-[16px]">{numMatch[1]}.</span>
-          <span>{inlineFormat(numMatch[2])}</span>
+          <span>{inlineFormat(numMatch[2], isDark)}</span>
         </div>
       );
       continue;
     }
 
-    elements.push(<p key={key++} className="my-1">{inlineFormat(trimmed)}</p>);
+    elements.push(<p key={key++} className="my-1">{inlineFormat(trimmed, isDark)}</p>);
   }
 
   return <>{elements}</>;
 };
 
 /** Handle inline markdown: **bold**, *italic*, rupee highlights */
-const inlineFormat = (text: string): React.ReactNode => {
+const inlineFormat = (text: string, isDark?: boolean): React.ReactNode => {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={i} className="font-semibold text-gray-900">{part.slice(2, -2)}</strong>;
+      return <strong key={i} className={`font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{part.slice(2, -2)}</strong>;
     }
     return part.split(/(\u20B9[\d,\.]+(?:\s*(?:L|lakh|lakhs|crore|crores|K))?)/gi).map((seg, j) =>
-      /^\u20B9/.test(seg) ? <span key={`${i}-${j}`} className="font-semibold text-rose-600">{seg}</span> : seg
+      /^\u20B9/.test(seg) ? <span key={`${i}-${j}`} className={`font-semibold ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>{seg}</span> : seg
     );
   });
 };
@@ -223,6 +259,11 @@ const SmartPlanner: React.FC = () => {
   const updateWeddingPreferences = useAppStore(s => s.updateWeddingPreferences);
   const setDraftVendorMessages = useAppStore(s => s.setDraftVendorMessages);
   const setPlanningStage = useAppStore(s => s.setPlanningStage);
+  const theme = useAppStore(s => s.theme);
+  const isDark = theme === 'dark';
+  const plannerChatMessages = useAppStore(s => s.plannerChatMessages);
+  const setPlannerChatMessages = useAppStore(s => s.setPlannerChatMessages);
+  const clearPlannerChatMessages = useAppStore(s => s.clearPlannerChatMessages);
 
   const [mode, setMode] = useState<'plan' | 'chat'>(blueprintId ? 'chat' : 'plan');
   const [prompt, setPrompt] = useState('');
@@ -236,17 +277,55 @@ const SmartPlanner: React.FC = () => {
   const [followUpDate, setFollowUpDate] = useState('');
   const [followUpGuests, setFollowUpGuests] = useState('');
   const [dateFlexibility, setDateFlexibility] = useState<'exact' | '2weeks' | '1month' | '3months'>('exact');
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  // Hydrate from persisted store, converting ISO strings back to Date objects
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => {
+    if (plannerChatMessages.length > 0) {
+      return plannerChatMessages.map(m => ({
+        ...m,
+        timestamp: new Date(m.timestamp),
+      }));
+    }
+    return [];
+  });
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [showPDFUploader, setShowPDFUploader] = useState(false);
+  const [pastBlueprints, setPastBlueprints] = useState<Array<{id: number; title: string; status: string; created_at: string; wedding_summary: any}>>([]);
+  const [showPastBlueprints, setShowPastBlueprints] = useState(false);
+
+  // Load past blueprints on mount
+  useEffect(() => {
+    BlueprintService.listBlueprints().then(res => {
+      if (res.success && res.data) {
+        setPastBlueprints(res.data as any);
+      }
+    }).catch(() => {});
+  }, [blueprintId]); // reload when blueprintId changes
+
+  const loadPastBlueprint = (bp: any) => {
+    setBlueprintId(bp.id);
+    const ws = bp.wedding_summary || {};
+    setBlueprint({
+      city: ws.city || '', date: ws.date || '', guestCount: String(ws.guest_count || ''),
+      budget: ws.budget ? `₹${(ws.budget / 100000).toFixed(0)} Lakhs` : '',
+      theme: ws.theme || '', events: ws.events || [],
+      budgetBreakdown: bp.budget_breakdown || {}, categorySpecs: bp.category_specs || {},
+      timeline: bp.timeline || [], costSavingTips: bp.cost_saving_tips || [], aiSummary: '',
+    });
+    setMode('chat');
+    setChatMessages([{
+      id: 'restored', sender: 'ai', content: `Welcome back! I've loaded your "${bp.title}" blueprint. What would you like to update?`,
+      timestamp: new Date(),
+    }]);
+    setShowPastBlueprints(false);
+  };
 
   const handleFeedback = (messageId: string, feedback: 'helpful' | 'not_helpful') => {
     setChatMessages(prev => prev.map(m => {
       if (m.id !== messageId) return m;
       const newFeedback = m.feedback === feedback ? null : feedback;
       // Fire and forget to backend
-      fetch('/api/ai/feedback', {
+      fetch(`${API_BASE}/api/ai/feedback`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message_id: messageId, feedback: newFeedback, message_content: m.content, timestamp: new Date().toISOString() }),
       }).catch(() => {});
@@ -258,6 +337,22 @@ const SmartPlanner: React.FC = () => {
   const resultRef = useRef<HTMLDivElement>(null);
   const followUpRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Sync chat messages to persisted store (debounced — only non-loading messages)
+  useEffect(() => {
+    const persistable = chatMessages
+      .filter(m => !m.loading)
+      .map(m => ({
+        id: m.id,
+        content: m.content,
+        sender: m.sender,
+        timestamp: m.timestamp instanceof Date ? m.timestamp.toISOString() : m.timestamp as unknown as string,
+        interactive: m.interactive,
+        feedback: m.feedback,
+      }));
+    setPlannerChatMessages(persistable);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatMessages]);
 
   useEffect(() => { if (mode === 'plan') inputRef.current?.focus(); }, [mode]);
   useEffect(() => { if (planResult) resultRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [planResult, activeStep]);
@@ -354,7 +449,7 @@ const SmartPlanner: React.FC = () => {
     setChatMessages(p => [...p, { id: (Date.now() + 1).toString(), content: '', sender: 'ai', timestamp: new Date(), loading: true }]);
 
     try {
-      const res = await fetch('/api/ai/suggest-events', {
+      const res = await fetch(`${API_BASE}/api/ai/suggest-events`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -404,8 +499,12 @@ const SmartPlanner: React.FC = () => {
 
   const handleChangeBudgetIntent = (intent: Extract<ChatIntent, { type: 'change_budget' }>) => {
     if (intent.amount) {
-      addAIMessage(`I'll update your budget to ${intent.amount}. This will recalculate your category allocations.`);
-      addInteractiveMessage('confirm_changes', [], [], { budget: intent.amount });
+      // Normalize the budget string
+      const budgetStr = intent.amount.replace(/[₹,]/g, '').trim();
+      const match = budgetStr.match(/(\d+\.?\d*)\s*(l|lakh|lakhs|crore|cr)/i);
+      const displayBudget = match ? `₹${match[1]} ${match[2].toLowerCase().startsWith('c') ? 'Crore' : 'Lakhs'}` : `₹${budgetStr}`;
+      updateBlueprint({ budget: displayBudget });
+      addAIMessage(`Done! Budget updated to **${displayBudget}**. Category allocations will adjust proportionally.`);
     } else {
       addAIMessage("What would you like your new budget to be? Enter an amount (e.g., 30 lakhs):");
       addInteractiveMessage('budget_input', [], []);
@@ -414,9 +513,10 @@ const SmartPlanner: React.FC = () => {
 
   const handleChangeCityIntent = (intent: Extract<ChatIntent, { type: 'change_city' }>) => {
     if (intent.city) {
-      const cityCapitalized = intent.city.charAt(0).toUpperCase() + intent.city.slice(1);
-      addAIMessage(`I'll move your wedding to ${cityCapitalized}. This may affect venue and vendor availability.`);
-      addInteractiveMessage('confirm_changes', [], [], { city: cityCapitalized });
+      const cityCapitalized = intent.city === 'bengaluru' ? 'Bangalore' : intent.city.charAt(0).toUpperCase() + intent.city.slice(1);
+      // Auto-apply immediately — no confirmation needed for simple changes
+      updateBlueprint({ city: cityCapitalized });
+      addAIMessage(`Done! Your wedding location is now **${cityCapitalized}**. All vendor searches and recommendations will use this city.`);
     } else {
       addAIMessage("Which city would you like to move your wedding to? Pick one:");
       addInteractiveMessage('city_selector', CITY_OPTIONS.map(c => ({ id: c.toLowerCase(), label: c })), []);
@@ -425,8 +525,8 @@ const SmartPlanner: React.FC = () => {
 
   const handleChangeGuestsIntent = (intent: Extract<ChatIntent, { type: 'change_guests' }>) => {
     if (intent.count) {
-      addAIMessage(`I'll update your guest count to ${intent.count}. This will adjust your per-head budget calculations.`);
-      addInteractiveMessage('confirm_changes', [], [], { guestCount: intent.count });
+      updateBlueprint({ guestCount: intent.count });
+      addAIMessage(`Done! Guest count updated to **${intent.count}**. Budget per-head and venue capacity recommendations will adjust automatically.`);
     } else {
       addAIMessage("How many guests are you expecting? Enter a number:");
       addInteractiveMessage('guest_input', [], []);
@@ -436,8 +536,8 @@ const SmartPlanner: React.FC = () => {
   const handleChangeThemeIntent = (intent: Extract<ChatIntent, { type: 'change_theme' }>) => {
     if (intent.theme) {
       const themeCapitalized = intent.theme.charAt(0).toUpperCase() + intent.theme.slice(1);
-      addAIMessage(`I'll change your wedding theme to ${themeCapitalized}. This will update your decoration style and ambiance.`);
-      addInteractiveMessage('confirm_changes', [], [], { theme: themeCapitalized });
+      updateBlueprint({ theme: themeCapitalized });
+      addAIMessage(`Done! Wedding theme updated to **${themeCapitalized}**. Decoration and ambiance recommendations will reflect this.`);
     } else {
       addAIMessage("What theme would you like for your wedding? Pick one:");
       addInteractiveMessage('theme_selector', THEME_OPTIONS.map(t => ({ id: t.toLowerCase(), label: t })), []);
@@ -447,6 +547,83 @@ const SmartPlanner: React.FC = () => {
   const handleHelpDecideIntent = async () => {
     // Route "help me decide" about events to the same adaptive checklist
     await handleAddEventIntent({ type: 'add_event', detected_events: [], raw: 'help me decide which events to add' });
+  };
+
+  const handleShowPlannedEventsIntent = () => {
+    if (!blueprint || !blueprint.events || blueprint.events.length === 0) {
+      addAIMessage("You don't have any events planned yet! Would you like to add some? I can suggest events based on your wedding style and culture.");
+      return;
+    }
+    const eventLabels = blueprint.events.map(eid => {
+      const ev = ALL_EVENTS.find(e => e.id === eid);
+      return ev ? `${ev.emoji} ${ev.label}` : eid;
+    });
+    const days = blueprint.weddingDays || Math.ceil(blueprint.events.length / 3) || 1;
+    let msg = `Here's what's currently planned for your wedding:\n\n`;
+    msg += `**Events (${blueprint.events.length}):** ${eventLabels.join(', ')}\n`;
+    msg += `**Duration:** ${days} day${days > 1 ? 's' : ''}\n`;
+    if (blueprint.date) msg += `**Date:** ${blueprint.date}\n`;
+    if (blueprint.city) msg += `**City:** ${blueprint.city}\n`;
+    if (blueprint.guestCount) msg += `**Guests:** ${blueprint.guestCount}\n`;
+    if (blueprint.budgetBreakdown && Object.keys(blueprint.budgetBreakdown).length > 0) {
+      msg += `\n**Budget Allocation:**\n`;
+      Object.entries(blueprint.budgetBreakdown).forEach(([cat, amt]) => {
+        msg += `• ${cat.charAt(0).toUpperCase() + cat.slice(1)}: ${fmtCur(amt)}\n`;
+      });
+    }
+    msg += `\nWould you like to add/remove events, change the duration, or adjust anything?`;
+    addAIMessage(msg);
+  };
+
+  const handleChangeDurationIntent = (intent: Extract<ChatIntent, { type: 'change_duration' }>) => {
+    const days = intent.days || 2;
+    updateBlueprint({ weddingDays: days });
+
+    // Show current events in context of the new duration
+    const currentEvents = blueprint?.events || [];
+    const eventLabels = currentEvents.map(eid => {
+      const ev = ALL_EVENTS.find(e => e.id === eid);
+      return ev ? `${ev.emoji} ${ev.label}` : eid;
+    });
+
+    let msg = `Updated! Your wedding is now a **${days}-day celebration**.\n\n`;
+    if (currentEvents.length > 0) {
+      msg += `**Currently planned events (${currentEvents.length}):**\n${eventLabels.map(l => `• ${l}`).join('\n')}\n\n`;
+
+      // Suggest a day-wise arrangement
+      if (days === 1) {
+        msg += `**Suggested Day 1 schedule:**\n`;
+        currentEvents.forEach(eid => {
+          const ev = ALL_EVENTS.find(e => e.id === eid);
+          if (ev) msg += `• ${ev.emoji} ${ev.label}\n`;
+        });
+      } else if (days === 2) {
+        const half = Math.ceil(currentEvents.length / 2);
+        const day1 = currentEvents.slice(0, half);
+        const day2 = currentEvents.slice(half);
+        msg += `**Suggested arrangement:**\n`;
+        msg += `**Day 1:** ${day1.map(eid => ALL_EVENTS.find(e => e.id === eid)?.label || eid).join(', ')}\n`;
+        msg += `**Day 2:** ${day2.map(eid => ALL_EVENTS.find(e => e.id === eid)?.label || eid).join(', ')}\n`;
+      } else {
+        const perDay = Math.ceil(currentEvents.length / days);
+        for (let d = 0; d < days; d++) {
+          const dayEvents = currentEvents.slice(d * perDay, (d + 1) * perDay);
+          if (dayEvents.length > 0) {
+            msg += `**Day ${d + 1}:** ${dayEvents.map(eid => ALL_EVENTS.find(e => e.id === eid)?.label || eid).join(', ')}\n`;
+          }
+        }
+      }
+      msg += `\nWould you like to rearrange events across days or add/remove any?`;
+    } else {
+      msg += `You haven't selected events yet. Would you like me to suggest events for a ${days}-day wedding?`;
+    }
+    addAIMessage(msg);
+
+    // Persist to backend
+    const bpId = useAppStore.getState().blueprintId;
+    if (bpId) {
+      BlueprintService.updateBlueprint(bpId, { wedding_summary: { wedding_days: days } as any }).catch(() => {});
+    }
   };
 
   // ── Interactive Widget Handlers ───────────────────────────────────────────
@@ -558,7 +735,18 @@ const SmartPlanner: React.FC = () => {
     setChatMessages(p => [...p, { id: (Date.now() + 1).toString(), content: '', sender: 'ai', timestamp: new Date(), loading: true }]);
     try {
       let ctx: Record<string, unknown> = {}; try { ctx = JSON.parse(localStorage.getItem('weddingPreferences') || '{}'); } catch {}
-      const res = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      // Inject full blueprint data so AI knows what's actually planned
+      const currentBp = useAppStore.getState().blueprint;
+      if (currentBp) {
+        (ctx as any).blueprint = {
+          city: currentBp.city, date: currentBp.date, guestCount: currentBp.guestCount,
+          budget: currentBp.budget, theme: currentBp.theme, events: currentBp.events,
+          weddingDays: currentBp.weddingDays,
+          budgetBreakdown: currentBp.budgetBreakdown, categorySpecs: currentBp.categorySpecs,
+          timeline: currentBp.timeline, costSavingTips: currentBp.costSavingTips,
+        };
+      }
+      const res = await fetch(`${API_BASE}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: msg, blueprintId: blueprintId || undefined, context: ctx }) });
       const r = await res.json(); const aiText = r.response || r.data?.response || 'Sorry, I could not process that request.';
       setChatMessages(p => [...p.filter(m => !m.loading), { id: Date.now().toString(), content: aiText, sender: 'ai', timestamp: new Date() }]);
@@ -583,7 +771,7 @@ const SmartPlanner: React.FC = () => {
   const callPlanAPI = async (finalPrompt: string) => {
     setIsPlanning(true); setError(null); setPlanResult(null); setShowFollowUp(false);
     try {
-      const res = await fetch('/api/ai/plan-wedding', { method: 'POST',
+      const res = await fetch(`${API_BASE}/api/ai/plan-wedding`, { method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-User-Role': 'couple', 'X-User-Id': '1' },
         body: JSON.stringify({ prompt: finalPrompt, dateFlexibility: dateFlexibility !== 'exact' ? dateFlexibility : undefined }) });
       const data = await res.json();
@@ -610,7 +798,23 @@ const SmartPlanner: React.FC = () => {
         if (prefs) { updateWeddingPreferences(prefs); localStorage.setItem('weddingPreferences', JSON.stringify(prefs)); }
         const ms = data.steps?.find((s: PlanStep) => s.step === 'messages_drafted');
         if (ms?.data && Array.isArray(ms.data)) { setDraftVendorMessages(ms.data); localStorage.setItem('draftVendorMessages', JSON.stringify(ms.data)); }
-        setChatMessages([{ id: '1', content: "Your plan is ready! Ask me anything about your wedding -- budget, vendors, timeline, or request changes.", sender: 'ai', timestamp: new Date() }]);
+        // Build a rich summary from the generated blueprint for the initial chat message
+        const bpData = bpStep?.data || {};
+        const ws = bpData.wedding_summary || {};
+        const bb = bpData.budget_breakdown || {};
+        const budgetLines = Object.entries(bb).map(([cat, amt]: [string, any]) => `- ${cat}: ₹${(Number(amt) / 100000).toFixed(1)}L`).join('\n');
+        const summaryMsg = [
+          `Your wedding plan is ready! Here's a summary:\n`,
+          `**${ws.city || basic.location || 'Your'} Wedding** — ${basic.weddingDate || ws.date || 'Date TBD'}`,
+          `**Guests:** ${ws.guest_count || basic.guestCount || '—'} | **Budget:** ₹${(Number(ws.budget || 0) / 100000).toFixed(0)}L`,
+          ws.events?.length ? `**Events:** ${(ws.events || []).join(', ')}` : '',
+          budgetLines ? `\n**Budget Breakdown:**\n${budgetLines}` : '',
+          bpData.cost_saving_tips?.length ? `\n**Cost-Saving Tips:**\n${bpData.cost_saving_tips.slice(0, 3).map((t: string) => `- ${t}`).join('\n')}` : '',
+          `\nAsk me to change anything — budget, city, events, theme — or go to **Blueprint** to review and publish!`,
+        ].filter(Boolean).join('\n');
+        setChatMessages([{ id: '1', content: summaryMsg, sender: 'ai', timestamp: new Date() }]);
+        // Switch to chat mode so user can interact
+        setMode('chat');
       } else { setError(data.error || 'Failed to plan wedding'); }
     } catch { setError('Something went wrong. Please try again.'); } finally { setIsPlanning(false); }
   };
@@ -687,6 +891,43 @@ const SmartPlanner: React.FC = () => {
     // Apply changes if any were found
     if (Object.keys(changes).length > 0) {
       updateBlueprint(changes);
+
+      // Auto-persist to backend if we have a blueprintId
+      const bpId = useAppStore.getState().blueprintId;
+      if (bpId) {
+        const currentBp = useAppStore.getState().blueprint;
+        if (currentBp) {
+          // Map store fields to API snake_case format
+          const patch: any = {};
+          const summaryChanges: any = {};
+          if (changes.city) summaryChanges.city = changes.city;
+          if (changes.budget) {
+            // Convert display budget (e.g., "₹30 Lakhs") to numeric for backend
+            const budgetNumMatch = changes.budget.match(/(\d+)/);
+            if (budgetNumMatch) {
+              const num = parseInt(budgetNumMatch[1]);
+              summaryChanges.budget = changes.budget.toLowerCase().includes('crore') ? num * 10000000 : num * 100000;
+            } else {
+              summaryChanges.budget = changes.budget;
+            }
+          }
+          if (changes.guestCount) summaryChanges.guest_count = Number(changes.guestCount);
+          if (changes.theme) summaryChanges.theme = changes.theme;
+          if (changes.events) summaryChanges.events = changes.events;
+          if (changes.date) summaryChanges.date = changes.date;
+          if (Object.keys(summaryChanges).length > 0) {
+            patch.wedding_summary = summaryChanges;
+          }
+          if (changes.budgetBreakdown) {
+            patch.budget_breakdown = { ...currentBp.budgetBreakdown, ...changes.budgetBreakdown };
+          }
+          if (Object.keys(patch).length > 0) {
+            // Fire and forget — don't block the chat flow
+            BlueprintService.updateBlueprint(bpId, patch).catch(() => {});
+          }
+        }
+      }
+
       // Also update legacy stores
       const legacyUpdates: Record<string, any> = {};
       if (changes.city) legacyUpdates.basicDetails = { ...useAppStore.getState().weddingPreferences.basicDetails, location: changes.city };
@@ -710,6 +951,7 @@ const SmartPlanner: React.FC = () => {
     // Special: re-plan from scratch
     if (msg === 'Re-plan from scratch') {
       useAppStore.getState().clearPlan();
+      clearPlannerChatMessages();
       setMode('plan'); setPlanResult(null); setChatMessages([]); setPrompt('');
       return;
     }
@@ -736,6 +978,12 @@ const SmartPlanner: React.FC = () => {
         break;
       case 'change_theme':
         handleChangeThemeIntent(intent);
+        break;
+      case 'change_duration':
+        handleChangeDurationIntent(intent);
+        break;
+      case 'show_planned_events':
+        handleShowPlannedEventsIntent();
         break;
       case 'find_vendors':
         navigate(intent.category ? `/vendors?category=${intent.category}` : '/vendors');
@@ -768,8 +1016,8 @@ const SmartPlanner: React.FC = () => {
 
     if (confirmed) {
       return (
-        <div className="bg-green-50 rounded-lg p-3 border border-green-200 mt-2">
-          <div className="flex items-center gap-2 text-green-700 text-sm font-medium">
+        <div className={`rounded-lg p-3 border mt-2 ${isDark ? 'bg-green-900/30 border-green-800' : 'bg-green-50 border-green-200'}`}>
+          <div className={`flex items-center gap-2 text-sm font-medium ${isDark ? 'text-green-400' : 'text-green-700'}`}>
             <Check className="w-4 h-4" /> Changes applied to your plan
           </div>
         </div>
@@ -1029,48 +1277,54 @@ const SmartPlanner: React.FC = () => {
   // ── Chat UI ───────────────────────────────────────────────────────────────
 
   const renderChat = () => (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div className={`rounded-2xl shadow-lg border overflow-hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+      <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-rose-500" /><h3 className="font-semibold text-gray-800">Chat with ShehnAI</h3>
+          <Sparkles className="w-5 h-5 text-rose-500" /><h3 className={`font-semibold text-sm sm:text-base ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>Chat with ShehnAI</h3>
         </div>
         <button onClick={() => setShowPDFUploader(!showPDFUploader)}
-          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all ${showPDFUploader ? 'bg-rose-50 border-rose-200 text-rose-600' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600'}`}>
-          <Upload className="w-3.5 h-3.5" /> Upload PDF
+          className={`flex items-center gap-1.5 text-xs px-2 sm:px-3 py-1.5 rounded-lg border transition-all ${
+            showPDFUploader
+              ? isDark ? 'bg-rose-900/30 border-rose-800 text-rose-400' : 'bg-rose-50 border-rose-200 text-rose-600'
+              : isDark ? 'bg-gray-700 border-gray-600 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600'
+          }`}>
+          <Upload className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Upload PDF</span><span className="sm:hidden">PDF</span>
         </button>
       </div>
       {showPDFUploader && (
-        <div className="border-b border-gray-100">
+        <div className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
           <PDFUploadExtractor onClose={() => setShowPDFUploader(false)} />
         </div>
       )}
-      <div className="max-h-96 overflow-y-auto p-4 space-y-3">
+      <div className={`max-h-[50vh] sm:max-h-[60vh] overflow-y-auto p-3 sm:p-4 space-y-3 ${isDark ? 'bg-gray-800' : ''}`}>
         {chatMessages.map(msg => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.loading ? (
-              <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-2xl"><Loader2 className="w-4 h-4 animate-spin text-rose-400" /><span className="text-sm text-gray-400">Thinking...</span></div>
+              <div className={`flex items-center gap-2 px-4 py-3 rounded-2xl ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <Loader2 className="w-4 h-4 animate-spin text-rose-400" /><span className="text-sm text-gray-400">Thinking...</span>
+              </div>
             ) : msg.sender === 'user' ? (
-              <div className="px-4 py-3 rounded-2xl max-w-xs lg:max-w-md bg-rose-500 text-white"><p className="text-sm">{msg.content}</p></div>
+              <div className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl max-w-[85%] sm:max-w-xs lg:max-w-lg xl:max-w-2xl bg-rose-500 text-white"><p className="text-sm">{msg.content}</p></div>
             ) : msg.sender === 'system' || msg.interactive ? (
-              <div className="flex items-start gap-2 max-w-sm lg:max-w-lg">
-                <div className="p-1.5 rounded-full bg-rose-100 flex-shrink-0 mt-0.5"><Sparkles className="w-3 h-3 text-rose-500" /></div>
-                <div className="bg-gray-50 border border-gray-100 px-4 py-3 rounded-2xl text-sm text-gray-800 leading-relaxed">
-                  {msg.content && renderMarkdown(msg.content)}
+              <div className="flex items-start gap-2 max-w-[90%] sm:max-w-sm lg:max-w-xl xl:max-w-3xl">
+                <div className={`p-1.5 rounded-full flex-shrink-0 mt-0.5 ${isDark ? 'bg-rose-900/40' : 'bg-rose-100'}`}><Sparkles className="w-3 h-3 text-rose-500" /></div>
+                <div className={`px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-sm leading-relaxed ${isDark ? 'bg-gray-700 border border-gray-600 text-gray-200' : 'bg-gray-50 border border-gray-100 text-gray-800'}`}>
+                  {msg.content && renderMarkdown(msg.content, isDark)}
                   {renderInteractiveWidget(msg)}
                 </div>
               </div>
             ) : (
-              <div className="flex items-start gap-2 max-w-sm lg:max-w-lg">
-                <div className="p-1.5 rounded-full bg-rose-100 flex-shrink-0 mt-0.5"><Sparkles className="w-3 h-3 text-rose-500" /></div>
+              <div className="flex items-start gap-2 max-w-[90%] sm:max-w-sm lg:max-w-xl xl:max-w-3xl">
+                <div className={`p-1.5 rounded-full flex-shrink-0 mt-0.5 ${isDark ? 'bg-rose-900/40' : 'bg-rose-100'}`}><Sparkles className="w-3 h-3 text-rose-500" /></div>
                 <div>
-                  <div className="bg-gray-50 border border-gray-100 px-4 py-3 rounded-2xl text-sm text-gray-800 leading-relaxed">{renderMarkdown(msg.content)}</div>
+                  <div className={`px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-sm leading-relaxed ${isDark ? 'bg-gray-700 border border-gray-600 text-gray-200' : 'bg-gray-50 border border-gray-100 text-gray-800'}`}>{renderMarkdown(msg.content, isDark)}</div>
                   <div className="flex items-center gap-1 mt-1 ml-1">
                     <button onClick={() => handleFeedback(msg.id, 'helpful')} title="Helpful"
-                      className={`p-1 rounded transition-all ${msg.feedback === 'helpful' ? 'text-green-500' : 'text-gray-300 hover:text-green-400'}`}>
+                      className={`p-1 rounded transition-all ${msg.feedback === 'helpful' ? 'text-green-500' : isDark ? 'text-gray-500 hover:text-green-400' : 'text-gray-300 hover:text-green-400'}`}>
                       <ThumbsUp className="w-3.5 h-3.5" fill={msg.feedback === 'helpful' ? 'currentColor' : 'none'} />
                     </button>
                     <button onClick={() => handleFeedback(msg.id, 'not_helpful')} title="Not helpful"
-                      className={`p-1 rounded transition-all ${msg.feedback === 'not_helpful' ? 'text-red-500' : 'text-gray-300 hover:text-red-400'}`}>
+                      className={`p-1 rounded transition-all ${msg.feedback === 'not_helpful' ? 'text-red-500' : isDark ? 'text-gray-500 hover:text-red-400' : 'text-gray-300 hover:text-red-400'}`}>
                       <ThumbsDown className="w-3.5 h-3.5" fill={msg.feedback === 'not_helpful' ? 'currentColor' : 'none'} />
                     </button>
                   </div>
@@ -1081,19 +1335,119 @@ const SmartPlanner: React.FC = () => {
         ))}
         <div ref={chatEndRef} />
       </div>
-      <div className="px-4 py-2 flex flex-wrap gap-2 border-t border-gray-50">
+      <div className={`px-3 sm:px-4 py-2 flex flex-wrap gap-1.5 sm:gap-2 border-t ${isDark ? 'border-gray-700' : 'border-gray-50'}`}>
         {QUICK_ACTIONS.map(({ label, icon: Icon }) => (
-          <button key={label} onClick={() => sendChat(label)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-full text-rose-600 hover:bg-rose-100 transition-all">
+          <button key={label} onClick={() => sendChat(label)} className={`flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 border rounded-full transition-all ${
+            isDark ? 'bg-rose-900/30 border-rose-800 text-rose-400 hover:bg-rose-900/50' : 'bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-100'
+          }`}>
             <Icon className="w-3 h-3" />{label}</button>
         ))}
       </div>
-      <div className="p-4 border-t border-gray-100 flex gap-3">
+      <div className={`p-3 sm:p-4 border-t flex gap-2 sm:gap-3 ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
         <textarea value={chatInput} onChange={e => setChatInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
-          placeholder={planResult ? "Have questions about your plan? Ask me anything..." : "Ask about your wedding plan..."}
-          className="flex-1 p-3 border border-gray-200 rounded-xl text-sm resize-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none" rows={2} />
+          placeholder={planResult ? "Have questions about your plan?" : "Ask about your wedding plan..."}
+          className={`flex-1 p-2.5 sm:p-3 border rounded-xl text-sm resize-none outline-none transition-all ${
+            isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-rose-500 focus:ring-2 focus:ring-rose-900/50' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100'
+          }`} rows={2} />
         <button onClick={() => sendChat()} disabled={!chatInput.trim() || isChatLoading}
-          className="px-4 rounded-xl bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+          className="px-3 sm:px-4 rounded-xl bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+          <Send className="w-4 h-4" /></button>
+      </div>
+    </div>
+  );
+
+  // ── Full-screen chat (fills available space) ─────────────────────────────
+  const renderChatFullScreen = () => (
+    <div className={`rounded-2xl shadow-lg border flex flex-col h-full overflow-hidden ${
+      isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+    }`}>
+      <div className={`px-3 sm:px-5 py-3 border-b flex items-center justify-between flex-shrink-0 ${
+        isDark ? 'border-gray-700' : 'border-gray-100'
+      }`}>
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-rose-500" /><h3 className={`font-semibold text-sm sm:text-base ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>Chat with ShehnAI</h3>
+        </div>
+        <button onClick={() => setShowPDFUploader(!showPDFUploader)}
+          className={`flex items-center gap-1.5 text-xs px-2 sm:px-3 py-1.5 rounded-lg border transition-all ${
+            showPDFUploader
+              ? isDark ? 'bg-rose-900/30 border-rose-800 text-rose-400' : 'bg-rose-50 border-rose-200 text-rose-600'
+              : isDark ? 'bg-gray-700 border-gray-600 text-gray-400 hover:bg-rose-900/20 hover:border-rose-800 hover:text-rose-400' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600'
+          }`}>
+          <Upload className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Upload PDF</span><span className="sm:hidden">PDF</span>
+        </button>
+      </div>
+      {showPDFUploader && (
+        <div className={`border-b flex-shrink-0 ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
+          <PDFUploadExtractor onClose={() => setShowPDFUploader(false)} />
+        </div>
+      )}
+      <div className={`flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 ${isDark ? 'bg-gray-800' : ''}`}>
+        {chatMessages.map(msg => (
+          <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {msg.loading ? (
+              <div className={`flex items-center gap-2 px-4 py-3 rounded-2xl ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <Loader2 className="w-4 h-4 animate-spin text-rose-400" /><span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-400'}`}>Thinking...</span>
+              </div>
+            ) : msg.sender === 'user' ? (
+              <div className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl max-w-[85%] sm:max-w-xs md:max-w-sm lg:max-w-lg xl:max-w-2xl bg-rose-500 text-white">
+                <p className="text-sm">{msg.content}</p>
+              </div>
+            ) : msg.sender === 'system' || msg.interactive ? (
+              <div className="flex items-start gap-2 max-w-[90%] sm:max-w-sm md:max-w-xl lg:max-w-2xl">
+                <div className={`p-1.5 rounded-full flex-shrink-0 mt-0.5 ${isDark ? 'bg-rose-900/40' : 'bg-rose-100'}`}><Sparkles className="w-3 h-3 text-rose-500" /></div>
+                <div className={`px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-sm leading-relaxed ${
+                  isDark ? 'bg-gray-700 border border-gray-600 text-gray-200' : 'bg-gray-50 border border-gray-100 text-gray-800'
+                }`}>
+                  {msg.content && renderMarkdown(msg.content, isDark)}
+                  {renderInteractiveWidget(msg)}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-start gap-2 max-w-[90%] sm:max-w-sm md:max-w-xl lg:max-w-2xl">
+                <div className={`p-1.5 rounded-full flex-shrink-0 mt-0.5 ${isDark ? 'bg-rose-900/40' : 'bg-rose-100'}`}><Sparkles className="w-3 h-3 text-rose-500" /></div>
+                <div>
+                  <div className={`px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-sm leading-relaxed ${
+                    isDark ? 'bg-gray-700 border border-gray-600 text-gray-200' : 'bg-gray-50 border border-gray-100 text-gray-800'
+                  }`}>{renderMarkdown(msg.content, isDark)}</div>
+                  <div className="flex items-center gap-1 mt-1 ml-1">
+                    <button onClick={() => handleFeedback(msg.id, 'helpful')} title="Helpful"
+                      className={`p-1 rounded transition-all ${msg.feedback === 'helpful' ? 'text-green-500' : isDark ? 'text-gray-500 hover:text-green-400' : 'text-gray-300 hover:text-green-400'}`}>
+                      <ThumbsUp className="w-3.5 h-3.5" fill={msg.feedback === 'helpful' ? 'currentColor' : 'none'} />
+                    </button>
+                    <button onClick={() => handleFeedback(msg.id, 'not_helpful')} title="Not helpful"
+                      className={`p-1 rounded transition-all ${msg.feedback === 'not_helpful' ? 'text-red-500' : isDark ? 'text-gray-500 hover:text-red-400' : 'text-gray-300 hover:text-red-400'}`}>
+                      <ThumbsDown className="w-3.5 h-3.5" fill={msg.feedback === 'not_helpful' ? 'currentColor' : 'none'} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <div ref={chatEndRef} />
+      </div>
+      <div className={`px-3 sm:px-4 py-2 flex flex-wrap gap-1.5 sm:gap-2 border-t flex-shrink-0 ${
+        isDark ? 'border-gray-700' : 'border-gray-50'
+      }`}>
+        {QUICK_ACTIONS.map(({ label, icon: Icon }) => (
+          <button key={label} onClick={() => sendChat(label)} className={`flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 border rounded-full transition-all ${
+            isDark ? 'bg-rose-900/30 border-rose-800 text-rose-400 hover:bg-rose-900/50' : 'bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-100'
+          }`}>
+            <Icon className="w-3 h-3" />{label}</button>
+        ))}
+      </div>
+      <div className={`p-3 sm:p-4 border-t flex gap-2 sm:gap-3 flex-shrink-0 ${
+        isDark ? 'border-gray-700' : 'border-gray-100'
+      }`}>
+        <textarea value={chatInput} onChange={e => setChatInput(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
+          placeholder="Ask about your wedding plan..."
+          className={`flex-1 p-2.5 sm:p-3 border rounded-xl text-sm resize-none outline-none transition-all ${
+            isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-rose-500 focus:ring-2 focus:ring-rose-900/50' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100'
+          }`} rows={2} />
+        <button onClick={() => sendChat()} disabled={!chatInput.trim() || isChatLoading}
+          className="px-3 sm:px-5 rounded-xl bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
           <Send className="w-4 h-4" /></button>
       </div>
     </div>
@@ -1104,24 +1458,29 @@ const SmartPlanner: React.FC = () => {
   if (mode === 'chat' && !planResult) {
     const banner = getSummaryBanner();
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-sage-50">
-        <div className="max-w-4xl mx-auto px-4 pt-8 pb-8 space-y-4">
-          {banner && (
-            <div className="relative rounded-2xl overflow-hidden">
-              <img src={getThemeImage(getPrefsFlat().weddingStyle)} alt="Wedding theme" className="w-full h-32 object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/classic contemporary.png'; }} />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
-              <div className="absolute inset-0 px-6 py-4 text-white flex items-center justify-between">
-                <div className="flex items-center gap-2"><Sparkles className="w-5 h-5" /><span className="font-medium">Your {banner}</span></div>
-                <button onClick={() => navigate('/blueprint')} className="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg transition-all backdrop-blur-sm">View Blueprint</button>
+      <div className={`h-[100dvh] flex flex-col overflow-hidden ${
+        isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-rose-50 via-white to-sage-50'
+      }`}>
+        {banner && (
+          <div className="relative h-11 sm:h-14 flex-shrink-0 overflow-hidden mx-2 sm:mx-3 mt-2 sm:mt-3 rounded-xl">
+            <img src={getThemeImage(getPrefsFlat().weddingStyle)} alt="Wedding theme" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/classic contemporary.png'; }} />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+            <div className="absolute inset-0 px-3 sm:px-6 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <Sparkles className="w-4 sm:w-5 h-4 sm:h-5 flex-shrink-0" />
+                <span className="font-medium text-xs sm:text-sm truncate">Your {banner}</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                <button onClick={() => navigate('/blueprint')} className="text-[10px] sm:text-xs bg-white/20 hover:bg-white/30 px-2 sm:px-3 py-1 rounded-lg transition-all backdrop-blur-sm">Blueprint</button>
+                <button onClick={() => { setBlueprintId(null); setMode('plan'); setChatMessages([]); clearPlannerChatMessages(); setPrompt(''); }}
+                  className="text-[10px] sm:text-xs text-white/60 hover:text-white/90 transition-all flex items-center gap-1">
+                  <RotateCcw className="w-3 h-3" /> New</button>
               </div>
             </div>
-          )}
-          {renderChat()}
-          <div className="flex justify-center">
-            <button onClick={() => { setBlueprintId(null); setMode('plan'); setChatMessages([]); setPrompt(''); }}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 transition-all">
-              <RotateCcw className="w-4 h-4" /> Start a new plan</button>
           </div>
+        )}
+        <div className="flex-1 min-h-0 mx-2 sm:mx-3 mb-2 sm:mb-3 mt-1.5 sm:mt-2">
+          {renderChatFullScreen()}
         </div>
       </div>
     );
@@ -1130,54 +1489,106 @@ const SmartPlanner: React.FC = () => {
   // ── Planning mode ─────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-sage-50">
-      <div className="max-w-4xl mx-auto px-4 pt-12 pb-8">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-rose-50 via-white to-sage-50'}`}>
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 pt-4 sm:pt-8 pb-4 sm:pb-8">
         {!planResult && (<>
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-100 rounded-full text-rose-700 text-sm font-medium mb-4">
-              <Sparkles className="w-4 h-4" />AI-Powered Wedding Planner</div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Plan Your Dream Wedding<br /><span className="text-rose-500">in One Sentence</span></h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Tell us about your dream wedding and our AI will create a complete plan -- budget breakdown, vendor requirements, timeline, and draft messages -- all instantly.</p>
+          <div className="text-center mb-6 sm:mb-10">
+            <div className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 ${
+              isDark ? 'bg-rose-900/30 text-rose-400' : 'bg-rose-100 text-rose-700'
+            }`}>
+              <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4" />AI-Powered Wedding Planner</div>
+            <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Plan Your Dream Wedding<br /><span className="text-rose-500">in One Sentence</span></h1>
+            <p className={`text-sm sm:text-base lg:text-lg max-w-2xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Tell us about your dream wedding and our AI will create a complete plan — budget breakdown, vendor requirements, timeline, and draft messages — all instantly.</p>
+            {pastBlueprints.length > 0 && (
+              <div className="mt-3 sm:mt-4">
+                <button onClick={() => setShowPastBlueprints(!showPastBlueprints)}
+                  className={`inline-flex items-center gap-2 text-xs sm:text-sm transition-all ${isDark ? 'text-gray-500 hover:text-rose-400' : 'text-gray-500 hover:text-rose-600'}`}>
+                  <History className="w-4 h-4" />
+                  {pastBlueprints.length} past blueprint{pastBlueprints.length > 1 ? 's' : ''} — resume where you left off
+                </button>
+                {showPastBlueprints && (
+                  <div className="mt-3 max-w-xl mx-auto space-y-2">
+                    {pastBlueprints.map(bp => {
+                      const ws = bp.wedding_summary || {} as any;
+                      return (
+                        <button key={bp.id} onClick={() => loadPastBlueprint(bp)}
+                          className={`w-full text-left border rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 hover:shadow-sm transition-all ${
+                            isDark ? 'bg-gray-800 border-gray-700 hover:border-rose-700' : 'bg-white border-gray-200 hover:border-rose-300'
+                          }`}>
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <span className={`text-sm font-semibold truncate block ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{bp.title}</span>
+                              <div className={`flex items-center gap-2 sm:gap-3 mt-0.5 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                                {ws.city && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ws.city}</span>}
+                                {ws.guest_count && <span className="flex items-center gap-1"><Users className="w-3 h-3" />{ws.guest_count} guests</span>}
+                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(bp.created_at).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${
+                              bp.status === 'published'
+                                ? isDark ? 'bg-green-900/40 text-green-400' : 'bg-green-100 text-green-700'
+                                : bp.status === 'closed'
+                                  ? isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-600'
+                                  : isDark ? 'bg-amber-900/40 text-amber-400' : 'bg-amber-100 text-amber-700'
+                            }`}>{bp.status}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 mb-6">
+          <div className={`rounded-2xl shadow-xl border p-4 sm:p-6 mb-4 sm:mb-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
             <div className="relative">
               <textarea ref={inputRef} value={prompt} onChange={e => setPrompt(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handlePlan(); } }}
                 placeholder="Describe your dream wedding... e.g., 'Royal palace wedding in Mumbai for 300 guests, \u20B950 lakh budget, December 2026'"
-                className="w-full min-h-[100px] p-4 pr-14 text-lg border-2 border-gray-200 rounded-xl focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none resize-none transition-all"
+                className={`w-full min-h-[70px] sm:min-h-[100px] p-3 sm:p-4 pr-14 text-sm sm:text-base lg:text-lg border-2 rounded-xl outline-none resize-none transition-all ${
+                  isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-rose-500 focus:ring-2 focus:ring-rose-900/50' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100'
+                }`}
                 disabled={isPlanning} />
               <button onClick={handlePlan} disabled={!prompt.trim() || isPlanning}
-                className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl">
-                {isPlanning ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}</button>
+                className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl">
+                {isPlanning ? <Loader2 className="w-4 sm:w-5 h-4 sm:h-5 animate-spin" /> : <Send className="w-4 sm:w-5 h-4 sm:h-5" />}</button>
             </div>
-            {!isPlanning && <div className="mt-4"><p className="text-xs text-gray-400 mb-2">Try an example:</p>
-              <div className="flex flex-wrap gap-2">{EXAMPLE_PROMPTS.map((ex, i) => (
-                <button key={i} onClick={() => setPrompt(ex)} className="text-xs px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-gray-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-700 transition-all">
-                  {ex.length > 60 ? ex.slice(0, 60) + '...' : ex}</button>
+            {!isPlanning && <div className="mt-3 sm:mt-4"><p className={`text-xs mb-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Try an example:</p>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">{EXAMPLE_PROMPTS.map((ex, i) => (
+                <button key={i} onClick={() => setPrompt(ex)} className={`text-[11px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 border rounded-full transition-all ${
+                  isDark ? 'bg-gray-700 border-gray-600 text-gray-400 hover:bg-rose-900/20 hover:border-rose-800 hover:text-rose-400' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-700'
+                }`}>
+                  {ex.length > 50 ? ex.slice(0, 50) + '...' : ex}</button>
               ))}</div></div>}
           </div>
 
           {showFollowUp && !isPlanning && (
-            <div ref={followUpRef} className="bg-white rounded-2xl shadow-lg border border-rose-100 p-6 mb-6 animate-in fade-in">
-              <h3 className="text-base font-semibold text-gray-800 mb-4">Just a couple more details to perfect your plan...</h3>
+            <div ref={followUpRef} className={`rounded-2xl shadow-lg border p-4 sm:p-6 mb-4 sm:mb-6 animate-in fade-in ${
+              isDark ? 'bg-gray-800 border-rose-900/50' : 'bg-white border-rose-100'
+            }`}>
+              <h3 className={`text-sm sm:text-base font-semibold mb-3 sm:mb-4 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Just a couple more details to perfect your plan...</h3>
               <div className="flex flex-col sm:flex-row gap-4 mb-5">
                 {missingDate && <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-600 mb-1.5"><Calendar className="w-4 h-4 inline mr-1 text-rose-400" />When's the big day?</label>
+                  <label className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}><Calendar className="w-4 h-4 inline mr-1 text-rose-400" />When's the big day?</label>
                   <input type="date" value={followUpDate} onChange={e => setFollowUpDate(e.target.value)} min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none transition-all mb-2" />
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Date flexibility</label>
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 rounded-xl outline-none transition-all mb-2 ${
+                      isDark ? 'bg-gray-700 border-gray-600 text-gray-200 focus:border-rose-500' : 'border-gray-200 text-gray-700 focus:border-rose-400 focus:ring-2 focus:ring-rose-100'
+                    }`} />
+                  <label className={`block text-xs font-medium mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Date flexibility</label>
                   <div className="flex gap-1.5 flex-wrap">
                     {([['exact', 'Exact date'], ['2weeks', '\u00B1 2 weeks'], ['1month', '\u00B1 1 month'], ['3months', '\u00B1 3 months']] as const).map(([val, label]) => (
                       <button key={val} type="button" onClick={() => setDateFlexibility(val)}
-                        className={`text-xs px-2.5 py-1 rounded-full border transition-all ${dateFlexibility === val ? 'bg-rose-500 text-white border-rose-500' : 'bg-white text-gray-600 border-gray-200 hover:border-rose-300'}`}>
+                        className={`text-xs px-2.5 py-1 rounded-full border transition-all ${dateFlexibility === val ? 'bg-rose-500 text-white border-rose-500' : isDark ? 'bg-gray-700 text-gray-400 border-gray-600 hover:border-rose-700' : 'bg-white text-gray-600 border-gray-200 hover:border-rose-300'}`}>
                         {label}
                       </button>
                     ))}
                   </div>
                 </div>}
-                {missingGuests && <div className="flex-1"><label className="block text-sm font-medium text-gray-600 mb-1.5"><Users className="w-4 h-4 inline mr-1 text-rose-400" />How many guests?</label>
+                {missingGuests && <div className="flex-1"><label className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}><Users className="w-4 h-4 inline mr-1 text-rose-400" />How many guests?</label>
                   <input type="number" value={followUpGuests} onChange={e => setFollowUpGuests(e.target.value)} placeholder="e.g. 200" min={1} max={10000}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl text-gray-700 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none transition-all" /></div>}
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 rounded-xl outline-none transition-all ${
+                      isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-rose-500' : 'border-gray-200 text-gray-700 focus:border-rose-400 focus:ring-2 focus:ring-rose-100'
+                    }`} /></div>}
               </div>
               <div className="flex items-center gap-3">
                 <button onClick={handleFollowUpSubmit} disabled={(missingDate && !followUpDate) || (missingGuests && !followUpGuests)}
@@ -1189,17 +1600,17 @@ const SmartPlanner: React.FC = () => {
           )}
 
           {isPlanning && (
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 flex items-center justify-center"><Sparkles className="w-8 h-8 text-rose-500 animate-pulse" /></div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Planning Your Dream Wedding...</h3>
-              <p className="text-gray-500 mb-6">Our AI is extracting preferences, creating your blueprint, matching vendors, and drafting messages</p>
-              <div className="flex justify-center gap-8 text-sm text-gray-400">
+            <div className={`rounded-2xl shadow-lg border p-6 sm:p-8 text-center ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${isDark ? 'bg-rose-900/30' : 'bg-rose-100'}`}><Sparkles className="w-7 sm:w-8 h-7 sm:h-8 text-rose-500 animate-pulse" /></div>
+              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>Planning Your Dream Wedding...</h3>
+              <p className={`text-sm sm:text-base mb-4 sm:mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Our AI is extracting preferences, creating your blueprint, matching vendors, and drafting messages</p>
+              <div className={`flex flex-wrap justify-center gap-3 sm:gap-8 text-xs sm:text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                 {['Extracting details', 'Building blueprint', 'Matching vendors', 'Drafting messages'].map((s, i) => (
                   <div key={i} className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-rose-300 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />{s}</div>
                 ))}</div>
             </div>
           )}
-          {error && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700">{error}</div>}
+          {error && <div className={`rounded-xl p-4 ${isDark ? 'bg-red-900/30 border border-red-800 text-red-400' : 'bg-red-50 border border-red-200 text-red-700'}`}>{error}</div>}
         </>)}
 
         {planResult && (
@@ -1217,35 +1628,43 @@ const SmartPlanner: React.FC = () => {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="flex border-b border-gray-100">
+            <div className={`rounded-2xl shadow-lg border overflow-hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+              <div className={`flex border-b overflow-x-auto ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
                 {planResult.steps.map((step, i) => (
                   <button key={i} onClick={() => setActiveStep(i)}
-                    className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${activeStep === i ? 'text-rose-600 border-b-2 border-rose-500 bg-rose-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}>
-                    <div className="flex items-center justify-center gap-1.5">
+                    className={`flex-1 min-w-0 px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all ${
+                      activeStep === i
+                        ? isDark ? 'text-rose-400 border-b-2 border-rose-500 bg-rose-900/20' : 'text-rose-600 border-b-2 border-rose-500 bg-rose-50'
+                        : isDark ? 'text-gray-500 hover:text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    }`}>
+                    <div className="flex items-center justify-center gap-1 sm:gap-1.5">
                       {STEP_ICONS[step.step] || <Check className="w-4 h-4" />}
-                      <span className="hidden md:inline">{step.title.replace(/[^\w\s]/g, '').trim()}</span>
-                      <span className="md:hidden">{step.title.replace(/[^\w\s]/g, '').trim().split(' ')[0]}</span>
+                      <span className="hidden md:inline truncate">{step.title.replace(/[^\w\s]/g, '').trim()}</span>
+                      <span className="md:hidden truncate">{step.title.replace(/[^\w\s]/g, '').trim().split(' ')[0]}</span>
                     </div></button>
                 ))}</div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 {planResult.steps[activeStep] && (<div>
-                  <h3 className="text-lg font-bold text-gray-800 mb-1">{planResult.steps[activeStep].title}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{planResult.steps[activeStep].summary}</p>
+                  <h3 className={`text-base sm:text-lg font-bold mb-1 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>{planResult.steps[activeStep].title}</h3>
+                  <p className={`text-sm mb-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{planResult.steps[activeStep].summary}</p>
                   {renderStepContent(planResult.steps[activeStep], planResult.preferences)}
                 </div>)}
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 justify-center">
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
               {planResult.blueprintId && <button onClick={() => navigate('/blueprint')}
-                className="flex items-center gap-2 px-6 py-3 bg-rose-500 text-white rounded-xl font-semibold hover:bg-rose-600 transition-all shadow-md">
-                View Full Blueprint <ArrowRight className="w-4 h-4" /></button>}
-              <button onClick={() => navigate('/preferences')} className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:border-rose-300 hover:text-rose-600 transition-all">
-                Fine-tune Preferences <ChevronRight className="w-4 h-4" /></button>
-              <button onClick={() => navigate('/quotes')} className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:border-rose-300 hover:text-rose-600 transition-all">
-                View Vendor Quotes <ChevronRight className="w-4 h-4" /></button>
-              <button onClick={() => { setPlanResult(null); setPrompt(''); setChatMessages([]); setBlueprintId(null); }}
+                className="flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-rose-500 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-rose-600 transition-all shadow-md">
+                View Blueprint <ArrowRight className="w-4 h-4" /></button>}
+              <button onClick={() => navigate('/preferences')} className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 border-2 rounded-xl text-sm sm:text-base font-semibold transition-all ${
+                isDark ? 'bg-gray-800 border-gray-600 text-gray-300 hover:border-rose-700 hover:text-rose-400' : 'bg-white border-gray-200 text-gray-700 hover:border-rose-300 hover:text-rose-600'
+              }`}>
+                Preferences <ChevronRight className="w-4 h-4" /></button>
+              <button onClick={() => navigate('/quotes')} className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 border-2 rounded-xl text-sm sm:text-base font-semibold transition-all ${
+                isDark ? 'bg-gray-800 border-gray-600 text-gray-300 hover:border-rose-700 hover:text-rose-400' : 'bg-white border-gray-200 text-gray-700 hover:border-rose-300 hover:text-rose-600'
+              }`}>
+                Quotes <ChevronRight className="w-4 h-4" /></button>
+              <button onClick={() => { setPlanResult(null); setPrompt(''); setChatMessages([]); clearPlannerChatMessages(); setBlueprintId(null); }}
                 className="flex items-center gap-2 px-6 py-3 text-gray-500 hover:text-gray-700 transition-all">Start Over</button>
             </div>
             <div className="mt-6">{renderChat()}</div>

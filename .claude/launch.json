@@ -4,8 +4,8 @@
     {
       "name": "frontend",
       "runtimeExecutable": "/Users/snehaaiyer/.pyenv/versions/3.12.7/bin/python",
-      "runtimeArgs": ["/tmp/shehnai_proxy.py"],
-      "port": 8001
+      "runtimeArgs": ["/tmp/serve_spa.py"],
+      "port": 3001
     }
   ]
 }

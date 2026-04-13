@@ -12,6 +12,7 @@ export interface BlueprintData {
   budget: string;
   theme: string;
   events: string[];
+  weddingDays?: number;           // number of days for the wedding (1, 2, 3, etc.)
   // AI-generated plan
   budgetBreakdown: Record<string, number>;     // { venue: 1800000, photography: 500000, ... }
   categorySpecs: Record<string, any>;           // { venue: { requirements: {...}, notes: '' }, ... }
@@ -44,6 +45,16 @@ interface AppState {
   activeConversationId: number | null;
   unreadMessageCount: number;
 
+  // AI Planner chat memory (persisted so user doesn't lose conversation on navigation)
+  plannerChatMessages: Array<{
+    id: string;
+    content: string;
+    sender: 'user' | 'ai' | 'system';
+    timestamp: string; // ISO string for serialization
+    interactive?: any;
+    feedback?: 'helpful' | 'not_helpful' | null;
+  }>;
+
   // Legacy fields (kept for backward compatibility during migration)
   weddingPreferences: Record<string, any>;
   chatHistory: Array<{ role: 'user' | 'assistant'; content: string; timestamp: number }>;
@@ -75,6 +86,10 @@ interface AppStore extends AppState {
   // Messaging
   setActiveConversation: (id: number | null) => void;
   setUnreadCount: (count: number) => void;
+
+  // Planner chat memory
+  setPlannerChatMessages: (messages: AppState['plannerChatMessages']) => void;
+  clearPlannerChatMessages: () => void;
 
   // Legacy (backward compat)
   updateWeddingPreferences: (prefs: Record<string, any>) => void;
@@ -109,6 +124,9 @@ export const useAppStore = create<AppStore>()(
 
       activeConversationId: null,
       unreadMessageCount: 0,
+
+      // Planner chat memory
+      plannerChatMessages: [],
 
       // Legacy
       weddingPreferences: {},
@@ -172,7 +190,7 @@ export const useAppStore = create<AppStore>()(
       clearPlan: () => set({
         blueprintId: null, blueprint: null, planningStage: 'preferences',
         shortlistedVendors: [], draftVendorMessages: [],
-        weddingPreferences: {},
+        weddingPreferences: {}, plannerChatMessages: [],
       }),
 
       // ─── Vendor Pipeline ───
@@ -196,6 +214,10 @@ export const useAppStore = create<AppStore>()(
       // ─── Messaging ───
       setActiveConversation: (id) => set({ activeConversationId: id }),
       setUnreadCount: (count) => set({ unreadMessageCount: count }),
+
+      // ─── Planner Chat Memory ───
+      setPlannerChatMessages: (messages) => set({ plannerChatMessages: messages }),
+      clearPlannerChatMessages: () => set({ plannerChatMessages: [] }),
 
       // ─── Legacy (backward compat) ───
       updateWeddingPreferences: (prefs) => set((s) => ({
@@ -228,6 +250,7 @@ export const useAppStore = create<AppStore>()(
         draftVendorMessages: state.draftVendorMessages,
         weddingPreferences: state.weddingPreferences,
         selectedVendors: state.selectedVendors,
+        plannerChatMessages: state.plannerChatMessages,
       }),
     }
   )

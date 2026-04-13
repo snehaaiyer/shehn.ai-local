@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Gavel, CheckCircle, ListFilter, MessageSquare, ChevronRight, MapPin,
-  Calendar, Users, IndianRupee, Clock, AlertTriangle, Lightbulb, Send, Sparkles,
+  Calendar, Users, IndianRupee, Clock, AlertTriangle, Lightbulb, Send, Sparkles, Star,
 } from 'lucide-react';
 import { VendorService } from '../../services/vendor_service';
+import { QuoteService } from '../../services/quote_service';
+import { MessagingService } from '../../services/messaging_service';
 import { useAppStore } from '../../store/useAppStore';
-import { VendorProfile } from '../../types/marketplace';
+import { VendorProfile, Quote, Conversation } from '../../types/marketplace';
 import { getThemeImage } from '../../config/theme_images';
 
 const VendorDashboard: React.FC = () => {
@@ -16,20 +18,32 @@ const VendorDashboard: React.FC = () => {
 
   const [vendorProfile, setVendorProfile] = useState<VendorProfile | null>(null);
   const [listings, setListings] = useState<any[]>([]);
+  const [vendorQuotes, setVendorQuotes] = useState<Quote[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const profileRes = await VendorService.getProfile(currentUserId);
+        const [profileRes, quotesRes, convoRes] = await Promise.all([
+          VendorService.getProfile(currentUserId),
+          QuoteService.getVendorQuotes(currentUserId),
+          MessagingService.getConversations({ vendor_id: currentUserId }),
+        ]);
+
         if (profileRes.success && profileRes.data) {
           setVendorProfile(profileRes.data);
-
           const listRes = await VendorService.getMarketplaceListings({ category: profileRes.data.category });
           if (listRes.success && listRes.data) {
             setListings(listRes.data.slice(0, 5));
           }
+        }
+        if (quotesRes.success && quotesRes.data) {
+          setVendorQuotes(quotesRes.data);
+        }
+        if (convoRes.success && convoRes.data) {
+          setConversations(convoRes.data);
         }
       } catch {
         // profile load failed
@@ -61,11 +75,16 @@ const VendorDashboard: React.FC = () => {
     );
   }
 
+  const shortlistedQuotes = vendorQuotes.filter((q) => q.status === 'shortlisted');
+  const acceptedQuotes = vendorQuotes.filter((q) => q.status === 'accepted');
+  const activeQuotes = vendorQuotes.filter((q) => q.status === 'submitted');
+  const unreadConvos = conversations.filter((c) => (c.unread_count || 0) > 0).length;
+
   const stats = [
-    { label: 'New Opportunities', value: listings.length, icon: ListFilter, color: 'bg-rose-50 text-rose-600' },
-    { label: 'Accepted Quotes', value: 1, icon: CheckCircle, color: 'bg-gray-100 text-gray-700' },
-    { label: 'Active Bids', value: listings.reduce((n, l) => n + (l.bid_count || 0), 0), icon: Gavel, color: 'bg-rose-50 text-rose-600' },
-    { label: 'Unread Messages', value: unreadMessageCount, icon: MessageSquare, color: 'bg-gray-100 text-gray-700' },
+    { label: 'Shortlisted', value: shortlistedQuotes.length, icon: Star, color: 'bg-amber-50 text-amber-600' },
+    { label: 'Accepted Quotes', value: acceptedQuotes.length, icon: CheckCircle, color: 'bg-gray-100 text-gray-700' },
+    { label: 'Active Bids', value: activeQuotes.length, icon: Gavel, color: 'bg-rose-50 text-rose-600' },
+    { label: 'Conversations', value: conversations.length, icon: MessageSquare, color: 'bg-gray-100 text-gray-700' },
   ];
 
   // Category-specific business tips
@@ -142,6 +161,48 @@ const VendorDashboard: React.FC = () => {
         })}
       </div>
 
+      {/* Shortlisted Quotes — high priority */}
+      {shortlistedQuotes.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Star className="h-5 w-5 text-amber-500" /> Shortlisted by Couples
+            </h2>
+            <button onClick={() => navigate('/vendor/inbox')} className="text-sm text-rose-600 hover:underline flex items-center gap-1">
+              Open Inbox <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {shortlistedQuotes.map((q) => (
+              <motion.div
+                key={q.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="rounded-xl border-2 border-amber-200 bg-amber-50/50 shadow-sm p-4 hover:shadow-md transition cursor-pointer"
+                onClick={() => navigate('/vendor/inbox')}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full uppercase">
+                    ⭐ Shortlisted
+                  </span>
+                  <span className="text-xs text-gray-400">{new Date(q.created_at).toLocaleDateString('en-IN')}</span>
+                </div>
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  {q.category.charAt(0).toUpperCase() + q.category.slice(1)} Quote
+                </p>
+                <p className="text-lg font-bold text-gray-900">
+                  ₹{q.total_estimated_price?.toLocaleString('en-IN') || q.package_price?.toLocaleString('en-IN') || '—'}
+                </p>
+                <p className="text-xs text-gray-500 mt-2 line-clamp-2">{q.inclusions || q.package_description || 'View details in inbox'}</p>
+                <div className="mt-3 flex items-center gap-1 text-xs text-rose-600 font-medium">
+                  <MessageSquare className="h-3.5 w-3.5" /> Respond to couple →
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Recent Marketplace Listings */}
       <section>
         <div className="flex items-center justify-between mb-4">
@@ -182,7 +243,9 @@ const VendorDashboard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
                     <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {l.wedding_summary?.guest_count || l.guest_count || '?'} guests</span>
-                    <span className="inline-flex items-center gap-1"><IndianRupee className="h-3.5 w-3.5" /> {l.wedding_summary?.budget ? `${(l.wedding_summary.budget / 100000).toFixed(1)}L` : 'N/A'}</span>
+                    {l.budget_allocated > 0 && (
+                      <span className="inline-flex items-center gap-1"><IndianRupee className="h-3.5 w-3.5" /> Category: ₹{(l.budget_allocated / 100000).toFixed(1)}L</span>
+                    )}
                   </div>
                   <p className="text-xs text-gray-400 line-clamp-2 mb-3">
                     {l.category_specs?.[vendorProfile.category]?.notes || 'View requirements'}
@@ -210,7 +273,9 @@ const VendorDashboard: React.FC = () => {
                 <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
                   <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {l.wedding_summary?.city || 'N/A'}</span>
                   <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {l.wedding_summary?.guest_count || '?'} guests</span>
-                  <span className="inline-flex items-center gap-1"><IndianRupee className="h-3.5 w-3.5" /> {l.wedding_summary?.budget ? `${(l.wedding_summary.budget / 100000).toFixed(1)}L` : 'N/A'}</span>
+                  {l.budget_allocated > 0 && (
+                    <span className="inline-flex items-center gap-1"><IndianRupee className="h-3.5 w-3.5" /> Category: ₹{(l.budget_allocated / 100000).toFixed(1)}L</span>
+                  )}
                 </div>
                 <p className="text-xs text-gray-400 line-clamp-2 mb-3">
                   {l.category_specs?.[vendorProfile.category]?.notes || 'View listing requirements'}
@@ -250,16 +315,46 @@ const VendorDashboard: React.FC = () => {
             View all messages <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-6 text-center text-gray-400 text-sm">
-          <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-          {unreadMessageCount > 0
-            ? `You have ${unreadMessageCount} unread message${unreadMessageCount > 1 ? 's' : ''}.`
-            : 'No new messages.'}
-          <br />
-          <button onClick={() => navigate('/vendor/inbox')} className="mt-2 text-rose-600 hover:underline text-sm">
-            Open Inbox
-          </button>
-        </div>
+        {conversations.length > 0 ? (
+          <div className="space-y-2">
+            {conversations.slice(0, 3).map((c) => (
+              <div
+                key={c.id}
+                onClick={() => navigate('/vendor/inbox')}
+                className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 hover:bg-gray-50 transition cursor-pointer flex items-center gap-3"
+              >
+                <div className="h-9 w-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold text-sm shrink-0">
+                  {(c.other_party_name || c.subject || 'C').charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-gray-900 truncate">{c.subject || c.other_party_name || 'Conversation'}</p>
+                    {c.last_message_at && (
+                      <span className="text-xs text-gray-400 shrink-0 ml-2">
+                        {new Date(c.last_message_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 truncate">{c.last_message || 'Start chatting...'}</p>
+                </div>
+                {(c.unread_count || 0) > 0 && (
+                  <span className="h-5 w-5 rounded-full bg-rose-500 text-white text-xs flex items-center justify-center shrink-0">
+                    {c.unread_count}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-6 text-center text-gray-400 text-sm">
+            <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+            No conversations yet. Shortlisted quotes will appear here.
+            <br />
+            <button onClick={() => navigate('/vendor/inbox')} className="mt-2 text-rose-600 hover:underline text-sm">
+              Open Inbox
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -53,6 +53,20 @@ export class MarketplaceAIService {
     return res.json();
   }
 
+  // ── Negotiation ──
+
+  static async negotiateQuote(
+    quoteId: number,
+    role: 'couple' | 'vendor',
+    message: string
+  ): Promise<{ success: boolean; data?: NegotiationSuggestion; error?: string }> {
+    const res = await fetch(`${API_BASE}/api/ai/negotiate-quote`, {
+      method: 'POST', headers: getAuthHeaders(),
+      body: JSON.stringify({ quote_id: quoteId, role, message })
+    });
+    return res.json();
+  }
+
   // ── Vendor-facing ──
 
   static async getBidAssistance(
@@ -139,4 +153,17 @@ export interface ListingInsight {
   winning_approach: string;
   red_flags: string[];
   opportunity_score: string;
+}
+
+export interface NegotiationSuggestion {
+  suggestion: string;
+  talking_points: string[];
+  revised_pricing: {
+    adjusted_total: number | null;
+    adjustment_reason: string;
+    per_plate_change: number | null;
+    added_inclusions: string[];
+    removed_items: string[];
+  };
+  tone_advice: string;
 }

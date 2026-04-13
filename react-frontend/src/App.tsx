@@ -22,6 +22,7 @@ import VendorDashboard from './pages/vendor/VendorDashboard';
 import VendorMarketplace from './pages/vendor/VendorMarketplace';
 import VendorProfile from './pages/vendor/VendorProfile';
 import VendorInbox from './pages/vendor/VendorInbox';
+import VendorCalendarPage from './pages/vendor/VendorCalendarPage';
 
 // Admin page imports
 import VendorApprovals from './pages/admin/VendorApprovals';
@@ -36,7 +37,8 @@ import { useAppStore } from './store/useAppStore';
 import './App.css';
 
 function App() {
-  const { sidebarOpen, setSidebarOpen, currentRole } = useAppStore();
+  const { sidebarOpen, setSidebarOpen, currentRole, theme } = useAppStore();
+  const isDark = theme === 'dark';
 
   return (
     <BrowserRouter
@@ -52,17 +54,24 @@ function App() {
 
         {/* App shell with sidebar */}
         <Route path="*" element={
-          <div className="min-h-screen bg-gray-50">
+          <div className={`min-h-screen transition-colors duration-300 ${
+            isDark ? 'bg-gray-900' : 'bg-[#FAFAF8]'
+          }`}>
+            {/* Mobile menu button */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg"
+              className={`lg:hidden fixed top-2 sm:top-4 left-2 sm:left-4 z-50 p-2 sm:p-2.5 rounded-xl shadow-card border transition-all hover:shadow-elevated active:scale-95 ${
+                isDark
+                  ? 'bg-gray-800/90 backdrop-blur-sm border-gray-700 text-gray-300'
+                  : 'bg-white/90 backdrop-blur-sm border-gray-100 text-gray-700'
+              }`}
             >
-              <Menu size={24} />
+              <Menu size={18} className="sm:w-5 sm:h-5" />
             </button>
 
             <AnimatedSidebar />
 
-            <div className="lg:pl-64">
+            <div className="lg:pl-[260px]">
               <main className="min-h-screen">
                 <Routes>
                   {/* Couple routes */}
@@ -87,6 +96,7 @@ function App() {
                     <Route path="/vendor/marketplace" element={<VendorMarketplace />} />
                     <Route path="/vendor/profile" element={<VendorProfile />} />
                     <Route path="/vendor/inbox" element={<VendorInbox />} />
+                    <Route path="/vendor/calendar" element={<VendorCalendarPage />} />
                   </>}
 
                   {/* Admin routes */}

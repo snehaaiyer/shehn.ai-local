@@ -51,6 +51,8 @@ const BlueprintReview: React.FC = () => {
   const blueprintId = useAppStore((s) => s.blueprintId);
   const setBlueprintId = useAppStore((s) => s.setBlueprintId);
   const weddingPreferences = useAppStore((s) => s.weddingPreferences);
+  const theme = useAppStore((s) => s.theme);
+  const isDark = theme === 'dark';
 
   const [blueprint, setBlueprint] = useState<Blueprint | null>(null);
   const [loading, setLoading] = useState(true);
@@ -177,31 +179,54 @@ const BlueprintReview: React.FC = () => {
     }
   }, [blueprint, budgetOptimization, showToast]);
 
-  // ── AI: Generate Blueprint ──
+  // ── AI: Generate / Update Blueprint ──
   const handleGenerateBlueprint = useCallback(async () => {
     setGenerating(true);
     try {
-      const res = await MarketplaceAIService.generateBlueprint({
-        city: weddingPreferences.city || 'Mumbai',
-        guest_count: Number(weddingPreferences.guestCount) || 200,
-        budget: weddingPreferences.budget || '2000000',
-        wedding_date: weddingPreferences.weddingDate || '',
-        wedding_type: weddingPreferences.weddingType || 'Hindu',
-        events: weddingPreferences.events || [],
-        priorities: weddingPreferences.priorities || [],
-        special_requirements: weddingPreferences.specialRequirements || undefined,
-      });
-      if (res.success && res.data?.id) {
-        setBlueprintId(res.data.id);
-        showToast('Blueprint generated successfully!');
+      if (blueprintId && blueprint) {
+        // Partial update — only send changed preferences, don't regenerate from scratch
+        const patch: Partial<Blueprint> = {
+          wedding_summary: {
+            ...blueprint.wedding_summary,
+            city: weddingPreferences.city || blueprint.wedding_summary.city,
+            guest_count: Number(weddingPreferences.guestCount) || blueprint.wedding_summary.guest_count,
+            budget: Number(weddingPreferences.budget) || blueprint.wedding_summary.budget,
+            date: weddingPreferences.weddingDate || blueprint.wedding_summary.date,
+            theme: (weddingPreferences as any).theme || blueprint.wedding_summary.theme,
+            events: weddingPreferences.events?.length ? weddingPreferences.events : blueprint.wedding_summary.events,
+          },
+        };
+        const res = await BlueprintService.updateBlueprint(blueprintId, patch);
+        if (res.success) {
+          setBlueprint((prev) => (prev ? { ...prev, ...patch } : prev));
+          showToast('Blueprint updated successfully!');
+        } else {
+          showToast(res.error || 'Blueprint update failed');
+        }
       } else {
-        showToast(res.error || 'Blueprint generation failed');
+        // Full generation — no existing blueprint
+        const res = await MarketplaceAIService.generateBlueprint({
+          city: weddingPreferences.city || 'Mumbai',
+          guest_count: Number(weddingPreferences.guestCount) || 200,
+          budget: weddingPreferences.budget || '2000000',
+          wedding_date: weddingPreferences.weddingDate || '',
+          wedding_type: weddingPreferences.weddingType || 'Hindu',
+          events: weddingPreferences.events || [],
+          priorities: weddingPreferences.priorities || [],
+          special_requirements: weddingPreferences.specialRequirements || undefined,
+        });
+        if (res.success && res.data?.id) {
+          setBlueprintId(res.data.id);
+          showToast('Blueprint generated successfully!');
+        } else {
+          showToast(res.error || 'Blueprint generation failed');
+        }
       }
     } catch {
-      showToast('Blueprint generation failed');
+      showToast(blueprintId ? 'Blueprint update failed' : 'Blueprint generation failed');
     }
     setGenerating(false);
-  }, [weddingPreferences, setBlueprintId, showToast]);
+  }, [weddingPreferences, blueprintId, blueprint, setBlueprintId, showToast]);
 
   // ── Budget total ──
   const budgetTotal = blueprint
@@ -221,9 +246,9 @@ const BlueprintReview: React.FC = () => {
   if (!blueprintId || !blueprint) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center max-w-md">
-          <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">No blueprint yet</h2>
+        <div className={`rounded-xl border shadow-sm p-8 text-center max-w-md ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <FileText className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-300'}`} />
+          <h2 className={`text-lg font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>No blueprint yet</h2>
           <p className="text-sm text-gray-500 mb-4">Go to Preferences to generate one, or let AI create one for you.</p>
           <div className="flex items-center gap-3 justify-center">
             <a
@@ -235,7 +260,7 @@ const BlueprintReview: React.FC = () => {
             <button
               onClick={handleGenerateBlueprint}
               disabled={generating}
-              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg border border-rose-300 text-rose-600 text-sm font-medium hover:bg-rose-50 transition-colors disabled:opacity-50"
+              className={`inline-flex items-center gap-1.5 px-5 py-2 rounded-lg border text-sm font-medium transition-colors disabled:opacity-50 ${isDark ? 'border-rose-700 text-rose-400 hover:bg-rose-900/30' : 'border-rose-300 text-rose-600 hover:bg-rose-50'}`}
             >
               <Sparkles className="w-4 h-4" />
               {generating ? 'Generating...' : 'Generate with AI'}
@@ -246,11 +271,11 @@ const BlueprintReview: React.FC = () => {
     );
   }
 
-  const ws = blueprint.wedding_summary;
-  const categories = Object.keys(blueprint.budget_breakdown) as VendorCategory[];
+  const ws = blueprint.wedding_summary || { date: '', city: '', guest_count: 0, budget: 0, theme: '', events: [] };
+  const categories = blueprint.budget_breakdown ? (Object.keys(blueprint.budget_breakdown) as VendorCategory[]) : [];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className={`max-w-4xl mx-auto px-4 py-8 space-y-8`}>
       {/* Toast */}
       {toastMsg && (
         <div className="fixed top-6 right-6 z-50 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg animate-fade-in">
@@ -261,17 +286,26 @@ const BlueprintReview: React.FC = () => {
       {/* ── Header ── */}
       <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">My Wedding Blueprint</h1>
+          <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>My Wedding Blueprint</h1>
           <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full capitalize ${statusBadge[blueprint.status]}`}>
             {blueprint.status}
           </span>
         </div>
+        <div className="flex items-center gap-2">
+        <button
+          onClick={handleGenerateBlueprint}
+          disabled={generating}
+          className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg border transition-colors disabled:opacity-50 ${isDark ? 'border-rose-700 text-rose-400 hover:bg-rose-900/30' : 'border-rose-300 text-rose-600 hover:bg-rose-50'}`}
+        >
+          <Sparkles className="w-4 h-4" />
+          {generating ? 'Updating...' : 'Update Blueprint'}
+        </button>
         <button
           onClick={handlePublishToggle}
           disabled={isPublishing}
           className={`flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
             blueprint.status === 'published'
-              ? 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? isDark ? 'border border-gray-600 text-gray-300 hover:bg-gray-700' : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
               : 'bg-rose-500 text-white hover:bg-rose-600'
           }`}
         >
@@ -285,6 +319,7 @@ const BlueprintReview: React.FC = () => {
             </>
           )}
         </button>
+        </div>
       </motion.div>
 
       {/* ── Theme Hero Image ── */}
@@ -305,7 +340,7 @@ const BlueprintReview: React.FC = () => {
       </motion.div>
 
       {/* ── Wedding Summary ── */}
-      <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.05 }} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.05 }} className={`rounded-xl border shadow-sm p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Wedding Summary</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Date */}
@@ -317,6 +352,7 @@ const BlueprintReview: React.FC = () => {
             onStartEdit={() => startEdit('date')}
             onSave={(v) => saveField('date', v)}
             inputType="date"
+            isDark={isDark}
           />
           {/* City */}
           <SummaryCell
@@ -326,6 +362,7 @@ const BlueprintReview: React.FC = () => {
             isEditing={editingField === 'city'}
             onStartEdit={() => startEdit('city')}
             onSave={(v) => saveField('city', v)}
+            isDark={isDark}
           />
           {/* Guests */}
           <SummaryCell
@@ -336,6 +373,7 @@ const BlueprintReview: React.FC = () => {
             onStartEdit={() => startEdit('guest_count')}
             onSave={(v) => saveField('guest_count', Number(v))}
             inputType="number"
+            isDark={isDark}
           />
           {/* Theme */}
           <SummaryCell
@@ -345,6 +383,7 @@ const BlueprintReview: React.FC = () => {
             isEditing={editingField === 'theme'}
             onStartEdit={() => startEdit('theme')}
             onSave={(v) => saveField('theme', v)}
+            isDark={isDark}
           />
           {/* Budget */}
           <SummaryCell
@@ -356,28 +395,29 @@ const BlueprintReview: React.FC = () => {
             onSave={(v) => saveField('budget', Number(v))}
             inputType="number"
             rawValue={String(ws.budget || 0)}
+            isDark={isDark}
           />
           {/* Events */}
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">
+            <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-rose-900/30' : 'bg-rose-50'}`}>
               <FileText className="w-4 h-4 text-rose-400" />
             </div>
             <div>
               <span className="text-xs text-gray-400 font-medium">Events</span>
-              <p className="text-sm font-semibold text-gray-900">{ws.events?.length ?? 0} events</p>
+              <p className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{ws.events?.length ?? 0} events</p>
             </div>
           </div>
         </div>
       </motion.div>
 
       {/* ── Budget Breakdown ── */}
-      <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.1 }} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.1 }} className={`rounded-xl border shadow-sm p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Budget Breakdown</h2>
           <button
             onClick={handleOptimizeBudget}
             disabled={optimizing}
-            className="flex items-center gap-1.5 text-xs font-medium text-rose-600 border border-rose-200 rounded-lg px-3 py-1.5 hover:bg-rose-50 transition-colors disabled:opacity-50"
+            className={`flex items-center gap-1.5 text-xs font-medium rounded-lg px-3 py-1.5 transition-colors disabled:opacity-50 ${isDark ? 'text-rose-400 border border-rose-700 hover:bg-rose-900/30' : 'text-rose-600 border border-rose-200 hover:bg-rose-50'}`}
           >
             <Sparkles className="w-3.5 h-3.5" />
             {optimizing ? 'Optimizing...' : 'AI Budget Optimizer'}
@@ -391,10 +431,10 @@ const BlueprintReview: React.FC = () => {
             return (
               <div
                 key={cat}
-                className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors group cursor-pointer"
+                className={`flex items-center gap-3 p-3 rounded-lg border transition-colors group cursor-pointer ${isDark ? 'border-gray-700 hover:border-gray-600' : 'border-gray-100 hover:border-gray-200'}`}
                 onClick={() => !isEdit && startEdit(`budget_${cat}`)}
               >
-                <div className="w-9 h-9 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isDark ? 'bg-rose-900/30' : 'bg-rose-50'}`}>
                   <Icon className="w-4 h-4 text-rose-500" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -404,12 +444,12 @@ const BlueprintReview: React.FC = () => {
                       autoFocus
                       type="number"
                       defaultValue={amount}
-                      className="block w-full text-sm font-semibold text-gray-900 border-b border-rose-300 outline-none bg-transparent"
+                      className={`block w-full text-sm font-semibold border-b border-rose-300 outline-none bg-transparent ${isDark ? 'text-gray-100' : 'text-gray-900'}`}
                       onBlur={(e) => saveField(`budget_${cat}`, e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
                     />
                   ) : (
-                    <p className="text-sm font-semibold text-gray-900 flex items-center gap-1">
+                    <p className={`text-sm font-semibold flex items-center gap-1 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
                       {formatCurrency(amount)}
                       <Edit3 className="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </p>
@@ -419,9 +459,9 @@ const BlueprintReview: React.FC = () => {
             );
           })}
         </div>
-        <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div className={`mt-4 pt-3 border-t flex items-center justify-between ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
           <span className="text-sm text-gray-500 font-medium">Total Allocated</span>
-          <span className="text-lg font-bold text-gray-900">{formatCurrency(budgetTotal)}</span>
+          <span className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{formatCurrency(budgetTotal)}</span>
         </div>
 
         {/* AI Budget Optimization Results */}
@@ -429,10 +469,10 @@ const BlueprintReview: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 p-4 bg-rose-50 border border-rose-100 rounded-xl space-y-3"
+            className={`mt-4 p-4 border rounded-xl space-y-3 ${isDark ? 'bg-rose-900/30 border-rose-800' : 'bg-rose-50 border-rose-100'}`}
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+              <h3 className={`text-sm font-semibold flex items-center gap-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
                 <Sparkles className="w-4 h-4 text-rose-500" /> AI Optimization Results
               </h3>
               <button onClick={() => setBudgetOptimization(null)} className="text-xs text-gray-400 hover:text-gray-600">Dismiss</button>
@@ -440,7 +480,7 @@ const BlueprintReview: React.FC = () => {
             {/* Suggestions */}
             <ul className="space-y-1">
               {budgetOptimization.suggestions.map((s, i) => (
-                <li key={i} className="text-sm text-gray-700 flex items-start gap-2">
+                <li key={i} className={`text-sm flex items-start gap-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />{s}
                 </li>
               ))}
@@ -450,7 +490,7 @@ const BlueprintReview: React.FC = () => {
               <p className="text-sm font-medium text-sage-700">Potential Savings: {budgetOptimization.potential_savings}</p>
             </div>
             {/* Priority Spend */}
-            <p className="text-sm text-gray-600"><strong>Priority:</strong> {budgetOptimization.priority_spend}</p>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}><strong>Priority:</strong> {budgetOptimization.priority_spend}</p>
             {/* Apply Button */}
             {budgetOptimization.recommended_reallocation && Object.keys(budgetOptimization.recommended_reallocation).length > 0 && (
               <button
@@ -465,7 +505,7 @@ const BlueprintReview: React.FC = () => {
       </motion.div>
 
       {/* ── Category Requirements ── */}
-      <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.15 }} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.15 }} className={`rounded-xl border shadow-sm p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Category Requirements</h2>
         <div className="space-y-2">
           {categories.map((cat) => {
@@ -476,16 +516,16 @@ const BlueprintReview: React.FC = () => {
             const reqEntries = Object.entries(reqs);
 
             return (
-              <div key={cat} className="border border-gray-100 rounded-lg overflow-hidden">
+              <div key={cat} className={`border rounded-lg overflow-hidden ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
                 <button
                   onClick={() => toggleCategory(cat)}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+                  className={`w-full flex items-center justify-between px-4 py-3 transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4 text-rose-400" />
-                    <span className="text-sm font-semibold text-gray-800 capitalize">{categoryLabels[cat]}</span>
+                    <span className={`text-sm font-semibold capitalize ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{categoryLabels[cat]}</span>
                     {reqEntries.length > 0 && (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{reqEntries.length} specs</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>{reqEntries.length} specs</span>
                     )}
                   </div>
                   <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -499,7 +539,7 @@ const BlueprintReview: React.FC = () => {
                         {reqEntries.map(([key, val]) => (
                           <div key={key} className="flex items-start gap-2 text-sm">
                             <span className="text-gray-500 font-medium min-w-[120px] capitalize">{key.replace(/_/g, ' ')}:</span>
-                            <span className="text-gray-800">{typeof val === 'object' ? JSON.stringify(val) : String(val)}</span>
+                            <span className={isDark ? 'text-gray-200' : 'text-gray-800'}>{typeof val === 'object' ? JSON.stringify(val) : String(val)}</span>
                           </div>
                         ))}
                       </div>
@@ -507,9 +547,9 @@ const BlueprintReview: React.FC = () => {
                       <p className="text-sm text-gray-400 italic">No specific requirements set</p>
                     )}
                     {spec?.notes && (
-                      <div className="mt-3 p-3 bg-rose-50 rounded-lg">
-                        <p className="text-xs font-medium text-rose-700 mb-1">Notes</p>
-                        <p className="text-sm text-rose-800">{spec.notes}</p>
+                      <div className={`mt-3 p-3 rounded-lg ${isDark ? 'bg-rose-900/30' : 'bg-rose-50'}`}>
+                        <p className={`text-xs font-medium mb-1 ${isDark ? 'text-rose-400' : 'text-rose-700'}`}>Notes</p>
+                        <p className={`text-sm ${isDark ? 'text-rose-300' : 'text-rose-800'}`}>{spec.notes}</p>
                       </div>
                     )}
                   </motion.div>
@@ -522,14 +562,14 @@ const BlueprintReview: React.FC = () => {
 
       {/* ── Timeline ── */}
       {blueprint.timeline && blueprint.timeline.length > 0 && (
-        <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.2 }} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.2 }} className={`rounded-xl border shadow-sm p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Timeline</h2>
           <ul className="space-y-3">
             {blueprint.timeline.map((item: any, idx: number) => (
               <li key={idx} className="flex items-start gap-3">
                 <div className="mt-1 w-2 h-2 rounded-full bg-rose-400 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{item.title || item.event || item}</p>
+                  <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{item.title || item.event || item}</p>
                   {item.date && <p className="text-xs text-gray-400">{item.date}</p>}
                   {item.description && <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>}
                 </div>
@@ -541,13 +581,13 @@ const BlueprintReview: React.FC = () => {
 
       {/* ── Cost-Saving Tips ── */}
       {blueprint.cost_saving_tips && blueprint.cost_saving_tips.length > 0 && (
-        <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.25 }} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.25 }} className={`rounded-xl border shadow-sm p-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-rose-400" /> Cost-Saving Tips
           </h2>
           <ul className="space-y-2">
             {blueprint.cost_saving_tips.map((tip, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+              <li key={idx} className={`flex items-start gap-2 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                 <Check className="w-4 h-4 text-sage-500 shrink-0 mt-0.5" />
                 <span>{tip}</span>
               </li>
@@ -570,11 +610,12 @@ interface SummaryCellProps {
   onSave: (value: string) => void;
   inputType?: string;
   rawValue?: string;
+  isDark?: boolean;
 }
 
-const SummaryCell: React.FC<SummaryCellProps> = ({ icon, label, value, isEditing, onStartEdit, onSave, inputType = 'text', rawValue }) => (
+const SummaryCell: React.FC<SummaryCellProps> = ({ icon, label, value, isEditing, onStartEdit, onSave, inputType = 'text', rawValue, isDark }) => (
   <div className="flex items-start gap-3 cursor-pointer group" onClick={() => !isEditing && onStartEdit()}>
-    <div className="mt-0.5 w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">{icon}</div>
+    <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center ${isDark ? 'bg-rose-900/30' : 'bg-rose-50'}`}>{icon}</div>
     <div className="flex-1 min-w-0">
       <span className="text-xs text-gray-400 font-medium">{label}</span>
       {isEditing ? (
@@ -582,12 +623,12 @@ const SummaryCell: React.FC<SummaryCellProps> = ({ icon, label, value, isEditing
           autoFocus
           type={inputType}
           defaultValue={rawValue || value}
-          className="block w-full text-sm font-semibold text-gray-900 border-b border-rose-300 outline-none bg-transparent"
+          className={`block w-full text-sm font-semibold border-b border-rose-300 outline-none bg-transparent ${isDark ? 'text-gray-100' : 'text-gray-900'}`}
           onBlur={(e) => onSave(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
         />
       ) : (
-        <p className="text-sm font-semibold text-gray-900 flex items-center gap-1">
+        <p className={`text-sm font-semibold flex items-center gap-1 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
           {value}
           <Edit3 className="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
         </p>

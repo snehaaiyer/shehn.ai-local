@@ -21,4 +21,10 @@ export class QuoteService {
     const res = await fetch(`${API_BASE}/api/quotes/${quoteId}/status`, { method: 'PATCH', headers: getAuthHeaders(), body: JSON.stringify({ status }) });
     return res.json();
   }
+
+  static async getVendorQuotes(vendorId?: number): Promise<{ success: boolean; data?: Quote[]; error?: string }> {
+    const params = vendorId ? `?vendor_id=${vendorId}` : '';
+    const res = await fetch(`${API_BASE}/api/vendor-quotes${params}`, { headers: getAuthHeaders() });
+    return res.json();
+  }
 }

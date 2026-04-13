@@ -14,6 +14,8 @@ const Messages: React.FC = () => {
   const currentUserId = useAppStore((s) => s.currentUserId);
   const storeActiveConversation = useAppStore((s) => s.activeConversationId);
   const setStoreActiveConversation = useAppStore((s) => s.setActiveConversation);
+  const theme = useAppStore((s) => s.theme);
+  const isDark = theme === 'dark';
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<number | null>(storeActiveConversation);
@@ -200,10 +202,10 @@ const Messages: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="w-8 h-8 text-gray-300" />
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+            <MessageCircle className={`w-8 h-8 ${isDark ? 'text-gray-500' : 'text-gray-300'}`} />
           </div>
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">No messages yet</h2>
+          <h2 className={`text-lg font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>No messages yet</h2>
           <p className="text-sm text-gray-500">
             Start a conversation from the{' '}
             <a href="/quotes" className="text-rose-500 hover:text-rose-600 font-medium">
@@ -225,11 +227,11 @@ const Messages: React.FC = () => {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDark ? 'bg-rose-900/30' : 'bg-rose-100'}`}>
             <Sparkles className="w-5 h-5 text-rose-500" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Draft Messages from Smart Planner</h2>
+            <h2 className={`text-lg sm:text-xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Draft Messages from Smart Planner</h2>
             <p className="text-sm text-gray-500">Review and send these vendor inquiry drafts</p>
           </div>
         </div>
@@ -237,9 +239,9 @@ const Messages: React.FC = () => {
           {draftMessages.map((msg: any, i: number) => {
             const isSent = sentDraftIds.has(i);
             return (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all hover:shadow-md">
+              <div key={i} className={`rounded-xl border shadow-sm p-5 transition-all hover:shadow-md ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 uppercase tracking-wide">
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide ${isDark ? 'bg-rose-900/30 text-rose-400' : 'bg-rose-50 text-rose-600'}`}>
                     {msg.category}
                   </span>
                   <div className="flex items-center gap-1.5 text-sm text-gray-500">
@@ -248,9 +250,9 @@ const Messages: React.FC = () => {
                   </div>
                 </div>
                 {msg.subject && (
-                  <h4 className="text-sm font-semibold text-gray-800 mb-2">{msg.subject}</h4>
+                  <h4 className={`text-sm font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{msg.subject}</h4>
                 )}
-                <p className="text-sm text-gray-600 leading-relaxed mb-4 whitespace-pre-line">
+                <p className={`text-sm leading-relaxed mb-4 whitespace-pre-line ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   {msg.message.length > 280 ? msg.message.slice(0, 280) + '...' : msg.message}
                 </p>
                 <div className="flex items-center justify-between">
@@ -288,34 +290,34 @@ const Messages: React.FC = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] flex bg-gray-50">
+    <div className={`h-[calc(100vh-64px)] flex ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* ── Left Panel: Conversation List ── */}
       <div
-        className={`w-full lg:w-1/3 lg:max-w-sm border-r border-gray-200 bg-white flex flex-col ${
+        className={`w-full lg:w-1/3 lg:max-w-sm border-r flex flex-col ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'} ${
           activeConversation ? 'hidden lg:flex' : 'flex'
         }`}
       >
         {/* Collapsed drafts banner (when conversations exist) */}
         {showDraftsSection && (
-          <div className="border-b border-gray-100">
+          <div className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
             <button
               onClick={() => setDraftsCollapsed(!draftsCollapsed)}
-              className="w-full px-4 py-2.5 flex items-center justify-between bg-rose-50 hover:bg-rose-100 transition-colors"
+              className={`w-full px-4 py-2.5 flex items-center justify-between transition-colors ${isDark ? 'bg-rose-900/30 hover:bg-rose-900/50' : 'bg-rose-50 hover:bg-rose-100'}`}
             >
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-rose-500" />
-                <span className="text-sm font-medium text-rose-700">
+                <span className={`text-sm font-medium ${isDark ? 'text-rose-400' : 'text-rose-700'}`}>
                   {draftMessages.length} draft{draftMessages.length !== 1 ? 's' : ''} from Smart Planner
                 </span>
               </div>
               {draftsCollapsed ? <ChevronDown className="w-4 h-4 text-rose-400" /> : <ChevronUp className="w-4 h-4 text-rose-400" />}
             </button>
             {!draftsCollapsed && (
-              <div className="px-3 py-2 max-h-48 overflow-y-auto space-y-2 bg-rose-50/50">
+              <div className={`px-3 py-2 max-h-48 overflow-y-auto space-y-2 ${isDark ? 'bg-rose-900/20' : 'bg-rose-50/50'}`}>
                 {draftMessages.map((msg: any, i: number) => {
                   const isSent = sentDraftIds.has(i);
                   return (
-                    <div key={i} className="bg-white rounded-lg p-2.5 border border-gray-100 flex items-center justify-between gap-2">
+                    <div key={i} className={`rounded-lg p-2.5 border flex items-center justify-between gap-2 ${isDark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-100'}`}>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5 mb-0.5">
                           <span className="text-[10px] font-semibold text-rose-600 uppercase">{msg.category}</span>
@@ -341,8 +343,8 @@ const Messages: React.FC = () => {
         )}
 
         {/* Search header */}
-        <div className="px-4 py-3 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">Messages</h2>
+        <div className={`px-4 py-3 border-b ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
+          <h2 className={`text-lg font-bold mb-3 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Messages</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -350,7 +352,7 @@ const Messages: React.FC = () => {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-300"
+              className={`w-full pl-9 pr-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500' : 'border-gray-200'}`}
             />
           </div>
         </div>
@@ -363,26 +365,26 @@ const Messages: React.FC = () => {
 
       {/* ── Right Panel: Messages ── */}
       <div
-        className={`flex-1 flex flex-col bg-white ${
+        className={`flex-1 flex flex-col ${isDark ? 'bg-gray-800' : 'bg-white'} ${
           activeConversation ? 'flex' : 'hidden lg:flex'
         }`}
       >
         {activeConversation && activeConvData ? (
           <>
             {/* Conversation header */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 bg-white">
+            <div className={`flex items-center gap-3 px-4 py-3 border-b ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-white'}`}>
               <button
                 onClick={handleBack}
-                className="lg:hidden shrink-0 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
+                className={`lg:hidden shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
               >
-                <ArrowLeft className="w-4 h-4 text-gray-600" />
+                <ArrowLeft className={`w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} />
               </button>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm text-gray-900 truncate">{activeConvData.other_party_name}</h3>
+                <h3 className={`font-semibold text-sm truncate ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{activeConvData.other_party_name}</h3>
                 <p className="text-xs text-gray-400 truncate">{activeConvData.subject}</p>
               </div>
               {activeConvData.other_party_category && (
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 capitalize">
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full capitalize ${isDark ? 'bg-rose-900/30 text-rose-400' : 'bg-rose-50 text-rose-600'}`}>
                   {activeConvData.other_party_category}
                 </span>
               )}
@@ -408,10 +410,10 @@ const Messages: React.FC = () => {
           /* Desktop empty state */
           <div className="hidden lg:flex flex-1 items-center justify-center">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <MessageCircle className="w-8 h-8 text-gray-300" />
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                <MessageCircle className={`w-8 h-8 ${isDark ? 'text-gray-500' : 'text-gray-300'}`} />
               </div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-1">Select a conversation</h3>
+              <h3 className={`text-lg font-semibold mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Select a conversation</h3>
               <p className="text-sm text-gray-400">Choose a vendor to start chatting</p>
             </div>
           </div>

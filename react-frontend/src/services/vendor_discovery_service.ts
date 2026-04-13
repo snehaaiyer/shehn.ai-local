@@ -35,6 +35,13 @@ interface Vendor {
     description: string;
     icon: string;
   }>;
+  price_tier?: string;
+  reviews_count?: number;
+  category_highlights?: string[];
+  category_details?: Record<string, any>;
+  preferences_match_score?: number;
+  preference_insights?: string[];
+  compatibility_details?: { priority_bonus: number };
 }
 
 export interface VendorSearchParams {
@@ -563,8 +570,8 @@ export class VendorDiscoveryService {
    */
   static async searchVendorsFromBackend(params: VendorSearchParams, weddingData: any): Promise<VendorDiscoveryResponse> {
     const backendUrl = window.location.hostname === 'localhost' ?
-      'http://0.0.0.0:8001' :
-      `https://${window.location.hostname}:8001`;
+      'http://localhost:8000' :
+      `${window.location.origin}`;
 
     // Enhanced request body for RAG-enhanced semantic search
     const requestBody = {
@@ -641,13 +648,22 @@ export class VendorDiscoveryService {
           category: vendor.category,
           location: vendor.location || weddingData.city,
           rating: vendor.rating || 4.5,
-          price_range: vendor.budget_tier || 'Contact for pricing',
-          description: `Professional ${vendor.category} services with ${vendor.rag_scores?.final_score?.toFixed(2) || 'high'} compatibility score`,
-          contact_score: Math.round((vendor.rag_scores?.final_score || 0.7) * 100),
+          price_range: vendor.price_range || vendor.budget_tier || 'Contact for pricing',
+          description: vendor.description || `Professional ${vendor.category} services with ${vendor.rag_scores?.final_score?.toFixed(2) || 'high'} compatibility score`,
+          contact_score: vendor.contact_score || Math.round((vendor.rag_scores?.final_score || 0.7) * 100),
           phone: vendor.contact?.phone,
           email: vendor.contact?.email,
           website: vendor.contact?.website,
-          images: vendor.images || []
+          images: vendor.images || [],
+          experience_years: vendor.experience_years,
+          specialties: vendor.specialties,
+          services_offered: vendor.services_offered,
+          reviews_count: vendor.reviews_count,
+          price_tier: vendor.price_tier,
+          category_highlights: vendor.category_highlights,
+          category_details: vendor.category_details,
+          preferences_match_score: vendor.preferences_match_score,
+          preference_insights: vendor.preference_insights,
         });
       });
     }

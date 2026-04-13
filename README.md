@@ -1,6 +1,12 @@
-# Shehnai.AI — AI-Powered Indian Wedding Reverse Marketplace
+# Shehn.AI — AI-Powered Indian Wedding Reverse Marketplace
 
-Shehnai is a full-stack wedding planning platform where couples generate AI-powered wedding blueprints and publish them to a marketplace. Vendors browse blueprints relevant to their category, submit structured quotes, and compete for the couple's business. All communication happens on-platform.
+<p align="center">
+  <img src="react-frontend/public/shehnai-logo.svg" alt="Shehn.AI Logo" height="80" />
+</p>
+
+Shehn.AI is a full-stack wedding planning platform powered by **multi-agent AI orchestration**. Couples generate AI-powered wedding blueprints and publish them to a reverse marketplace. Vendors browse blueprints relevant to their category, submit structured quotes with sealed bidding, and compete for the couple's business. All communication happens on-platform.
+
+**Target Market:** India's ₹6.5 lakh crore wedding industry — 1 crore+ weddings per year, ₹39.5L average spend per wedding.
 
 ## How It Works
 
@@ -31,7 +37,7 @@ Shehnai is a full-stack wedding planning platform where couples generate AI-powe
 ┌─────────────────────────────────────────────────────────────┐
 │                        React Frontend                        │
 │  TypeScript · Tailwind CSS · Framer Motion · Zustand Store   │
-│  Port 5173 (Vite dev) or 5000                                │
+│  Port 3000 (CRA dev/serve)                                   │
 ├─────────────────────────────────────────────────────────────┤
 │                     FastAPI Backend                           │
 │  simple_unified_server.py · Port 8000                        │
@@ -76,15 +82,15 @@ python simple_unified_server.py
 ```bash
 cd react-frontend
 npm install
-npm start
-# App opens on http://localhost:5173
+npm run build && npx serve -s build -l 3000
+# App opens on http://localhost:3000
 ```
 
 ### 3. Access
-- **Couple view**: http://localhost:5173/ (default)
+- **Couple view**: http://localhost:3000/ (default)
 - **Vendor view**: Switch role in sidebar footer (Dev role switcher)
 - **Admin view**: Switch to "Admin" in sidebar footer
-- **Public RSVP**: http://localhost:5173/rsvp/:inviteCode (no login required)
+- **Public RSVP**: http://localhost:3000/rsvp/:inviteCode (no login required)
 
 ---
 
@@ -162,6 +168,34 @@ The platform supports 6 vendor categories, each with structured pricing:
 | **Entertainment** | Per event/night | ₹20K – ₹5L/event |
 
 Quotes include category-specific fields (e.g., drone coverage for photography, live counters for catering). The backend auto-calculates `total_estimated_price` from unit pricing x couple's requirements for apples-to-apples comparison.
+
+---
+
+## Agentic AI Architecture
+
+### CrewAI Multi-Agent Orchestration
+
+Shehn.AI uses **15 specialized AI agents** organized into **3 crews** for wedding blueprint generation:
+
+| Crew | Agents | Purpose |
+|------|--------|---------|
+| **Research Crew** | Venue Scout, Catering Analyst, Photo/Video Strategist, Decor Planner, Entertainment Curator | Market research across all 6 vendor categories |
+| **Planning Crew** | Budget Optimizer, Timeline Architect, Vendor Matcher, Guest Logistics, Culture Specialist | Budget allocation, scheduling, ritual integration |
+| **Content Crew** | Blueprint Writer, Cost Analyzer, Communication Drafter, Quality Reviewer, Summary Generator | Final document assembly and quality assurance |
+
+### Orchestration Patterns
+- **Sequential**: Research → Planning → Content (full blueprint generation)
+- **Parallel + Sequential**: 5 research agents run concurrently, then feed into planning
+- **Self-Correction**: Quality Reviewer can trigger re-generation on inconsistencies
+- **Two-Agent Collaboration**: Budget Optimizer + Cost Analyzer iterate together
+
+### 4-Tier AI Fallback
+| Tier | Engine | Use Case |
+|------|--------|----------|
+| 1 | CrewAI + Gemini | Multi-agent orchestration (primary) |
+| 2 | Gemini Direct | Single-model generation (fallback) |
+| 3 | Ollama Local | On-device LLM (offline fallback) |
+| 4 | Deterministic | Rule-based templates (guaranteed) |
 
 ---
 
@@ -284,7 +318,7 @@ All seed vendors are pre-approved and have realistic Indian wedding business pro
 | Backend | Python FastAPI, Uvicorn |
 | AI | Google Gemini 2.0 Flash, Anthropic Claude Haiku 4.5, Ollama (local fallback) |
 | Database | NocoDB (vendor data), In-memory stores (blueprints, quotes, messages) |
-| Orchestration | CrewAI (multi-agent wedding planning) |
+| Orchestration | CrewAI (15 agents, 3 crews, 4 orchestration patterns) |
 
 ---
 

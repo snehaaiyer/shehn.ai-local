@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../config/api_config';
 
 import { Heart, DollarSign, Camera, Utensils, Palette, Loader2, Sparkles, Clock, TrendingUp, FileText, Building2 } from 'lucide-react';
 
@@ -333,7 +334,7 @@ const WeddingBlueprint: React.FC<WeddingBlueprintProps> = ({ preferences: weddin
         }
       };
 
-      const res = await fetch('/api/ai/generate-blueprint', {
+      const res = await fetch(`${API_BASE}/api/ai/generate-blueprint`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)

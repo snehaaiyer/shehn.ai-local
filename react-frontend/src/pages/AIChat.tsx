@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Sparkles } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { API_BASE } from '../config/api_config';
 
 interface Message {
   id: string;
@@ -30,7 +31,7 @@ const LogoWithFallback: React.FC<{ size?: string }> = ({ size = "w-8 h-8" }) => 
   return (
     <img
       src="/shehnai-logo.png"
-      alt="Shehnai.AI"
+      alt="Shehn.AI"
       className={`${size} mr-2`}
       onError={() => setImageError(true)}
     />
@@ -147,7 +148,7 @@ const AIChat: React.FC = () => {
 
     try {
       // Call backend AI chat endpoint (CrewAI + Ollama GLM4)
-      const res = await fetch('/api/ai/chat', {
+      const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: inputMessage, blueprintId: blueprintId || undefined, context: (() => { try { return JSON.parse(localStorage.getItem('weddingPreferences') || '{}'); } catch { return {}; } })() })

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Calendar, DollarSign, TrendingUp, FileText, CheckCircle, Clock, AlertCircle, Download } from 'lucide-react';
+import { API_BASE } from '../config/api_config';
 // AI analysis via backend /api/ai/chat
 
 interface QuotationData {
@@ -50,7 +51,7 @@ export const QuotationSummaryTable: React.FC<QuotationSummaryTableProps> = ({
     setIsLoading(true);
     try {
       // Fetch quotations from backend
-      const response = await fetch(`/api/quotations/${weddingId}`);
+      const response = await fetch(`${API_BASE}/api/quotations/${weddingId}`);
       const data = await response.json();
       
       if (data.success) {
@@ -124,7 +125,7 @@ Format as JSON:
 }`;
 
     try {
-      const res = await fetch('/api/ai/chat', {
+      const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: prompt })

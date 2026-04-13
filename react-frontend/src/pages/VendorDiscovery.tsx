@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { VendorDiscoveryService } from '../services/vendor_discovery_service';
 import { useAppStore } from '../store/useAppStore';
 import { getThemeImage } from '../config/theme_images';
+import { API_BASE } from '../config/api_config';
 // TODO: Replace with MessagingService once built (Phase 3)
 
 interface Vendor {
@@ -53,6 +54,10 @@ interface Vendor {
   compatibility_details?: {
     priority_bonus: number;
   };
+  price_tier?: string;
+  reviews_count?: number;
+  category_highlights?: string[];
+  category_details?: Record<string, any>;
 }
 
 // Placeholder for weddingPreferences state, assuming it's managed elsewhere or fetched
@@ -122,6 +127,9 @@ const TOP_MATCH_BADGES = [
 ];
 
 const VendorDiscovery: React.FC = () => {
+  const theme = useAppStore(s => s.theme);
+  const isDark = theme === 'dark';
+
   // Core state
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -313,9 +321,10 @@ const VendorDiscovery: React.FC = () => {
     if (!blueprintId) return;
     const fetchBlueprint = async () => {
       try {
-        const response = await fetch(`/api/blueprint/${blueprintId}`);
+        const response = await fetch(`${API_BASE}/api/blueprints/${blueprintId}`, { headers: { 'X-User-Role': 'couple', 'X-User-Id': '1', 'Content-Type': 'application/json' } });
         if (response.ok) {
-          const data = await response.json();
+          const json = await response.json();
+          const data = json.success && json.data ? json.data : json;
           console.log('Blueprint data loaded for vendor discovery:', data);
           setBlueprintData(data);
 
@@ -601,13 +610,13 @@ const VendorDiscovery: React.FC = () => {
   // Show error state if there's a critical error
   if (hasError) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-white rounded-2xl shadow-lg border border-red-100">
-          <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+        <div className={`max-w-md mx-auto text-center p-8 rounded-2xl shadow-lg border ${isDark ? 'bg-gray-800 border-red-900' : 'bg-white border-red-100'}`}>
+          <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${isDark ? 'bg-red-900/30' : 'bg-red-100'}`}>
             <span className="text-red-500 text-2xl">!</span>
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Something went wrong</h2>
-          <p className="text-gray-600 mb-4">
+          <h2 className={`text-xl font-bold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Something went wrong</h2>
+          <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {errorMessage || 'There was an error loading the vendor discovery page.'}
           </p>
           <div className="space-y-2">
@@ -623,7 +632,7 @@ const VendorDiscovery: React.FC = () => {
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-300"
+              className={`w-full px-4 py-2 rounded-lg transition-all duration-300 ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               Refresh Page
             </button>
@@ -651,8 +660,8 @@ const VendorDiscovery: React.FC = () => {
     return (
       <div
         key={vendor.id}
-        className={`bg-white rounded-xl shadow-lg border overflow-hidden transition-all duration-300 ${
-          isSkipped ? 'opacity-50 border-gray-300' : isShortlisted ? 'border-green-300 ring-2 ring-green-100' : 'border-gray-200 hover:shadow-xl'
+        className={`rounded-xl shadow-lg border overflow-hidden transition-all duration-300 ${isDark ? 'bg-gray-800' : 'bg-white'} ${
+          isSkipped ? `opacity-50 ${isDark ? 'border-gray-600' : 'border-gray-300'}` : isShortlisted ? 'border-green-300 ring-2 ring-green-100' : `${isDark ? 'border-gray-700 hover:shadow-xl' : 'border-gray-200 hover:shadow-xl'}`
         }`}
       >
         {/* Vendor Images */}
@@ -668,7 +677,7 @@ const VendorDiscovery: React.FC = () => {
               }}
             />
           ) : (
-            <div className="h-full bg-gray-100 flex items-center justify-center">
+            <div className={`h-full flex items-center justify-center ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <Building2 className="h-12 w-12 text-gray-400" />
             </div>
           )}
@@ -692,7 +701,7 @@ const VendorDiscovery: React.FC = () => {
         <div className="p-4">
           <div className="mb-3">
             <div className="flex items-start justify-between mb-1">
-              <h3 className="text-lg font-bold text-gray-800 line-clamp-1 flex-1">{vendor.name}</h3>
+              <h3 className={`text-lg font-bold line-clamp-1 flex-1 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{vendor.name}</h3>
               {vendor.preferences_match_score && vendor.preferences_match_score >= 80 && (
                 <div className="ml-2 px-2 py-1 bg-sage-100 text-sage-700 text-xs font-medium rounded-full flex items-center gap-1">
                   <div className="w-2 h-2 bg-sage-500 rounded-full"></div>
@@ -706,13 +715,13 @@ const VendorDiscovery: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <div className={`flex items-center gap-2 text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               <MapPin className="h-4 w-4" />
               <span className="line-clamp-1">{vendor.location}</span>
             </div>
             {!hasBlueprintContext && vendor.preference_insights && vendor.preference_insights.length > 0 && (
               <div className="mb-2">
-                <div className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                <div className={`text-xs px-2 py-1 rounded ${isDark ? 'text-gray-400 bg-gray-700' : 'text-gray-600 bg-gray-50'}`}>
                   {vendor.preference_insights[0]}
                 </div>
               </div>
@@ -730,15 +739,38 @@ const VendorDiscovery: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="text-xs text-gray-600">
+            <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
               {vendor.price_range.split('(')[0].trim()}
             </div>
           </div>
 
           {/* Brief Description */}
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+          <p className={`text-sm mb-2 line-clamp-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {vendor.description}
           </p>
+
+          {/* Category Highlights (from enriched profiles) */}
+          {vendor.category_highlights && vendor.category_highlights.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {vendor.category_highlights.slice(0, 4).map((h, i) => (
+                <span key={i} className={`text-xs px-2 py-0.5 rounded-full border ${isDark ? 'bg-gray-700 text-gray-300 border-gray-600' : 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+                  {h}
+                </span>
+              ))}
+              {vendor.category_highlights.length > 4 && (
+                <span className="text-xs text-gray-500 px-1 py-0.5">+{vendor.category_highlights.length - 4} more</span>
+              )}
+            </div>
+          )}
+
+          {/* Experience & Reviews */}
+          {(vendor.experience_years || vendor.reviews_count) && (
+            <div className={`flex items-center gap-3 text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              {vendor.experience_years ? <span>{vendor.experience_years} yrs exp</span> : null}
+              {vendor.reviews_count ? <span>• {vendor.reviews_count} reviews</span> : null}
+              {vendor.price_tier && <span className={`px-1.5 py-0.5 rounded ${vendor.price_tier === 'premium' ? 'bg-amber-50 text-amber-700' : vendor.price_tier === 'budget' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'}`}>{vendor.price_tier}</span>}
+            </div>
+          )}
 
           {/* Action Buttons -- Approve/Skip in blueprint mode, original in explore mode */}
           {hasBlueprintContext ? (
@@ -746,7 +778,7 @@ const VendorDiscovery: React.FC = () => {
               {isSkipped ? (
                 <button
                   onClick={() => undoSkip(vendor.id)}
-                  className="w-full px-3 py-2 bg-gray-100 text-gray-600 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 font-medium"
+                  className={`w-full px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-center gap-2 font-medium ${isDark ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                 >
                   <Undo2 className="h-4 w-4" />
                   Undo Skip
@@ -767,7 +799,7 @@ const VendorDiscovery: React.FC = () => {
                     </button>
                     <button
                       onClick={() => skipVendor(vendor.id)}
-                      className="flex-1 px-3 py-2.5 bg-gray-200 text-gray-600 text-sm rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-1.5 font-semibold"
+                      className={`flex-1 px-3 py-2.5 text-sm rounded-lg transition-colors flex items-center justify-center gap-1.5 font-semibold ${isDark ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                     >
                       <X className="h-4 w-4" />
                       Skip
@@ -775,7 +807,7 @@ const VendorDiscovery: React.FC = () => {
                   </div>
                   <button
                     onClick={() => openVendorModal(vendor)}
-                    className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                    className={`w-full px-3 py-2 text-sm rounded-lg transition-colors font-medium ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                   >
                     Know More
                   </button>
@@ -822,7 +854,7 @@ const VendorDiscovery: React.FC = () => {
 
               <button
                 onClick={() => openVendorModal(vendor)}
-                className="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                className={`w-full px-3 py-2 text-sm rounded-lg transition-colors font-medium ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
               >
                 Know More
               </button>
@@ -843,17 +875,17 @@ const VendorDiscovery: React.FC = () => {
           placeholder={`Search ${selectedCategory ? categories.find(c => c.id === selectedCategory)?.name.toLowerCase() : 'vendors'}, locations, or services...`}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-4 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
+          className={`w-full pl-12 pr-4 py-4 rounded-xl border focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-500 focus:border-gray-500 focus:ring-gray-500/20' : 'bg-white border-gray-200 focus:border-gray-400 focus:ring-gray-400/20 text-gray-700 placeholder-gray-400'}`}
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Location</label>
           <select
             value={selectedLocation}
             onChange={(e) => handleFilterChange('location', e.target.value)}
-            className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
+            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 focus:border-gray-500 focus:ring-gray-500/20' : 'bg-white border-gray-200 focus:border-gray-400 focus:ring-gray-400/20 text-gray-700'}`}
           >
             <option value="">All Locations</option>
             <option value="mumbai">Mumbai</option>
@@ -871,11 +903,11 @@ const VendorDiscovery: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Budget Range</label>
           <select
             value={selectedBudget}
             onChange={(e) => handleFilterChange('budget', e.target.value)}
-            className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
+            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 focus:border-gray-500 focus:ring-gray-500/20' : 'bg-white border-gray-200 focus:border-gray-400 focus:ring-gray-400/20 text-gray-700'}`}
           >
             <option value="">Any Budget</option>
             <option value="budget">Budget Friendly</option>
@@ -886,11 +918,11 @@ const VendorDiscovery: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Rating</label>
+          <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Minimum Rating</label>
           <select
             value={selectedRating}
             onChange={(e) => handleFilterChange('rating', e.target.value)}
-            className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-400/20 transition-all duration-300 text-gray-700"
+            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all duration-300 ${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 focus:border-gray-500 focus:ring-gray-500/20' : 'bg-white border-gray-200 focus:border-gray-400 focus:ring-gray-400/20 text-gray-700'}`}
           >
             <option value="">Any Rating</option>
             <option value="4.5">4.5+ Stars</option>
@@ -929,7 +961,7 @@ const VendorDiscovery: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Notification Toast */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium transition-all duration-300 ${
@@ -955,14 +987,14 @@ const VendorDiscovery: React.FC = () => {
           {hasBlueprintContext ? (
             <>
               {/* AI-Matched Header */}
-              <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+              <div className={`rounded-2xl p-8 border shadow-lg ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-indigo-600">
                     <Sparkles className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold" style={{ color: '#3D5A3D' }}>AI-Matched Vendors for Your Wedding</h1>
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-1 flex-wrap">
+                    <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>AI-Matched Vendors for Your Wedding</h1>
+                    <div className={`flex items-center gap-4 text-sm mt-1 flex-wrap ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                       {blueprintCity && (
                         <span className="flex items-center gap-1">
                           <MapPin className="h-3.5 w-3.5" /> {blueprintCity}
@@ -981,13 +1013,13 @@ const VendorDiscovery: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   Review vendors matched to your blueprint. Shortlist the ones you like, skip the rest. Your selections are saved automatically.
                 </p>
               </div>
 
               {/* Category Horizontal Scroll with Completion Indicators */}
-              <div className="bg-white rounded-2xl p-4 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+              <div className={`rounded-2xl p-4 border shadow-lg ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
                 <div className="flex overflow-x-auto gap-2 pb-1">
                   {categories.map((category) => {
                     const Icon = category.icon;
@@ -1005,8 +1037,8 @@ const VendorDiscovery: React.FC = () => {
                           isActive
                             ? 'bg-deep-navy text-white shadow-lg'
                             : catShortlisted
-                              ? 'bg-green-50 text-green-700 border border-green-300'
-                              : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
+                              ? (isDark ? 'bg-green-900/30 text-green-400 border border-green-700' : 'bg-green-50 text-green-700 border border-green-300')
+                              : (isDark ? 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600' : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100')
                         }`}
                       >
                         {Icon}
@@ -1038,25 +1070,25 @@ const VendorDiscovery: React.FC = () => {
                   : [];
 
                 return (
-                  <div className="bg-indigo-50 rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#E6E6FA' }}>
-                    <h2 className="text-lg font-bold mb-3" style={{ color: '#3D5A3D' }}>
+                  <div className={`rounded-2xl p-6 border shadow-lg ${isDark ? 'bg-indigo-900/20 border-indigo-800' : 'bg-indigo-50'}`} style={isDark ? {} : { borderColor: '#E6E6FA' }}>
+                    <h2 className={`text-lg font-bold mb-3 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                       Blueprint Requirements &mdash; {categories.find(c => c.id === selectedCategory)?.name}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                       {spec.budget_allocated != null && (
-                        <div className="bg-white rounded-xl p-3 border border-indigo-100">
-                          <div className="text-xs text-gray-500 mb-1">Budget Allocated</div>
-                          <div className="font-semibold text-gray-800">
+                        <div className={`rounded-xl p-3 border ${isDark ? 'bg-gray-800 border-indigo-800' : 'bg-white border-indigo-100'}`}>
+                          <div className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Budget Allocated</div>
+                          <div className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
                             {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(spec.budget_allocated)}
                           </div>
                         </div>
                       )}
                       {reqEntries.length > 0 && (
-                        <div className="bg-white rounded-xl p-3 border border-indigo-100">
-                          <div className="text-xs text-gray-500 mb-1">Style / Requirements</div>
+                        <div className={`rounded-xl p-3 border ${isDark ? 'bg-gray-800 border-indigo-800' : 'bg-white border-indigo-100'}`}>
+                          <div className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Style / Requirements</div>
                           <div className="space-y-1">
                             {reqEntries.map(([key, value]) => (
-                              <div key={key} className="text-gray-700">
+                              <div key={key} className={isDark ? 'text-gray-300' : 'text-gray-700'}>
                                 <span className="font-medium capitalize">{key.replace(/_/g, ' ')}:</span>{' '}
                                 {String(value)}
                               </div>
@@ -1065,9 +1097,9 @@ const VendorDiscovery: React.FC = () => {
                         </div>
                       )}
                       {spec.notes && (
-                        <div className="bg-white rounded-xl p-3 border border-indigo-100">
-                          <div className="text-xs text-gray-500 mb-1">Notes</div>
-                          <div className="text-gray-700">{spec.notes}</div>
+                        <div className={`rounded-xl p-3 border ${isDark ? 'bg-gray-800 border-indigo-800' : 'bg-white border-indigo-100'}`}>
+                          <div className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Notes</div>
+                          <div className={isDark ? 'text-gray-300' : 'text-gray-700'}>{spec.notes}</div>
                         </div>
                       )}
                     </div>
@@ -1076,16 +1108,16 @@ const VendorDiscovery: React.FC = () => {
               })()}
 
               {/* Collapsible Refine Filters */}
-              <div className="bg-white rounded-2xl border shadow-lg overflow-hidden" style={{ borderColor: '#FFB6C1' }}>
+              <div className={`rounded-2xl border shadow-lg overflow-hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
                 <button
                   onClick={() => setFiltersExpanded(!filtersExpanded)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-gray-600 hover:bg-gray-50 transition-colors"
+                  className={`w-full px-6 py-4 flex items-center justify-between transition-colors ${isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-50'}`}
                 >
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
                     <span className="font-medium text-sm">Refine Filters</span>
                     {(selectedLocation || selectedBudget || selectedRating) && (
-                      <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'}`}>
                         {[selectedLocation, selectedBudget, selectedRating].filter(Boolean).length} active
                       </span>
                     )}
@@ -1093,7 +1125,7 @@ const VendorDiscovery: React.FC = () => {
                   {filtersExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
                 {filtersExpanded && (
-                  <div className="px-6 pb-6 border-t border-gray-100 pt-4">
+                  <div className={`px-6 pb-6 border-t pt-4 ${isDark ? 'border-gray-700' : 'border-gray-100'}`}>
                     {renderFilters()}
                   </div>
                 )}
@@ -1104,7 +1136,7 @@ const VendorDiscovery: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Sparkles className="h-5 w-5 text-indigo-600" />
-                    <h2 className="text-xl font-bold" style={{ color: '#3D5A3D' }}>
+                    <h2 className={`text-xl font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                       Top {Math.min(3, filteredVendors.length)} AI Matches
                     </h2>
                   </div>
@@ -1124,7 +1156,7 @@ const VendorDiscovery: React.FC = () => {
                       return (
                         <div
                           key={vendor.id}
-                          className={`bg-white rounded-2xl border-2 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${badge.border} ${
+                          className={`rounded-2xl border-2 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${isDark ? 'bg-gray-800' : 'bg-white'} ${badge.border} ${
                             isShortlisted ? 'ring-2 ring-green-300' : ''
                           }`}
                         >
@@ -1159,26 +1191,26 @@ const VendorDiscovery: React.FC = () => {
                           {/* Content */}
                           <div className="p-5 space-y-3">
                             <div>
-                              <h3 className="text-lg font-bold text-gray-800 line-clamp-1">{vendor.name}</h3>
+                              <h3 className={`text-lg font-bold line-clamp-1 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{vendor.name}</h3>
                               <div className="flex items-center gap-2 mt-1">
                                 <Star className="h-4 w-4 text-rose-400 fill-current" />
                                 <span className="text-sm font-semibold">{vendor.rating}</span>
-                                <span className="text-xs text-gray-500">({vendor.contact_score || 0} reviews)</span>
+                                <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>({vendor.contact_score || 0} reviews)</span>
                               </div>
                             </div>
 
-                            <div className="text-sm font-medium text-gray-700">
+                            <div className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                               {vendor.price_range.split('(')[0].trim()}
                             </div>
 
                             {/* USP */}
-                            <div className="bg-gray-50 rounded-lg p-3">
-                              <div className="text-xs font-semibold text-gray-500 uppercase mb-1">USP</div>
-                              <p className="text-sm text-gray-700 line-clamp-2">{usp}</p>
+                            <div className={`rounded-lg p-3 ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                              <div className={`text-xs font-semibold uppercase mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>USP</div>
+                              <p className={`text-sm line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{usp}</p>
                             </div>
 
                             {/* Match Reason */}
-                            <div className="bg-indigo-50 rounded-lg p-3">
+                            <div className={`rounded-lg p-3 ${isDark ? 'bg-indigo-900/20' : 'bg-indigo-50'}`}>
                               <div className="text-xs font-semibold text-indigo-500 uppercase mb-1">Why Matched</div>
                               <p className="text-sm text-indigo-700 line-clamp-2">{matchReason}</p>
                             </div>
@@ -1229,7 +1261,7 @@ const VendorDiscovery: React.FC = () => {
                             drag="x"
                             dragConstraints={{ left: 0, right: 0 }}
                             dragElastic={0.1}
-                            className={`flex-shrink-0 w-[85vw] max-w-[340px] snap-center bg-white rounded-2xl border-2 shadow-xl overflow-hidden ${badge.border} ${
+                            className={`flex-shrink-0 w-[85vw] max-w-[340px] snap-center rounded-2xl border-2 shadow-xl overflow-hidden ${isDark ? 'bg-gray-800' : 'bg-white'} ${badge.border} ${
                               isShortlisted ? 'ring-2 ring-green-300' : ''
                             }`}
                           >
@@ -1264,24 +1296,24 @@ const VendorDiscovery: React.FC = () => {
                             {/* Content */}
                             <div className="p-4 space-y-3">
                               <div>
-                                <h3 className="text-lg font-bold text-gray-800 line-clamp-1">{vendor.name}</h3>
+                                <h3 className={`text-lg font-bold line-clamp-1 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{vendor.name}</h3>
                                 <div className="flex items-center gap-2 mt-1">
                                   <Star className="h-4 w-4 text-rose-400 fill-current" />
                                   <span className="text-sm font-semibold">{vendor.rating}</span>
-                                  <span className="text-xs text-gray-500">({vendor.contact_score || 0} reviews)</span>
+                                  <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>({vendor.contact_score || 0} reviews)</span>
                                 </div>
                               </div>
 
-                              <div className="text-sm font-medium text-gray-700">
+                              <div className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                 {vendor.price_range.split('(')[0].trim()}
                               </div>
 
-                              <div className="bg-gray-50 rounded-lg p-3">
-                                <div className="text-xs font-semibold text-gray-500 uppercase mb-1">USP</div>
-                                <p className="text-sm text-gray-700 line-clamp-2">{usp}</p>
+                              <div className={`rounded-lg p-3 ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                                <div className={`text-xs font-semibold uppercase mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>USP</div>
+                                <p className={`text-sm line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{usp}</p>
                               </div>
 
-                              <div className="bg-indigo-50 rounded-lg p-3">
+                              <div className={`rounded-lg p-3 ${isDark ? 'bg-indigo-900/20' : 'bg-indigo-50'}`}>
                                 <div className="text-xs font-semibold text-indigo-500 uppercase mb-1">Why Matched</div>
                                 <p className="text-sm text-indigo-700 line-clamp-2">{matchReason}</p>
                               </div>
@@ -1322,11 +1354,11 @@ const VendorDiscovery: React.FC = () => {
 
               {/* ====== MORE VENDORS (compact list after top 3) ====== */}
               {!isLoading && filteredVendors.length > 3 && (
-                <div className="bg-white rounded-2xl p-6 border shadow-lg space-y-4" style={{ borderColor: '#FFB6C1' }}>
-                  <h2 className="text-lg font-bold" style={{ color: '#3D5A3D' }}>
+                <div className={`rounded-2xl p-6 border shadow-lg space-y-4 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
+                  <h2 className={`text-lg font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                     More Vendors ({filteredVendors.length - 3})
                   </h2>
-                  <div className="divide-y divide-gray-100">
+                  <div className={`divide-y ${isDark ? 'divide-gray-700' : 'divide-gray-100'}`}>
                     {filteredVendors.slice(3).map((vendor) => {
                       const isShortlisted = shortlistedVendors.includes(vendor.id);
                       const isSkipped = skippedVendors.includes(vendor.id);
@@ -1342,7 +1374,7 @@ const VendorDiscovery: React.FC = () => {
                           {/* Mini info */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-semibold text-gray-800 truncate">{vendor.name}</h3>
+                              <h3 className={`font-semibold truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{vendor.name}</h3>
                               {firstHighlight && (
                                 <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full whitespace-nowrap">
                                   {firstHighlight}
@@ -1354,7 +1386,7 @@ const VendorDiscovery: React.FC = () => {
                                 </span>
                               )}
                             </div>
-                            <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                            <div className={`flex items-center gap-3 mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                               <span className="flex items-center gap-1">
                                 <Star className="h-3.5 w-3.5 text-rose-400 fill-current" />
                                 {vendor.rating}
@@ -1369,7 +1401,7 @@ const VendorDiscovery: React.FC = () => {
                             {isSkipped ? (
                               <button
                                 onClick={() => undoSkip(vendor.id)}
-                                className="px-3 py-1.5 text-xs bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-1"
+                                className={`px-3 py-1.5 text-xs rounded-lg transition-colors flex items-center gap-1 ${isDark ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                               >
                                 <Undo2 className="h-3 w-3" /> Undo
                               </button>
@@ -1388,7 +1420,7 @@ const VendorDiscovery: React.FC = () => {
                                 </button>
                                 <button
                                   onClick={() => skipVendor(vendor.id)}
-                                  className="px-3 py-1.5 text-xs bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300 transition-colors"
+                                  className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${isDark ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                                 >
                                   <X className="h-3 w-3" />
                                 </button>
@@ -1396,7 +1428,7 @@ const VendorDiscovery: React.FC = () => {
                             )}
                             <button
                               onClick={() => openVendorModal(vendor)}
-                              className="px-3 py-1.5 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                              className={`px-3 py-1.5 text-xs rounded-lg transition-colors font-medium ${isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                             >
                               View Details
                             </button>
@@ -1412,7 +1444,7 @@ const VendorDiscovery: React.FC = () => {
             /* ====== EXPLORE MODE: No blueprint ====== */
             <>
               {/* CTA Banner to start with AI Planner */}
-              <div className="bg-indigo-50 rounded-2xl p-6 border border-indigo-200 shadow-lg">
+              <div className={`rounded-2xl p-6 border shadow-lg ${isDark ? 'bg-indigo-900/20 border-indigo-800' : 'bg-indigo-50 border-indigo-200'}`}>
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-indigo-600">
@@ -1433,15 +1465,15 @@ const VendorDiscovery: React.FC = () => {
               </div>
 
               {/* Original Header */}
-              <div className="bg-white rounded-2xl p-8 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+              <div className={`rounded-2xl p-8 border shadow-lg ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D5A3D' }}>
                       <Search className="h-6 w-6" style={{ color: '#FFFFFF' }} />
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold" style={{ color: '#3D5A3D' }}>Vendor Discovery</h1>
-                      <p className="text-gray-600">Find the perfect vendors for your wedding</p>
+                      <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>Vendor Discovery</h1>
+                      <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Find the perfect vendors for your wedding</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -1458,7 +1490,7 @@ const VendorDiscovery: React.FC = () => {
               </div>
 
               {/* Category Tabs */}
-              <div className="bg-white rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#FFB6C1' }}>
+              <div className={`rounded-2xl p-6 border shadow-lg ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
                 <div className="flex overflow-x-auto gap-2 pb-2">
                   {categories.map((category) => {
                     const Icon = category.icon;
@@ -1471,7 +1503,7 @@ const VendorDiscovery: React.FC = () => {
                         className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 whitespace-nowrap ${
                           isActive
                             ? 'bg-deep-navy text-white shadow-lg'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
+                            : (isDark ? 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600' : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100')
                         }`}
                       >
                         {Icon}
@@ -1484,37 +1516,37 @@ const VendorDiscovery: React.FC = () => {
 
               {/* Preferences Summary */}
               {savedPrefs && (
-                <div className="bg-rose-50 rounded-2xl p-6 border shadow-lg" style={{ borderColor: '#E6E6FA' }}>
-                  <h2 className="text-lg font-bold mb-4" style={{ color: '#3D5A3D' }}>
+                <div className={`rounded-2xl p-6 border shadow-lg ${isDark ? 'bg-rose-900/20 border-rose-800' : 'bg-rose-50'}`} style={isDark ? {} : { borderColor: '#E6E6FA' }}>
+                  <h2 className={`text-lg font-bold mb-4 ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                     Smart Matching Active
                   </h2>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     {savedPrefs.basicDetails?.location && (
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-gray-600" />
-                        <span className="text-gray-700">{savedPrefs.basicDetails.location}</span>
+                        <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{savedPrefs.basicDetails.location}</span>
                       </div>
                     )}
                     {savedPrefs.theme?.selectedTheme && (
                       <div className="flex items-center gap-2">
-                        <Palette className="h-4 w-4 text-rose-600" />
-                        <span className="text-gray-700">{savedPrefs.theme.selectedTheme.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+                        <Palette className={`h-4 w-4 ${isDark ? 'text-rose-400' : 'text-rose-600'}`} />
+                        <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{savedPrefs.theme.selectedTheme.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
                       </div>
                     )}
                     {savedPrefs.basicDetails?.budgetRange && (
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-sage-600" />
-                        <span className="text-gray-700">{savedPrefs.basicDetails.budgetRange}</span>
+                        <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{savedPrefs.basicDetails.budgetRange}</span>
                       </div>
                     )}
                     {savedPrefs.basicDetails?.guestCount && (
                       <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-rose-600" />
-                        <span className="text-gray-700">{savedPrefs.basicDetails.guestCount} guests</span>
+                        <Users className={`h-4 w-4 ${isDark ? 'text-rose-400' : 'text-rose-600'}`} />
+                        <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>{savedPrefs.basicDetails.guestCount} guests</span>
                       </div>
                     )}
                   </div>
-                  <div className="mt-3 text-xs text-gray-600">
+                  <div className={`mt-3 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     Vendors are automatically filtered and ranked based on your wedding preferences.
                     Higher match scores indicate better alignment with your choices.
                   </div>
@@ -1522,8 +1554,8 @@ const VendorDiscovery: React.FC = () => {
               )}
 
               {/* Search and Quick Filters (always visible in explore mode) */}
-              <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
-                <h2 className="text-xl font-bold" style={{ color: '#3D5A3D' }}>
+              <div className={`rounded-2xl p-8 border shadow-lg space-y-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
+                <h2 className={`text-xl font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   {selectedCategory ? `${categories.find(c => c.id === selectedCategory)?.name} Search` : 'Vendor Search'}
                 </h2>
                 {renderFilters()}
@@ -1532,17 +1564,17 @@ const VendorDiscovery: React.FC = () => {
           )}
 
           {/* ====== RESULTS SECTION (shared) ====== */}
-          <div className="bg-white rounded-2xl p-8 border shadow-lg space-y-6" style={{ borderColor: '#FFB6C1' }}>
+          <div className={`rounded-2xl p-4 sm:p-8 border shadow-lg space-y-6 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}`} style={isDark ? {} : { borderColor: '#FFB6C1' }}>
             {/* Results Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold" style={{ color: '#3D5A3D' }}>
+                <h2 className={`text-lg sm:text-xl font-bold ${isDark ? 'text-gray-100' : ''}`} style={isDark ? {} : { color: '#3D5A3D' }}>
                   {hasBlueprintContext
                     ? `${filteredVendors.length} AI-matched vendors`
                     : `${filteredVendors.length} vendors found`
                   }
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   {searchQuery && `Searching for "${searchQuery}"`}
                   {hasBlueprintContext && !searchQuery && filteredVendors.length > 0 && (
                     <span>
@@ -1558,8 +1590,8 @@ const VendorDiscovery: React.FC = () => {
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-all duration-300 ${
                     viewMode === 'grid'
-                      ? 'bg-gray-200 text-gray-700'
-                      : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                      ? (isDark ? 'bg-gray-600 text-gray-200' : 'bg-gray-200 text-gray-700')
+                      : (isDark ? 'bg-gray-700 text-gray-500 hover:bg-gray-600' : 'bg-gray-100 text-gray-400 hover:bg-gray-200')
                   }`}
                 >
                   <Grid className="h-5 w-5" />
@@ -1568,8 +1600,8 @@ const VendorDiscovery: React.FC = () => {
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg transition-all duration-300 ${
                     viewMode === 'list'
-                      ? 'bg-gray-200 text-gray-700'
-                      : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                      ? (isDark ? 'bg-gray-600 text-gray-200' : 'bg-gray-200 text-gray-700')
+                      : (isDark ? 'bg-gray-700 text-gray-500 hover:bg-gray-600' : 'bg-gray-100 text-gray-400 hover:bg-gray-200')
                   }`}
                 >
                   <List className="h-5 w-5" />
@@ -1590,7 +1622,7 @@ const VendorDiscovery: React.FC = () => {
                   <h3 className="text-lg font-semibold" style={{ color: '#3D5A3D' }}>
                     {hasBlueprintContext ? 'Matching Vendors to Your Blueprint' : 'Finding Perfect Vendors for You'}
                   </h3>
-                  <p className="text-gray-600 max-w-md">
+                  <p className={`max-w-md ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     Searching {selectedCategory} in {selectedLocation || 'your location'} based on your wedding preferences...
                   </p>
                   <div className="flex items-center justify-center gap-2 mt-4">
@@ -1636,10 +1668,10 @@ const VendorDiscovery: React.FC = () => {
             {/* No Results */}
             {!isLoading && !errorMessage && filteredVendors.length === 0 && (
               <div className="text-center py-12">
-                <div className="bg-gray-50 rounded-xl p-8 max-w-md mx-auto">
+                <div className={`rounded-xl p-8 max-w-md mx-auto ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
                   <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">No vendors found</h3>
-                  <p className="text-gray-600 mb-4">
+                  <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>No vendors found</h3>
+                  <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     {hasBlueprintContext
                       ? 'No AI-matched vendors in this category yet. Try expanding filters or check another category.'
                       : 'Try adjusting your search criteria or filters to find more vendors.'}
@@ -1660,23 +1692,23 @@ const VendorDiscovery: React.FC = () => {
         {/* Vendor Details Modal */}
         {showVendorModal && selectedVendor && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className={`rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
+              <div className={`sticky top-0 border-b p-6 rounded-t-2xl ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl overflow-hidden">
                       {selectedVendor.images && selectedVendor.images.length > 0 ? (
                         <img src={selectedVendor.images[0]} alt={selectedVendor.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <div className={`w-full h-full flex items-center justify-center ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
                           <Building2 className="h-6 w-6 text-gray-400" />
                         </div>
                       )}
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-800">{selectedVendor.name}</h2>
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <h2 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{selectedVendor.name}</h2>
+                      <div className={`flex items-center gap-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         <MapPin className="h-4 w-4" />
                         <span>{selectedVendor.location}</span>
                       </div>
@@ -1684,7 +1716,7 @@ const VendorDiscovery: React.FC = () => {
                   </div>
                   <button
                     onClick={closeVendorModal}
-                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    className={`p-2 rounded-full transition-colors ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
                   >
                     <X className="h-5 w-5 text-gray-500" />
                   </button>
@@ -1720,8 +1752,8 @@ const VendorDiscovery: React.FC = () => {
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Overview</h3>
-                    <p className="text-gray-600 mb-4">{selectedVendor.description}</p>
+                    <h3 className={`text-lg font-semibold mb-3 ${isDark ? 'text-gray-100' : ''}`}>Overview</h3>
+                    <p className={`mb-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{selectedVendor.description}</p>
 
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
@@ -1749,7 +1781,7 @@ const VendorDiscovery: React.FC = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
+                    <h3 className={`text-lg font-semibold mb-3 ${isDark ? 'text-gray-100' : ''}`}>Contact Information</h3>
                     <div className="space-y-3">
                       {selectedVendor.phone && (
                         <button
@@ -1790,7 +1822,7 @@ const VendorDiscovery: React.FC = () => {
 
                       {/* Shortlist/Skip in modal (blueprint mode) */}
                       {hasBlueprintContext && (
-                        <div className="flex gap-2 pt-2 border-t border-gray-200">
+                        <div className={`flex gap-2 pt-2 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
                           <button
                             onClick={() => {
                               shortlistVendor(selectedVendor.id);
@@ -1810,7 +1842,7 @@ const VendorDiscovery: React.FC = () => {
                               skipVendor(selectedVendor.id);
                               closeVendorModal();
                             }}
-                            className="flex-1 px-4 py-2.5 bg-gray-200 text-gray-600 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-gray-300 transition-colors"
+                            className={`flex-1 px-4 py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${isDark ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                           >
                             <X className="h-4 w-4" />
                             Skip
@@ -1826,14 +1858,14 @@ const VendorDiscovery: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {selectedVendor.capacity && (
                       <div>
-                        <h3 className="text-lg font-semibold mb-2">Capacity</h3>
-                        <p className="text-2xl font-bold text-gray-600">{selectedVendor.capacity} guests</p>
+                        <h3 className={`text-lg font-semibold mb-2 ${isDark ? 'text-gray-100' : ''}`}>Capacity</h3>
+                        <p className={`text-2xl font-bold ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{selectedVendor.capacity} guests</p>
                       </div>
                     )}
 
                     {selectedVendor.amenities && selectedVendor.amenities.length > 0 && (
                       <div>
-                        <h3 className="text-lg font-semibold mb-3">Amenities</h3>
+                        <h3 className={`text-lg font-semibold mb-3 ${isDark ? 'text-gray-100' : ''}`}>Amenities</h3>
                         <div className="grid grid-cols-1 gap-2">
                           {selectedVendor.amenities.map((amenity, index) => (
                             <div key={index} className="flex items-center gap-2">

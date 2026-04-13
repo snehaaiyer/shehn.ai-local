@@ -7,6 +7,12 @@ export class BlueprintService {
     return res.json();
   }
 
+  static async listBlueprints(coupleId?: number): Promise<{ success: boolean; data?: Blueprint[]; error?: string }> {
+    const params = coupleId ? `?couple_id=${coupleId}` : '';
+    const res = await fetch(`${API_BASE}/api/blueprints${params}`, { headers: getAuthHeaders() });
+    return res.json();
+  }
+
   static async getBlueprint(id: number): Promise<{ success: boolean; data?: Blueprint; error?: string }> {
     const res = await fetch(`${API_BASE}/api/blueprints/${id}`, { headers: getAuthHeaders() });
     return res.json();

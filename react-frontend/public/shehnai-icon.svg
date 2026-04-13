@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="480" height="480">
+  <!-- App Icon Background -->
+  <rect width="120" height="120" rx="28" fill="#2F4F46"/>
+  
+  <!-- Symbol (White on Green) -->
+  <g transform="rotate(45 60 60) scale(0.8) translate(15, 15)">
+      <path d="M 60,60 C 90,20 115,20 115,60 C 115,100 90,100 60,60 C 30,20 5,20 5,60 C 5,100 30,100 60,60 Z" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 60,60 C 75,40 90,40 90,60 C 90,80 75,80 60,60 C 45,40 30,40 30,60 C 30,80 45,80 60,60 Z" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Center Node -->
+  <circle cx="60" cy="60" r="7.5" fill="#E86F5B" />
+</svg>

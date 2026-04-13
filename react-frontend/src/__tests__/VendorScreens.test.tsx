@@ -46,7 +46,7 @@ describe('VendorRegister Screen', () => {
 
   test('renders registration form heading', () => {
     renderRegister();
-    expect(screen.getByText(/Join Shehnai/i)).toBeTruthy();
+    expect(screen.getByText(/Join Shehn\.AI/i)).toBeTruthy();
   });
 
   test('has business name input', () => {

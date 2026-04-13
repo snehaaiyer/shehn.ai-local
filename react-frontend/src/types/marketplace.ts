@@ -9,6 +9,7 @@ export interface WeddingSummary {
   budget: number;
   theme: string;
   events: string[];
+  wedding_days?: number;
 }
 
 export interface CategorySpec {
@@ -150,4 +151,6 @@ export interface VendorProfile {
   rating: number;
   approval_status: 'pending' | 'approved' | 'rejected';
   profile_completion: number;
+  // FAQ key-value store — category-relevant attributes for semantic matching
+  faq_data?: Record<string, string | number | boolean | string[]>;
 }
