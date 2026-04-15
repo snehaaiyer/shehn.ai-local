@@ -143,19 +143,7 @@ async def serve_root():
     </html>
     """)
 
-@app.get("/{path:path}")
-async def serve_spa_routes(path: str):
-    """Serve React SPA routes"""
-    if path.startswith("api/"):
-        raise HTTPException(status_code=404, detail="API endpoint not found")
-
-    index_file = react_build_path / "index.html"
-    if index_file.exists():
-        return FileResponse(str(index_file), media_type="text/html")
-
-    return await serve_root()
-
-# Health Check
+# Health Check (must be defined before the wildcard SPA route)
 @app.get("/health")
 async def health_check():
     return JSONResponse({
@@ -175,6 +163,18 @@ async def health_check():
 @app.get("/api/health")
 async def api_health():
     return await health_check()
+
+@app.get("/{path:path}")
+async def serve_spa_routes(path: str):
+    """Serve React SPA routes"""
+    if path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    index_file = react_build_path / "index.html"
+    if index_file.exists():
+        return FileResponse(str(index_file), media_type="text/html")
+
+    return await serve_root()
 
 # Fix vendor data endpoint routing
 @app.get("/api/vendor-data/{category}")
