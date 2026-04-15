@@ -179,7 +179,7 @@ args = "cd react-frontend && rm -rf node_modules/.cache && npm install --legacy-
 
 [[ports]]
 localPort = 3000
-externalPort = 80
+externalPort = 3000
 
 [[ports]]
 localPort = 3001
@@ -191,7 +191,7 @@ externalPort = 5000
 
 [[ports]]
 localPort = 8001
-externalPort = 3000
+externalPort = 8001
 
 [agent]
 expertMode = true
