@@ -991,12 +991,13 @@ def get_enhanced_mock_vendors(category: str, location: str, context: Dict) -> Li
 
 if __name__ == "__main__":
     import uvicorn
-    print("🌸 Starting Unified Wedding Server on port 8001")
-    print("📊 Health endpoint: http://0.0.0.0:8001/health")
-    print("🔗 API docs: http://0.0.0.0:8001/docs")
+    # Port is configurable via PORT env var; default 8000 to avoid
+    # collisions with common macOS services on 8001.
+    port = int(os.environ.get("PORT", "8000"))
+    host = os.environ.get("HOST", "0.0.0.0")
+    print(f"🌸 Starting Unified Wedding Server on {host}:{port}")
+    print(f"📊 Health endpoint:  http://localhost:{port}/health")
+    print(f"🔗 API docs:         http://localhost:{port}/api/docs")
+    print(f"🌐 App:              http://localhost:{port}/")
 
-    # Use port 8001 consistently (don't override with PORT env var)
-    port = 8001
-    print(f"🌐 Starting server on port {port}")
-
-    uvicorn.run(app, host="0.0.0.0", port=port, reload=False, log_level="info")
+    uvicorn.run(app, host=host, port=port, reload=False, log_level="info")
