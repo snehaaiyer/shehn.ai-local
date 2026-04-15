@@ -116,5 +116,25 @@ models/*.bin
 models/*.safetensors
 
 # Local configuration files
-config/local_* .claude/worktrees/
+config/local_*
 .claude/worktrees/
+
+# Vector databases (generated, not for version control)
+chroma_db/
+chroma_wedding_vendors/
+
+# Replit attached assets (pasted error logs / scratch files)
+attached_assets/
+
+# Auto-generated timestamped test reports and summaries
+*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9]*.json
+*_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9]*.md
+
+# One-off test/integration report files
+comprehensive_google_api_test_report.json
+frontend_backend_integration_report.json
+google_api_test_report.json
+google_integration_test_report.json
+
+# Backup files
+*_backup_*.py
