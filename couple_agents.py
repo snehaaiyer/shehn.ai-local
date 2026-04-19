@@ -136,7 +136,12 @@ class CoupleAgents:
     # ────────────────────────────────────────────
 
     def analyze_quote(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Budget agent analyzes a vendor quote against allocated budget."""
+        """Budget agent analyzes a vendor quote against allocated budget.
+
+        Caller may pass `benchmark` — a one-line grounded market comparison
+        computed deterministically by the server. The agent must use it instead
+        of inventing per-plate or per-guest numbers.
+        """
         if not self.agents_ready:
             return {"success": False, "error": "Agents not ready"}
 
@@ -144,6 +149,12 @@ class CoupleAgents:
         budget_allocated = data.get("budget_allocated", 0)
         category = data.get("category", "")
         wedding_summary = data.get("wedding_summary", {})
+        benchmark = data.get("benchmark", "")
+
+        benchmark_block = (
+            f"\nGROUNDED MARKET CONTEXT (use this — do not invent numbers):\n{benchmark}\n"
+            if benchmark else ""
+        )
 
         task = Task(
             description=f"""Analyze this {category} vendor quote for an Indian wedding in {wedding_summary.get('city', 'India')}.
@@ -152,8 +163,9 @@ Budget allocated: ₹{budget_allocated:,}
 Guests: {wedding_summary.get('guest_count', 200)}
 Pricing: {json.dumps(quote.get('category_pricing', {}))}
 Inclusions: {quote.get('inclusions', 'N/A')}
-
-Provide: value_rating (good/fair/expensive), market_comparison, strengths, concerns, negotiation_tip, budget_impact.
+{benchmark_block}
+Provide: value_rating (good/fair/expensive), market_comparison (leave empty — the server replaces it), strengths, concerns, negotiation_tip, budget_impact.
+Focus on qualitative judgement — the numeric comparison is computed elsewhere.
 Respond ONLY with valid JSON.""",
             expected_output="JSON with value_rating, market_comparison, strengths, concerns, negotiation_tip, budget_impact",
             agent=self.budget_agent,

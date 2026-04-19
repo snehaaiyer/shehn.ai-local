@@ -2845,25 +2845,263 @@ IMPORTANT: Always respond ONLY with valid JSON — no extra text before or after
 Be concise — 2-3 sentences per insight. Use ₹ symbol and Indian number formatting (lakhs/crores)."""
 
 
+# ── Market benchmarks (WedMeGood / ShaadiSaga / WeddingWire India 2025-26) ──
+# Hoisted to module level so /api/ai/analyze-quote can reuse them deterministically.
+CITY_TIERS_METRO = {
+    "mumbai", "delhi", "new delhi", "bangalore", "bengaluru",
+    "hyderabad", "chennai", "kolkata", "pune", "gurgaon", "gurugram", "noida",
+}
+CITY_TIERS_T2 = {
+    "jaipur", "ahmedabad", "lucknow", "chandigarh", "goa",
+    "kochi", "indore", "nagpur", "vadodara", "surat",
+}
+
+# Per-plate catering rates (₹/plate) by tier and quality band
+CATERING_PLATE_RATES = {
+    "metro": {"budget": (800, 1200),  "mid": (1200, 1800), "premium": (1800, 3000)},
+    "tier2": {"budget": (600, 900),   "mid": (900, 1400),  "premium": (1400, 2200)},
+    "tier3": {"budget": (400, 700),   "mid": (700, 1100),  "premium": (1100, 1800)},
+}
+
+# Other category benchmarks: (low, high) lump-sum or per-unit
+CATEGORY_BENCHMARKS = {
+    "metro": {
+        "venue":         {"unit": "per_guest", "range": (2500, 6000)},
+        "photography":   {"unit": "lump",      "range": (150000, 400000)},
+        "decoration":    {"unit": "lump",      "range": (200000, 800000)},
+        "makeup":        {"unit": "per_look",  "range": (20000, 45000)},
+        "entertainment": {"unit": "lump",      "range": (50000, 200000)},
+    },
+    "tier2": {
+        "venue":         {"unit": "per_guest", "range": (1800, 4000)},
+        "photography":   {"unit": "lump",      "range": (80000, 250000)},
+        "decoration":    {"unit": "lump",      "range": (100000, 500000)},
+        "makeup":        {"unit": "per_look",  "range": (12000, 30000)},
+        "entertainment": {"unit": "lump",      "range": (30000, 120000)},
+    },
+    "tier3": {
+        "venue":         {"unit": "per_guest", "range": (1200, 2800)},
+        "photography":   {"unit": "lump",      "range": (50000, 150000)},
+        "decoration":    {"unit": "lump",      "range": (60000, 300000)},
+        "makeup":        {"unit": "per_look",  "range": (8000, 20000)},
+        "entertainment": {"unit": "lump",      "range": (20000, 80000)},
+    },
+}
+
+FULL_MEAL_EVENT_NAMES = {"ceremony", "reception", "wedding"}
+LIGHT_MEAL_EVENT_NAMES = {"mehendi", "sangeet", "haldi", "cocktail"}
+
+
+def _city_tier(city: str) -> str:
+    c = (city or "").strip().lower()
+    if not c:
+        return "tier2"
+    if any(c == m or m in c for m in CITY_TIERS_METRO):
+        return "metro"
+    if any(c == m or m in c for m in CITY_TIERS_T2):
+        return "tier2"
+    return "tier3"
+
+
+def _format_inr(n: int) -> str:
+    """Indian number formatting with ₹ symbol — e.g. ₹1,20,000."""
+    try:
+        n = int(n)
+    except (TypeError, ValueError):
+        return f"₹{n}"
+    s = str(abs(n))
+    if len(s) <= 3:
+        out = s
+    else:
+        last3 = s[-3:]
+        rest = s[:-3]
+        groups = []
+        while len(rest) > 2:
+            groups.insert(0, rest[-2:])
+            rest = rest[:-2]
+        if rest:
+            groups.insert(0, rest)
+        out = ",".join(groups) + "," + last3
+    return f"₹{'-' if n < 0 else ''}{out}"
+
+
+def compute_market_benchmark(category: str, quote: dict, wedding_summary: dict) -> dict:
+    """
+    Deterministic per-category market comparison.
+    Returns: {comparison_text, value_rating, per_unit, unit_label, market_low, market_high, tier}
+    `value_rating` ∈ {good, fair, expensive}.
+    Falls back to fair/empty text on missing data — never raises.
+    """
+    category = (category or "").lower().strip()
+    city = wedding_summary.get("city", "") if wedding_summary else ""
+    guest_count = int(wedding_summary.get("guest_count") or 0)
+    events = [str(e).lower() for e in (wedding_summary.get("events") or [])]
+    tier = _city_tier(city)
+    tier_label_map = {"metro": "metro", "tier2": "tier-2", "tier3": "tier-3"}
+    tier_label = tier_label_map[tier]
+    city_display = city.title() if city else tier_label
+
+    total = int(quote.get("total_estimated_price") or 0)
+    if total <= 0:
+        return {"comparison_text": "", "value_rating": "fair", "per_unit": 0,
+                "unit_label": "", "market_low": 0, "market_high": 0, "tier": tier}
+
+    def _classify(value: float, low: float, high: float) -> str:
+        # Use 5% slack on the low end for "good" and a hard ceiling at 1.05*high for "expensive"
+        if value < low * 1.05:
+            return "good"
+        if value > high * 1.05:
+            return "expensive"
+        return "fair"
+
+    if category == "catering":
+        if guest_count <= 0:
+            return {"comparison_text": "", "value_rating": "fair", "per_unit": 0,
+                    "unit_label": "₹/plate", "market_low": 0, "market_high": 0, "tier": tier}
+        full_meals = sum(1 for e in events if e in FULL_MEAL_EVENT_NAMES)
+        light_meals = sum(1 for e in events if e in LIGHT_MEAL_EVENT_NAMES)
+        meal_weight = max(full_meals + light_meals * 0.5, 1.0)
+        per_plate = int(total / (guest_count * meal_weight))
+        bands = CATERING_PLATE_RATES[tier]
+        full_low = bands["budget"][0]
+        full_high = bands["premium"][1]
+        # Pick the band the per-plate falls into for a tighter sentence
+        if per_plate < bands["budget"][1]:
+            band_name, band_low, band_high = "budget", *bands["budget"]
+        elif per_plate < bands["mid"][1]:
+            band_name, band_low, band_high = "mid", *bands["mid"]
+        else:
+            band_name, band_low, band_high = "premium", *bands["premium"]
+        rating = _classify(per_plate, full_low, full_high)
+        meal_note = f" across {int(meal_weight*10)/10} meal-equivalents" if meal_weight > 1 else ""
+        comparison = (
+            f"{_format_inr(per_plate)}/plate for {guest_count} guests{meal_note} "
+            f"vs {city_display} {tier_label} {band_name}-tier band "
+            f"{_format_inr(band_low)}–{_format_inr(band_high)}/plate "
+            f"(full range {_format_inr(full_low)}–{_format_inr(full_high)})."
+        )
+        return {"comparison_text": comparison, "value_rating": rating,
+                "per_unit": per_plate, "unit_label": "₹/plate",
+                "market_low": full_low, "market_high": full_high, "tier": tier}
+
+    if category == "venue":
+        bench = CATEGORY_BENCHMARKS[tier]["venue"]
+        low, high = bench["range"]
+        if guest_count > 0:
+            per_guest = int(total / guest_count)
+            rating = _classify(per_guest, low, high)
+            comparison = (
+                f"{_format_inr(per_guest)}/guest for {guest_count} guests "
+                f"vs {city_display} {tier_label} venue band "
+                f"{_format_inr(low)}–{_format_inr(high)}/guest."
+            )
+            return {"comparison_text": comparison, "value_rating": rating,
+                    "per_unit": per_guest, "unit_label": "₹/guest",
+                    "market_low": low, "market_high": high, "tier": tier}
+        # No guest count — compare lump sum to a 200-guest reference window
+        ref_low, ref_high = low * 200, high * 200
+        rating = _classify(total, ref_low, ref_high)
+        comparison = (
+            f"{_format_inr(total)} venue total vs {city_display} {tier_label} reference "
+            f"{_format_inr(ref_low)}–{_format_inr(ref_high)} (200-guest baseline)."
+        )
+        return {"comparison_text": comparison, "value_rating": rating,
+                "per_unit": total, "unit_label": "₹ total",
+                "market_low": ref_low, "market_high": ref_high, "tier": tier}
+
+    if category in ("photography", "decoration", "entertainment"):
+        bench = CATEGORY_BENCHMARKS[tier][category]
+        low, high = bench["range"]
+        rating = _classify(total, low, high)
+        comparison = (
+            f"{_format_inr(total)} vs {city_display} {tier_label} {category} band "
+            f"{_format_inr(low)}–{_format_inr(high)}."
+        )
+        return {"comparison_text": comparison, "value_rating": rating,
+                "per_unit": total, "unit_label": "₹ total",
+                "market_low": low, "market_high": high, "tier": tier}
+
+    if category == "makeup":
+        bench = CATEGORY_BENCHMARKS[tier]["makeup"]
+        low, high = bench["range"]
+        # Makeup is per-look; without a look count we compare lump sum to 2-look baseline
+        ref_low, ref_high = low * 2, high * 2
+        rating = _classify(total, ref_low, ref_high)
+        comparison = (
+            f"{_format_inr(total)} vs {city_display} {tier_label} makeup band "
+            f"{_format_inr(low)}–{_format_inr(high)}/look (2-look baseline "
+            f"{_format_inr(ref_low)}–{_format_inr(ref_high)})."
+        )
+        return {"comparison_text": comparison, "value_rating": rating,
+                "per_unit": total, "unit_label": "₹ total",
+                "market_low": ref_low, "market_high": ref_high, "tier": tier}
+
+    return {"comparison_text": "", "value_rating": "fair", "per_unit": total,
+            "unit_label": "", "market_low": 0, "market_high": 0, "tier": tier}
+
+
 @app.post("/api/ai/analyze-quote")
 async def ai_analyze_quote(request: Request):
-    """Couple-facing: Analyze a vendor quote using couple budget_agent or direct LLM."""
+    """Couple-facing: Analyze a vendor quote using couple budget_agent or direct LLM.
+
+    The numeric `market_comparison` and `value_rating` fields are computed
+    deterministically from CATERING_PLATE_RATES / CATEGORY_BENCHMARKS — the LLM
+    only writes the qualitative strengths/concerns/negotiation_tip/budget_impact.
+    """
     data = await request.json()
     quote = data.get("quote", {})
     budget_allocated = data.get("budget_allocated", 0)
     category = data.get("category", "")
     wedding_summary = data.get("wedding_summary", {})
 
-    # Try couple AI budget agent
+    # ── Deterministic benchmark (computed before LLM, used to ground prompt) ──
+    benchmark = compute_market_benchmark(category, quote, wedding_summary)
+    benchmark_line = (
+        f"Real market data for this {category} quote: {benchmark['comparison_text']} "
+        f"Verdict (computed): {benchmark['value_rating']}."
+    ) if benchmark.get("comparison_text") else (
+        f"No reliable market benchmark available for this {category} quote — "
+        f"do NOT invent comparisons; leave market_comparison generic."
+    )
+
+    def _apply_benchmark_overrides(analysis: dict) -> dict:
+        """Stamp deterministic fields onto whatever the LLM produced."""
+        if not isinstance(analysis, dict):
+            analysis = {"analysis": analysis}
+        if benchmark.get("comparison_text"):
+            analysis["market_comparison"] = benchmark["comparison_text"]
+            analysis["value_rating"] = benchmark["value_rating"]
+            analysis["benchmark"] = {
+                "per_unit": benchmark["per_unit"],
+                "unit_label": benchmark["unit_label"],
+                "market_low": benchmark["market_low"],
+                "market_high": benchmark["market_high"],
+                "tier": benchmark["tier"],
+                "source": "deterministic",
+            }
+        analysis.setdefault("strengths", [])
+        analysis.setdefault("concerns", [])
+        analysis.setdefault("negotiation_tip", "Ask about package deals for multiple functions.")
+        analysis.setdefault(
+            "budget_impact",
+            f"This quote is {'within' if quote.get('total_estimated_price', 0) <= budget_allocated else 'over'} your allocated budget.",
+        )
+        return analysis
+
+    # Try couple AI budget agent (Ollama/GLM4 via CrewAI)
     if COUPLE_AGENTS_AVAILABLE and couple_ai:
         try:
             result = await asyncio.to_thread(couple_ai.analyze_quote, {
                 "quote": quote, "budget_allocated": budget_allocated,
-                "category": category, "wedding_summary": wedding_summary
+                "category": category, "wedding_summary": wedding_summary,
+                "benchmark": benchmark_line,
             })
             if result and result.get("success"):
                 analysis = result.get("analysis", "")
-                return {"success": True, "data": analysis if isinstance(analysis, dict) else {"analysis": analysis, "value_rating": "fair"}, "provider": "CoupleAI budget_agent"}
+                if not isinstance(analysis, dict):
+                    analysis = {"analysis": analysis}
+                analysis = _apply_benchmark_overrides(analysis)
+                return {"success": True, "data": analysis, "provider": "CoupleAI budget_agent"}
         except Exception as e:
             logger.warning(f"Couple AI quote analysis failed, falling back: {e}")
 
@@ -2871,24 +3109,28 @@ async def ai_analyze_quote(request: Request):
 - Quote total: ₹{quote.get('total_estimated_price', 0):,}
 - Budget allocated: ₹{budget_allocated:,}
 - City: {wedding_summary.get('city', 'unknown')}, Guests: {wedding_summary.get('guest_count', 0)}
+- Events: {', '.join(wedding_summary.get('events', [])) or 'unknown'}
 - Pricing details: {json.dumps(quote.get('category_pricing', {}))}
 - Inclusions: {quote.get('inclusions', 'N/A')}
 
-Respond in this exact JSON format:
-{{"value_rating": "good/fair/expensive", "market_comparison": "1 sentence comparing to typical {category} rates in {wedding_summary.get('city', 'this city')}", "strengths": ["strength1", "strength2"], "concerns": ["concern1"], "negotiation_tip": "1 actionable negotiation suggestion", "budget_impact": "1 sentence on how this affects overall budget"}}"""
+GROUNDED MARKET CONTEXT (use this — do not invent your own numbers):
+{benchmark_line}
+
+Respond in this exact JSON format. Leave `market_comparison` empty — it will be replaced by the grounded value above. Focus on qualitative judgement:
+{{"value_rating": "good/fair/expensive", "market_comparison": "", "strengths": ["strength1", "strength2"], "concerns": ["concern1"], "negotiation_tip": "1 actionable negotiation suggestion", "budget_impact": "1 sentence on how this affects overall budget"}}"""
 
     response = await _ask_claude(MARKET_SYSTEM, prompt, 400)
     try:
         analysis = json.loads(response)
-        return {"success": True, "data": analysis}
     except json.JSONDecodeError:
-        return {"success": True, "data": {
+        analysis = {
             "value_rating": "fair",
-            "market_comparison": response[:200] if response else "AI analysis unavailable.",
+            "market_comparison": "",
             "strengths": [], "concerns": [],
             "negotiation_tip": "Ask about package deals for multiple functions.",
-            "budget_impact": f"This quote is {'within' if quote.get('total_estimated_price', 0) <= budget_allocated else 'over'} your allocated budget."
-        }}
+            "budget_impact": f"This quote is {'within' if quote.get('total_estimated_price', 0) <= budget_allocated else 'over'} your allocated budget.",
+        }
+    return {"success": True, "data": _apply_benchmark_overrides(analysis)}
 
 
 @app.post("/api/ai/match-vendors")

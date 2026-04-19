@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "frontend",
-      "runtimeExecutable": "/Users/snehaaiyer/.pyenv/versions/3.12.7/bin/python",
-      "runtimeArgs": ["/tmp/serve_spa.py"],
-      "port": 3001
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 3000,
+      "cwd": "react-frontend"
     }
   ]
 }

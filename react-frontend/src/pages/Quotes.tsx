@@ -10,7 +10,7 @@ import PDFUploadExtractor from '../components/PDFUploadExtractor';
 import { QuoteService } from '../services/quote_service';
 import { MessagingService } from '../services/messaging_service';
 import { MarketplaceAIService, QuoteAnalysis, VendorMatch, NegotiationSuggestion } from '../services/marketplace_ai_service';
-import { Quote, VendorCategory, QuoteStatus } from '../types/marketplace';
+import { Quote, VendorCategory, QuoteStatus, WeddingSummary } from '../types/marketplace';
 import { useAppStore } from '../store/useAppStore';
 import QuoteCard from '../components/QuoteCard';
 import PlanningJourney from '../components/PlanningJourney';
@@ -256,6 +256,11 @@ const Quotes: React.FC = () => {
     venue: 0, photography: 0, catering: 0, decoration: 0, makeup: 0, entertainment: 0,
   });
 
+  // Wedding summary from blueprint — fed to AI analyses so comparisons are grounded
+  const [weddingSummary, setWeddingSummary] = useState<WeddingSummary>({
+    date: '', city: '', guest_count: 0, budget: 0, theme: '', events: [],
+  });
+
   // AI state
   const [aiAnalysis, setAiAnalysis] = useState<Record<number, QuoteAnalysis>>({});
   const [vendorRankings, setVendorRankings] = useState<VendorMatch[]>([]);
@@ -294,7 +299,7 @@ const Quotes: React.FC = () => {
     return () => { cancelled = true; };
   }, [blueprintId]);
 
-  // Load budget from blueprint
+  // Load budget + wedding summary from blueprint
   useEffect(() => {
     if (!blueprintId) return;
     let cancelled = false;
@@ -302,8 +307,12 @@ const Quotes: React.FC = () => {
       try {
         const { BlueprintService } = await import('../services/blueprint_service');
         const res = await BlueprintService.getBlueprint(blueprintId);
-        if (!cancelled && res.success && res.data?.budget_breakdown) {
+        if (cancelled || !res.success || !res.data) return;
+        if (res.data.budget_breakdown) {
           setBudgetByCategory((prev) => ({ ...prev, ...res.data!.budget_breakdown }));
+        }
+        if (res.data.wedding_summary) {
+          setWeddingSummary((prev) => ({ ...prev, ...res.data!.wedding_summary }));
         }
       } catch { /* keep defaults */ }
     })();
@@ -364,7 +373,7 @@ const Quotes: React.FC = () => {
       const res = await MarketplaceAIService.analyzeQuote(
         quote,
         budgetByCategory[quote.category] ?? 0,
-        { city: '', guest_count: 0, budget: 0, date: '', theme: '', events: [] }
+        weddingSummary
       );
       if (res.success && res.data) {
         setAiAnalysis((prev) => ({ ...prev, [quote.id]: res.data! }));
@@ -373,7 +382,7 @@ const Quotes: React.FC = () => {
       }
     } catch { showToast('AI analysis failed'); }
     setAnalyzingQuoteId(null);
-  }, [aiAnalysis, budgetByCategory, showToast]);
+  }, [aiAnalysis, budgetByCategory, weddingSummary, showToast]);
 
   const handleRankVendors = useCallback(async () => {
     const categoryQuotes = activeCategory === 'all' ? filteredQuotes : filteredQuotes.filter((q) => q.category === activeCategory);
