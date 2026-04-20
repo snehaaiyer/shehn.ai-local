@@ -1973,12 +1973,39 @@ _timeline_events: Dict[int, dict] = {}
 _budget_transactions: Dict[int, dict] = {}
 _vendor_profiles: Dict[int, dict] = {}
 _users: List[dict] = []
+# Agent orchestration state (spec §5 vendor_interactions + agent_runs)
+_vendor_interactions: Dict[str, dict] = {}  # keyed by f"{request_id}:{vendor_id}"
+_agent_runs: Dict[str, dict] = {}           # keyed by request_id (str uuid)
 _next_id = {"bp": 1, "q": 1, "conv": 1, "msg": 1, "evt": 1, "tl": 1, "vp": 1, "tx": 1}
 
 def _id(kind: str) -> int:
     val = _next_id[kind]
     _next_id[kind] += 1
     return val
+
+
+# ── Agent layer wiring (spec §4.2-§4.4: Planner + Tools + Executor) ─────────
+try:
+    import agent_tools
+    from agent_executor import AgentExecutor
+    from agent_planner import generate_plan, plan_from_query, new_request_id
+
+    agent_tools.bind_stores(
+        vendor_profiles=_vendor_profiles,
+        blueprints=_blueprints,
+        quotes=_quotes,
+        conversations=_conversations,
+        messages=_messages,
+        vendor_interactions=_vendor_interactions,
+        id_factory=_id,
+    )
+    agent_executor = AgentExecutor(runs_store=_agent_runs)
+    AGENT_LAYER_AVAILABLE = True
+    logger.info(f"✅ Agent layer loaded — tools: {', '.join(agent_tools.list_tools())}")
+except Exception as e:
+    agent_executor = None
+    AGENT_LAYER_AVAILABLE = False
+    logger.warning(f"⚠️ Agent layer unavailable: {e}")
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -5007,6 +5034,160 @@ async def extract_pdf(
     except Exception as e:
         logger.error(f"PDF extraction error: {e}")
         return JSONResponse({"success": False, "error": f"Processing failed: {str(e)}"}, status_code=500)
+
+
+# ═══════════════════════════════════════════════════════════════
+# AGENT ORCHESTRATION — spec §6-§7 (planner + executor + webhooks)
+# ═══════════════════════════════════════════════════════════════
+
+def _agent_unavailable() -> JSONResponse:
+    return JSONResponse(
+        {"success": False, "error": "Agent layer not loaded — check server logs"},
+        status_code=503,
+    )
+
+
+@app.post("/agent/query")
+async def agent_query(request: Request):
+    """Spec §6: free-form query → blueprint/plan → executor.
+
+    Body: {user_id: int, query: str}                       — ad-hoc single category
+       or {user_id: int, blueprint_id: int, categories?: [str]}  — plan from blueprint
+    """
+    if not AGENT_LAYER_AVAILABLE:
+        return _agent_unavailable()
+    data = await request.json()
+    user_id = int(data.get("user_id") or 0)
+    blueprint_id = data.get("blueprint_id")
+    query = data.get("query", "")
+
+    if blueprint_id:
+        bp = _blueprints.get(int(blueprint_id))
+        if not bp:
+            return JSONResponse({"success": False, "error": "Blueprint not found"}, status_code=404)
+        plan = generate_plan(bp, categories=data.get("categories"), request_id=new_request_id())
+    elif query:
+        plan = plan_from_query(query, user_id)
+    else:
+        return JSONResponse(
+            {"success": False, "error": "Provide either `query` or `blueprint_id`"},
+            status_code=400,
+        )
+
+    run = agent_executor.start(plan)
+    return {"success": True, "data": _serialize_run(run)}
+
+
+@app.get("/agent/runs")
+async def agent_list_runs(request: Request, couple_id: int = 0):
+    if not AGENT_LAYER_AVAILABLE:
+        return _agent_unavailable()
+    rows = agent_executor.list_runs(couple_id=couple_id or None)
+    return {"success": True, "data": [_serialize_run(r) for r in rows]}
+
+
+@app.get("/agent/runs/{request_id}")
+async def agent_get_run(request_id: str):
+    if not AGENT_LAYER_AVAILABLE:
+        return _agent_unavailable()
+    run = agent_executor.get(request_id)
+    if not run:
+        return JSONResponse({"success": False, "error": "Run not found"}, status_code=404)
+    return {"success": True, "data": _serialize_run(run, include_logs=True)}
+
+
+@app.post("/agent/runs/{request_id}/resume")
+async def agent_resume_run(request_id: str):
+    """Force-resume a waiting run. Useful for ops/debugging."""
+    if not AGENT_LAYER_AVAILABLE:
+        return _agent_unavailable()
+    try:
+        run = agent_executor.resume(request_id)
+    except KeyError:
+        return JSONResponse({"success": False, "error": "Run not found"}, status_code=404)
+    return {"success": True, "data": _serialize_run(run)}
+
+
+@app.post("/webhook/events")
+async def webhook_events(request: Request):
+    """Spec §5: async events (vendor replies). Writes interaction state + resumes run.
+
+    Accepted event: `vendor.response.received` with
+    data = {request_id, vendor_id, quote: {total, message, inclusions}}
+    """
+    if not AGENT_LAYER_AVAILABLE:
+        return _agent_unavailable()
+    payload = await request.json()
+    event = payload.get("event")
+    data = payload.get("data") or {}
+
+    if event == "vendor.response.received":
+        request_id = data.get("request_id")
+        vendor_id = data.get("vendor_id")
+        if not request_id or vendor_id is None:
+            return JSONResponse(
+                {"success": False, "error": "request_id and vendor_id required"},
+                status_code=400,
+            )
+        key = f"{request_id}:{vendor_id}"
+        existing = _vendor_interactions.get(key)
+        if not existing:
+            # Vendor wasn't part of the run; still record the response for audit.
+            existing = {
+                "request_id": request_id, "vendor_id": vendor_id,
+                "vendor_name": _vendor_profiles.get(int(vendor_id), {}).get("name", f"Vendor {vendor_id}"),
+                "conversation_id": None, "status": "unsolicited",
+                "contacted_at": None,
+            }
+        existing["status"] = "responded"
+        existing["responded_at"] = datetime.now().isoformat()
+        existing["quote"] = data.get("quote", {})
+        _vendor_interactions[key] = existing
+
+        resumed = None
+        try:
+            resumed = agent_executor.resume(request_id)
+        except KeyError:
+            logger.warning(f"webhook: no run for request_id {request_id}")
+        return {
+            "success": True,
+            "interaction": existing,
+            "run_status": resumed["status"] if resumed else None,
+        }
+
+    return JSONResponse(
+        {"success": False, "error": f"Unknown event type: {event!r}"},
+        status_code=400,
+    )
+
+
+@app.get("/agent/tools")
+async def agent_list_tools():
+    """Introspection: list registered tool names."""
+    if not AGENT_LAYER_AVAILABLE:
+        return _agent_unavailable()
+    return {"success": True, "data": agent_tools.list_tools()}
+
+
+def _serialize_run(run: dict, include_logs: bool = False) -> dict:
+    """Trim big blobs for list views; include full logs for detail view."""
+    out = {
+        "request_id": run["request_id"],
+        "blueprint_id": run.get("blueprint_id"),
+        "couple_id": run.get("couple_id"),
+        "status": run["status"],
+        "current_step": run["current_step"],
+        "total_steps": len(run["plan"]["steps"]),
+        "recommendation": run["state"].get("recommendation"),
+        "created_at": run["created_at"],
+        "updated_at": run["updated_at"],
+        "completed_at": run.get("completed_at"),
+    }
+    if include_logs:
+        out["plan"] = run["plan"]
+        out["state"] = run["state"]
+        out["logs"] = run["logs"]
+    return out
 
 
 # Catch-all route must be defined last
