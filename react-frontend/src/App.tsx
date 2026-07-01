@@ -15,6 +15,7 @@ import Timeline from './pages/Timeline';
 import Quotes from './pages/Quotes';
 import Messages from './pages/Messages';
 import PublicRSVP from './pages/PublicRSVP';
+import LearningHub from './pages/LearningHub';
 
 // Vendor page imports
 import VendorRegister from './pages/vendor/VendorRegister';
@@ -88,6 +89,7 @@ function App() {
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/plan" element={<SmartPlanner />} />
                     <Route path="/timeline" element={<Timeline />} />
+                    <Route path="/learn" element={<LearningHub />} />
                   </>}
 
                   {/* Vendor routes */}

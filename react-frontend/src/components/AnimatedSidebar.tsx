@@ -5,7 +5,7 @@ import {
   Home, Search, DollarSign, Heart, MessageCircle,
   X, Settings, Sun, Moon, Mail, FileText, IndianRupee,
   Bot, Store, User, Users, CheckCircle, Sparkles, Calendar,
-  ChevronRight
+  ChevronRight, BookOpen
 } from "lucide-react";
 import { useAppStore } from '../store/useAppStore';
 
@@ -51,6 +51,7 @@ const coupleNav: NavItem[] = [
   { name: 'Budget', href: '/budget', icon: <DollarSign className="h-[18px] w-[18px]" /> },
   { name: 'Timeline', href: '/timeline', icon: <Calendar className="h-[18px] w-[18px]" /> },
   { name: 'Invites', href: '/wedding-invites', icon: <Mail className="h-[18px] w-[18px]" /> },
+  { name: 'Learning Hub', href: '/learn', icon: <BookOpen className="h-[18px] w-[18px]" /> },
 ];
 
 const vendorNav: NavItem[] = [
